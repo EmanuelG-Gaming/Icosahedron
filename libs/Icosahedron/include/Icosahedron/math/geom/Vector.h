@@ -49,7 +49,14 @@ namespace ic {
             }
             return result;
         }
-    
+        
+        Vec operator*(float scalar) {
+            Vec result;
+            for (int i = 0; i < dimensions; i++) {
+                result.values[i] = values[i] * scalar;
+            }
+            return result;
+        }
         float dot(Vec &other) {
             float result = 0.0f;
             for (int i = 0; i < dimensions; i++) {
@@ -70,8 +77,8 @@ namespace ic {
 
             return stream;
         }
-
-        T &operator[](int index) {
+        
+        T& operator[](const int index) {
             return values[index];
         }
 

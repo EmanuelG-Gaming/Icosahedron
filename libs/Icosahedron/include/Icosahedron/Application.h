@@ -3,7 +3,6 @@
 
 #include <string>
 
-#define GLEW_STATIC
 #include <GL/glew.h>
 
 #include <SDL2/SDL.h>
@@ -11,11 +10,13 @@
 
 #include <Icosahedron/graphics/Color.h>
 #include <Icosahedron/input/Input.h>
+#include <Icosahedron/input/InputHandler.h>
 
 namespace ic {
     class Application {
         public:
-            /* Initializes the application. Called before load(). */
+            /* Initializes the application. Called before load(). 
+             * Don't use this to add OpenGL stuff, as a context doesn't exist during this stage. */
             virtual bool init() { return true; }
 
             /* Called after setting a window and a valid OpenGL context. */
@@ -37,14 +38,19 @@ namespace ic {
     
             int screen_width();
             int screen_height();
+            
+        private:
+            void send_application_information();
 
         protected:
             std::string displayName;
-
+            ic::InputHandler inputHandler;
+            
         private:
             int width, height;
             SDL_Window *window;
             SDL_GLContext context;
+
             bool constructed = false;
     };
 }

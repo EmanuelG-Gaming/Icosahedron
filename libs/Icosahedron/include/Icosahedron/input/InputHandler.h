@@ -11,8 +11,10 @@ namespace ic {
             InputHandler() {}
             
             void handle(ic::Event event, float dt);
+            void update(float dt);
+            
             void add_input(ic::Input* input, const INPUT_LOCATION &location);
-            ic::Input &find_input(const INPUT_LOCATION &location);
+            ic::Input *find_input(const INPUT_LOCATION &location);
             
         private:
             std::map<INPUT_LOCATION, ic::Input*> inputs;

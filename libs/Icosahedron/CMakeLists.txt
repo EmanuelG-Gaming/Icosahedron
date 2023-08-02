@@ -9,18 +9,29 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
     
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Shader.h
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Batch.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/input/Input.h
     ${LIBRARY_HEADERS_DIRECTORY}/input/InputHandler.h
     ${LIBRARY_HEADERS_DIRECTORY}/input/KeyboardController.h
-    
+
+    ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Shape2D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/RectangleShape.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/Application.h
     ${LIBRARY_HEADERS_DIRECTORY}/Core.h
 )
 
 set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
-    ${LIBRARY_SOURCE_DIRECTORY}/math/geom/Vector.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/graphics/Color.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Shader.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Batch.cpp
+
+    ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/RectangleShape.cpp
+
+    ${LIBRARY_SOURCE_DIRECTORY}/input/KeyboardController.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/input/InputHandler.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/Application.cpp
 )

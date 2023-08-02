@@ -1,5 +1,6 @@
 #include <Application.h>
 
+#include <iostream>
 
 void ic::Application::clear_color() {
     clear_color(0.0f, 0.0f, 0.0f);
@@ -24,7 +25,8 @@ bool ic::Application::construct(int w, int h) {
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
-		fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
+		//fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
+        std::cerr << "SDL_Init Error: " << SDL_GetError();
 		return false;
 	}
     
@@ -38,40 +40,44 @@ bool ic::Application::construct(int w, int h) {
     
 
     if (!init()) {
-        printf("Couldn't initialize the application.\n");
+        std::cerr << "Couldn't initialize the application." << "\n";
         return false;
     }
 
 	SDL_Window *win = SDL_CreateWindow(displayName.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
 	if (win == NULL)
 	{
-		fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
+		std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << "\n";
 		return false;
 	}
 
 	// We will not actually need a context created, but we should create one
 	SDL_GLContext cont = SDL_GL_CreateContext(win);
-    
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) {
-        printf("Couldn't initialize GLEW.\n");
-        return false;
-    }
     window = win;
     context = cont;
 
-    if (!load()) {
-        printf("Couldn't load the application.\n");
+    glewExperimental = GL_TRUE;
+    if (glewInit() != GLEW_OK) {
+        std::cerr << "Couldn't initialize GLEW." << "\n";
         return false;
     }
+    
+    send_application_information();
 
+    if (!load()) {
+        std::cerr << "Couldn't load the application." << "\n";
+        return false;
+    }
+    
+    glViewport(0, 0, width, height);
+    
     constructed = true;
     return true;
 }
 
 void ic::Application::start() {
     if (!constructed) {
-        printf("Couldn't start the application. It wasn't constructed first.\n");
+        std::cerr << "Couldn't start the application. It wasn't constructed first." << "\n";
         return;
     }
 
@@ -82,12 +88,14 @@ void ic::Application::start() {
     SDL_Event e;
     while (!disabled)
 	{
+        
         while (SDL_PollEvent(&e))
 		{
 			if (e.type == SDL_QUIT) {
                  disabled = true;
                  break;
             }
+            inputHandler.handle(e, delta);
 
             // Event-handling code
             if (!handle_event(e, delta)) {
@@ -95,10 +103,12 @@ void ic::Application::start() {
                 break;
             }
 		}
-
+        
         Uint64 now = SDL_GetPerformanceCounter();
         delta = (now - then) / (float) SDL_GetPerformanceFrequency();
         then = now;
+
+        inputHandler.update(delta);
 
     	// Update and render to screen code
     	if (!update(delta)) {
@@ -110,10 +120,27 @@ void ic::Application::start() {
 	}
 	dispose();
 	
-    SDL_GL_DeleteContext(context);
     
 	SDL_DestroyWindow(window);
+    SDL_GL_DeleteContext(context);
+
 	SDL_Quit();
+}
+
+void ic::Application::send_application_information() {
+    SDL_version compiled, linked;
+    SDL_VERSION(&compiled);
+    SDL_GetVersion(&linked);
+
+    GLint majorGL, minorGL;
+    glGetIntegerv(GL_MAJOR_VERSION, &majorGL);
+    glGetIntegerv(GL_MINOR_VERSION, &minorGL);
+
+    std::cout << "----- Icosahedron -----" << "\n";
+    std::cout << "OpenGL version: " << majorGL << "." << minorGL << "\n";
+    std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << "\n";
+    fprintf(stdout, "Compiled SDL2 version: %u.%u.%u\n", compiled.major, compiled.minor, compiled.patch);
+    fprintf(stdout, "Linked SDL2 version: %u.%u.%u\n", linked.major, linked.minor, linked.patch);
 }
 
 int ic::Application::screen_width() {
