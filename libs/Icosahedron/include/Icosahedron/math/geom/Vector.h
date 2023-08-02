@@ -78,6 +78,23 @@ namespace ic {
             return stream;
         }
         
+        T& x() {
+            static_assert(dimensions >= 1, "X is only avaiable for dimensions >= 1.");
+            return values[0];
+        }
+        T& y() {
+            static_assert(dimensions >= 2, "Y is only avaiable for dimensions >= 2.");
+            return values[1];
+        }
+        T& z() {
+            static_assert(dimensions >= 3, "Z is only avaiable for dimensions >= 3.");
+            return values[2];
+        }
+        T& w() {
+            static_assert(dimensions >= 4, "W is only avaiable for dimensions >= 4.");
+            return values[3];
+        }
+        
         T& operator[](const int index) {
             return values[index];
         }

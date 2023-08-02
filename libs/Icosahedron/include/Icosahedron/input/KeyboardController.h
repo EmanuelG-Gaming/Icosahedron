@@ -4,7 +4,7 @@
 #include <functional>
 #include <map>
 
-#include <Icosahedron/math/geom/Vector.h>
+#include <Icosahedron/math/geom/Vectors.h>
 
 #include <Icosahedron/input/Input.h>
 
@@ -14,19 +14,18 @@ namespace ic {
      * Also allows for more keyboard actions to be added. */
     struct KeyboardController : public Input {
         public:
-            KeyboardController() {}
+            KeyboardController();
 
-            void handle_event(ic::Event event, float dt) override;
             void update(float dt) override;
 
             void add_action(const std::function<void()> &callback, Uint8 location);
 
             Uint8* get_keyboard_state();
-            ic::Vector<int, 2> get_direction();
+            ic::Vec2i get_direction();
 
         private:
             Uint8* keyboardState;
-            ic::Vector<int, 2> direction;
+            ic::Vec2i direction;
             std::map<Uint8, std::function<void()>> inputActions;
     };
 }

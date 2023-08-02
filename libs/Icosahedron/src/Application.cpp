@@ -86,11 +86,10 @@ void ic::Application::start() {
     bool disabled = false;
 
     SDL_Event e;
-    while (!disabled)
-	{
-        
-        while (SDL_PollEvent(&e))
-		{
+    while (!disabled) {
+        SDL_PumpEvents();
+
+        while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
                  disabled = true;
                  break;
@@ -102,8 +101,10 @@ void ic::Application::start() {
                 disabled = true;
                 break;
             }
-		}
+        }
+        SDL_Delay(10);
         
+
         Uint64 now = SDL_GetPerformanceCounter();
         delta = (now - then) / (float) SDL_GetPerformanceFrequency();
         then = now;

@@ -13,6 +13,7 @@ namespace ic {
 
 // Math
 #include <Icosahedron/math/geom/Vector.h>
+#include <Icosahedron/math/geom/Vectors.h>
 
 // Graphics
 #include <Icosahedron/graphics/Color.h>

@@ -5,7 +5,7 @@
 
 #include <GL/glew.h>
 
-#include <Icosahedron/math/geom/Vector.h>
+#include <Icosahedron/math/geom/Vectors.h>
 #include <Icosahedron/graphics/Color.h>
 #include <Icosahedron/graphics/gl/Shader.h>
 
@@ -23,8 +23,8 @@ enum GLPrimitives {
 namespace ic {
     /* A vertex for a Batch2D. */
     struct BatchVertex {
-        ic::Vector<float, 2> Position;
-        ic::Vector<float, 3> Color;
+        ic::Vec2f Position;
+        ic::Vec3f Color;
 
         BatchVertex() {}
         BatchVertex(float x, float y, ic::Color color) : Position({x, y}), Color({color.r / 255.0f, color.g / 255.0f, color.b / 255.0f}) {}

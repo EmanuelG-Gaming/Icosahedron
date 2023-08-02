@@ -9,14 +9,14 @@ RectangleShape::RectangleShape() {
     size = { 0.2f, 0.2f };
 }
 
-RectangleShape::RectangleShape(ic::Vector<float, 2> position, ic::Vector<float, 2> size) {
+RectangleShape::RectangleShape(ic::Vec2f position, ic::Vec2f size) {
     this->position = position;
     this->size = size;
 }
 
 void RectangleShape::draw(ic::Batch2D *batch, const ic::Color &color) {
-    float x1 = position[0] - size[0], y1 = position[1] - size[1];
-    float x2 = position[0] + size[0], y2 = position[1] + size[1];
+    float x1 = position.x() - size.x(), y1 = position.y() - size.y();
+    float x2 = position.x() + size.x(), y2 = position.y() + size.y();
     
     std::vector<BatchVertex> vertices = {
         BatchVertex(x1, y1, color),

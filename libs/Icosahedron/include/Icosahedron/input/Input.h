@@ -4,7 +4,7 @@
 #include <string>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_scancode.h>
 
 using INPUT_LOCATION = std::string;
 

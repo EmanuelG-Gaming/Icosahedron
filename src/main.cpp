@@ -66,10 +66,10 @@ class Example2 : public ic::Application {
         bool update(float dt) override { 
             float speed = 1.0f;
             ic::KeyboardController *controller = (ic::KeyboardController*) inputHandler.find_input("WASD");
-            ic::Vector<int, 2> dir = controller->get_direction();
+            ic::Vec2i dir = controller->get_direction();
 
-            shape->position[0] += dir[0] * speed * dt;
-            shape->position[1] += dir[1] * speed * dt;
+            shape->position.x() += dir.x() * speed * dt;
+            shape->position.y() += dir.y() * speed * dt;
 
 
             clear_color(ic::Colors::blue);
