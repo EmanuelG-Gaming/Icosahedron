@@ -15,7 +15,7 @@ For some, this can be pretty straightforward, but here it is:
 
 (Assuming you've got a C++ compiler, OpenGL support on the computer, and SDL2 installed)
 
-If you've managed to build this project successfully, you may see a `build` folder being created, with something like `engine.exe`. You can use the `.\build\engine` command on the terminal, that will start your application.
+If you've managed to build this project successfully, you may see a `build` folder being created, with something like `engine.exe`. You can use the `.\build\engine` command on the terminal, and this will start your application.
 
 # Example usage
 More examples are available inside the `src/main.cpp` file.
@@ -25,7 +25,7 @@ For instance, a very simple application that shows an empty blue window on start
 ```
 #include <Icosahedron/Core.h>
 
-class Example1 : public ic::Application {
+class Example : public ic::Application {
     public:
         bool init() override {
             displayName = "Example window";
@@ -47,7 +47,7 @@ class Example1 : public ic::Application {
 };
 
 int main(int argc, char *argv[]) {
-    Example1 application;
+    Example application;
 
     if (application.construct(640, 480)) {
         application.start();
