@@ -37,7 +37,6 @@ int main(int argc, char *argv[]) {
 
 
 /* Example2: Displays a green rectangle that can be moved around using the WASD keys or the arrow keys. */
-/*
 #include <Icosahedron/Core.h>
 
 class Example2 : public ic::Application {
@@ -94,4 +93,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-*/

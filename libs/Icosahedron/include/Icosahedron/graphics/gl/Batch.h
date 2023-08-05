@@ -8,31 +8,23 @@
 #include <Icosahedron/math/geom/Vectors.h>
 #include <Icosahedron/graphics/Color.h>
 #include <Icosahedron/graphics/gl/Shader.h>
-
-enum GLPrimitives {
-    INVALID_PRIMITIVE = 0,
-
-    POINTS = GL_POINTS,
-    LINES = GL_LINES,
-    TRIANGLES = GL_TRIANGLES,
-    TRIANGLE_FANS = GL_TRIANGLE_FAN,
-    TRIANGLE_STRIPS = GL_TRIANGLE_STRIP
-};
-
+#include <Icosahedron/graphics/gl/GL.h>
 
 namespace ic {
     /* A vertex for a Batch2D. */
     struct BatchVertex {
         ic::Vec2f Position;
         ic::Vec3f Color;
+        ic::Vec2f TextureCoords;
 
         BatchVertex() {}
         BatchVertex(float x, float y, ic::Color color) : Position({x, y}), Color({color.r / 255.0f, color.g / 255.0f, color.b / 255.0f}) {}
+        BatchVertex(float x, float y, float tx, float ty, ic::Color color) : Position({x, y}), TextureCoords({tx, ty}), Color({color.r / 255.0f, color.g / 255.0f, color.b / 255.0f}) {}
     };
     
     class Batch2D {
         public:
-            Batch2D(int capacity, GLPrimitives renderType);
+            Batch2D(int capacity, ic::GLPrimitives renderType);
             
             void add(const std::vector<ic::BatchVertex> &vertices);
             void render();

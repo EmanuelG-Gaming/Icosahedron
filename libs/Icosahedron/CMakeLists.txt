@@ -6,11 +6,19 @@ set(LIBRARY_NAME Icosahedron)
 set(LIBRARY_HEADERS_DIRECTORY include/${LIBRARY_NAME})
 set(LIBRARY_HEADERS 
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Vector.h
+    ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Vectors.h
+    ${LIBRARY_HEADERS_DIRECTORY}/math/Matrix.h
+    ${LIBRARY_HEADERS_DIRECTORY}/math/Matrices.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
-    
+
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/GL.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Shader.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Batch.h
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Texture.h
+    
+    ${LIBRARY_HEADERS_DIRECTORY}/Renderer.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/input/Input.h
     ${LIBRARY_HEADERS_DIRECTORY}/input/InputHandler.h
@@ -27,6 +35,8 @@ set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Shader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Batch.cpp
+
+    ${LIBRARY_SOURCE_DIRECTORY}/Renderer.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/RectangleShape.cpp
 
