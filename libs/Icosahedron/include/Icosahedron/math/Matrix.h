@@ -20,7 +20,7 @@ namespace ic {
         /* Initialises the matrix in column-major order. */
         Matrix(std::initializer_list<T> from) {
             for (auto position = from.begin(); position != from.end(); position++) {
-                tmp[std::distance(from.begin(), position)] = *position;
+                values[std::distance(from.begin(), position)] = *position;
             }
         }
 

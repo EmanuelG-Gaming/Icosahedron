@@ -36,12 +36,13 @@ int main(int argc, char *argv[]) {
 */
 
 
-/* Example2: Displays a green rectangle that can be moved around using the WASD keys or the arrow keys. */
+/* Example2: Displays a textured rectangle that can be moved around using the WASD keys or the arrow keys. */
 #include <Icosahedron/Core.h>
 
 class Example2 : public ic::Application {
     ic::Batch2D *batch;
     ic::RectangleShape *shape;
+    ic::Texture<ic::T2D> *texture;
 
     public:
         bool init() override {
@@ -50,8 +51,9 @@ class Example2 : public ic::Application {
         }
         
         bool load() override {
-            batch = new ic::Batch2D(1000, TRIANGLES);
+            batch = new ic::Batch2D(1000, ic::TRIANGLES);
             shape = new ic::RectangleShape();
+            texture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
 
             inputHandler.add_input(new ic::KeyboardController(), "WASD");
 
@@ -73,7 +75,8 @@ class Example2 : public ic::Application {
 
             clear_color(ic::Colors::blue);
 
-            shape->draw(batch, ic::Colors::green);
+            texture->use();
+            shape->draw(batch, ic::Colors::white);
             batch->render();
 
             return true; 
@@ -81,6 +84,7 @@ class Example2 : public ic::Application {
 
         void dispose() override {
             batch->dispose();
+            texture->dispose();
         }
 };
 

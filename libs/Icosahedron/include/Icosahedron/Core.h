@@ -15,12 +15,17 @@ namespace ic {
 #include <Icosahedron/math/geom/Vector.h>
 #include <Icosahedron/math/geom/Vectors.h>
 
+#include <Icosahedron/math/Matrix.h>
+#include <Icosahedron/math/Matrices.h>
+
 // Graphics
 #include <Icosahedron/graphics/Color.h>
 #include <Icosahedron/graphics/Colors.h>
 
+#include <Icosahedron/graphics/gl/GL.h>
 #include <Icosahedron/graphics/gl/Shader.h>
 #include <Icosahedron/graphics/gl/Batch.h>
+#include <Icosahedron/graphics/gl/Texture.h>
 
 // Input
 #include <Icosahedron/input/Input.h>

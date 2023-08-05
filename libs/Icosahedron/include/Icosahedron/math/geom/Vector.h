@@ -1,6 +1,7 @@
 #ifndef IC_VECTOR_H
 #define IC_VECTOR_H
 
+#include <cmath>
 #include <iostream>
 #include <array>
 
@@ -57,11 +58,42 @@ namespace ic {
             }
             return result;
         }
+
         float dot(Vec &other) {
             float result = 0.0f;
             for (int i = 0; i < dimensions; i++) {
                 result += values[i] * other[i];
             }
+            return result;
+        }
+        float len() {
+            float result = 0.0f;
+            for (int i = 0; i < dimensions; i++) {
+                result += values[i] * values[i];
+            }
+            result = sqrt(result);
+
+            return result;
+        }
+        Vec nor() {
+            Vec result;
+            float length = len();
+            for (int i = 0; i < dimensions; i++) {
+                result.values[i] = values[i] / length;
+            }
+            return result;
+        }
+
+        float crs(ic::Vector<T, 2> &other) {
+            return x * other.y() - y * other.x();
+        }
+        ic::Vector<T, 3> crs(ic::Vector<T, 3> &other) {
+            float cx = y * other.z - z * other.y;
+            float cy = z * other.x - x * other.z;
+            float cz = x * other.y - y * other.x;
+        
+            ic::Vector<T, 3> result = { cx, cy, cz };
+        
             return result;
         }
 

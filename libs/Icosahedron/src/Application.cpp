@@ -102,7 +102,7 @@ void ic::Application::start() {
                 break;
             }
         }
-        SDL_Delay(10);
+        SDL_Delay(5);
         
 
         Uint64 now = SDL_GetPerformanceCounter();

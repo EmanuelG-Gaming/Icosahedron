@@ -18,7 +18,7 @@ namespace ic {
         TRIANGLE_STRIPS = GL_TRIANGLE_STRIP
     };
 
-    enum class GLTextureTypes {
+    enum GLTextureTypes {
         T2D = GL_TEXTURE_2D,
         TCube = GL_TEXTURE_CUBE_MAP,
     };

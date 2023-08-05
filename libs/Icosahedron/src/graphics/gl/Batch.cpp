@@ -7,18 +7,23 @@ Batch2D::Batch2D(int capacity, GLPrimitives renderType) {
         "#version 300 es\n"
         "layout (location = 0) in vec2 position;\n"
         "layout (location = 1) in vec3 color;\n"
+        "layout (location = 2) in vec2 tCoords;\n"
         "out vec3 vColor;\n"
+        "out vec2 vTCoords;\n"
         "void main(){\n"
         "vColor = color;\n"
+        "vTCoords = tCoords;\n"
         "gl_Position = vec4(position.xy, 0.0, 1.0);\n"
         "}\n",
 
         "#version 300 es\n"
         "precision mediump float;\n"
         "in vec3 vColor;\n"
+        "in vec2 vTCoords;\n"
+        "uniform sampler2D sampleTexture;\n"
         "out vec4 outColor;\n"
         "void main(){\n"
-        "outColor = vec4(vColor, 1.0);\n"
+        "outColor = texture(sampleTexture, vTCoords) * vec4(vColor, 1.0);\n"
         "}\n", 
 
         false
@@ -50,10 +55,15 @@ void Batch2D::setup() {
     GLint color = 1;
     glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, sizeof(BatchVertex), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(color);
-           
+
+    GLint texCoords = 2;
+    glVertexAttribPointer(texCoords, 2, GL_FLOAT, GL_FALSE, sizeof(BatchVertex), (void*)(5 * sizeof(float)));
+    glEnableVertexAttribArray(texCoords);
+            
     glBindVertexArray(0);
     glDisableVertexAttribArray(position);
     glDisableVertexAttribArray(color);
+    glDisableVertexAttribArray(texCoords);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
