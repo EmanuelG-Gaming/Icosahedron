@@ -1,6 +1,7 @@
 #include <Application.h>
 
 #include <iostream>
+#include <Icosahedron/graphics/gl/Shaders.h>
 
 void ic::Application::clear_color() {
     clear_color(0.0f, 0.0f, 0.0f);
@@ -63,6 +64,8 @@ bool ic::Application::construct(int w, int h) {
     }
     
     send_application_information();
+
+    pre_load();
 
     if (!load()) {
         std::cerr << "Couldn't load the application." << "\n";
@@ -144,10 +147,14 @@ void ic::Application::send_application_information() {
     fprintf(stdout, "Linked SDL2 version: %u.%u.%u\n", linked.major, linked.minor, linked.patch);
 }
 
+void ic::Application::pre_load() {
+    shaders.load_shaders();
+}
+
+
 int ic::Application::screen_width() {
     return width;
 }
-
 int ic::Application::screen_height() {
     return height;
 }

@@ -5,18 +5,18 @@
 using namespace ic;
 
 RectangleShape::RectangleShape() {
-    position = { 0.0f, 0.0f };
-    size = { 0.2f, 0.2f };
+    r.position = { 0.0f, 0.0f };
+    r.size = { 0.2f, 0.2f };
 }
 
 RectangleShape::RectangleShape(ic::Vec2f position, ic::Vec2f size) {
-    this->position = position;
-    this->size = size;
+    this->r.position = position;
+    this->r.size = size;
 }
 
 void RectangleShape::draw(ic::Batch2D *batch, const ic::Color &color) {
-    float x1 = position.x() - size.x(), y1 = position.y() - size.y();
-    float x2 = position.x() + size.x(), y2 = position.y() + size.y();
+    float x1 = r.position.x() - r.size.x(), y1 = r.position.y() - r.size.y();
+    float x2 = r.position.x() + r.size.x(), y2 = r.position.y() + r.size.y();
     
     std::vector<BatchVertex> vertices = {
         BatchVertex(x1, y1, 0.0f, 1.0f, color),

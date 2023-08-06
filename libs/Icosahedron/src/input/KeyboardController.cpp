@@ -7,23 +7,6 @@ KeyboardController::KeyboardController() {
 }
 
 void ic::KeyboardController::update(float dt) {
-    direction = { 0, 0 };
-
-    if (keyboardState[KEY_A] || keyboardState[KEY_LEFT]) {
-        direction.x() = -1;
-    }
-    if (keyboardState[KEY_D] || keyboardState[KEY_RIGHT]) {
-        direction.x() = 1;
-    }
-
-    if (keyboardState[KEY_S] || keyboardState[KEY_DOWN]) {
-        direction.y() = -1;
-    }
-    if (keyboardState[KEY_W] || keyboardState[KEY_UP]) {
-        direction.y() = 1;
-    }
-
-
     for (auto pair : inputActions) {
         const Uint8 keyCode = pair.first;
         auto call = pair.second;

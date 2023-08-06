@@ -7,7 +7,6 @@
 
 #include <Icosahedron/math/geom/Vectors.h>
 #include <Icosahedron/graphics/Color.h>
-#include <Icosahedron/graphics/gl/Shader.h>
 #include <Icosahedron/graphics/gl/GL.h>
 
 namespace ic {
@@ -43,7 +42,6 @@ namespace ic {
 
             GLuint vbo;
             GLuint vao;
-            ic::Shader *shader;
     };
 }
 

@@ -9,6 +9,7 @@
 #include <SDL2/SDL_opengl.h>
 
 #include <Icosahedron/graphics/Color.h>
+#include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/input/Input.h>
 #include <Icosahedron/input/InputHandler.h>
 
@@ -16,7 +17,7 @@ namespace ic {
     class Application {
         public:
             /* Initializes the application. Called before load(). 
-             * Don't use this to add OpenGL stuff, as a context doesn't exist during this stage. */
+             * Don't use this to add OpenGL stuff, as a GL context doesn't exist during this stage. */
             virtual bool init() { return true; }
 
             /* Called after setting a window and a valid OpenGL context. */
@@ -40,11 +41,15 @@ namespace ic {
             int screen_height();
             
         private:
+            /* Sends relevant information about the current OpenGL, GLEW, and SDL contexts. */
             void send_application_information();
+            /* Called before load(). */
+            void pre_load();
 
         protected:
             std::string displayName;
             ic::InputHandler inputHandler;
+            ic::Shaders shaders;
             
         private:
             int width, height;

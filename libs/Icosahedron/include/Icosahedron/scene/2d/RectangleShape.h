@@ -2,15 +2,15 @@
 #define IC_RECTANGLE_SHAPE_H
 
 #include <Icosahedron/math/geom/Vectors.h>
+#include <Icosahedron/math/geom/Rectangle.h>
 
 #include <Icosahedron/scene/2d/Shape2D.h>
 
 namespace ic {
     class RectangleShape : public ic::Shape2D {
         public:
-            ic::Vec2f position;
-            ic::Vec2f size;
-            
+            ic::Rectangle r;
+
             RectangleShape();
             RectangleShape(ic::Vec2f position, ic::Vec2f size);
             

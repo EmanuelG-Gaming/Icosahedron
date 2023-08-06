@@ -1,5 +1,5 @@
-#ifndef IC_KEYBOARD_CONTROLLER
-#define IC_KEYBOARD_CONTROLLER
+#ifndef IC_WASD_CONTROLLER_H
+#define IC_WASD_CONTROLLER_H
 
 #include <functional>
 #include <map>
@@ -8,11 +8,12 @@
 
 #include <Icosahedron/input/Input.h>
 
-
 namespace ic {
-    struct KeyboardController : public Input {
+    /* An input that uses the WASD keys to get a direction vector.
+     * Also allows for more keyboard actions to be added. */
+    struct WASDController : public Input {
         public:
-            KeyboardController();
+            WASDController();
 
             void update(float dt) override;
 
@@ -27,5 +28,4 @@ namespace ic {
             std::map<Uint8, std::function<void()>> inputActions;
     };
 }
-
 #endif

@@ -3,39 +3,12 @@
 using namespace ic;
 
 Batch2D::Batch2D(int capacity, GLPrimitives renderType) {
-    this->shader = new ic::Shader(
-        "#version 300 es\n"
-        "layout (location = 0) in vec2 position;\n"
-        "layout (location = 1) in vec3 color;\n"
-        "layout (location = 2) in vec2 tCoords;\n"
-        "out vec3 vColor;\n"
-        "out vec2 vTCoords;\n"
-        "void main(){\n"
-        "vColor = color;\n"
-        "vTCoords = tCoords;\n"
-        "gl_Position = vec4(position.xy, 0.0, 1.0);\n"
-        "}\n",
-
-        "#version 300 es\n"
-        "precision mediump float;\n"
-        "in vec3 vColor;\n"
-        "in vec2 vTCoords;\n"
-        "uniform sampler2D sampleTexture;\n"
-        "out vec4 outColor;\n"
-        "void main(){\n"
-        "outColor = texture(sampleTexture, vTCoords) * vec4(vColor, 1.0);\n"
-        "}\n", 
-
-        false
-    );
-    
     this->vertexCapacity = capacity;
     this->verticesUsed = 0;
     this->vbo = this->vao = 0;
     
     this->renderType = renderType;
-    this->shader = shader;
-           
+    
     setup();
 }
 
@@ -98,7 +71,6 @@ void Batch2D::render() {
         return;
     }
     
-    this->shader->use();
     glBindVertexArray(this->vao);
     glDrawArrays(this->renderType, 0, verticesUsed);
            
@@ -115,6 +87,4 @@ int Batch2D::get_extra_vertices() {
 void Batch2D::dispose() {
     if (this->vbo) glDeleteBuffers(1, &this->vbo);
     if (this->vao) glDeleteBuffers(1, &this->vao);
-
-    this->shader->clear();
 }
