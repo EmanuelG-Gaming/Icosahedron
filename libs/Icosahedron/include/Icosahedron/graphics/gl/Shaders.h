@@ -6,7 +6,7 @@
 namespace ic {
     /* OpenGL shader presets. */
     class Shaders {
-public:
+        public:
         /* A simple shader that doesn't use textures. */
         ic::Shader *basicShader2D;
         /* A simple, textured shader. */
@@ -56,7 +56,9 @@ public:
                 "uniform sampler2D sampleTexture;\n"
                 "out vec4 outColor;\n"
                 "void main(){\n"
-                "outColor = texture(sampleTexture, vTCoords) * vec4(vColor, 1.0);\n"
+                "vec4 color = texture(sampleTexture, vTCoords);\n"
+                "if (color.a <= 0.2) discard;\n"
+                "outColor = color * vec4(vColor, 1.0);\n"
                 "}\n", 
 
                 false

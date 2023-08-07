@@ -71,7 +71,7 @@ class Example2 : public ic::Application {
         bool update(float dt) override { 
             float speed = 1.0f;
             ic::KeyboardController *controller = (ic::KeyboardController*) inputHandler.find_input("WASD");
-            ic::Vec2i dir = controller->get_direction();
+            ic::Vec2i dir = controller->direction;
 
             shape->r.position.x() += dir.x() * speed * dt;
             shape->r.position.y() += dir.y() * speed * dt;
@@ -81,7 +81,7 @@ class Example2 : public ic::Application {
 
             shader->use();
             texture->use();
-            shape->draw(batch, ic::Colors::white);
+            shape->draw(renderer, batch, ic::Colors::white);
             batch->render();
 
             return true; 
@@ -105,16 +105,17 @@ int main(int argc, char *argv[]) {
 }
 */
 
-/* Example3: A recreation of pong. */
+/* Example3: A recreation of pong. The left paddle uses WS keys and the right one uses up-down keys. */
 #include <Icosahedron/Core.h>
 
 class Example3 : public ic::Application {
     ic::Batch2D *batch;
-    ic::Texture<ic::T2D> *texture;
+    ic::TextureAtlas *texture;
     ic::Shader *shader;
 
-    ic::RectangleShape *shape;
-    
+    ic::RectangleShape *paddle1, *paddle2, *ball;
+    ic::Vec2f vel;
+
     public:
         bool init() override {
             displayName = "Example window";
@@ -122,12 +123,36 @@ class Example3 : public ic::Application {
         }
         
         bool load() override {
-            batch = new ic::Batch2D(1000, ic::TRIANGLES);
-            shape = new ic::RectangleShape();
-            texture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
             shader = shaders.basicTextureShader2D;
+            texture = new ic::TextureAtlas();
+            texture->add_entries({ "paddle1", "resources/textures/white.png",
+                                   "paddle2", "resources/textures/white.png",
+                                   "ball", "resources/textures/aluminium-ball.png" });
+            batch = new ic::Batch2D(1000, ic::TRIANGLES);
 
-            inputHandler.add_input(new ic::WASDController(), "WASD");
+            
+            paddle1 = new ic::RectangleShape({ -0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle1");
+            paddle2 = new ic::RectangleShape({ 0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle2");
+            ball = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.05f, 0.05f }, "ball");
+
+            paddle1->set_atlas(texture);
+            paddle2->set_atlas(texture);
+            ball->set_atlas(texture);
+
+            restart();
+
+            ic::KeyboardController *cont1 = new ic::KeyboardController();
+            cont1->add_action([](ic::KeyboardController *c) {c->direction.y() = 1;}, KEY_W);
+            cont1->add_action([](ic::KeyboardController *c) {c->direction.y() = -1;}, KEY_S);
+
+            
+            ic::KeyboardController *cont2 = new ic::KeyboardController();
+            cont2->add_action([](ic::KeyboardController *c) {c->direction.y() = 1;}, KEY_UP);
+            cont2->add_action([](ic::KeyboardController *c) {c->direction.y() = -1;}, KEY_DOWN);
+            
+
+            inputHandler.add_input(cont1, "paddle1");
+            inputHandler.add_input(cont2, "paddle2");
 
             return true;
         }
@@ -136,20 +161,77 @@ class Example3 : public ic::Application {
             return true;
         }
     
-        bool update(float dt) override { 
+        bool update(float dt) override {
+            // Boundary conditions
+            if (ball->r.position.y() + ball->r.size.y() > 1.0f) {
+                ball->r.position.y() = 1.0f - ball->r.size.y();
+                vel.y() *= -1;
+            }
+            if (ball->r.position.y() - ball->r.size.y() < -1.0f) {
+                ball->r.position.y() = -1.0f + ball->r.size.y();
+                vel.y() *= -1;
+            }
+
+            if (ball->r.position.x() + ball->r.size.x() < -1.0f) {
+                restart();
+            }
+            if (ball->r.position.x() - ball->r.size.x() > 1.0f) {
+                restart();
+            }
+
+            // Collision detection
+            if (ball->r.overlaps(paddle1->r)) {
+                ic::Vec2f overlap = ball->r.find_overlap(paddle1->r);
+                if (overlap.x() < overlap.y()) {
+                    ball->r.position.x() += (overlap.x() + ball->r.size.x());
+                    vel.x() *= -1;
+                } else {
+                    int sign = (ball->r.position.y() >= paddle1->r.position.y()) ? 1 : -1;
+                    ball->r.position.y() += sign * (overlap.y() + ball->r.size.y());
+                    vel.y() *= -1;
+                }
+            }
+
+            if (ball->r.overlaps(paddle2->r)) {
+                ic::Vec2f overlap = ball->r.find_overlap(paddle2->r);
+                if (overlap.x() < overlap.y()) {
+                    ball->r.position.x() -= (overlap.x() + ball->r.size.x());
+                    vel.x() *= -1;
+                } else {
+                    int sign = (ball->r.position.y() >= paddle2->r.position.y()) ? 1 : -1;
+                    ball->r.position.y() += sign * (overlap.y() + ball->r.size.y());
+                    vel.y() *= -1;
+                }
+            }
+
+            // Dynamics
+            ball->r.position.x() += vel.x() * dt;
+            ball->r.position.y() += vel.y() * dt;
+
+
+
             float speed = 1.0f;
-            ic::KeyboardController *controller = (ic::KeyboardController*) inputHandler.find_input("WASD");
-            ic::Vec2i dir = controller->get_direction();
+            ic::KeyboardController *controller1 = (ic::KeyboardController*) inputHandler.find_input("paddle1");
+            ic::KeyboardController *controller2 = (ic::KeyboardController*) inputHandler.find_input("paddle2");
+            
+            ic::Vec2i dir1 = controller1->direction;
+            ic::Vec2i dir2 = controller2->direction;
 
-            shape->r.position.x() += dir.x() * speed * dt;
-            shape->r.position.y() += dir.y() * speed * dt;
+            
+            paddle1->r.position.y() += dir1.y() * speed * dt;
+            paddle2->r.position.y() += dir2.y() * speed * dt;
 
-
+            paddle1->r.position.clamp({ -1.0f, -1.0f + paddle1->r.size.y() }, { 1.0f, 1.0f - paddle1->r.size.y() });
+            paddle2->r.position.clamp({ -1.0f, -1.0f + paddle2->r.size.y() }, { 1.0f, 1.0f - paddle2->r.size.y() });
+            
+            // Rendering
             clear_color(ic::Colors::black);
 
             shader->use();
             texture->use();
-            shape->draw(batch, ic::Colors::white);
+            paddle1->draw(renderer, batch, ic::Colors::white);
+            paddle2->draw(renderer, batch, ic::Colors::white);
+            ball->draw(renderer, batch, ic::Colors::white);
             batch->render();
 
             return true; 
@@ -159,6 +241,14 @@ class Example3 : public ic::Application {
             batch->dispose();
             texture->dispose();
             shader->clear();
+        }
+
+        void restart() {
+            paddle1->r.position = { -0.7f, 0.0f };
+            paddle2->r.position = { 0.7f, 0.0f };
+
+            ball->r.position = { 0.0f, 0.0f };
+            vel = { 1.0f, 0.5f };
         }
 };
 

@@ -12,19 +12,19 @@
 namespace ic {
     struct KeyboardController : public Input {
         public:
+            ic::Vec2i direction;
             KeyboardController();
 
             void update(float dt) override;
 
-            void add_action(const std::function<void()> &callback, Uint8 location);
+            void add_action(const std::function<void(ic::KeyboardController*)> &callback, Uint8 location);
 
             Uint8* get_keyboard_state();
             ic::Vec2i get_direction();
 
         protected:
             Uint8* keyboardState;
-            ic::Vec2i direction;
-            std::map<Uint8, std::function<void()>> inputActions;
+            std::map<Uint8, std::function<void(ic::KeyboardController*)>> inputActions;
     };
 }
 

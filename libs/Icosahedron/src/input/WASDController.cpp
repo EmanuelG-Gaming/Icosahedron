@@ -29,20 +29,16 @@ void ic::WASDController::update(float dt) {
         auto call = pair.second;
 
         if (keyboardState[keyCode]) {
-            call();
+            call(this);
         }
     }
 }
 
-void ic::WASDController::add_action(const std::function<void()> &callback, Uint8 location) {
+void ic::WASDController::add_action(const std::function<void(ic::WASDController*)> &callback, Uint8 location) {
     inputActions[location] = callback;
 }
 
 
 Uint8* ic::WASDController::get_keyboard_state() {
      return const_cast<Uint8*>(SDL_GetKeyboardState(NULL));
-}
-
-ic::Vec2i ic::WASDController::get_direction() {
-     return direction;
 }

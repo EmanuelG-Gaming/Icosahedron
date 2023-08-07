@@ -13,6 +13,9 @@
 #include <Icosahedron/input/Input.h>
 #include <Icosahedron/input/InputHandler.h>
 
+#include <Icosahedron/Renderer.h>
+
+
 namespace ic {
     class Application {
         public:
@@ -50,7 +53,8 @@ namespace ic {
             std::string displayName;
             ic::InputHandler inputHandler;
             ic::Shaders shaders;
-            
+            ic::Renderer renderer;
+
         private:
             int width, height;
             SDL_Window *window;

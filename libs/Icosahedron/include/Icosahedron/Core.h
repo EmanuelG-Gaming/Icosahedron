@@ -28,6 +28,7 @@ namespace ic {
 #include <Icosahedron/graphics/gl/Shader.h>
 #include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/gl/TextureAtlas.h>
 #include <Icosahedron/graphics/gl/Batch.h>
 
 // Input
@@ -39,6 +40,8 @@ namespace ic {
 // Scene
 #include <Icosahedron/scene/2d/Shape2D.h>
 #include <Icosahedron/scene/2d/RectangleShape.h>
+
+#include <Icosahedron/Renderer.h>
 
 // App
 #include <Icosahedron/Application.h>

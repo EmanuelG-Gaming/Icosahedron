@@ -3,11 +3,12 @@
 
 #include <Icosahedron/graphics/Color.h>
 #include <Icosahedron/graphics/gl/Batch.h>
+#include <Icosahedron/Renderer.h>
 
 namespace ic {
     class Shape2D {
         public:
-            virtual void draw(ic::Batch2D *batch, const ic::Color &color) {}
+            virtual void draw(ic::Renderer render, ic::Batch2D *batch, const ic::Color &color) {}
     };
 }
 

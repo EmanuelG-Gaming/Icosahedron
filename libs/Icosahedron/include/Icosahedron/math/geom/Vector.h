@@ -97,6 +97,12 @@ namespace ic {
             return result;
         }
 
+        void clamp(Vec lower, Vec upper) {
+            for (int i = 0; i < dimensions; i++) {
+                values[i] = std::max(lower[i], std::min(upper[i], values[i]));
+            }
+        }
+
         friend std::ostream& operator<<(std::ostream &stream, Vec &vector) {
             std::size_t dims = vector.size();
 
