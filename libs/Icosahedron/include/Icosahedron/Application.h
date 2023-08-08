@@ -13,6 +13,7 @@
 #include <Icosahedron/input/Input.h>
 #include <Icosahedron/input/InputHandler.h>
 
+#include <Icosahedron/graphics/FreeType.h>
 #include <Icosahedron/Renderer.h>
 
 

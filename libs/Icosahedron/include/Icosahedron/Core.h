@@ -31,6 +31,9 @@ namespace ic {
 #include <Icosahedron/graphics/gl/TextureAtlas.h>
 #include <Icosahedron/graphics/gl/Batch.h>
 
+#include <Icosahedron/graphics/TextAtlas.h>
+#include <Icosahedron/graphics/FreeType.h>
+
 // Input
 #include <Icosahedron/input/Input.h>
 #include <Icosahedron/input/KeyboardController.h>

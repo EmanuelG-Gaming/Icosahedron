@@ -22,7 +22,10 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Texture.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/TextureAtlas.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Batch.h
-    
+
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/TextAtlas.h
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/FreeType.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/Renderer.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/input/Input.h
@@ -41,6 +44,9 @@ set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Shader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Batch.cpp
+
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/TextAtlas.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/FreeType.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/Renderer.cpp
 

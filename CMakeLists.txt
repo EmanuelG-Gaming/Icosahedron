@@ -8,7 +8,11 @@ set(ENGINE_SOURCE_DIRECTORY src)
 set(ENGINE_SOURCE ${ENGINE_SOURCE_DIRECTORY}/main.cpp)
 
 set(ENGINE_LIBRARIES_DIRECTORY libs)
-set(ENGINE_LIBRARIES Icosahedron)
+set(ENGINE_LIBRARIES 
+    Icosahedron
+)
+
+set(ENGINE_THIRD_PARTY_DIRECTORY third-party)
 
 project(${ENGINE_FULL_PROJECT_NAME})
 
@@ -31,6 +35,7 @@ target_link_libraries(${ENGINE_PROJECT_NAME} ${ENGINE_LIBRARIES})
 
 ### Might have included these from the third-party vendors folder ###
 # GLEW #
+
 find_package(GLEW REQUIRED)
 include_directories(${GLEW_INCLUDE_DIRS})
 target_link_libraries(${ENGINE_PROJECT_NAME} GLEW::glew)
@@ -49,3 +54,8 @@ target_link_libraries(${ENGINE_PROJECT_NAME} SDL2::SDL2)
 find_package(SDL2_image REQUIRED)
 include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
 target_link_libraries(${ENGINE_PROJECT_NAME} SDL2_image::SDL2_image)
+
+# Freetype2 #
+find_package(Freetype REQUIRED)
+include_directories(${FREETYPE2_INCLUDE_DIRS})
+target_link_libraries(${ENGINE_PROJECT_NAME} Freetype::Freetype)

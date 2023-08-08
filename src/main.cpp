@@ -106,15 +106,18 @@ int main(int argc, char *argv[]) {
 */
 
 /* Example3: A recreation of pong. The left paddle uses WS keys and the right one uses up-down keys. */
+/*
 #include <Icosahedron/Core.h>
 
 class Example3 : public ic::Application {
-    ic::Batch2D *batch;
+    ic::Batch2D *batch, *textBatch;
     ic::TextureAtlas *texture;
-    ic::Shader *shader;
+    ic::TextAtlas *atlas;
+    ic::Shader *shader, *textShader;
 
     ic::RectangleShape *paddle1, *paddle2, *ball;
     ic::Vec2f vel;
+    int points1 = 0, points2 = 0;
 
     public:
         bool init() override {
@@ -124,12 +127,19 @@ class Example3 : public ic::Application {
         
         bool load() override {
             shader = shaders.basicTextureShader2D;
+            textShader = shaders.basicTextShader2D;
+
+            // We use the arial font
+            ic::FreeType::get().add_atlas("score", "C:/Windows/Fonts/arial.ttf", 48);
+            atlas = ic::FreeType::get().find_atlas("score");
+
             texture = new ic::TextureAtlas();
             texture->add_entries({ "paddle1", "resources/textures/white.png",
                                    "paddle2", "resources/textures/white.png",
                                    "ball", "resources/textures/aluminium-ball.png" });
-            batch = new ic::Batch2D(1000, ic::TRIANGLES);
 
+            batch = new ic::Batch2D(1000, ic::TRIANGLES);
+            textBatch = new ic::Batch2D(1000, ic::TRIANGLES);
             
             paddle1 = new ic::RectangleShape({ -0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle1");
             paddle2 = new ic::RectangleShape({ 0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle2");
@@ -139,7 +149,7 @@ class Example3 : public ic::Application {
             paddle2->set_atlas(texture);
             ball->set_atlas(texture);
 
-            restart();
+            restart(nullptr);
 
             ic::KeyboardController *cont1 = new ic::KeyboardController();
             cont1->add_action([](ic::KeyboardController *c) {c->direction.y() = 1;}, KEY_W);
@@ -173,10 +183,10 @@ class Example3 : public ic::Application {
             }
 
             if (ball->r.position.x() + ball->r.size.x() < -1.0f) {
-                restart();
+                restart(paddle2);
             }
             if (ball->r.position.x() - ball->r.size.x() > 1.0f) {
-                restart();
+                restart(paddle1);
             }
 
             // Collision detection
@@ -234,16 +244,29 @@ class Example3 : public ic::Application {
             ball->draw(renderer, batch, ic::Colors::white);
             batch->render();
 
+            // Text rendering
+            textShader->use();
+            atlas->use();
+            renderer.draw_string_centered(textBatch, atlas, std::to_string(points1) + " | " + std::to_string(points2), 0.0f, 0.7f);
+            textBatch->render();
+
             return true; 
         }
 
         void dispose() override {
             batch->dispose();
+            textBatch->dispose();
             texture->dispose();
             shader->clear();
         }
 
-        void restart() {
+        void restart(ic::RectangleShape *winner) {
+            if (winner == paddle1) {
+                points1++;
+            } else if (winner == paddle2) {
+                points2++;
+            }
+
             paddle1->r.position = { -0.7f, 0.0f };
             paddle2->r.position = { 0.7f, 0.0f };
 
@@ -261,3 +284,4 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+*/

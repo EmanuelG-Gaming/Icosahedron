@@ -63,9 +63,9 @@ bool ic::Application::construct(int w, int h) {
         return false;
     }
     
-    send_application_information();
-
     pre_load();
+
+    send_application_information();
 
     if (!load()) {
         std::cerr << "Couldn't load the application." << "\n";
@@ -123,7 +123,7 @@ void ic::Application::start() {
 		SDL_GL_SwapWindow(window);
 	}
 	dispose();
-	
+	ic::FreeType::get().dispose();
     
 	SDL_DestroyWindow(window);
     SDL_GL_DeleteContext(context);
@@ -140,8 +140,8 @@ void ic::Application::send_application_information() {
     glGetIntegerv(GL_MAJOR_VERSION, &majorGL);
     glGetIntegerv(GL_MINOR_VERSION, &minorGL);
 
-    std::cout << "----- Icosahedron -----" << "\n";
-    std::cout << "OpenGL version: " << majorGL << "." << minorGL << "\n";
+    std::cout << "----- Icosahedron -----" << "\n\n";
+    std::cout << "OpenGL driver compactibility: " << majorGL << "." << minorGL << " / " << glGetString(GL_VENDOR) << "\n";
     std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << "\n";
     fprintf(stdout, "Compiled SDL2 version: %u.%u.%u\n", compiled.major, compiled.minor, compiled.patch);
     fprintf(stdout, "Linked SDL2 version: %u.%u.%u\n", linked.major, linked.minor, linked.patch);
@@ -149,6 +149,7 @@ void ic::Application::send_application_information() {
 
 void ic::Application::pre_load() {
     shaders.load_shaders();
+    ic::FreeType::get().load();
 }
 
 
