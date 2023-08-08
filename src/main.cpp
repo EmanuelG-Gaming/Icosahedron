@@ -136,7 +136,7 @@ class Example3 : public ic::Application {
             texture = new ic::TextureAtlas();
             texture->add_entries({ "paddle1", "resources/textures/white.png",
                                    "paddle2", "resources/textures/white.png",
-                                   "ball", "resources/textures/aluminium-ball.png" });
+                                   "ball", "resources/textures/ball.png" });
 
             batch = new ic::Batch2D(1000, ic::TRIANGLES);
             textBatch = new ic::Batch2D(1000, ic::TRIANGLES);
