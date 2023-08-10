@@ -152,13 +152,13 @@ class Example3 : public ic::Application {
             restart(nullptr);
 
             ic::KeyboardController *cont1 = new ic::KeyboardController();
-            cont1->add_action([](ic::KeyboardController *c) {c->direction.y() = 1;}, KEY_W);
-            cont1->add_action([](ic::KeyboardController *c) {c->direction.y() = -1;}, KEY_S);
+            cont1->add_action([cont1]() {cont1->direction.y() = 1;}, KEY_W);
+            cont1->add_action([cont1]() {cont1->direction.y() = -1;}, KEY_S);
 
             
             ic::KeyboardController *cont2 = new ic::KeyboardController();
-            cont2->add_action([](ic::KeyboardController *c) {c->direction.y() = 1;}, KEY_UP);
-            cont2->add_action([](ic::KeyboardController *c) {c->direction.y() = -1;}, KEY_DOWN);
+            cont2->add_action([cont2]() {cont2->direction.y() = 1;}, KEY_UP);
+            cont2->add_action([cont2]() {cont2->direction.y() = -1;}, KEY_DOWN);
             
 
             inputHandler.add_input(cont1, "paddle1");
@@ -286,7 +286,8 @@ int main(int argc, char *argv[]) {
 }
 */
 
-/* Example4: A tiled game. */
+/* Example4: A tiled game. Collision detection is via AABBs (ic::Rectangles). */
+
 #include <Icosahedron/Core.h>
 
 const std::size_t MAP_WIDTH = 16;
@@ -331,12 +332,15 @@ const std::array<int, MAP_AREA> obstructing = {
 };
 
 class Example4 : public ic::Application {
-    ic::Batch2D *batch;
+    ic::Batch2D *batch, *textBatch;
     ic::TextureAtlas *texture;
-    ic::Shader *shader;
+    ic::Shader *shader, *textShader;
+    ic::TextAtlas *atlas;
 
     ic::RectangleShape *shape;
     ic::Camera2D *camera;
+
+    bool collisionDebug;
 
     public:
         bool init() override {
@@ -346,21 +350,36 @@ class Example4 : public ic::Application {
         
         bool load() override {
             shader = shaders.basicTextureShader2D;
+            textShader = shaders.basicTextShader2D;
 
             camera = new ic::Camera2D(0.3f);
 
             batch = new ic::Batch2D(10000, ic::TRIANGLES);
+            textBatch = new ic::Batch2D(1000, ic::TRIANGLES);
             texture = new ic::TextureAtlas();
-            texture->add_entries({ "player", "resources/textures/white.png",
+            texture->add_entries({ "white", "resources/textures/white.png",
+                                   "ball", "resources/textures/ball.png",
+                                   "player", "resources/textures/white.png",
                                    "wood", "resources/textures/wood.png",
                                    "stone", "resources/textures/stone.png",
                                    "dirt", "resources/textures/dirt.png",
                                    "grass", "resources/textures/grass.png" });
 
-            shape = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.3f, 0.3f }, "player");
+            // We use the arial font
+            ic::FreeType::get().add_atlas("score", "C:/Windows/Fonts/arial.ttf", 48);
+            atlas = ic::FreeType::get().find_atlas("score");
+
+            shape = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.4f, 0.4f }, "player");
             shape->set_atlas(texture);
 
-            inputHandler.add_input(new ic::WASDController(), "WASD");
+            
+            ic::KeyboardController *debugCont = new ic::KeyboardController();
+            debugCont->add_key_up_action([this]() {collisionDebug = !collisionDebug;}, KEY_T);
+            
+            inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
+            inputHandler.add_input(debugCont, "collisionDebug");
+
+            collisionDebug = false;
 
             return true;
         }
@@ -375,8 +394,11 @@ class Example4 : public ic::Application {
             int px = (int) shape->r.position.x();
             int py = (int) shape->r.position.y();
 
-            for (int i = -2; i < 2; i++) {
-                for (int j = -2; j < 2; j++) {
+            float detectionRadius1 = shape->r.size.x() + 1;
+            float detectionRadius2 = shape->r.size.y() + 1;
+
+            for (int i = -detectionRadius1; i < detectionRadius1 + 1; i++) {
+                for (int j = -detectionRadius2; j < detectionRadius2 + 1; j++) {
                     int cx = px + i;
                     int cy = py + j;
 
@@ -438,8 +460,32 @@ class Example4 : public ic::Application {
                 renderer.draw_rectangle(batch, texture->get_entry(entryName), x, y, 0.5f, 0.5f);
             }
 
+            if (collisionDebug) {
+                for (int i = -detectionRadius1; i < detectionRadius1 + 1; i++) {
+                    for (int j = -detectionRadius2; j < detectionRadius2 + 1; j++) {
+                        int cx = px + i;
+                        int cy = py + j;
+
+                        // Boundary conditions
+                        if ((cx < 0 || cy < 0) || (cx >= MAP_WIDTH || cy >= MAP_HEIGHT)) continue;
+
+
+                        std::string sprite = "ball";
+                        if (obstructing[cy * MAP_WIDTH + cx]) sprite = "white";
+
+                        renderer.draw_rectangle(batch, texture->get_entry(sprite), cx, cy, 0.4f, 0.4f);
+                    }
+                }
+            }
+
             shape->draw(renderer, batch, ic::Colors::green);
             batch->render();
+
+            // Text rendering
+            textShader->use();
+            atlas->use();
+            renderer.draw_string(textBatch, atlas, "T key - toggle potential collisions", -1.0f, 0.9f, 0.8f, 0.8f);
+            textBatch->render();
 
             return true; 
         }
@@ -448,6 +494,7 @@ class Example4 : public ic::Application {
             batch->dispose();
             texture->dispose();
             shader->clear();
+            textShader->clear();
         }
 };
 

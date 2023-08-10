@@ -37,7 +37,6 @@ namespace ic {
 // Input
 #include <Icosahedron/input/Input.h>
 #include <Icosahedron/input/KeyboardController.h>
-#include <Icosahedron/input/WASDController.h>
 #include <Icosahedron/input/InputHandler.h>
 
 // Scene
