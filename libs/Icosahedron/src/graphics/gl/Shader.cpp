@@ -115,7 +115,20 @@ void Shader::set_uniform_float(const std::string &name, float value) {
     glUniform1f(this->uniform_location(name), value);
 }
 
+void Shader::set_uniform_mat3(const std::string &name, const ic::Mat3x3 &mat) {
+    glUniformMatrix3fv(this->uniform_location(name), 1, GL_FALSE, mat.values.data());
+}
+void Shader::set_uniform_mat4(const std::string &name, const ic::Mat4x4 &mat) {
+    glUniformMatrix4fv(this->uniform_location(name), 1, GL_FALSE, mat.values.data());
+}
 
+
+void Shader::set_uniform_vec2f(const std::string &name, const ic::Vec2f &vec) {
+    this->set_uniform_vec2f(name, vec.values[0], vec.values[1]);
+}
+void Shader::set_uniform_vec3f(const std::string &name, const ic::Vec3f &vec) {
+    this->set_uniform_vec3f(name, vec.values[0], vec.values[1], vec.values[2]);
+}
 void Shader::set_uniform_vec2f(const std::string &name, float x, float y) {
     glUniform2f(this->uniform_location(name), x, y);
 }

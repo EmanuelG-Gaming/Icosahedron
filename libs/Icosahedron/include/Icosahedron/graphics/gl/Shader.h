@@ -6,6 +6,10 @@
 #include <GL/glew.h>
 
 #include <Icosahedron/math/geom/Vector.h>
+#include <Icosahedron/math/geom/Vectors.h>
+
+#include <Icosahedron/math/Matrices.h>
+
 #include <Icosahedron/graphics/Color.h>
 
 
@@ -26,6 +30,11 @@ namespace ic {
             void set_uniform_bool(const std::string &name, bool value);
             void set_uniform_float(const std::string &name, float value);
             
+            void set_uniform_mat3(const std::string &name, const ic::Mat3x3 &mat);
+            void set_uniform_mat4(const std::string &name, const ic::Mat4x4 &mat);
+            
+            void set_uniform_vec2f(const std::string &name, const ic::Vec2f &vec);
+            void set_uniform_vec3f(const std::string &name, const ic::Vec3f &vec);
             void set_uniform_vec2f(const std::string &name, float x, float y);
             void set_uniform_vec3f(const std::string &name, float x, float y, float z);
             

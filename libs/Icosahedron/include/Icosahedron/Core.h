@@ -43,6 +43,7 @@ namespace ic {
 // Scene
 #include <Icosahedron/scene/2d/Shape2D.h>
 #include <Icosahedron/scene/2d/RectangleShape.h>
+#include <Icosahedron/scene/2d/Camera2D.h>
 
 #include <Icosahedron/Renderer.h>
 

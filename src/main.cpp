@@ -285,3 +285,178 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 */
+
+/* Example4: A tiled game. */
+#include <Icosahedron/Core.h>
+
+const std::size_t MAP_WIDTH = 16;
+const std::size_t MAP_HEIGHT = 16;
+const std::size_t MAP_AREA = MAP_WIDTH * MAP_HEIGHT;
+
+const std::array<int, MAP_AREA> tiles = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+    0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+    0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+const std::array<int, MAP_AREA> obstructing = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+    0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+    0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
+class Example4 : public ic::Application {
+    ic::Batch2D *batch;
+    ic::TextureAtlas *texture;
+    ic::Shader *shader;
+
+    ic::RectangleShape *shape;
+    ic::Camera2D *camera;
+
+    public:
+        bool init() override {
+            displayName = "Example window";
+            return true;
+        }
+        
+        bool load() override {
+            shader = shaders.basicTextureShader2D;
+
+            camera = new ic::Camera2D(0.3f);
+
+            batch = new ic::Batch2D(10000, ic::TRIANGLES);
+            texture = new ic::TextureAtlas();
+            texture->add_entries({ "player", "resources/textures/white.png",
+                                   "wood", "resources/textures/wood.png",
+                                   "stone", "resources/textures/stone.png",
+                                   "dirt", "resources/textures/dirt.png",
+                                   "grass", "resources/textures/grass.png" });
+
+            shape = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.3f, 0.3f }, "player");
+            shape->set_atlas(texture);
+
+            inputHandler.add_input(new ic::WASDController(), "WASD");
+
+            return true;
+        }
+
+        bool handle_event(ic::Event event, float dt) override {
+            return true;
+        }
+    
+        bool update(float dt) override {
+            // Collision detection
+            std::vector<ic::Rectangle> possibleCollisions;
+            int px = (int) shape->r.position.x();
+            int py = (int) shape->r.position.y();
+
+            for (int i = -2; i < 2; i++) {
+                for (int j = -2; j < 2; j++) {
+                    int cx = px + i;
+                    int cy = py + j;
+
+                    // Boundary conditions
+                    if ((cx < 0 || cy < 0) || (cx >= MAP_WIDTH || cy >= MAP_HEIGHT)) continue;
+
+                    if (obstructing[cy * MAP_WIDTH + cx]) possibleCollisions.push_back({ {(float)cx, (float)cy}, {0.5f, 0.5f} });
+                }
+            }
+
+            for (auto rectangle : possibleCollisions) {
+                if (!shape->r.overlaps(rectangle)) continue;
+
+                ic::Vec2f overlap = shape->r.find_overlap(rectangle);
+
+                if (overlap.x() < overlap.y()) {
+                    int sign = (shape->r.position.x() >= rectangle.position.x()) ? 1 : -1;
+                    shape->r.position.x() += sign * overlap.x();
+                } else {
+                    int sign = (shape->r.position.y() >= rectangle.position.y()) ? 1 : -1;
+                    shape->r.position.y() += sign * overlap.y();
+                }
+            }
+
+            // Dynamics
+            float speed = 3.0f;
+            ic::KeyboardController *controller = (ic::KeyboardController*) inputHandler.find_input("WASD");
+            ic::Vec2i dir = controller->direction;
+
+            shape->r.position.x() += dir.x() * speed * dt;
+            shape->r.position.y() += dir.y() * speed * dt;
+
+            shape->r.position.clamp({ -0.5f + shape->r.size.x(), -0.5f + shape->r.size.y() }, { MAP_WIDTH - shape->r.size.x() - 0.5f, MAP_HEIGHT - shape->r.size.y() - 0.5f });
+
+            camera->position = shape->r.position;
+
+            // Rendering
+            clear_color(ic::Colors::blue);
+
+            shader->use();
+            camera->use(shader);
+
+            texture->use();
+
+            for (int i = 0; i < MAP_AREA; i++) {
+                int index = tiles[i];
+                std::string entryName;
+
+                switch (index) {
+                    case 0: entryName = "grass"; break;
+                    case 1: entryName = "dirt"; break;
+                    case 2: entryName = "stone"; break;
+                }
+
+
+                int x = i % MAP_WIDTH;
+                int y = i / MAP_HEIGHT;
+
+                renderer.draw_rectangle(batch, texture->get_entry(entryName), x, y, 0.5f, 0.5f);
+            }
+
+            shape->draw(renderer, batch, ic::Colors::green);
+            batch->render();
+
+            return true; 
+        }
+
+        void dispose() override {
+            batch->dispose();
+            texture->dispose();
+            shader->clear();
+        }
+};
+
+int main(int argc, char *argv[]) {
+    Example4 application;
+    
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}

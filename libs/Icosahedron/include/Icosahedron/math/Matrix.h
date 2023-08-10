@@ -14,6 +14,7 @@ namespace ic {
     template <typename T, std::size_t n, std::size_t m>
     struct Matrix {
         using Mat = Matrix<T, n, m>;
+        
         std::array<T, n * m> values;
 
         Matrix() {}
@@ -25,7 +26,6 @@ namespace ic {
         }
 
         void identity() {
-            static_assert(!is_square(), "Identity matrices only work if they're square.");
             for (int i = 0; i < area(); i++) {
                 values[i] = 0.0f;
             }
@@ -97,6 +97,82 @@ namespace ic {
             value(3, 2) = -fwd.dot(cameraPosition);
         }
 
+        void set_translation(ic::Vector<T, n - 1> by) {
+            identity();
+
+            for (int i = 0; i < n - 1; i++) {
+                value(i, n - 1) = by[i];
+            }
+        }
+
+        void set_scaling(ic::Vector<T, n - 1> by) {
+            identity();
+
+            for (int i = 0; i < n - 1; i++) {
+                value(i, i) = by[i];
+            }
+        }
+        void set_scaling(T by) {
+            identity();
+
+            for (int i = 0; i < n - 1; i++) {
+                value(i, i) = by;
+            }
+        }
+
+        /* Matrix-matrix multiplication. */
+        Mat operator*(Mat &other) {
+            Mat result;
+            if (!is_square()) {
+                printf("Project didn't implement non-square matrix multiplication.\n");
+                return result;
+            }
+
+            int row = 0, column = 0;
+            for (int i = 0; i < area(); i++) {
+                row = (i / n) * n;
+                column = (i % n);
+
+                float sum = 0.0f;
+                for (int j = 0; j < n; j++) {
+                    sum += values[row + j] * other[column + j * n];
+                }
+                result[i] = sum;
+            }
+
+            return result;
+        }
+
+        /* Matrix-vector multiplication.*/
+        ic::Vector<T, n> operator*(ic::Vector<T, n> &other) {
+            ic::Vector<T, n> result;
+
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    result[i] = result[i] + (other[i] * value(i, j));
+                }
+            }
+
+            return result;
+        }
+
+        friend std::ostream& operator<<(std::ostream &stream, Mat &matrix) {
+            std::size_t size = matrix.area();
+            int r = 0;
+
+            stream << "(";
+            for (int i = 0; i < size; i++) {
+                stream << matrix[i];
+                if (i < size - 1) {
+                    stream << ", ";
+                    if (++r % m == 0) stream << "\n";
+                }
+            }
+            stream << ")";
+
+            return stream;
+        }
+
         T& value(const int x, const int y) {
             return values[y * n + x];
         }
@@ -115,6 +191,5 @@ namespace ic {
             return n * m;
         }
     };
-    ic::Matrix<float, 2, 2> mat = { 1, 2, 3, 5 };
 }
 #endif
