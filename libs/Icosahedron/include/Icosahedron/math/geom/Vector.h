@@ -85,12 +85,12 @@ namespace ic {
         }
 
         float crs(ic::Vector<T, 2> &other) {
-            return x * other.y() - y * other.x();
+            return x() * other.y() - y() * other.x();
         }
         ic::Vector<T, 3> crs(ic::Vector<T, 3> &other) {
-            float cx = y * other.z - z * other.y;
-            float cy = z * other.x - x * other.z;
-            float cz = x * other.y - y * other.x;
+            float cx = y() * other.z() - z() * other.y();
+            float cy = z() * other.x() - x() * other.z();
+            float cz = x() * other.y() - y() * other.x();
         
             ic::Vector<T, 3> result = { cx, cy, cz };
         

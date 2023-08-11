@@ -16,10 +16,8 @@ PolygonShape::PolygonShape(const ic::Polygon &fromPolygon, ic::Vec2f position) {
 }
 
 void ic::PolygonShape::draw(ic::Renderer render, ic::Batch2D *batch, const ic::Color &color) {
-    std::vector<ic::Vec2f> vertices;
-
-    std::vector<ic::Vec2f> oldVertices = this->poly.get_vertices();
-    std::vector<int> indices = ic::EarClippingTriangulation::triangulate(oldVertices);
+    std::vector<ic::Vec2f> vertices = this->poly.get_vertices();
+    std::vector<int> indices = ic::EarClippingTriangulation::get().triangulate(vertices);
 
     render.draw_vertices(batch, vertices, indices, color);
 }

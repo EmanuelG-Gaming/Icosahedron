@@ -49,6 +49,7 @@ namespace ic {
 #include <Icosahedron/scene/2d/Camera2D.h>
 
 #include <Icosahedron/Renderer.h>
+#include <Icosahedron/util/GeometryGenerator.h>
 
 // App
 #include <Icosahedron/Application.h>

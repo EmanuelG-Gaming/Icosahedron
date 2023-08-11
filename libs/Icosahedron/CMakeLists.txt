@@ -9,10 +9,13 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Vectors.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Rectangle.h
+    ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Polygon.h
+    
 
     ${LIBRARY_HEADERS_DIRECTORY}/math/Matrix.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/Matrices.h
-
+    ${LIBRARY_HEADERS_DIRECTORY}/math/EarClippingTriangulation.h
+    
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
 
@@ -26,6 +29,7 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/TextAtlas.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/FreeType.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/util/GeometryGenerator.h
     ${LIBRARY_HEADERS_DIRECTORY}/Renderer.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/input/Input.h

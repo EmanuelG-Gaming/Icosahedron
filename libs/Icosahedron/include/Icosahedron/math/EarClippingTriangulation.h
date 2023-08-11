@@ -7,7 +7,13 @@
 #include <Icosahedron/math/geom/Vectors.h>
 
 namespace ic {
-    namespace EarClippingTriangulation {
+    class EarClippingTriangulation {
+public:
+        static EarClippingTriangulation& get() {
+            static EarClippingTriangulation ins;
+            return ins;
+        }
+
         enum class WindingOrder {
             invalid,
 
@@ -16,7 +22,7 @@ namespace ic {
         };
 
         template <typename T>
-        T get_item_looped(const std::vector<T> &source, int index) {
+        T get_item_looped(std::vector<T> &source, int index) {
             int length = source.size();
             if (index >= length) {
                 return source[index % length];
@@ -28,9 +34,9 @@ namespace ic {
         }
 
         template <typename T>
-        std::vector<T> swap_vector(const std::vector<T> source) {
+        std::vector<T> swap_vector(std::vector<T> &source) {
             for (int i = 0; i < source.size() / 2; i++) {
-                std::swap(source[i], source[source.size() - i - 1]);
+                std::swap(source.at(i), source.at(source.size() - i - 1));
             }
             return source;
         }
@@ -42,7 +48,7 @@ namespace ic {
 
             return (determinant == 0.0f);
         }
-        bool has_collinear_sides(const std::vector<ic::Vec2f> &polygon) {
+        bool has_collinear_sides(std::vector<ic::Vec2f> &polygon) {
             for (int i = 0; i < polygon.size(); i++) {
                 ic::Vec2f B = get_item_looped(polygon, i - 1);
                 ic::Vec2f A = polygon[i];
@@ -101,7 +107,7 @@ namespace ic {
 
             return WindingOrder::invalid;
         }
-
+        
         std::vector<int> triangulate(std::vector<ic::Vec2f> &polygon) {
             if (!simple_polygon(polygon)) {
                 throw std::runtime_error("Polygon is not simple!");
@@ -118,7 +124,7 @@ namespace ic {
             }
             if (winding == WindingOrder::counterClockwise) {
                 swap_vector(polygon);
-                printf("Winding order of polygon is counter-clockwise.");
+                //printf("Winding order of polygon is counter-clockwise.");
             }
 
 
@@ -180,6 +186,13 @@ namespace ic {
 
             return triangles;
         }
-    }
+
+private:
+        EarClippingTriangulation() {}
+        ~EarClippingTriangulation() {}
+public:
+        EarClippingTriangulation(EarClippingTriangulation const&) = delete;
+        void operator = (EarClippingTriangulation const&) = delete;
+    };
 }
 #endif

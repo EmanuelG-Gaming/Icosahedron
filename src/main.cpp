@@ -374,7 +374,8 @@ class Example4 : public ic::Application {
             shape = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.4f, 0.4f }, "player");
             shape->set_atlas(texture);
 
-            
+            p = new ic::PolygonShape(ic::GeometryGenerator::generate_regular_polygon(7), { 3.0f, 0.0f} );
+
             ic::KeyboardController *debugCont = new ic::KeyboardController();
             debugCont->add_key_up_action([this]() {collisionDebug = !collisionDebug;}, KEY_T);
             
@@ -481,6 +482,7 @@ class Example4 : public ic::Application {
             }
 
             shape->draw(renderer, batch, ic::Colors::green);
+            p->draw(renderer, batch, ic::Colors::yellow);
             batch->render();
 
             // Text rendering

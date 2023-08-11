@@ -44,6 +44,16 @@ void Renderer::draw_Line(ic::Batch2D *batch, float x1, float y1, float x2, float
 
     batch->add(vertices);
 }
+void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, const ic::Color &color) {
+    std::vector<BatchVertex> v;
+
+    for (int index = 0; index < vertices.size(); index++) {
+        ic::Vec2f vertex = vertices[index];
+        v.push_back(BatchVertex(vertex.x(), vertex.y(), 0.0f, 0.0f, color));
+    }
+
+    batch->add(v);
+}
 void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, const ic::Color &color) {
     std::vector<BatchVertex> v;
 

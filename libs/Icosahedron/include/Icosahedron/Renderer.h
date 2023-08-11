@@ -19,6 +19,7 @@ namespace ic {
             void draw_rectangle(ic::Batch2D *batch, float x, float y, float width, float height, const ic::Color &color = { 255, 255, 255 });
             void draw_rectangle(ic::Batch2D *batch, AtlasEntry entry, float x, float y, float width, float height, const ic::Color &color = { 255, 255, 255 });
             void draw_Line(ic::Batch2D *batch, float x1, float y1, float x2, float y2, const ic::Color &color = { 255, 255, 255 });
+            void draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, const ic::Color &color = { 255, 255, 255 }); 
             void draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, const ic::Color &color = { 255, 255, 255 }); 
 
             void draw_string(ic::Batch2D *batch, ic::TextAtlas *textAtlas, const std::string &text, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f, const ic::Color &color = { 255, 255, 255 });
