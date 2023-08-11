@@ -338,6 +338,8 @@ class Example4 : public ic::Application {
     ic::TextAtlas *atlas;
 
     ic::RectangleShape *shape;
+    ic::PolygonShape *p;
+    
     ic::Camera2D *camera;
 
     bool collisionDebug;

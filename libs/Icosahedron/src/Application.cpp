@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/math/Mathf.h>
 
 void ic::Application::clear_color() {
     clear_color(0.0f, 0.0f, 0.0f);
@@ -148,6 +149,7 @@ void ic::Application::send_application_information() {
 }
 
 void ic::Application::pre_load() {
+    ic::Mathf::get().load();
     shaders.load_shaders();
     ic::FreeType::get().load();
 }

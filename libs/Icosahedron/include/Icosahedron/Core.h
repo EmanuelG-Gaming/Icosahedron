@@ -12,10 +12,13 @@ namespace ic {
 }
 
 // Math
+#include <Icosahedron/math/Mathf.h>
+
 #include <Icosahedron/math/geom/Vector.h>
 #include <Icosahedron/math/geom/Vectors.h>
 
 #include <Icosahedron/math/geom/Rectangle.h>
+#include <Icosahedron/math/geom/Polygon.h>
 
 #include <Icosahedron/math/Matrix.h>
 #include <Icosahedron/math/Matrices.h>
@@ -42,6 +45,7 @@ namespace ic {
 // Scene
 #include <Icosahedron/scene/2d/Shape2D.h>
 #include <Icosahedron/scene/2d/RectangleShape.h>
+#include <Icosahedron/scene/2d/PolygonShape.h>
 #include <Icosahedron/scene/2d/Camera2D.h>
 
 #include <Icosahedron/Renderer.h>
