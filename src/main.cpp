@@ -287,32 +287,34 @@ int main(int argc, char *argv[]) {
 */
 
 /* Example4: A tiled game. Collision detection is via AABBs (ic::Rectangles). */
-
+/*
 #include <Icosahedron/Core.h>
 
 const std::size_t MAP_WIDTH = 16;
 const std::size_t MAP_HEIGHT = 16;
 const std::size_t MAP_AREA = MAP_WIDTH * MAP_HEIGHT;
 const int DROP_DISPARITY = 5;
+const float COMPLETE_AFTER_SECONDS = 5.0f;
 
 const std::array<int, MAP_AREA> tiles = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
-    0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
-    0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 1, 0, 1, 1, 0, 2, 2, 2, 0, 0, 0, 0,
+    0, 2, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+    0, 0, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+    0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0,
+    0, 1, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 1, 0, 0, 0, 1, 1, 2, 0, 1, 0, 0, 0, 0, 1, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0,
 };
+
 const std::array<int, MAP_AREA> obstructing = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
@@ -362,6 +364,9 @@ class Example4 : public ic::Application {
     int collected;
     int initialSize;
 
+    bool completedLevel;
+    float completeTimer;
+
     public:
         bool init() override {
             displayName = "Example window";
@@ -389,30 +394,19 @@ class Example4 : public ic::Application {
             ic::FreeType::get().add_atlas("score", "C:/Windows/Fonts/arial.ttf", 48);
             atlas = ic::FreeType::get().find_atlas("score");
 
-            shape = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.4f, 0.4f }, "player");
-            shape->set_atlas(texture);
-
-            for (int x = 0; x < MAP_WIDTH; x++) {
-                for (int y = 0; y < MAP_HEIGHT; y++) {
-                    int index = y * MAP_WIDTH + x;
-                    if (obstructing[index]) continue;
-                    
-                    if (rand() % DROP_DISPARITY == 1) {
-                        drops.push_back(new Drop({ 0.0f + x, 0.0f + y }, rand() % 5 + 3, (rand() % 50 / 300.0f) + 0.1f));
-                    }
-                }
-            }
-
+            
             ic::KeyboardController *debugCont = new ic::KeyboardController();
             debugCont->add_key_up_action([this]() {collisionDebug = !collisionDebug;}, KEY_T);
             
             inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
             inputHandler.add_input(debugCont, "collisionDebug");
 
-            collisionDebug = false;
-            collected = 0;
-            initialSize = drops.size();
 
+            shape = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.4f, 0.4f }, "player");
+            shape->set_atlas(texture);
+            
+            reset();
+            
             return true;
         }
 
@@ -459,6 +453,14 @@ class Example4 : public ic::Application {
             for (auto &drop : drops) {
                 if (!drop->hitbox.overlaps(shape->r)) continue;
                 collect(drop);
+            }
+
+            // If level is completed...
+            if (completedLevel) {
+                completeTimer += dt;
+            }
+            if (completeTimer >= COMPLETE_AFTER_SECONDS) {
+                reset();
             }
 
             // Dynamics
@@ -531,7 +533,9 @@ class Example4 : public ic::Application {
             atlas->use();
             renderer.draw_string(textBatch, atlas, "T key - toggle potential collisions", -1.0f, 0.9f, 0.8f, 0.8f);
             renderer.draw_string(textBatch, atlas, std::to_string(collected) + "/" + std::to_string(initialSize) + " polygons remaining", -1.0f, 0.75f, 0.8f, 0.8f);
-            
+            if (completedLevel) {
+                renderer.draw_string_centered(textBatch, atlas, "Level finished!", 0.0f, 0.4f, 1.5f, 1.5f);
+            }
             textBatch->render();
 
             return true; 
@@ -539,20 +543,52 @@ class Example4 : public ic::Application {
 
         void dispose() override {
             batch->dispose();
+            textBatch->dispose();
             texture->dispose();
             shader->clear();
             textShader->clear();
         }
 
         void collect(Drop *drop) {
-            for (int i = 0; i < drops.size(); i++) {
-                if (drop != drops[i]) continue;
-                drops.erase(drops.begin() + i);
-                delete drop;
-                collected++;
+            int index = 0;
 
-                return;
+            for (int i = 0; i < drops.size(); i++) {
+                if (drop == drops[i]) {
+                    index = i;
+                    break;
+                }
             }
+            drops.erase(drops.begin() + index);
+            delete drop;
+
+            collected++;
+            if (collected == initialSize) {
+                completedLevel = true;
+            }
+        }
+
+        void reset() {
+            for (int x = 0; x < MAP_WIDTH; x++) {
+                for (int y = 0; y < MAP_HEIGHT; y++) {
+                    int index = y * MAP_WIDTH + x;
+                    if (obstructing[index]) continue;
+                    
+                    if (rand() % DROP_DISPARITY == 1) {
+                        Drop *drop = new Drop({ 0.0f + x, 0.0f + y }, rand() % 5 + 3, (rand() % 50 / 300.0f) + 0.15f);
+                        drop->shape->poly.set_rotation(ic::Mathf::get().to_radians(rand() % 360));
+
+                        drops.push_back(drop);
+                    }
+                }
+            }
+            
+            shape->r.position = { 0.0f, 0.0f };
+
+            collisionDebug = false;
+            collected = 0;
+            initialSize = drops.size();
+            completedLevel = false;
+            completeTimer = 0.0f;
         }
 };
 
@@ -565,3 +601,4 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+*/
