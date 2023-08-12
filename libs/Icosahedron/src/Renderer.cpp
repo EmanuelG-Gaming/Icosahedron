@@ -58,7 +58,7 @@ void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices
     std::vector<BatchVertex> v;
 
     for (auto &index : indices) {
-        ic::Vec2f vertex = vertices[index];
+        ic::Vec2f vertex = vertices.at(index);
         v.push_back(BatchVertex(vertex.x(), vertex.y(), 0.0f, 0.0f, color));
     }
 

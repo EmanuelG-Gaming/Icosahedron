@@ -48,9 +48,12 @@ namespace ic {
                 if (!dirty) return transformedVertices;
                 dirty = false;
 
-                if (localVertices.size() != transformedVertices.size()) {
-                    transformedVertices.reserve(localVertices.size());
+                if (transformedVertices.size() != localVertices.size()) {
+                    transformedVertices.resize(localVertices.size());
                 }
+                
+                bool scales = scaleX != 1 || scaleY != 1;
+                bool rotates = rotation != 0;
 
                 float sine = ic::Mathf::get().sinf(rotation);
                 float cosine = ic::Mathf::get().cosf(rotation);
@@ -59,13 +62,17 @@ namespace ic {
                     float tx = local.x(), ty = local.y();
 
                     // Scaling
-                    tx *= scaleX;
-                    ty *= scaleY;
+                    if (scales) {
+                        tx *= scaleX;
+                        ty *= scaleY;
+                    }
 
                     // Rotation
-                    float otx = tx;
-                    tx = tx * cosine - ty * sine;
-                    ty = otx * sine + ty * cosine;
+                    if (rotates) {
+                        float otx = tx;
+                        tx = tx * cosine - ty * sine;
+                        ty = otx * sine + ty * cosine;
+                    }
 
                     // Translation
                     tx += x;
@@ -158,9 +165,9 @@ namespace ic {
 
             ic::Rectangle bounding;
 
-            float rotation = 0;
-            float x = 0, y = 0;
-            float scaleX = 1, scaleY = 1;
+            float rotation = 0.0f;
+            float x = 0.0f, y = 0.0f;
+            float scaleX = 1.0f, scaleY = 1.0f;
 
             bool dirty = false;
     };

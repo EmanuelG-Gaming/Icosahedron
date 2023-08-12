@@ -293,6 +293,7 @@ int main(int argc, char *argv[]) {
 const std::size_t MAP_WIDTH = 16;
 const std::size_t MAP_HEIGHT = 16;
 const std::size_t MAP_AREA = MAP_WIDTH * MAP_HEIGHT;
+const int DROP_DISPARITY = 5;
 
 const std::array<int, MAP_AREA> tiles = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -331,6 +332,21 @@ const std::array<int, MAP_AREA> obstructing = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+struct Drop {
+    ic::PolygonShape *shape;
+    ic::Rectangle hitbox;
+
+    Drop() {
+        this->shape = new ic::PolygonShape(ic::GeometryGenerator::generate_regular_polygon(3));
+        this->hitbox = ic::Rectangle({ 0.0f, 0.0f }, { 0.8f, 0.8f });
+    }
+
+    Drop(ic::Vec2f position, int sides, float radius) {
+        this->shape = new ic::PolygonShape(ic::GeometryGenerator::generate_regular_polygon(sides, radius), position);
+        this->hitbox = ic::Rectangle(position, { radius - radius * 0.2f, radius - radius * 0.2f });
+    }
+};
+
 class Example4 : public ic::Application {
     ic::Batch2D *batch, *textBatch;
     ic::TextureAtlas *texture;
@@ -338,11 +354,13 @@ class Example4 : public ic::Application {
     ic::TextAtlas *atlas;
 
     ic::RectangleShape *shape;
-    ic::PolygonShape *p;
+    std::vector<Drop*> drops;
     
     ic::Camera2D *camera;
 
     bool collisionDebug;
+    int collected;
+    int initialSize;
 
     public:
         bool init() override {
@@ -374,7 +392,16 @@ class Example4 : public ic::Application {
             shape = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.4f, 0.4f }, "player");
             shape->set_atlas(texture);
 
-            p = new ic::PolygonShape(ic::GeometryGenerator::generate_regular_polygon(7), { 3.0f, 0.0f} );
+            for (int x = 0; x < MAP_WIDTH; x++) {
+                for (int y = 0; y < MAP_HEIGHT; y++) {
+                    int index = y * MAP_WIDTH + x;
+                    if (obstructing[index]) continue;
+                    
+                    if (rand() % DROP_DISPARITY == 1) {
+                        drops.push_back(new Drop({ 0.0f + x, 0.0f + y }, rand() % 5 + 3, (rand() % 50 / 300.0f) + 0.1f));
+                    }
+                }
+            }
 
             ic::KeyboardController *debugCont = new ic::KeyboardController();
             debugCont->add_key_up_action([this]() {collisionDebug = !collisionDebug;}, KEY_T);
@@ -383,6 +410,8 @@ class Example4 : public ic::Application {
             inputHandler.add_input(debugCont, "collisionDebug");
 
             collisionDebug = false;
+            collected = 0;
+            initialSize = drops.size();
 
             return true;
         }
@@ -426,6 +455,12 @@ class Example4 : public ic::Application {
                 }
             }
 
+            // Remove drops if colliding
+            for (auto &drop : drops) {
+                if (!drop->hitbox.overlaps(shape->r)) continue;
+                collect(drop);
+            }
+
             // Dynamics
             float speed = 3.0f;
             ic::KeyboardController *controller = (ic::KeyboardController*) inputHandler.find_input("WASD");
@@ -437,6 +472,9 @@ class Example4 : public ic::Application {
             shape->r.position.clamp({ -0.5f + shape->r.size.x(), -0.5f + shape->r.size.y() }, { MAP_WIDTH - shape->r.size.x() - 0.5f, MAP_HEIGHT - shape->r.size.y() - 0.5f });
 
             camera->position = shape->r.position;
+            for (auto &drop : drops) {
+                drop->shape->poly.rotate(dt);
+            }
 
             // Rendering
             clear_color(ic::Colors::blue);
@@ -482,13 +520,18 @@ class Example4 : public ic::Application {
             }
 
             shape->draw(renderer, batch, ic::Colors::green);
-            p->draw(renderer, batch, ic::Colors::yellow);
+            for (auto &drop : drops) {
+                drop->shape->draw(renderer, batch, ic::Colors::lightGray);
+            }
+
             batch->render();
 
             // Text rendering
             textShader->use();
             atlas->use();
             renderer.draw_string(textBatch, atlas, "T key - toggle potential collisions", -1.0f, 0.9f, 0.8f, 0.8f);
+            renderer.draw_string(textBatch, atlas, std::to_string(collected) + "/" + std::to_string(initialSize) + " polygons remaining", -1.0f, 0.75f, 0.8f, 0.8f);
+            
             textBatch->render();
 
             return true; 
@@ -499,6 +542,17 @@ class Example4 : public ic::Application {
             texture->dispose();
             shader->clear();
             textShader->clear();
+        }
+
+        void collect(Drop *drop) {
+            for (int i = 0; i < drops.size(); i++) {
+                if (drop != drops[i]) continue;
+                drops.erase(drops.begin() + i);
+                delete drop;
+                collected++;
+
+                return;
+            }
         }
 };
 

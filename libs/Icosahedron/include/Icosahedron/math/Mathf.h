@@ -25,30 +25,11 @@ namespace ic {
                 return radians * radToDeg;
             }
 
-
-            void load() {
-                for (int i = 0; i < 360; i++) {
-                    float angle = to_radians(i);
-                    sineValues[i] = sin(angle);
-                    cosineValues[i] = cos(angle);
-                }
-            }
-
             float sinf(float radians) {
-                float r = radians;
-                if (r < 0) r += 2 * pi;
-                if (r > 2 * pi) r -= 2 * pi;
-                
-                float degrees = to_degrees(r);
-                return sineValues[(int) degrees];
+                return sin(radians);
             }
             float cosf(float radians) {
-                float r = radians;
-                if (r < 0) r += 2 * pi;
-                if (r > 2 * pi) r -= 2 * pi;
-
-                float degrees = to_degrees(r);
-                return cosineValues[(int) degrees];
+                return cos(radians);
             }
 
         private:
@@ -58,10 +39,6 @@ namespace ic {
         public:
             Mathf(Mathf const&) = delete;
             void operator = (Mathf const&) = delete;
-
-        private:
-            /* Trigonometric function lookup table. */
-            float sineValues[360], cosineValues[360];
     };
 }
 #endif

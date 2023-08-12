@@ -149,7 +149,6 @@ void ic::Application::send_application_information() {
 }
 
 void ic::Application::pre_load() {
-    ic::Mathf::get().load();
     shaders.load_shaders();
     ic::FreeType::get().load();
 }
