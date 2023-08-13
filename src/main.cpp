@@ -287,7 +287,7 @@ int main(int argc, char *argv[]) {
 */
 
 /* Example4: A tiled game. Collision detection is via AABBs (ic::Rectangles). */
-
+/*
 #include <Icosahedron/Core.h>
 
 const std::size_t MAP_WIDTH = 16;
@@ -610,3 +610,4 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+*/
