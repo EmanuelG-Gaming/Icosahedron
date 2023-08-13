@@ -19,9 +19,11 @@ namespace ic {
 
 #include <Icosahedron/math/geom/Rectangle.h>
 #include <Icosahedron/math/geom/Polygon.h>
+#include <Icosahedron/math/EarClippingTriangulation.h>
 
 #include <Icosahedron/math/Matrix.h>
 #include <Icosahedron/math/Matrices.h>
+#include <Icosahedron/math/Interpolation.h>
 
 // Graphics
 #include <Icosahedron/graphics/Color.h>

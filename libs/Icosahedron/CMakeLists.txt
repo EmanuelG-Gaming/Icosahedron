@@ -14,6 +14,7 @@ set(LIBRARY_HEADERS
 
     ${LIBRARY_HEADERS_DIRECTORY}/math/Matrix.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/Matrices.h
+    ${LIBRARY_HEADERS_DIRECTORY}/math/Interpolation.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/EarClippingTriangulation.h
     
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h

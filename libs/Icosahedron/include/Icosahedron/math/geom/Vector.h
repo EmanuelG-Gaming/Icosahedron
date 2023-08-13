@@ -103,6 +103,19 @@ namespace ic {
             }
         }
 
+        /* Applies linear interpolation over each vector's components. */
+        Vec interpolate(Vec &other, float alpha) {
+            // pt = p1 + (p2 - p1) * t
+            // pt = p1 + p2t - p1t
+            // pt = p1 * (1 - t) + p2t
+
+            Vec result;
+            for (int i = 0; i < dimensions; i++) {
+                result.values[i] = values[i] * (1 - alpha) + other[i] * alpha;
+            }
+            return result;
+        }
+
         friend std::ostream& operator<<(std::ostream &stream, Vec &vector) {
             std::size_t dims = vector.size();
 

@@ -32,6 +32,25 @@ namespace ic {
                 return cos(radians);
             }
 
+            float clamp(float x, float min, float max) {
+                return std::max(min, std::min(x, max));
+            }
+
+            /* Linear interpolation. */
+            float interpolate(float from, float to, float alpha) {
+                // pt = p1 + (p2 - p1) * t
+                // pt = p1 + p2t - p1t
+                // pt = p1 * (1 - t) + p2t
+
+                return from * (1 - alpha) + to * alpha;
+            }
+            float interpolate_logarithmic(float from, float to, float alpha) {
+                float value = interpolate(log(from), log(to), alpha);
+                value = exp(value);
+
+                return value;
+            }
+
         private:
             Mathf() {}
             ~Mathf() {}

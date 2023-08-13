@@ -287,7 +287,7 @@ int main(int argc, char *argv[]) {
 */
 
 /* Example4: A tiled game. Collision detection is via AABBs (ic::Rectangles). */
-/*
+
 #include <Icosahedron/Core.h>
 
 const std::size_t MAP_WIDTH = 16;
@@ -295,6 +295,7 @@ const std::size_t MAP_HEIGHT = 16;
 const std::size_t MAP_AREA = MAP_WIDTH * MAP_HEIGHT;
 const int DROP_DISPARITY = 5;
 const float COMPLETE_AFTER_SECONDS = 5.0f;
+const float COMPLETE_POPUP_ANIMATION_DURATION = 1.5f;
 
 const std::array<int, MAP_AREA> tiles = {
     0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0,
@@ -405,6 +406,7 @@ class Example4 : public ic::Application {
             shape = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.4f, 0.4f }, "player");
             shape->set_atlas(texture);
             
+            collisionDebug = false;
             reset();
             
             return true;
@@ -533,8 +535,16 @@ class Example4 : public ic::Application {
             atlas->use();
             renderer.draw_string(textBatch, atlas, "T key - toggle potential collisions", -1.0f, 0.9f, 0.8f, 0.8f);
             renderer.draw_string(textBatch, atlas, std::to_string(collected) + "/" + std::to_string(initialSize) + " polygons remaining", -1.0f, 0.75f, 0.8f, 0.8f);
+
             if (completedLevel) {
-                renderer.draw_string_centered(textBatch, atlas, "Level finished!", 0.0f, 0.4f, 1.5f, 1.5f);
+                float t = completeTimer / COMPLETE_POPUP_ANIMATION_DURATION;
+                float alpha = ic::Mathf::get().clamp(t, 0.0f, 1.0f);
+
+                ic::Vec2f from = { 0.0f, 1.1f }, to = { 0.0f, 0.4f };
+                ic::Vec2f position = from.interpolate(to, ic::Interpolation::get().smoothstep(alpha));
+                float scale = ic::Mathf::get().interpolate_logarithmic(0.5f, 1.5f, alpha);
+
+                renderer.draw_string_centered(textBatch, atlas, "Level finished!", position.x(), position.y(), scale, scale);
             }
             textBatch->render();
 
@@ -584,7 +594,6 @@ class Example4 : public ic::Application {
             
             shape->r.position = { 0.0f, 0.0f };
 
-            collisionDebug = false;
             collected = 0;
             initialSize = drops.size();
             completedLevel = false;
@@ -601,4 +610,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-*/
