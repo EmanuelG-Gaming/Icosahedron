@@ -95,7 +95,7 @@ namespace ic {
                 printf("Texture added.\n");
             }
 
-            /* Loads multiple images based on the format: { image_alias1, image_file_name1, image_alias2, image_file_name2, ... }*/
+            /** @brief Loads multiple images based on the format: { image_alias1, image_file_name1, image_alias2, image_file_name2, ... }*/
             void add_entries(const std::vector<std::string> &from) {
                 for (int i = 0; i < from.size(); i += 2) {
                     std::string alias = from.at(i);

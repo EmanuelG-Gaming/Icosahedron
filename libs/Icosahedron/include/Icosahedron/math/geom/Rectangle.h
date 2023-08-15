@@ -4,8 +4,8 @@
 #include <Icosahedron/math/geom/Vectors.h>
 
 namespace ic {
-    /* A rectangle can be defined with a center position and a size (half-width and half-height).
-     * It is the two-dimensional analog of the more generalized axis-aligned bounding box (AABB). */
+    /** @brief A rectangle can be defined with a center position and a size (half-width and half-height).
+     *  It is the two-dimensional analog of the more generalized axis-aligned bounding box (AABB). */
     struct Rectangle {
         ic::Vec2f position;
         ic::Vec2f size;
@@ -32,7 +32,7 @@ namespace ic {
                    (y2 >= y3 && y1 <= y4);
         }
 
-        /* Returns the width and height of an overlap of two rectangles. */
+        /** @returns The width and height of an overlap of two rectangles. */
         ic::Vec2f find_overlap(ic::Rectangle &other) {
             float x1 = position.x() - size.x(), y1 = position.y() - size.y();
             float x2 = position.x() + size.x(), y2 = position.y() + size.y();

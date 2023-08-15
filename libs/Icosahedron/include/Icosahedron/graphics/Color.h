@@ -10,7 +10,7 @@
 using color_t = uint8_t;
 
 namespace ic {
-    /* Stores an RGB color with components ranging from 0 to 255. */
+    /** @brief Stores an RGB color with components ranging from 0 to 255. */
     struct Color {
         color_t r, g, b;
 
@@ -68,6 +68,10 @@ namespace ic {
             
             return result;
         }
+        Color midpoint(Color &other) {
+            return interpolate(other, 0.5f);
+        }
+
         friend std::ostream& operator<<(std::ostream &stream, Color &color) {
             stream << "(" << (unsigned)color.r << ", " << (unsigned)color.g << ", " << (unsigned)color.b << ")";
 

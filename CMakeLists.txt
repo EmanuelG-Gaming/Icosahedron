@@ -33,9 +33,9 @@ endforeach(LIBRARY)
 target_link_libraries(${ENGINE_PROJECT_NAME} ${ENGINE_LIBRARIES})
 
 
+# Third-party libraries #
 ### Might have included these from the third-party vendors folder ###
 # GLEW #
-
 find_package(GLEW REQUIRED)
 include_directories(${GLEW_INCLUDE_DIRS})
 target_link_libraries(${ENGINE_PROJECT_NAME} GLEW::glew)

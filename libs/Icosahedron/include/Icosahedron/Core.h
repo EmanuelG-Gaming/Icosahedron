@@ -25,6 +25,8 @@ namespace ic {
 #include <Icosahedron/math/Matrices.h>
 #include <Icosahedron/math/Interpolation.h>
 
+#include <Icosahedron/math/geom/Quaternion.h>
+
 // Graphics
 #include <Icosahedron/graphics/Color.h>
 #include <Icosahedron/graphics/Colors.h>
@@ -35,6 +37,7 @@ namespace ic {
 #include <Icosahedron/graphics/gl/Texture.h>
 #include <Icosahedron/graphics/gl/TextureAtlas.h>
 #include <Icosahedron/graphics/gl/Batch.h>
+#include <Icosahedron/graphics/gl/VertexArray.h>
 
 #include <Icosahedron/graphics/TextAtlas.h>
 #include <Icosahedron/graphics/FreeType.h>
@@ -48,10 +51,16 @@ namespace ic {
 #include <Icosahedron/scene/2d/Shape2D.h>
 #include <Icosahedron/scene/2d/RectangleShape.h>
 #include <Icosahedron/scene/2d/PolygonShape.h>
+#include <Icosahedron/scene/2d/Mesh2D.h>
 #include <Icosahedron/scene/2d/Camera2D.h>
 
-#include <Icosahedron/Renderer.h>
+#include <Icosahedron/scene/3d/Camera3D.h>
+
+// Utilities
 #include <Icosahedron/util/GeometryGenerator.h>
+
+// Renderer
+#include <Icosahedron/Renderer.h>
 
 // App
 #include <Icosahedron/Application.h>

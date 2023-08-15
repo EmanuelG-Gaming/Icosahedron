@@ -6,7 +6,7 @@
 #include <array>
 
 namespace ic {
-    /* An n-dimensional geometric vector. */
+    /** @brief Represents an n-dimensional geometric vector. */
     template <typename T, std::size_t dimensions>
     struct Vector {
         using Vec = Vector<T, dimensions>;
@@ -51,14 +51,35 @@ namespace ic {
             return result;
         }
         
-        Vec operator*(float scalar) {
+        Vec operator+(T scalar) {
+            Vec result;
+            for (int i = 0; i < dimensions; i++) {
+                result.values[i] = values[i] + scalar;
+            }
+            return result;
+        }
+        Vec operator-(T scalar) {
+            Vec result;
+            for (int i = 0; i < dimensions; i++) {
+                result.values[i] = values[i] - scalar;
+            }
+            return result;
+        }
+        Vec operator*(T scalar) {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
                 result.values[i] = values[i] * scalar;
             }
             return result;
         }
-
+        Vec operator/(T scalar) {
+            Vec result;
+            for (int i = 0; i < dimensions; i++) {
+                result.values[i] = values[i] / scalar;
+            }
+            return result;
+        }
+        
         float dot(Vec &other) {
             float result = 0.0f;
             for (int i = 0; i < dimensions; i++) {
@@ -103,12 +124,8 @@ namespace ic {
             }
         }
 
-        /* Applies linear interpolation over each vector's components. */
+        /** @brief Applies linear interpolation over each vector's components. */
         Vec interpolate(Vec &other, float alpha) {
-            // pt = p1 + (p2 - p1) * t
-            // pt = p1 + p2t - p1t
-            // pt = p1 * (1 - t) + p2t
-
             Vec result;
             for (int i = 0; i < dimensions; i++) {
                 result.values[i] = values[i] * (1 - alpha) + other[i] * alpha;
@@ -148,6 +165,15 @@ namespace ic {
         
         T& operator[](const int index) {
             return values[index];
+        }
+
+        ic::Vector<float, dimensions> convert_float() {
+            ic::Vector<float, dimensions> result;
+            for (int i = 0; i < dimensions; i++) {
+                result[i] = (float) result[i];
+            }
+
+            return result;
         }
 
         std::size_t size() {

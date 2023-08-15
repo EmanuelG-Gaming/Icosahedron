@@ -1,7 +1,7 @@
 #ifndef IC_GL_H
 #define IC_GL_H
 
-#include <initializer_list>
+#include <vector>
 
 #include <GL/glew.h>
 
@@ -21,6 +21,11 @@ namespace ic {
     enum GLTextureTypes {
         T2D = GL_TEXTURE_2D,
         TCube = GL_TEXTURE_CUBE_MAP,
+    };
+
+    struct GLAttribute {
+        std::vector<float> content;
+        int dimensions;
     };
 }
 

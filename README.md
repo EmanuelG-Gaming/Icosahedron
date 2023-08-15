@@ -1,5 +1,26 @@
 # Icosahedron
-A game engine that uses SDL2 with GLEW.
+A game engine.
+
+Uses SDL2, GLEW, FreeType 2.
+
+# Library structure
+The following table's contents may be prone to change:
+
+| Directory name | Description |
+| --- | --- |
+| graphics | For things graphics-related. Also contains a FreeType 2 wrapper that is made to render text to a `TextAtlas`. |
+| graphics/gl | OpenGL wrappers. |
+| input | Contains controllers for input devices such as your keyboard. They are added and handled via `InputHandler`. |
+| math | Header-only definitions to mathematical objects and functions. |
+| math/geom | Same thing, but for geometrical concepts such as the vector, or the axis-aligned rectangle. |
+| Icosahedron/scene | It is currently in 2D, but it has objects that can be represented in a game scene, such as a camera, or a polygon. |
+| util | Utilities, like the `GeometryGenerator`. |
+
+The rest of the files that may not belong to the folders mentioned above are `Application`,  `Core`, and `Renderer`.
+
+- `Application` is the starting point for an usual application made with Icosahedron;
+- `Core` contains include paths to almost all the headers of this library;
+- `Renderer` has functions for rendering geometry.
 
 # Building the code:
 For some, this can be pretty straightforward, but here it is:

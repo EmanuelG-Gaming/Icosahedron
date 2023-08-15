@@ -4,9 +4,11 @@
 #include <cmath>
 
 namespace ic {
-    /* Interpolation shaping functions.
-     * Note that inputs usually range from 0 to 1, and the outputs
-     * start from 0. */
+    /** @brief Interpolation shaping functions.
+     * 
+     *  @note
+     *  Inputs to these functions usually range from 0 to 1, and the outputs
+     *  start from 0. */
     class Interpolation {
         public:
             static Interpolation& get() {
@@ -30,8 +32,8 @@ namespace ic {
                 return x * x * x * x * x;
             }
 
-            /* Provides a shaping function for the exponential e^x. 
-             * Note that this is an approximation, as it reaches about 0.982 when x = 1. */
+            /** @brief Provides a shaping function for the exponential e^x. 
+             *  @note This is an approximation, as it reaches about 0.982 when x = 1. */
             float exponential(float x) {
                 float scale = 4.0f / 7.0f;
                 return (exp(x) - 1) * scale;

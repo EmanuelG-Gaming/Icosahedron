@@ -8,7 +8,7 @@
 
 
 namespace ic {
-    /* Represents a two-dimensional camera. */
+    /** @brief Represents a camera in a two-dimensional space. */
     class Camera2D {
         public:
             ic::Vec2f position;

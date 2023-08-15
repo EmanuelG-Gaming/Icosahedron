@@ -10,41 +10,42 @@
 #include <Icosahedron/math/geom/Rectangle.h>
 
 namespace ic {
-    /* Illustrates a polygon with local and transformed vertices in two-dimensional space. */
+    /** @brief Illustrates a polygon with local and transformed vertices in two-dimensional space. */
     struct Polygon {
         public:
-            /* Initializes a new, but empty polygon. */
+            /** @brief Initializes a new, but empty polygon. */
             Polygon() {
                 this->localVertices.reserve(0);
             }
 
-            /* Constructs a polygon from a set of vertices.
-             * Throws an invalid argument if the vertex count is smaller than 3. */
-            Polygon(const std::vector<ic::Vec2f> &from) {
-                if (from.size() < 3) throw std::invalid_argument("A polygon isn't defined for vertex counts smaller than 3."); 
+            /** @brief Constructs a polygon from a set of vertices.
+             *  @param from A set of floating-point numbers that represent the coordinates of 2D vectors,
+             *  in the following format: { x1, y1, x2, y2, ... }
+             *  @throws An invalid argument, if the size of the set is smaller than 6, AKA if the vertex
+             *  count is smaller than 3. */
+            Polygon(const std::vector<float> &from) {
+                if (from.size() < 6) throw std::invalid_argument("A polygon isn't defined for vertex counts smaller than 3."); 
 
                 this->localVertices = from;
-                /*
-                for (auto position = from.begin(); position != from.end(); position++) {
-                    this->localVertices[std::distance(from.begin(), position)] = *position;
-                }
-                */
             }
 
 
-            std::vector<ic::Vec2f> &get_vertices() {
+            std::vector<float> &get_vertices() {
                 return localVertices;
             }
 
-            /* Sets vertices without any scaling, rotation, or translation.
-             * Throws an invalid argument if the vertex count is smaller than 3. */
-            void set_vertices(const std::vector<ic::Vec2f> &from) {
-                if (from.size() < 3) throw std::invalid_argument("Cannot set vertices if counts are smaller than 3."); 
+            /** @brief Sets up vertices without any scaling, rotation, or translation.
+             *  @param from A set of floating-point numbers that represent the coordinates of 2D vectors,
+             *  in the following format: { x1, y1, x2, y2, ... }
+             *  @throws An invalid argument, if the size of the set is smaller than 6, AKA if the vertex
+             *  count is smaller than 3. */
+            void set_vertices(const std::vector<float> &from) {
+                if (from.size() < 6) throw std::invalid_argument("Cannot set vertices if counts are smaller than 3."); 
 
                 this->localVertices = from;
             }
 
-            std::vector<ic::Vec2f> &get_transformed_vertices() {
+            std::vector<float> &get_transformed_vertices() {
                 if (!dirty) return transformedVertices;
                 dirty = false;
 
@@ -57,9 +58,8 @@ namespace ic {
 
                 float sine = ic::Mathf::get().sinf(rotation);
                 float cosine = ic::Mathf::get().cosf(rotation);
-                for (int i = 0; i < localVertices.size(); i++) {
-                    ic::Vec2f local = localVertices[i];
-                    float tx = local.x(), ty = local.y();
+                for (int i = 0; i < localVertices.size(); i += 2) {
+                    float tx = localVertices[i], ty = localVertices[i + 1];
 
                     // Scaling
                     if (scales) {
@@ -78,13 +78,37 @@ namespace ic {
                     tx += x;
                     ty += y;
 
-                    ic::Vec2f transformed = { tx, ty };
-                    transformedVertices[i] = transformed;
+                    transformedVertices[i] = tx;
+                    transformedVertices[i + 1] = ty;
                 }
 
                 return transformedVertices;
             }
 
+            ic::Rectangle &get_bounding_box() {
+                std::vector<float> verts = get_transformed_vertices();
+
+                float minX = verts[0];
+                float minY = verts[1];
+                float maxX = verts[0];
+                float maxY = verts[1];
+
+                for (int i = 0; i < verts.size(); i += 2) {
+                    float dx = verts[i];
+                    float dy = verts[i + 1];
+
+                    minX = minX > dx ? dx : minX;
+                    minY = minY > dy ? dy : minY;
+
+                    maxX = maxX < dx ? dx : maxX;
+                    maxY = maxY < dy ? dy : maxY;
+                }
+
+                bounding.size = ic::Vec2f({maxX - minX, maxY - minY}) * 0.5f;
+                bounding.position = ic::Vec2f({ minX, minY }) + bounding.size;
+
+                return bounding;
+            }
 
             void set_position(float px, float py) {
                 x = px;
@@ -160,8 +184,8 @@ namespace ic {
             }
 
         protected:
-            std::vector<ic::Vec2f> localVertices;
-            std::vector<ic::Vec2f> transformedVertices;
+            std::vector<float> localVertices;
+            std::vector<float> transformedVertices;
 
             ic::Rectangle bounding;
 

@@ -13,14 +13,14 @@
 
 
 namespace ic {
-    /* An OpenGL wrapper for a texture.
+    /** @brief An OpenGL wrapper for a texture.
      * A texture is bound using the use() function, in order to be applied to geometry. */
     template <ic::GLTextureTypes T>
     class Texture {
         public:
             Texture() {}
             Texture(bool smooth, bool repeating) : smooth(smooth), repeating(repeating) {}
-            Texture(std::vector<std::string> fileNames, bool smooth = false, bool repeating = true) : Texture(smooth, repeating) {
+            Texture(std::vector<std::string> fileNames, bool smooth = false, bool repeating = false) : Texture(smooth, repeating) {
                 setup(fileNames);
             }
 

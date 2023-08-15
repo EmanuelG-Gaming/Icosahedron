@@ -17,6 +17,8 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/math/Interpolation.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/EarClippingTriangulation.h
     
+    ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Quaternion.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
 
@@ -40,7 +42,12 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Shape2D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/RectangleShape.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/PolygonShape.h
+    ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Mesh2D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Camera2D.h
+
+    
+
+    ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Camera3D.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/Application.h
     ${LIBRARY_HEADERS_DIRECTORY}/Core.h
@@ -49,6 +56,7 @@ set(LIBRARY_HEADERS
 set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Shader.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/VertexArray.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Batch.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/TextAtlas.cpp
@@ -58,6 +66,7 @@ set(LIBRARY_SOURCE
 
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/RectangleShape.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/PolygonShape.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Mesh2D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Camera2D.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/input/KeyboardController.cpp

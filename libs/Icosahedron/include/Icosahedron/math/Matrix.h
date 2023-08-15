@@ -10,7 +10,7 @@
 #include <Icosahedron/math/geom/Vectors.h>
 
 namespace ic {
-    /* An n by m column-major matrix. */
+    /** @brief Represents an n by m column-major matrix. */
     template <typename T, std::size_t n, std::size_t m>
     struct Matrix {
         using Mat = Matrix<T, n, m>;

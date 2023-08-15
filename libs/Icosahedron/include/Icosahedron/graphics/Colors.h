@@ -4,7 +4,7 @@
 #include <Icosahedron/graphics/Color.h>
 
 namespace ic {
-    /* Color presets. */
+    /** @brief Color presets. */
     namespace Colors {
         ic::Color
             red = { 255, 0, 0 },

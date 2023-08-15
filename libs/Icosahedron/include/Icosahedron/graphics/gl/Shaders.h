@@ -7,19 +7,14 @@
 #include <Icosahedron/graphics/gl/Shader.h>
 
 namespace ic {
-    /* OpenGL shader presets. */
+    /** @brief OpenGL shader presets. */
     class Shaders {
         public:
 
         std::string basicShaderVertex2D;
 
-        /* A simple shader that doesn't use textures. */
         ic::Shader *basicShader2D;
-
-        /* A simple, textured shader. */
         ic::Shader *basicTextureShader2D; 
-
-        /* A shader that is used to render text. */
         ic::Shader *basicTextShader2D;
 
         void load_shaders() {

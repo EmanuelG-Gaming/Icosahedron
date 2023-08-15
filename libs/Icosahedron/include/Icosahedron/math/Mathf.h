@@ -4,7 +4,7 @@
 #include <cmath>
 
 namespace ic {
-    /* Mathematical functions. */
+    /** @brief Mathematical functions. */
     class Mathf {
         public:
             static Mathf& get() {
@@ -31,6 +31,21 @@ namespace ic {
             float cosf(float radians) {
                 return cos(radians);
             }
+
+            float absinf(float radians) {
+                return abs(sinf(radians));
+            }
+            float abcosf(float radians) {
+                return abs(cosf(radians));
+            }
+
+            float positive_sinf(float radians) {
+                return (sinf(radians) + 1) * 0.5f;
+            }
+            float positive_cosf(float radians) {
+                return (cosf(radians) + 1) * 0.5f;
+            }
+
 
             float clamp(float x, float min, float max) {
                 return std::max(min, std::min(x, max));

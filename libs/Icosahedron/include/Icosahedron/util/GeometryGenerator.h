@@ -10,10 +10,10 @@
 #include <Icosahedron/math/Mathf.h>
 
 namespace ic {
-    /* Utilities for procedurally loading geometry. */
+    /** @brief Utilities for procedurally loading geometry. */
     namespace GeometryGenerator {
         ic::Polygon generate_regular_polygon(int sides = 3, float radius = 1.0f) {
-            std::vector<ic::Vec2f> vertices;
+            std::vector<float> vertices;
             float angle = 0.0f;
 
             for (int i = 0; i < sides; i++) {
@@ -21,7 +21,8 @@ namespace ic {
                 float x = ic::Mathf::get().cosf(angle) * radius;
                 float y = ic::Mathf::get().sinf(angle) * radius;
 
-                vertices.push_back({x, y});
+                vertices.push_back(x);
+                vertices.push_back(y);
             }
 
             ic::Polygon result = ic::Polygon(vertices);

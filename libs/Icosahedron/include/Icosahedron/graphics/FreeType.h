@@ -10,7 +10,7 @@
 #include <Icosahedron/graphics/TextAtlas.h>
 
 namespace ic {
-    /* The starting point for the FreeType 2 font renderer. */
+    /** @brief The starting point for the FreeType 2 font renderer. */
     class FreeType {
         public:
             static FreeType& get() {

@@ -10,7 +10,7 @@
 
 
 namespace ic {
-    /* Stores information about a character of a text atlas. */
+    /** @brief Stores information about a character of a text atlas. */
     struct CharacterInfo {
         float advX, advY;
     
@@ -20,7 +20,7 @@ namespace ic {
         float offsetX = 0.0f;
     };
 
-    /* A text atlas stores ASCII bitmap glyphs in a horizontal order. */
+    /** @brief A text atlas stores ASCII bitmap glyphs in a horizontal order. */
     class TextAtlas {
         public:
             TextAtlas(FT_Face font);

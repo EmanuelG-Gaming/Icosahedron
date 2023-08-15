@@ -59,7 +59,7 @@ class Example2 : public ic::Application {
             texture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
             shader = shaders.basicTextureShader2D;
 
-            inputHandler.add_input(new ic::WASDController(), "WASD");
+            inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
 
             return true;
         }
@@ -611,3 +611,144 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 */
+
+/* Example5: Per-vertex colors for polygons. */
+/*
+#include <Icosahedron/Core.h>
+
+class Example5 : public ic::Application {
+    ic::Batch2D *batch;
+    ic::Shader *shader;
+    ic::Texture<ic::T2D> *texture;
+
+    ic::PolygonShape *shape1, *shape2;
+    float time;
+    ic::VertexArray array1, array2;
+
+    public:
+        bool init() override {
+            displayName = "Example window";
+            return true;
+        }
+        
+        bool load() override {
+            shader = shaders.basicTextureShader2D;
+
+            batch = new ic::Batch2D(1000, ic::TRIANGLES);
+            shape1 = new ic::PolygonShape(
+                ic::GeometryGenerator::generate_regular_polygon(4, 0.3f), 
+                { ic::Colors::red, ic::Colors::green, ic::Colors::blue, ic::Colors::white },
+                { -0.25f, 0.0f }
+            );
+            shape2 = new ic::PolygonShape(
+                ic::GeometryGenerator::generate_regular_polygon(3, 0.3f), 
+                { ic::Colors::red, ic::Colors::green, ic::Colors::blue },
+                { 0.25f, 0.0f }
+            );
+            texture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
+
+            time = 0.0f;
+
+            return true;
+        }
+
+        bool handle_event(ic::Event event, float dt) override {
+            return true;
+        }
+    
+        bool update(float dt) override { 
+            time += dt;
+            shape1->poly.rotate(dt);
+
+            clear_color(ic::Colors::blue);
+
+            shader->use();
+
+            // How much should a polygon's vertex colors blend with the main color
+            // 0 means the polygon is not blended with the main color at all
+            // 1 means the polygon is fully blended with the main color
+            renderer.tint(1.0f);
+            shape1->draw(renderer, batch, ic::Colors::white);
+            renderer.tint(0.0f);
+            texture->use();
+            shape2->draw(renderer, batch, ic::Colors::white);
+            batch->render();
+
+            return true; 
+        }
+
+        void dispose() override {
+            batch->dispose();
+            shader->clear();
+            texture->dispose();
+        }
+};
+
+int main(int argc, char *argv[]) {
+    Example5 application;
+    
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}
+*/
+
+#include <Icosahedron/Core.h>
+
+class Example5 : public ic::Application {
+    ic::Mesh2D *mesh;
+
+    public:
+        bool init() override {
+            displayName = "Example window";
+            return true;
+        }
+        
+        bool load() override {
+            std::vector<float> positions = {
+                -0.5f, -0.5f,
+                0.5f, -0.5f,
+                0.0f, 0.5f
+            };
+            std::vector<float> colors = {
+                1.0f, 0.0f, 0.0f,
+                0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 1.0f
+            };
+
+            std::vector<unsigned int> indices = {
+                0, 1, 2
+            };
+
+            mesh = new ic::Mesh2D(positions);
+            mesh->add_attribute("color", 3, colors);
+            mesh->add_index_buffer(indices);
+
+            return true;
+        }
+
+        bool handle_event(ic::Event event, float dt) override { 
+            return true;
+        }
+    
+        bool update(float dt) override { 
+            clear_color(ic::Colors::blue);
+
+            shaders.basicShader2D->use();
+            mesh->draw();
+
+            return true; 
+        }
+};
+
+int main(int argc, char *argv[]) {
+    Example5 application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}

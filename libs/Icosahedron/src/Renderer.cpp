@@ -65,6 +65,92 @@ void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices
     batch->add(v);
 }
 
+void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, std::vector<ic::Color> vertexColors, const ic::Color &color) {
+    if (vertexColors.size() != vertices.size()) {
+        printf("Didn't render the vertices. Vertex colors' size didn't correspond to the vertex positions' size.\n");
+        return;
+    }
+
+    std::vector<BatchVertex> v;
+    for (int index = 0; index < vertices.size(); index++) {
+        ic::Vec2f vertex = vertices[index];
+        ic::Color col = vertexColors[index], tint = color;
+        ic::Color c = col.interpolate(tint, tinting);
+
+        v.push_back(BatchVertex(vertex.x(), vertex.y(), 0.0f, 0.0f, c));
+    }
+
+    batch->add(v);
+}
+void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, std::vector<ic::Color> vertexColors, const ic::Color &color) {
+    if (vertexColors.size() != vertices.size()) {
+        printf("Didn't render the vertices. Vertex colors' size didn't correspond to the vertex positions' size.\n");
+        return;
+    }
+
+    std::vector<BatchVertex> v;
+
+    for (auto &index : indices) {
+        ic::Vec2f vertex = vertices.at(index);
+        ic::Color col = vertexColors[index], tint = color;
+        ic::Color c = col.interpolate(tint, tinting);
+
+        v.push_back(BatchVertex(vertex.x(), vertex.y(), 0.0f, 0.0f, c));
+    }
+
+    batch->add(v);
+}
+
+void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color) {
+    if (vertexColors.size() != vertices.size()) {
+        printf("Didn't render the vertices. Vertex colors' size didn't correspond to the vertex positions' size.\n");
+        return;
+    }
+    if (vertexTexCoords.size() != vertices.size()) {
+        printf("Didn't render the vertices. Vertex texture coordinates' size didn't correspond to the vertex positions' size.\n");
+        return;
+    }
+
+    std::vector<BatchVertex> v;
+
+    for (int index = 0; index < vertices.size(); index++) {
+        ic::Vec2f vertex = vertices.at(index);
+        ic::Color col = vertexColors[index], tint = color;
+        ic::Color c = col.interpolate(tint, tinting);
+        ic::Vec2f coords = vertexTexCoords[index];
+
+        v.push_back(BatchVertex(vertex.x(), vertex.y(), coords.x(), coords.y(), c));
+    }
+
+    batch->add(v);
+}
+
+void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color) {
+    if (vertexColors.size() != vertices.size()) {
+        printf("Didn't render the vertices. Vertex colors' size didn't correspond to the vertex positions' size.\n");
+        return;
+    }
+    if (vertexTexCoords.size() != vertices.size()) {
+        printf("Didn't render the vertices. Vertex texture coordinates' size didn't correspond to the vertex positions' size.\n");
+        return;
+    }
+
+    std::vector<BatchVertex> v;
+
+    for (auto &index : indices) {
+        ic::Vec2f vertex = vertices.at(index);
+        ic::Color col = vertexColors[index], tint = color;
+        ic::Color c = col.interpolate(tint, tinting);
+        ic::Vec2f coords = vertexTexCoords[index];
+
+        v.push_back(BatchVertex(vertex.x(), vertex.y(), coords.x(), coords.y(), c));
+    }
+
+    batch->add(v);
+}
+
+
+
 void Renderer::draw_string(ic::Batch2D *batch, ic::TextAtlas *textAtlas, const std::string &text, float x, float y, float scaleX, float scaleY, const ic::Color &color) {
     float sclX = scaleX * 0.002f;
     float sclY = scaleY * 0.002f;
@@ -130,3 +216,6 @@ void Renderer::draw_string_itself(ic::Batch2D *batch, ic::TextAtlas *textAtlas, 
     batch->add(vertices);
 }
         
+void Renderer::tint(float amount) {
+    tinting = amount;
+}
