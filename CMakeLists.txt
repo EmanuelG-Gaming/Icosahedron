@@ -17,6 +17,7 @@ set(ENGINE_THIRD_PARTY_DIRECTORY third-party)
 project(${ENGINE_FULL_PROJECT_NAME})
 
 # Testing #
+set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1) # Prevent the addition of multiple tests
 include(CTest)
 enable_testing()
 

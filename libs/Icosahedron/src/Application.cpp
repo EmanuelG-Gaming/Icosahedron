@@ -27,8 +27,7 @@ bool ic::Application::construct(int w, int h) {
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
-		//fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
-        std::cerr << "SDL_Init Error: " << SDL_GetError();
+		std::cerr << "SDL_Init Error: " << SDL_GetError();
 		return false;
 	}
     
@@ -39,41 +38,45 @@ bool ic::Application::construct(int w, int h) {
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    
 
     if (!init()) {
         std::cerr << "Couldn't initialize the application." << "\n";
         return false;
     }
 
-	SDL_Window *win = SDL_CreateWindow(displayName.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
+    Uint32 flags = 0;
+    if (scaling == WindowScaling::resizeable) flags |= SDL_WINDOW_RESIZABLE;
+    else if (scaling == WindowScaling::fullscreen) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    flags |= SDL_WINDOW_OPENGL;
+
+    SDL_Window *win = SDL_CreateWindow(displayName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
 	if (win == NULL)
 	{
 		std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << "\n";
 		return false;
 	}
-
+    
 	// We will not actually need a context created, but we should create one
 	SDL_GLContext cont = SDL_GL_CreateContext(win);
     window = win;
     context = cont;
-
+    
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
         std::cerr << "Couldn't initialize GLEW." << "\n";
         return false;
     }
     
-    pre_load();
-
     send_application_information();
+
+    pre_load();
 
     if (!load()) {
         std::cerr << "Couldn't load the application." << "\n";
         return false;
     }
     
-    glViewport(0, 0, width, height);
+    glViewport(0, 0, w, h);
     
     constructed = true;
     return true;
@@ -94,10 +97,38 @@ void ic::Application::start() {
         SDL_PumpEvents();
 
         while (SDL_PollEvent(&e)) {
-			if (e.type == SDL_QUIT) {
-                 disabled = true;
-                 break;
+            switch (e.type) {
+                case SDL_QUIT:
+                    disabled = true;
+                    break;
+                case SDL_KEYUP:
+                    if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+                        disabled = true;
+                        break;
+                    }
+                case SDL_WINDOWEVENT:
+                    if (scaling != WindowScaling::fixed &&
+                       (e.window.event == SDL_WINDOWEVENT_RESIZED || e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)) {
+                        
+                        int w = 0, h = 0;
+                        if (scaling == WindowScaling::resizeable) {
+                            w = e.window.data1;
+                            h = e.window.data2;
+                        } else if (scaling == WindowScaling::fullscreen) {
+                            SDL_Rect displayRectangle;
+                            SDL_GetDisplayBounds(0, &displayRectangle);
+
+                            w = displayRectangle.w;
+                            h = displayRectangle.h;
+                        }
+
+                        width = w;
+                        height = h;
+                        glViewport(0, 0, width, height);
+                        //std::cout << width << " " << height << "\n";
+                    }
             }
+
             inputHandler.handle(e, delta);
 
             // Event-handling code

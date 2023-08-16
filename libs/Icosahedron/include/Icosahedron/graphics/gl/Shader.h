@@ -2,7 +2,6 @@
 #define IC_SHADER_H
 
 #include <string>
-
 #include <GL/glew.h>
 
 #include <Icosahedron/math/geom/Vector.h>

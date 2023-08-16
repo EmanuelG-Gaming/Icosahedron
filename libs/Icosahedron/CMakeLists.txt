@@ -27,6 +27,7 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Shaders.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Texture.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/TextureAtlas.h
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/VertexArray.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Batch.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/TextAtlas.h

@@ -42,14 +42,24 @@ void ic::VertexArray::unuse() {
 
 void ic::VertexArray::dispose() {
     glDeleteBuffers(1, &vao);
+    glDeleteBuffers(1, &ibo);
     glDeleteBuffers(bufferObjects.size(), bufferObjects.data());
 
+    reset();
+}
+
+void ic::VertexArray::reset() {
     bufferObjects.clear();
+    lastVertexBufferPosition = 0;
     vao = 0;
+    ibo = 0;
     indicesUsed = 0;
 }
 
 
+void ic::VertexArray::jump() {
+    lastVertexBufferPosition++;
+}
 void ic::VertexArray::add_vertex_buffer(int dimensions, const std::vector<GLfloat> &content) {
     use();
 
@@ -58,13 +68,14 @@ void ic::VertexArray::add_vertex_buffer(int dimensions, const std::vector<GLfloa
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, content.size() * sizeof(GLfloat), content.data(), GL_STATIC_DRAW); 
     
-    int position = bufferObjects.size();
+    int position = lastVertexBufferPosition;
     glVertexAttribPointer(position, dimensions, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(0));
     glEnableVertexAttribArray(position);
 
     bufferObjects.push_back(vertexBuffer);
+    lastVertexBufferPosition++;
 }
-void ic::VertexArray::add_index_buffer(const std::vector<GLuint> &content) {
+void ic::VertexArray::set_index_buffer(const std::vector<GLuint> &content) {
     use();
 
     GLuint indexBuffer;
@@ -72,14 +83,13 @@ void ic::VertexArray::add_index_buffer(const std::vector<GLuint> &content) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, content.size() * sizeof(GLuint), content.data(), GL_STATIC_DRAW); 
 
-    bufferObjects.push_back(indexBuffer);
+    ibo = indexBuffer;
     indicesUsed = content.size();
-    indexBuffersAdded++;
 }
 
 void ic::VertexArray::unuse_attribute_definitions() {
     unuse();
-    for (int i = 0; i < bufferObjects.size() - indexBuffersAdded; i++) {
+    for (int i = 0; i < bufferObjects.size(); i++) {
         glDisableVertexAttribArray(i);
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);

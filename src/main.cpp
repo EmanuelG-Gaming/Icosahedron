@@ -699,32 +699,33 @@ int main(int argc, char *argv[]) {
 
 class Example5 : public ic::Application {
     ic::Mesh2D *mesh;
+    ic::Texture<ic::T2D> *texture;
+    ic::Shader *shader;
 
     public:
         bool init() override {
             displayName = "Example window";
+            scaling = ic::WindowScaling::resizeable;
+            
             return true;
         }
         
         bool load() override {
-            std::vector<float> positions = {
-                -0.5f, -0.5f,
-                0.5f, -0.5f,
-                0.0f, 0.5f
-            };
-            std::vector<float> colors = {
-                1.0f, 0.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 1.0f
-            };
+            std::vector<float> positions = ic::GeometryGenerator::get().generate_regular_polygon(7, 0.3f);
 
-            std::vector<unsigned int> indices = {
-                0, 1, 2
-            };
-
+            std::vector<float> textureCoords = ic::GeometryGenerator::get().generate_UV_polygon(positions);
+            std::vector<unsigned int> indices = ic::EarClippingTriangulation::get().triangulate(positions);
+            
             mesh = new ic::Mesh2D(positions);
-            mesh->add_attribute("color", 3, colors);
-            mesh->add_index_buffer(indices);
+            // Jump past the color attribute
+            mesh->jump_attribute();
+            mesh->add_attribute("textureCoords", 2, textureCoords);
+            mesh->set_index_buffer(indices);
+            mesh->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
+
+            shader = new ic::Shader(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D, false);
+            texture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
+            
 
             return true;
         }
@@ -735,11 +736,16 @@ class Example5 : public ic::Application {
     
         bool update(float dt) override { 
             clear_color(ic::Colors::blue);
-
-            shaders.basicShader2D->use();
-            mesh->draw();
+            
+            texture->use();
+            mesh->draw(shader);
 
             return true; 
+        }
+
+        void dispose() {
+            shader->clear();
+            texture->dispose();
         }
 };
 

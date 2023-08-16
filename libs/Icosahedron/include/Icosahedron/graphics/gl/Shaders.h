@@ -10,12 +10,17 @@ namespace ic {
     /** @brief OpenGL shader presets. */
     class Shaders {
         public:
+        std::string basicShaderVertex2D,
+                    basicShaderFrag2D;
 
-        std::string basicShaderVertex2D;
+        std::string basicTextureShaderVertex2D,
+                    basicTextureShaderFrag2D;
 
-        ic::Shader *basicShader2D;
-        ic::Shader *basicTextureShader2D; 
-        ic::Shader *basicTextShader2D;
+        std::string basicTextShaderVertex2D,
+                    basicTextShaderFrag2D;
+        
+        std::string meshShaderVertex2D,
+                    meshShaderFrag2D;
 
         void load_shaders() {
             basicShaderVertex2D = 
@@ -35,26 +40,22 @@ namespace ic {
                 "pos = projection * pos;\n"
                 "}\n"
                 "gl_Position = pos;\n"
-                "}\n";
+                "}\n"; 
+           
 
-            basicShader2D = new ic::Shader(
-                basicShaderVertex2D,
-
+            basicShaderFrag2D = 
                 "#version 330 core\n"
                 "precision mediump float;\n"
                 "in vec3 vColor;\n"
                 "out vec4 outColor;\n"
                 "void main(){\n"
                 "outColor = vec4(vColor, 1.0);\n"
-                "}\n", 
-
-                false
-            );
+                "}\n";
+        
 
         
-            basicTextureShader2D = new ic::Shader(
-                basicShaderVertex2D,
-
+            basicTextureShaderVertex2D = basicShaderVertex2D;
+            basicTextureShaderFrag2D =
                 "#version 330 core\n"
                 "precision mediump float;\n"
                 "in vec3 vColor;\n"
@@ -65,14 +66,10 @@ namespace ic {
                 "vec4 color = texture(sampleTexture, vTCoords);\n"
                 "if (color.a <= 0.2) discard;\n"
                 "outColor = color * vec4(vColor, 1.0);\n"
-                "}\n", 
+                "}\n";
 
-                false
-            );
-
-            basicTextShader2D = new ic::Shader(
-                basicShaderVertex2D,
-
+            basicTextShaderVertex2D = basicShaderVertex2D;
+            basicTextShaderFrag2D =
                 "#version 330 core\n"
                 "precision mediump float;\n"
                 "in vec3 vColor;\n"
@@ -83,10 +80,28 @@ namespace ic {
                 "vec4 color = texture(sampleTexture, vTCoords);\n"
                 "if (color.r <= 0.2) discard;\n"
                 "outColor = vec4(color.r, color.r, color.r, 1.0) * vec4(vColor, 1.0);\n"
-                "}\n", 
-
-                false
-            );
+                "}\n";
+            
+            meshShaderVertex2D = basicShaderVertex2D;
+            meshShaderFrag2D =
+                "#version 330 core\n"
+                "precision mediump float;\n"
+                "struct Material {\n"
+                "float colorBlending;\n"
+                "vec3 baseColor;\n"
+                "};\n"
+                
+                "in vec3 vColor;\n"
+                "in vec2 vTCoords;\n"
+                "uniform Material material;\n"
+                "uniform sampler2D sampleTexture;\n"
+                "out vec4 outColor;\n"
+                "void main(){\n"
+                "vec4 c = mix(vec4(vColor, 1.0), vec4(material.baseColor, 1.0), material.colorBlending);\n"
+                "vec4 color = texture(sampleTexture, vTCoords);\n"
+                "if (color.a <= 0.2) discard;\n"
+                "outColor = color * c;\n"
+                "}\n";
         }
     };
 }

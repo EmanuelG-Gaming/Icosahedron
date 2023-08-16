@@ -38,6 +38,11 @@ namespace ic {
 
             void dispose();
 
+            /** @brief Jumps to the next attribute, based on the location
+             *  inside the shader program, without adding any vertex buffer.
+            */
+            void jump();
+
             /** @brief Adds a floating-point vertex buffer to this VAO.
              *  @param dimensions The number of dimensions of the attribute vector.
              *  @param content Attribute content in the following form: { x1, y1, ... n1,
@@ -45,19 +50,19 @@ namespace ic {
              *                                                            ... }, where n is the number of dimensions.
             */
             void add_vertex_buffer(int dimensions, const std::vector<GLfloat> &content);
-            void add_index_buffer(const std::vector<GLuint> &content);
+            void set_index_buffer(const std::vector<GLuint> &content);
 
             void unuse_attribute_definitions();
 
         protected:
             void setup();
-
+            void reset();
+            
         private:
             std::vector<GLuint> bufferObjects;
-            GLuint vao = 0;
+            GLuint vao = 0, ibo = 0;
             GLsizei indicesUsed = 0;
-
-            int indexBuffersAdded = 0;
+            int lastVertexBufferPosition = 0;
     };
 }
 

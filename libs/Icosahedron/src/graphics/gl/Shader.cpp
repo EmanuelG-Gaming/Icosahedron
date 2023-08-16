@@ -63,6 +63,8 @@ void Shader::load(const std::string &vertSource, const std::string &fragSource) 
 
     glDeleteShader(vert);
     glDeleteShader(fragm);
+
+    std::cout << "Shader loaded with index: " << this->program << "\n";
 }
 void Shader::load_content_from_files(const std::string &vertFile, const std::string &fragFile, std::string &vertContent, std::string &fragContent) {
     std::ifstream vert;

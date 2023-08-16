@@ -108,7 +108,7 @@ public:
             return WindingOrder::invalid;
         }
         
-        std::vector<int> triangulate(std::vector<ic::Vec2f> &polygon) {
+        std::vector<unsigned int> triangulate(std::vector<ic::Vec2f> &polygon) {
             if (!simple_polygon(polygon)) {
                 throw std::runtime_error("Polygon is not simple!");
             }
@@ -131,7 +131,7 @@ public:
             int totalTriangleCount = polygon.size() - 2;
             int totalIndexCount = totalTriangleCount * 3;
 
-            std::vector<int> indices, triangles;
+            std::vector<unsigned int> indices, triangles;
             for (int i = 0; i < polygon.size(); i++) {
                 indices.push_back(i);
             }
@@ -185,6 +185,15 @@ public:
             triangles[indexCount++] = indices[2];
 
             return triangles;
+        }
+
+        std::vector<unsigned int> triangulate(std::vector<float> &polygon) {
+            std::vector<ic::Vec2f> vertices;
+            for (int i = 0; i < polygon.size(); i+=2) {
+                float x = polygon[i], y = polygon[i + 1];
+                vertices.push_back({ x, y });
+            }
+            return triangulate(vertices);
         }
 
 private:

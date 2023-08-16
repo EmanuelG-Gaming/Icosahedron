@@ -18,6 +18,14 @@
 
 
 namespace ic {
+    enum class WindowScaling {
+        invalid = -1,
+        
+        fixed,
+        resizeable,
+        fullscreen
+    };
+
     class Application {
         public:
             /* Initializes the application. Called before load(). 
@@ -51,13 +59,17 @@ namespace ic {
             void pre_load();
 
         protected:
-            std::string displayName;
+            /* The name that is displayed on the window. */
+            std::string displayName = "test";
+            /* The type of scaling that this window uses. */
+            ic::WindowScaling scaling = ic::WindowScaling::fixed;
+
             ic::InputHandler inputHandler;
             ic::Shaders shaders;
             ic::Renderer renderer;
 
         private:
-            int width, height;
+            int width = 0, height = 0;
             SDL_Window *window;
             SDL_GLContext context;
 
