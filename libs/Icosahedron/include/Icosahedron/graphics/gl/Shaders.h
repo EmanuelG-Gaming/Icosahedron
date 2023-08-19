@@ -82,7 +82,26 @@ namespace ic {
                 "outColor = vec4(color.r, color.r, color.r, 1.0) * vec4(vColor, 1.0);\n"
                 "}\n";
             
-            meshShaderVertex2D = basicShaderVertex2D;
+
+            meshShaderVertex2D =
+                "#version 330 core\n"
+                "layout (location = 0) in vec2 position;\n"
+                "layout (location = 1) in vec3 color;\n"
+                "layout (location = 2) in vec2 tCoords;\n"
+                "uniform mat4 projection;\n"
+                "uniform mat4 model = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);\n"
+                "uniform int useCamera;\n"
+                "out vec3 vColor;\n"
+                "out vec2 vTCoords;\n"
+                "void main(){\n"
+                "vColor = color;\n"
+                "vTCoords = tCoords;\n"
+                "vec4 pos = model * vec4(position, 0.0, 1.0);\n"
+                "if (useCamera == 1) {\n"
+                "pos = projection * pos;\n"
+                "}\n"
+                "gl_Position = pos;\n"
+                "}\n";
             meshShaderFrag2D =
                 "#version 330 core\n"
                 "precision mediump float;\n"

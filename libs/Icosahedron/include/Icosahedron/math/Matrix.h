@@ -7,6 +7,7 @@
 #include <array>
 #include <initializer_list>
 
+#include <Icosahedron/math/Mathf.h>
 #include <Icosahedron/math/geom/Vectors.h>
 
 namespace ic {
@@ -17,7 +18,9 @@ namespace ic {
         
         std::array<T, n * m> values;
 
-        Matrix() {}
+        Matrix() {
+            identity();
+        }
         /* Initialises the matrix in column-major order. */
         Matrix(std::initializer_list<T> from) {
             for (auto position = from.begin(); position != from.end(); position++) {
@@ -34,7 +37,7 @@ namespace ic {
             }
         }
 
-        void set_perspective(float fovDegrees, float zNear, float zFar, float aspectRatio) {
+        Mat set_perspective(float fovDegrees, float zNear, float zFar, float aspectRatio) {
             static_assert(!is_square(), "Perspective matrices work if they're square.");
             static_assert(n != 4, "Tried to initialize a perspective matrix with a size != 4.");
             
@@ -48,10 +51,12 @@ namespace ic {
             value(3, 3) = 0.0f;
 
             value(3, 2) = -(2 * zFar * zNear) / range;           
-            value(2, 3) = -1.0f;            
+            value(2, 3) = -1.0f;
+
+            return *this;           
         }
 
-        void set_orthographic(float left, float right, float bottom, float top, float near, float far) {
+        Mat set_orthographic(float left, float right, float bottom, float top, float near, float far) {
             static_assert(!is_square(), "Orthographic matrices work if they're square.");
             static_assert(n != 4, "Tried to initialize an orthographic matrix with a size != 4.");
             
@@ -64,13 +69,15 @@ namespace ic {
             value(3, 0) = -(right + left) / (right - left);
             value(3, 1) = -(top + bottom) / (top - bottom);
             value(3, 2) = -(far + near) / (far - near);
+
+            return *this;
         }
-        void set_orthographic(float left, float right, float bottom, float top) {
-            set_orthographic(left, right, bottom, top, 0.1f, 1000.0f);
+        Mat set_orthographic(float left, float right, float bottom, float top) {
+            return set_orthographic(left, right, bottom, top, 0.1f, 1000.0f);
         }
 
 
-        void set_look_at(ic::Vec3f cameraPosition, ic::Vec3f lookingAt, ic::Vec3f up) {
+        Mat set_look_at(ic::Vec3f cameraPosition, ic::Vec3f lookingAt, ic::Vec3f up) {
             static_assert(!is_square(), "View matrices work if they're square.");
             static_assert(n != 4, "Tried to initialize a view matrix with a size != 4.");
             
@@ -95,29 +102,54 @@ namespace ic {
             value(3, 0) = -cameraXAxis.dot(cameraPosition);
             value(3, 1) = -cameraYAxis.dot(cameraPosition);
             value(3, 2) = -fwd.dot(cameraPosition);
+
+            return *this;
         }
 
-        void set_translation(ic::Vector<T, n - 1> by) {
+        template <std::size_t p>
+        Mat set_translation(ic::Vector<T, p> by) {
             identity();
 
-            for (int i = 0; i < n - 1; i++) {
+            for (int i = 0; i < p; i++) {
                 value(i, n - 1) = by[i];
             }
+
+            return *this;
         }
 
-        void set_scaling(ic::Vector<T, n - 1> by) {
+        template <std::size_t p>
+        Mat set_scaling(ic::Vector<T, p> by) {
             identity();
 
-            for (int i = 0; i < n - 1; i++) {
+            for (int i = 0; i < p; i++) {
                 value(i, i) = by[i];
             }
+
+            return *this;
         }
-        void set_scaling(T by) {
+
+        Mat set_scaling(T by) {
             identity();
 
             for (int i = 0; i < n - 1; i++) {
                 value(i, i) = by;
             }
+
+            return *this;
+        }
+
+        Mat set_rotation_z(float radians) {
+            identity();
+
+            value(0, 0) = ic::Mathf::get().cosf(radians);
+            value(1, 1) = ic::Mathf::get().cosf(radians);
+            value(0, 1) = -ic::Mathf::get().sinf(radians);
+            value(1, 0) = ic::Mathf::get().sinf(radians);
+
+            return *this;
+        }
+        Mat set_rotation(float radians) {
+            return set_rotation_z(radians);
         }
 
         /* Matrix-matrix multiplication. */
@@ -135,7 +167,7 @@ namespace ic {
 
                 float sum = 0.0f;
                 for (int j = 0; j < n; j++) {
-                    sum += values[row + j] * other[column + j * n];
+                    sum += values[column + j * n] * other[row + j];
                 }
                 result[i] = sum;
             }

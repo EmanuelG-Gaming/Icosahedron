@@ -41,25 +41,32 @@ int main(int argc, char *argv[]) {
 #include <Icosahedron/Core.h>
 
 class Example2 : public ic::Application {
-    ic::Batch2D *batch;
     ic::Texture<ic::T2D> *texture;
     ic::Shader *shader;
 
-    ic::RectangleShape *shape;
-    
+    ic::Mesh2D *shape;
+    ic::Vec2f shapePosition;
+
     public:
         bool init() override {
             displayName = "Example window";
+            
             return true;
         }
         
         bool load() override {
-            batch = new ic::Batch2D(1000, ic::TRIANGLES);
-            shape = new ic::RectangleShape();
+            shape = new ic::Mesh2D(ic::GeometryGenerator::get().generate_rectangle(0.2f, 0.2f));
+
+            shape->jump_attribute();
+            shape->add_attribute("textureCoords", 2, { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f });
+            shape->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+            shape->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
+
             texture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
-            shader = shaders.basicTextureShader2D;
+            shader = new ic::Shader(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D, false);
 
             inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
+            shapePosition = { 0.0f, 0.0f };
 
             return true;
         }
@@ -73,24 +80,25 @@ class Example2 : public ic::Application {
             ic::KeyboardController *controller = (ic::KeyboardController*) inputHandler.find_input("WASD");
             ic::Vec2i dir = controller->direction;
 
-            shape->r.position.x() += dir.x() * speed * dt;
-            shape->r.position.y() += dir.y() * speed * dt;
-
+            shapePosition.x() += dir.x() * speed * dt;
+            shapePosition.y() += dir.y() * speed * dt;
+            
+            shape->set_transformation(ic::Mat4x4().set_translation<2>(shapePosition));
 
             clear_color(ic::Colors::blue);
 
             shader->use();
             texture->use();
-            shape->draw(renderer, batch, ic::Colors::white);
-            batch->render();
-
+            shape->draw(shader);
+            
             return true; 
         }
 
         void dispose() override {
-            batch->dispose();
             texture->dispose();
             shader->clear();
+
+            shape->dispose();
         }
 };
 
@@ -122,12 +130,14 @@ class Example3 : public ic::Application {
     public:
         bool init() override {
             displayName = "Example window";
+            //scaling = ic::WindowScaling::fullscreen;
+
             return true;
         }
         
         bool load() override {
-            shader = shaders.basicTextureShader2D;
-            textShader = shaders.basicTextShader2D;
+            shader = new ic::Shader(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D, false);
+            textShader = new ic::Shader(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D, false);
 
             // We use the arial font
             ic::FreeType::get().add_atlas("score", "C:/Windows/Fonts/arial.ttf", 48);
@@ -340,12 +350,12 @@ struct Drop {
     ic::Rectangle hitbox;
 
     Drop() {
-        this->shape = new ic::PolygonShape(ic::GeometryGenerator::generate_regular_polygon(3));
+        this->shape = new ic::PolygonShape(ic::GeometryGenerator::get().generate_regular_polygon(3));
         this->hitbox = ic::Rectangle({ 0.0f, 0.0f }, { 0.8f, 0.8f });
     }
 
     Drop(ic::Vec2f position, int sides, float radius) {
-        this->shape = new ic::PolygonShape(ic::GeometryGenerator::generate_regular_polygon(sides, radius), position);
+        this->shape = new ic::PolygonShape(ic::GeometryGenerator::get().generate_regular_polygon(sides, radius), position);
         this->hitbox = ic::Rectangle(position, { radius - radius * 0.2f, radius - radius * 0.2f });
     }
 };
@@ -371,12 +381,14 @@ class Example4 : public ic::Application {
     public:
         bool init() override {
             displayName = "Example window";
+            //scaling = ic::WindowScaling::fullscreen;
+
             return true;
         }
         
         bool load() override {
-            shader = shaders.basicTextureShader2D;
-            textShader = shaders.basicTextShader2D;
+            shader = new ic::Shader(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D, false);
+            textShader = new ic::Shader(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D, false);
 
             camera = new ic::Camera2D(0.3f);
 
@@ -612,120 +624,59 @@ int main(int argc, char *argv[]) {
 }
 */
 
-/* Example5: Per-vertex colors for polygons. */
-/*
+/* Example5: Polygon example. Demonstrates the use of per-vertex colors, separate texturing (no atlas), matrix transformations, all in the same shader program. */
 #include <Icosahedron/Core.h>
 
 class Example5 : public ic::Application {
+    ic::Mesh2D *mesh1;
+    ic::Mesh2D *mesh2;
+    ic::Texture<ic::T2D> *texture, *whiteTexture;
     ic::Batch2D *batch;
-    ic::Shader *shader;
-    ic::Texture<ic::T2D> *texture;
 
-    ic::PolygonShape *shape1, *shape2;
-    float time;
-    ic::VertexArray array1, array2;
+    ic::Shader *shader, *batchShader;
+    float time = 0;
 
     public:
         bool init() override {
             displayName = "Example window";
-            return true;
-        }
-        
-        bool load() override {
-            shader = shaders.basicTextureShader2D;
-
-            batch = new ic::Batch2D(1000, ic::TRIANGLES);
-            shape1 = new ic::PolygonShape(
-                ic::GeometryGenerator::generate_regular_polygon(4, 0.3f), 
-                { ic::Colors::red, ic::Colors::green, ic::Colors::blue, ic::Colors::white },
-                { -0.25f, 0.0f }
-            );
-            shape2 = new ic::PolygonShape(
-                ic::GeometryGenerator::generate_regular_polygon(3, 0.3f), 
-                { ic::Colors::red, ic::Colors::green, ic::Colors::blue },
-                { 0.25f, 0.0f }
-            );
-            texture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
-
-            time = 0.0f;
-
-            return true;
-        }
-
-        bool handle_event(ic::Event event, float dt) override {
-            return true;
-        }
-    
-        bool update(float dt) override { 
-            time += dt;
-            shape1->poly.rotate(dt);
-
-            clear_color(ic::Colors::blue);
-
-            shader->use();
-
-            // How much should a polygon's vertex colors blend with the main color
-            // 0 means the polygon is not blended with the main color at all
-            // 1 means the polygon is fully blended with the main color
-            renderer.tint(1.0f);
-            shape1->draw(renderer, batch, ic::Colors::white);
-            renderer.tint(0.0f);
-            texture->use();
-            shape2->draw(renderer, batch, ic::Colors::white);
-            batch->render();
-
-            return true; 
-        }
-
-        void dispose() override {
-            batch->dispose();
-            shader->clear();
-            texture->dispose();
-        }
-};
-
-int main(int argc, char *argv[]) {
-    Example5 application;
-    
-    if (application.construct(640, 480)) {
-        application.start();
-    }
-
-    return 0;
-}
-*/
-
-#include <Icosahedron/Core.h>
-
-class Example5 : public ic::Application {
-    ic::Mesh2D *mesh;
-    ic::Texture<ic::T2D> *texture;
-    ic::Shader *shader;
-
-    public:
-        bool init() override {
-            displayName = "Example window";
-            scaling = ic::WindowScaling::resizeable;
+            scaling = ic::WindowScaling::fullscreen;
             
             return true;
         }
         
         bool load() override {
+            // Mesh 1
             std::vector<float> positions = ic::GeometryGenerator::get().generate_regular_polygon(7, 0.3f);
-
             std::vector<float> textureCoords = ic::GeometryGenerator::get().generate_UV_polygon(positions);
             std::vector<unsigned int> indices = ic::EarClippingTriangulation::get().triangulate(positions);
             
-            mesh = new ic::Mesh2D(positions);
+            mesh1 = new ic::Mesh2D(positions);
             // Jump past the color attribute
-            mesh->jump_attribute();
-            mesh->add_attribute("textureCoords", 2, textureCoords);
-            mesh->set_index_buffer(indices);
-            mesh->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
+            mesh1->jump_attribute();
+            mesh1->add_attribute("textureCoords", 2, textureCoords);
+            mesh1->set_index_buffer(indices);
+            mesh1->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
+            
+            // Mesh 2
+            std::vector<float> triangle = ic::GeometryGenerator::get().generate_regular_polygon(3, 0.3f);
+            
+            mesh2 = new ic::Mesh2D(triangle);
+            mesh2->add_attribute("color", 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue });
+            mesh2->set_index_buffer({ 0, 1, 2 });
+            mesh2->set_material(ic::MeshMaterial2D(ic::Colors::white, 0.2f));
+            mesh2->set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
+
 
             shader = new ic::Shader(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D, false);
+            batchShader = new ic::Shader(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D, false);
+
             texture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
-            
+            whiteTexture = new ic::Texture<ic::T2D>({"resources/textures/white.png"});
+
+            batch = new ic::Batch2D(1000, ic::TRIANGLES);
+            batch->add_vertex_buffer(2); // Position
+            batch->add_vertex_buffer(3); // Color
+            batch->add_vertex_buffer(2); // Texture coordinates
 
             return true;
         }
@@ -734,18 +685,46 @@ class Example5 : public ic::Application {
             return true;
         }
     
-        bool update(float dt) override { 
+        bool update(float dt) override {
+            time += dt;
             clear_color(ic::Colors::blue);
             
+            ic::Mat4x4 combined, scaling, rotation, translation;
+            scaling.set_scaling<2>({ ic::Mathf::get().sinf(time), ic::Mathf::get().cosf(time) });
+            rotation.set_rotation(time);
+            translation.set_translation<2>({ 0.35f, 0.0f });
+            
+            // Multiplying matrices together this way follows column-major notation, so
+            // translation * rotation * scaling is not the same as scaling * rotation * translation,
+            // even though the latter seems to be a logical approach (i.e. you scale, then rotate, then translate)
+            combined = translation * rotation * scaling;
+            mesh1->set_transformation(combined);
+            
+            shader->use();
             texture->use();
-            mesh->draw(shader);
+            mesh1->draw(shader);
+            whiteTexture->use();
+            mesh2->draw(shader);
+
+            batchShader->use();
+            renderer.draw_rectangle(batch, 0.0f, 0.0f, 0.2f, 0.2f, ic::Colors::red);
+            renderer.draw_rectangle(batch, 0.0f, 0.25f, 0.1f, 0.1f, ic::Colors::green);
+            renderer.draw_rectangle(batch, 0.5f, -0.4f, 0.4f, 0.4f, ic::Colors::cyan);
+            batch->render();
 
             return true; 
         }
 
         void dispose() {
             shader->clear();
+            batchShader->use();
+
             texture->dispose();
+            whiteTexture->dispose();
+
+            mesh1->dispose();
+            mesh2->dispose();
+            batch->dispose();
         }
 };
 

@@ -6,6 +6,7 @@
 #include <string>
 
 #include <Icosahedron/math/geom/Vectors.h>
+#include <Icosahedron/math/Matrices.h>
 
 #include <Icosahedron/graphics/gl/GL.h>
 #include <Icosahedron/graphics/gl/Shader.h>
@@ -17,7 +18,7 @@ namespace ic {
         float colorBlending;
         ic::Vec3f baseColor;
 
-        MeshMaterial2D() {}
+        MeshMaterial2D() : baseColor({1.0f, 1.0f, 1.0f}), colorBlending(0.0f) {}
         MeshMaterial2D(ic::Color baseColor, float colorBlending = 1.0f) : baseColor({ baseColor.r / 255.0f, baseColor.g / 255.0f, baseColor.b / 255.0f }), colorBlending(colorBlending) {}
     };
 
@@ -27,6 +28,9 @@ namespace ic {
             Mesh2D();
             /** @brief Constructs a mesh that has a position vertex attribute. */
             Mesh2D(std::vector<float> vertexPositions);
+
+            /** @brief Overrides the mesh's current model-level transformation matrix. */
+            void set_transformation(const ic::Mat4x4 &to);
 
             void set_material(ic::MeshMaterial2D newMaterial);
 
@@ -41,6 +45,7 @@ namespace ic {
             void unuse_attribute_definitions();
 
             void draw(ic::Shader *shader);
+            void dispose();
 
         protected:
             void upload_material(ic::Shader *shader, const ic::MeshMaterial2D &mat);
@@ -51,6 +56,8 @@ namespace ic {
 
             ic::VertexArray *vao = nullptr;
             ic::MeshMaterial2D material;
+
+            ic::Mat4x4 model;
     };
 }
 #endif

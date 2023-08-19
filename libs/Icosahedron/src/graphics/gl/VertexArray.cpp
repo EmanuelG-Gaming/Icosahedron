@@ -4,11 +4,12 @@ using namespace ic;
 
 ///// Drawable /////
 
-VertexArrayDrawable::VertexArrayDrawable(GLuint vao, GLsizei indicesUsed) : vao(vao), indicesUsed(indicesUsed) {
+VertexArrayDrawable::VertexArrayDrawable(GLuint vao, GLuint ibo, GLsizei indicesUsed) : vao(vao), ibo(ibo), indicesUsed(indicesUsed) {
 }
 
 void ic::VertexArrayDrawable::use() {
     glBindVertexArray(vao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 }
 void ic::VertexArrayDrawable::draw(GLPrimitives primitive) {
     glDrawElements(primitive, indicesUsed, GL_UNSIGNED_INT, nullptr);
@@ -28,7 +29,7 @@ VertexArray::VertexArray() {
 
 
 ic::VertexArrayDrawable ic::VertexArray::get_drawable() {
-    return ic::VertexArrayDrawable(vao, indicesUsed);
+    return ic::VertexArrayDrawable(vao, ibo, indicesUsed);
 }
 
 

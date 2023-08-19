@@ -34,6 +34,17 @@ public:
             return vertices;
         }
 
+        std::vector<float> generate_rectangle(float width, float height) {
+            std::vector<float> vertices = {
+                -width, height,
+                width, height,
+                width, -height,
+                -width, -height
+            };
+
+            return vertices;
+        }
+
         std::vector<float> generate_UV_polygon(const std::vector<float> &verts, float magnification = 1.0f) {
             float width = 0, height = 0;
 
@@ -69,6 +80,7 @@ public:
             }
             return textureCoords;
         }
+
 private:
         GeometryGenerator() {}
         ~GeometryGenerator() {}

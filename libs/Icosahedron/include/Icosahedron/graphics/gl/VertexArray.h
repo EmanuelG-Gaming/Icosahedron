@@ -12,7 +12,7 @@ namespace ic {
     /** @brief Drawn using a vertex array object with glDrawElements. */
     class VertexArrayDrawable final {
         public:
-            VertexArrayDrawable(GLuint vao, GLsizei indicesUsed);
+            VertexArrayDrawable(GLuint vao, GLuint ibo, GLsizei indicesUsed);
 
             void use();
             void draw(GLPrimitives primitive = TRIANGLES);
@@ -21,6 +21,7 @@ namespace ic {
 
         private:
             const GLuint vao = 0;
+            const GLuint ibo = 0;
             const GLsizei indicesUsed = 0;
     };
 

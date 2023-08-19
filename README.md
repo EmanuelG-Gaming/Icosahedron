@@ -1,7 +1,5 @@
 # Icosahedron
-A game engine.
-
-Uses SDL2, GLEW, FreeType 2.
+A game engine that uses OpenGL.
 
 # Library structure
 The following table's contents may be prone to change:
