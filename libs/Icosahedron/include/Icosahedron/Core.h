@@ -32,6 +32,8 @@ namespace ic {
 #include <Icosahedron/graphics/Colors.h>
 
 #include <Icosahedron/graphics/gl/GL.h>
+#include <Icosahedron/graphics/gl/GLStateHandler.h>
+
 #include <Icosahedron/graphics/gl/Shader.h>
 #include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/graphics/gl/Texture.h>
@@ -58,6 +60,10 @@ namespace ic {
 
 // Utilities
 #include <Icosahedron/util/GeometryGenerator.h>
+
+
+// Global
+#include <Icosahedron/Global.h>
 
 // Renderer
 #include <Icosahedron/Renderer.h>

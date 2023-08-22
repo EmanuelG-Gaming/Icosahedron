@@ -5,37 +5,7 @@ using namespace ic;
 void Renderer::draw_rectangle(ic::Batch2D *batch, float x, float y, float width, float height, const ic::Color &color) {
     float x1 = x - width, y1 = y - height;
     float x2 = x + width, y2 = y + height;
-
-    std::vector<float> positions = {
-        x1, y2,
-        x2, y2,
-        x2, y1,
-        x1, y1
-    };
-
-    std::vector<ic::Color> colors = {
-        color, color, color, color
-    };
-
-    std::vector<float> textureCoords = {
-        0.0f, 1.0f,
-        1.0f, 1.0f,
-        1.0f, 0.0f,
-        0.0f, 0.0f
-    };
-
-    std::vector<unsigned int> indices = {
-        0, 1, 2,
-        0, 2, 3
-    };
-
-    batch->add_vertex_data(0, positions);
-    batch->add_vertex_data(1, colors);
-    batch->add_vertex_data(2, textureCoords);
-
-    batch->add_indices(indices);
-    
-    /*
+     
     std::vector<BatchVertex> vertices = {
         BatchVertex(x1, y1, 0.0f, 1.0f, color),
         BatchVertex(x2, y2, 1.0f, 0.0f, color),
@@ -47,9 +17,8 @@ void Renderer::draw_rectangle(ic::Batch2D *batch, float x, float y, float width,
     };
 
     batch->add(vertices);
-    */
 }
-/*
+
 void Renderer::draw_rectangle(ic::Batch2D *batch, AtlasEntry entry, float x, float y, float width, float height, const ic::Color &color) {
     float x1 = x - width, y1 = y - height;
     float x2 = x + width, y2 = y + height;
@@ -250,4 +219,3 @@ void Renderer::draw_string_itself(ic::Batch2D *batch, ic::TextAtlas *textAtlas, 
 void Renderer::tint(float amount) {
     tinting = amount;
 }
-*/

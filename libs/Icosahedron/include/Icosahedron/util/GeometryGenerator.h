@@ -44,7 +44,7 @@ public:
 
             return vertices;
         }
-
+        
         std::vector<float> generate_UV_polygon(const std::vector<float> &verts, float magnification = 1.0f) {
             float width = 0, height = 0;
 

@@ -8,7 +8,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
+#include <Icosahedron/Global.h>
+
 #include <Icosahedron/graphics/Color.h>
+
+#include <Icosahedron/graphics/gl/GLStateHandler.h>
 #include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/input/Input.h>
 #include <Icosahedron/input/InputHandler.h>
@@ -65,6 +69,7 @@ namespace ic {
             ic::WindowScaling scaling = ic::WindowScaling::fixed;
 
             ic::InputHandler inputHandler;
+            ic::GLStateHandler states;
             ic::Shaders shaders;
             ic::Renderer renderer;
 

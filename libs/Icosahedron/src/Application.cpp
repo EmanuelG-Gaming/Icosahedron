@@ -4,6 +4,9 @@
 #include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/math/Mathf.h>
 
+int IC_WINDOW_WIDTH = 0;
+int IC_WINDOW_HEIGHT = 0;
+
 void ic::Application::clear_color() {
     clear_color(0.0f, 0.0f, 0.0f);
 }
@@ -24,6 +27,9 @@ void ic::Application::clear_color(const ic::Color &color) {
 bool ic::Application::construct(int w, int h) {
     width = w;
     height = h;
+
+    IC_WINDOW_WIDTH = width;
+    IC_WINDOW_HEIGHT = height;
 
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
@@ -124,6 +130,9 @@ void ic::Application::start() {
 
                         width = w;
                         height = h;
+                        IC_WINDOW_WIDTH = width;
+                        IC_WINDOW_HEIGHT = height;
+                        
                         glViewport(0, 0, width, height);
                         //std::cout << width << " " << height << "\n";
                     }

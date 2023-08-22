@@ -18,7 +18,8 @@ The rest of the files that may not belong to the folders mentioned above are `Ap
 
 - `Application` is the starting point for an usual application made with Icosahedron;
 - `Core` contains include paths to almost all the headers of this library;
-- `Renderer` has functions for rendering geometry.
+- `Renderer` has functions for rendering geometry;
+- `Global` provides entry for global-scope variables, like the window size via `IC_WINDOW_WIDTH` and `IC_WINDOW_HEIGHT`.
 
 # Building the code:
 For some, this can be pretty straightforward, but here it is:

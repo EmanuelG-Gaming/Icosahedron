@@ -1,6 +1,8 @@
 #ifndef IC_CAMERA_2D_H
 #define IC_CAMERA_2D_H
 
+#include <Icosahedron/Global.h>
+
 #include <Icosahedron/math/geom/Vectors.h>
 #include <Icosahedron/math/Matrices.h>
 
@@ -30,6 +32,9 @@ namespace ic {
         
         protected:
             ic::Mat4x4 projection;
+            ic::Mat4x4 aspectRatioCorrection;
+
+            const int &width, &height;
     };
 }
 #endif

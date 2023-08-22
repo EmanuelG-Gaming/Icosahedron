@@ -38,8 +38,8 @@ namespace ic {
         }
 
         Mat set_perspective(float fovDegrees, float zNear, float zFar, float aspectRatio) {
-            static_assert(!is_square(), "Perspective matrices work if they're square.");
-            static_assert(n != 4, "Tried to initialize a perspective matrix with a size != 4.");
+            //static_assert(is_square(), "Perspective matrices work if they're square.");
+            static_assert(n == 4, "Tried to initialize a perspective matrix with a size != 4.");
             
             float fovR = float(1.0f / tan(fovDegrees * (M_PI / 180.0f) / 2.0f));           
             float range = zFar - zNear;
@@ -57,8 +57,8 @@ namespace ic {
         }
 
         Mat set_orthographic(float left, float right, float bottom, float top, float near, float far) {
-            static_assert(!is_square(), "Orthographic matrices work if they're square.");
-            static_assert(n != 4, "Tried to initialize an orthographic matrix with a size != 4.");
+            //static_assert(is_square(), "Orthographic matrices work if they're square.");
+            static_assert(n == 4, "Tried to initialize an orthographic matrix with a size != 4.");
             
             identity();
            
@@ -78,8 +78,8 @@ namespace ic {
 
 
         Mat set_look_at(ic::Vec3f cameraPosition, ic::Vec3f lookingAt, ic::Vec3f up) {
-            static_assert(!is_square(), "View matrices work if they're square.");
-            static_assert(n != 4, "Tried to initialize a view matrix with a size != 4.");
+            //static_assert(is_square(), "View matrices work if they're square.");
+            static_assert(n == 4, "Tried to initialize a view matrix with a size != 4.");
             
             ic::Vec3f fwd = (cameraPosition - lookingAt).nor();                
             ic::Vec3f cameraXAxis = fwd.crs(up).nor();
@@ -87,17 +87,17 @@ namespace ic {
            
             identity();
            
-            value(0, 0) = cameraXAxis.x;
-            value(1, 0) = cameraXAxis.y;
-            value(2, 0) = cameraXAxis.z;
-     
-            value(0, 1) = cameraYAxis.x;
-            value(1, 1) = cameraYAxis.y;
-            value(2, 1) = cameraYAxis.z;
+            value(0, 0) = cameraXAxis.x();
+            value(1, 0) = cameraXAxis.y();
+            value(2, 0) = cameraXAxis.z();
 
-            value(0, 2) = fwd.x;
-            value(1, 2) = fwd.y;
-            value(2, 2) = fwd.z;
+            value(0, 1) = cameraYAxis.x();
+            value(1, 1) = cameraYAxis.y();
+            value(2, 1) = cameraYAxis.z();
+
+            value(0, 2) = fwd.x();
+            value(1, 2) = fwd.y();
+            value(2, 2) = fwd.z();
            
             value(3, 0) = -cameraXAxis.dot(cameraPosition);
             value(3, 1) = -cameraYAxis.dot(cameraPosition);

@@ -6,7 +6,14 @@
 
 #include <Icosahedron/graphics/gl/Shader.h>
 
+
+/** @brief Appends the GLSL version to the shader code.
+  * Also removes the need to add quotation marks at each line of code.
+*/
+#define IC_ADD_GLSL_DEFINITION(string) "#version 330 core\n" #string
+
 namespace ic {
+
     /** @brief OpenGL shader presets. */
     class Shaders {
         public:
@@ -23,104 +30,127 @@ namespace ic {
                     meshShaderFrag2D;
 
         void load_shaders() {
-            basicShaderVertex2D = 
-                "#version 330 core\n"
-                "layout (location = 0) in vec2 position;\n"
-                "layout (location = 1) in vec3 color;\n"
-                "layout (location = 2) in vec2 tCoords;\n"
-                "uniform mat4 projection;\n"
-                "uniform int useCamera;\n"
-                "out vec3 vColor;\n"
-                "out vec2 vTCoords;\n"
-                "void main(){\n"
-                "vColor = color;\n"
-                "vTCoords = tCoords;\n"
-                "vec4 pos = vec4(position, 0.0, 1.0);\n"
-                "if (useCamera == 1) {\n"
-                "pos = projection * pos;\n"
-                "}\n"
-                "gl_Position = pos;\n"
-                "}\n"; 
-           
+            basicShaderVertex2D = IC_ADD_GLSL_DEFINITION(
+                layout (location = 0) in vec2 position;
+                layout (location = 1) in vec3 color;
+                layout (location = 2) in vec2 tCoords;
 
-            basicShaderFrag2D = 
-                "#version 330 core\n"
-                "precision mediump float;\n"
-                "in vec3 vColor;\n"
-                "out vec4 outColor;\n"
-                "void main(){\n"
-                "outColor = vec4(vColor, 1.0);\n"
-                "}\n";
-        
+                uniform mat4 projection;
+                uniform int useCamera;
+
+                out vec3 vColor;
+                out vec2 vTCoords;
+
+                void main() {
+                    vColor = color;
+                    vTCoords = tCoords;
+                    vec4 pos = vec4(position, 0.0, 1.0);
+
+                    if (useCamera == 1) {
+                        pos = projection * pos;
+                    }
+
+                    gl_Position = pos;
+                }
+            );
+
+            basicShaderFrag2D = IC_ADD_GLSL_DEFINITION(
+                precision mediump float;
+
+                in vec3 vColor;
+                out vec4 outColor;
+
+                void main() {
+                    outColor = vec4(vColor, 1.0);
+                }
+            );
 
         
             basicTextureShaderVertex2D = basicShaderVertex2D;
-            basicTextureShaderFrag2D =
-                "#version 330 core\n"
-                "precision mediump float;\n"
-                "in vec3 vColor;\n"
-                "in vec2 vTCoords;\n"
-                "uniform sampler2D sampleTexture;\n"
-                "out vec4 outColor;\n"
-                "void main(){\n"
-                "vec4 color = texture(sampleTexture, vTCoords);\n"
-                "if (color.a <= 0.2) discard;\n"
-                "outColor = color * vec4(vColor, 1.0);\n"
-                "}\n";
+            basicTextureShaderFrag2D = IC_ADD_GLSL_DEFINITION(
+                precision mediump float;
+
+                in vec3 vColor;
+                in vec2 vTCoords;
+
+                uniform sampler2D sampleTexture;
+
+                out vec4 outColor;
+
+                void main() {
+                    vec4 color = texture(sampleTexture, vTCoords);
+                    if (color.a <= 0.1) discard;
+                    outColor = color * vec4(vColor, 1.0);
+                }
+            );
 
             basicTextShaderVertex2D = basicShaderVertex2D;
-            basicTextShaderFrag2D =
-                "#version 330 core\n"
-                "precision mediump float;\n"
-                "in vec3 vColor;\n"
-                "in vec2 vTCoords;\n"
-                "uniform sampler2D sampleTexture;\n"
-                "out vec4 outColor;\n"
-                "void main(){\n"
-                "vec4 color = texture(sampleTexture, vTCoords);\n"
-                "if (color.r <= 0.2) discard;\n"
-                "outColor = vec4(color.r, color.r, color.r, 1.0) * vec4(vColor, 1.0);\n"
-                "}\n";
-            
+            basicTextShaderFrag2D = IC_ADD_GLSL_DEFINITION(
+                precision mediump float;
 
-            meshShaderVertex2D =
-                "#version 330 core\n"
-                "layout (location = 0) in vec2 position;\n"
-                "layout (location = 1) in vec3 color;\n"
-                "layout (location = 2) in vec2 tCoords;\n"
-                "uniform mat4 projection;\n"
-                "uniform mat4 model = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);\n"
-                "uniform int useCamera;\n"
-                "out vec3 vColor;\n"
-                "out vec2 vTCoords;\n"
-                "void main(){\n"
-                "vColor = color;\n"
-                "vTCoords = tCoords;\n"
-                "vec4 pos = model * vec4(position, 0.0, 1.0);\n"
-                "if (useCamera == 1) {\n"
-                "pos = projection * pos;\n"
-                "}\n"
-                "gl_Position = pos;\n"
-                "}\n";
-            meshShaderFrag2D =
-                "#version 330 core\n"
-                "precision mediump float;\n"
-                "struct Material {\n"
-                "float colorBlending;\n"
-                "vec3 baseColor;\n"
-                "};\n"
+                in vec3 vColor;
+                in vec2 vTCoords;
+
+                uniform sampler2D sampleTexture;
+
+                out vec4 outColor;
+
+                void main() {
+                    vec4 color = texture(sampleTexture, vTCoords);
+                    if (color.r <= 0.1) discard;
+                    outColor = vec4(color.r, color.r, color.r, 1.0) * vec4(vColor, 1.0);
+                }
+            );
+
+            meshShaderVertex2D = IC_ADD_GLSL_DEFINITION(
+                layout (location = 0) in vec2 position;
+                layout (location = 1) in vec3 color;
+                layout (location = 2) in vec2 tCoords;
+
+                uniform mat4 projection;
+                uniform mat4 model = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+                uniform int useCamera;
                 
-                "in vec3 vColor;\n"
-                "in vec2 vTCoords;\n"
-                "uniform Material material;\n"
-                "uniform sampler2D sampleTexture;\n"
-                "out vec4 outColor;\n"
-                "void main(){\n"
-                "vec4 c = mix(vec4(vColor, 1.0), vec4(material.baseColor, 1.0), material.colorBlending);\n"
-                "vec4 color = texture(sampleTexture, vTCoords);\n"
-                "if (color.a <= 0.2) discard;\n"
-                "outColor = color * c;\n"
-                "}\n";
+                out vec3 vColor;
+                out vec2 vTCoords;
+
+                void main() {
+                    vColor = color;
+                    vTCoords = tCoords;
+                    vec4 pos = model * vec4(position, 0.0, 1.0);
+
+                    if (useCamera == 1) {
+                        pos = projection * pos;
+                    }
+
+                    gl_Position = pos;
+                }
+            );
+
+            meshShaderFrag2D = IC_ADD_GLSL_DEFINITION(
+                precision mediump float;
+
+                struct Material {
+                    float colorBlending;
+                    vec3 baseColor;
+                };
+            
+                in vec3 vColor;
+                in vec2 vTCoords;
+
+                uniform Material material;
+                uniform sampler2D sampleTexture;
+
+                out vec4 outColor;
+
+                void main() {
+                    vec4 c = mix(vec4(vColor, 1.0), vec4(material.baseColor, 1.0), material.colorBlending);
+                    vec4 color = texture(sampleTexture, vTCoords);
+                    if (color.a <= 0.1) discard;
+
+                    outColor = color * c;
+                }
+            );
         }
     };
 }

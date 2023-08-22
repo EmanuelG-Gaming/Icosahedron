@@ -625,21 +625,20 @@ int main(int argc, char *argv[]) {
 */
 
 /* Example5: Polygon example. Demonstrates the use of per-vertex colors, separate texturing (no atlas), matrix transformations, all in the same shader program. */
+/*
 #include <Icosahedron/Core.h>
 
 class Example5 : public ic::Application {
     ic::Mesh2D *mesh1;
     ic::Mesh2D *mesh2;
     ic::Texture<ic::T2D> *texture, *whiteTexture;
-    ic::Batch2D *batch;
-
-    ic::Shader *shader, *batchShader;
+    
+    ic::Shader *shader;
     float time = 0;
 
     public:
         bool init() override {
             displayName = "Example window";
-            scaling = ic::WindowScaling::fullscreen;
             
             return true;
         }
@@ -668,15 +667,9 @@ class Example5 : public ic::Application {
 
 
             shader = new ic::Shader(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D, false);
-            batchShader = new ic::Shader(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D, false);
-
+            
             texture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
             whiteTexture = new ic::Texture<ic::T2D>({"resources/textures/white.png"});
-
-            batch = new ic::Batch2D(1000, ic::TRIANGLES);
-            batch->add_vertex_buffer(2); // Position
-            batch->add_vertex_buffer(3); // Color
-            batch->add_vertex_buffer(2); // Texture coordinates
 
             return true;
         }
@@ -706,30 +699,127 @@ class Example5 : public ic::Application {
             whiteTexture->use();
             mesh2->draw(shader);
 
-            batchShader->use();
-            renderer.draw_rectangle(batch, 0.0f, 0.0f, 0.2f, 0.2f, ic::Colors::red);
-            renderer.draw_rectangle(batch, 0.0f, 0.25f, 0.1f, 0.1f, ic::Colors::green);
-            renderer.draw_rectangle(batch, 0.5f, -0.4f, 0.4f, 0.4f, ic::Colors::cyan);
-            batch->render();
-
             return true; 
         }
 
         void dispose() {
             shader->clear();
-            batchShader->use();
-
+            
             texture->dispose();
             whiteTexture->dispose();
 
             mesh1->dispose();
             mesh2->dispose();
-            batch->dispose();
         }
 };
 
 int main(int argc, char *argv[]) {
     Example5 application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}
+*/
+
+/** Example6: */
+#include <Icosahedron/Core.h>
+
+class Example6 : public ic::Application {
+    ic::Mesh2D *woodMesh, *opacityMesh;
+    ic::Texture<ic::T2D> *woodTexture, *opacityTexture;
+    ic::Shader *shader;
+    ic::Camera2D *camera;
+
+    float rotation;
+
+    public:
+        bool init() override {
+            displayName = "Example window";
+            scaling = ic::WindowScaling::resizeable;
+
+            return true;
+        }
+        
+        bool load() override {
+            // Can you see what happens when you disable the blending?
+            states.enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
+            
+            auto positions = ic::GeometryGenerator::get().generate_rectangle(0.5f, 0.5f);
+
+            woodMesh = new ic::Mesh2D(positions);
+            woodMesh->jump_attribute();
+            woodMesh->add_attribute("textureCoords", 2, { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f });
+            woodMesh->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+            woodMesh->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
+
+            opacityMesh = new ic::Mesh2D(positions);
+            opacityMesh->jump_attribute();
+            opacityMesh->add_attribute("textureCoords", 2, { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f });
+            opacityMesh->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+            opacityMesh->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
+
+            shader = new ic::Shader(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D, false);
+            woodTexture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
+            opacityTexture = new ic::Texture<ic::T2D>({"resources/textures/side-alpha.png"});
+
+            inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
+            
+            camera = new ic::Camera2D(1.0f);
+            rotation = 0.0f;
+
+            return true;
+        }
+
+        bool handle_event(ic::Event event, float dt) override { 
+            return true;
+        }
+    
+        bool update(float dt) override { 
+            rotation += dt;
+
+            float speed = 3.0f;
+            ic::KeyboardController *controller = (ic::KeyboardController*) inputHandler.find_input("WASD");
+            ic::Vec2i dir = controller->direction;
+
+            camera->position.x() += dir.x() * speed * dt;
+            camera->position.y() += dir.y() * speed * dt;
+
+
+
+
+            clear_color(ic::Colors::blue);
+
+            
+            woodMesh->set_transformation(ic::Mat4x4().set_rotation(rotation));
+            opacityMesh->set_transformation(ic::Mat4x4().set_rotation(rotation));
+
+            shader->use();
+            camera->use(shader);
+            
+            woodTexture->use();
+            woodMesh->draw(shader);
+            opacityTexture->use();
+            opacityMesh->draw(shader);
+
+            return true; 
+        }
+
+        void dispose() override {
+            shader->clear();
+
+            woodMesh->dispose();
+            woodTexture->dispose();
+
+            opacityMesh->dispose();
+            opacityTexture->dispose();
+        }
+};
+
+int main(int argc, char *argv[]) {
+    Example6 application;
 
     if (application.construct(640, 480)) {
         application.start();

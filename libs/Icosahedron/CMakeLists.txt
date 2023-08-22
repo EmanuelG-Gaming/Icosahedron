@@ -23,6 +23,8 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/GL.h
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/GLStateHandler.h
+    
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Shader.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Shaders.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Texture.h
@@ -46,16 +48,16 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Mesh2D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Camera2D.h
 
-    
-
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Camera3D.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/Global.h
     ${LIBRARY_HEADERS_DIRECTORY}/Application.h
     ${LIBRARY_HEADERS_DIRECTORY}/Core.h
 )
 
 set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/GLStateHandler.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Shader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/VertexArray.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Batch.cpp
@@ -69,6 +71,8 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/PolygonShape.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Mesh2D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Camera2D.cpp
+
+    ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Camera3D.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/input/KeyboardController.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/input/InputHandler.cpp

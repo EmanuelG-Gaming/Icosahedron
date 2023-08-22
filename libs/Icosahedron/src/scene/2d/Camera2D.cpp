@@ -2,27 +2,29 @@
 
 using namespace ic;
 
-Camera2D::Camera2D() {
+Camera2D::Camera2D() : width(IC_WINDOW_WIDTH), height(IC_WINDOW_HEIGHT) {
     this->position = { 0.0f, 0.0f };
     this->scale = 1.0f;
 }
-Camera2D::Camera2D(ic::Vec2f position, float scale) {
+Camera2D::Camera2D(ic::Vec2f position, float scale) : Camera2D() {
     this->position = position;
     this->scale = scale;
 }
-Camera2D::Camera2D(float scale) {
+Camera2D::Camera2D(float scale) : Camera2D() {
     this->position = { 0.0f, 0.0f };
     this->scale = scale;
 }
 
 void Camera2D::use(ic::Shader *shader) {
-    ic::Mat4x4 scaling;
+    ic::Mat4x4 translation, scaling;
     ic::Vec3f pos = { position.x(), position.y(), 0.0f };
+    float aspect = this->width / (float) this->height;
 
     scaling.set_scaling(this->scale);
-    projection.set_translation((pos * -1));
+    translation.set_translation((pos * -1));
+    this->aspectRatioCorrection.set_orthographic(-aspect, aspect, -1, 1);
 
-    projection = projection * scaling;
+    projection = this->aspectRatioCorrection * translation * scaling;
     
     shader->set_uniform_mat4("projection", projection);
     shader->set_uniform_bool("useCamera", true);
