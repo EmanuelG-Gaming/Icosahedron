@@ -50,8 +50,8 @@ namespace ic {
             value(2, 2) = -(zFar + zNear) / range; 
             value(3, 3) = 0.0f;
 
-            value(3, 2) = -(2 * zFar * zNear) / range;           
-            value(2, 3) = -1.0f;
+            value(2, 3) = -(2 * zFar * zNear) / range;           
+            value(3, 2) = -1.0f;
 
             return *this;           
         }
@@ -88,20 +88,20 @@ namespace ic {
             identity();
            
             value(0, 0) = cameraXAxis.x();
-            value(1, 0) = cameraXAxis.y();
-            value(2, 0) = cameraXAxis.z();
+            value(0, 1) = cameraXAxis.y();
+            value(0, 2) = cameraXAxis.z();
 
-            value(0, 1) = cameraYAxis.x();
+            value(1, 0) = cameraYAxis.x();
             value(1, 1) = cameraYAxis.y();
-            value(2, 1) = cameraYAxis.z();
+            value(1, 2) = cameraYAxis.z();
 
-            value(0, 2) = fwd.x();
-            value(1, 2) = fwd.y();
+            value(2, 0) = fwd.x();
+            value(2, 1) = fwd.y();
             value(2, 2) = fwd.z();
            
-            value(3, 0) = -cameraXAxis.dot(cameraPosition);
-            value(3, 1) = -cameraYAxis.dot(cameraPosition);
-            value(3, 2) = -fwd.dot(cameraPosition);
+            value(0, 3) = -cameraXAxis.dot(cameraPosition);
+            value(1, 3) = -cameraYAxis.dot(cameraPosition);
+            value(2, 3) = -fwd.dot(cameraPosition);
 
             return *this;
         }

@@ -41,13 +41,15 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/input/Input.h
     ${LIBRARY_HEADERS_DIRECTORY}/input/InputHandler.h
     ${LIBRARY_HEADERS_DIRECTORY}/input/KeyboardController.h
-    
+    ${LIBRARY_HEADERS_DIRECTORY}/input/MouseController.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Shape2D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/RectangleShape.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/PolygonShape.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Mesh2D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Camera2D.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Mesh3D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Camera3D.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/Global.h
@@ -72,9 +74,11 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Mesh2D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Camera2D.cpp
 
+    ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Mesh3D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Camera3D.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/input/KeyboardController.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/input/MouseController.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/input/InputHandler.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/Application.cpp

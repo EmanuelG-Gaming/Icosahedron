@@ -51,7 +51,7 @@ namespace ic {
             CameraSettings settings;
 
             ic::Mat4x4 viewMatrix, projectionMatrix;
-
+           
             /** The projection matrix multiplied by the view matrix. */
             ic::Mat4x4 combined;
     };

@@ -725,6 +725,7 @@ int main(int argc, char *argv[]) {
 */
 
 /** Example6: */
+/*
 #include <Icosahedron/Core.h>
 
 class Example6 : public ic::Application {
@@ -738,7 +739,7 @@ class Example6 : public ic::Application {
     public:
         bool init() override {
             displayName = "Example window";
-            scaling = ic::WindowScaling::resizeable;
+            scaling = ic::WindowScaling::fullscreen;
 
             return true;
         }
@@ -747,17 +748,18 @@ class Example6 : public ic::Application {
             // Can you see what happens when you disable the blending?
             states.enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
             
-            auto positions = ic::GeometryGenerator::get().generate_rectangle(0.5f, 0.5f);
+            auto positions = ic::GeometryGenerator::get().generate_rectangle(100.0f, 100.0f);
+            auto textureCoords = ic::GeometryGenerator::get().generate_UV_rectangle(100.0f, 100.0f);
 
             woodMesh = new ic::Mesh2D(positions);
             woodMesh->jump_attribute();
-            woodMesh->add_attribute("textureCoords", 2, { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f });
+            woodMesh->add_attribute("textureCoords", 2, textureCoords);
             woodMesh->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
             woodMesh->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
 
             opacityMesh = new ic::Mesh2D(positions);
             opacityMesh->jump_attribute();
-            opacityMesh->add_attribute("textureCoords", 2, { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f });
+            opacityMesh->add_attribute("textureCoords", 2, textureCoords);
             opacityMesh->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
             opacityMesh->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
 
@@ -765,9 +767,13 @@ class Example6 : public ic::Application {
             woodTexture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
             opacityTexture = new ic::Texture<ic::T2D>({"resources/textures/side-alpha.png"});
 
+            ic::MouseController *mouse = new ic::MouseController();
+            mouse->add_mouse_up_action([this](){ rotation += ic::Mathf::get().pi * 2 / 5.0f; });
+
             inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
-            
-            camera = new ic::Camera2D(1.0f);
+            inputHandler.add_input(mouse, "mouse");
+
+            camera = new ic::Camera2D(0.5f);
             rotation = 0.0f;
 
             return true;
@@ -778,17 +784,15 @@ class Example6 : public ic::Application {
         }
     
         bool update(float dt) override { 
-            rotation += dt;
+            //rotation += dt;
 
             float speed = 3.0f;
-            ic::KeyboardController *controller = (ic::KeyboardController*) inputHandler.find_input("WASD");
-            ic::Vec2i dir = controller->direction;
+            auto controller = inputHandler.find_keyboard("WASD");
+            ic::Vec2i dir = controller->get_direction();
 
             camera->position.x() += dir.x() * speed * dt;
             camera->position.y() += dir.y() * speed * dt;
-
-
-
+            
 
             clear_color(ic::Colors::blue);
 
@@ -820,6 +824,178 @@ class Example6 : public ic::Application {
 
 int main(int argc, char *argv[]) {
     Example6 application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}
+*/
+
+#include <Icosahedron/Core.h>
+
+class Example7 : public ic::Application {
+    ic::Shader *blinnPhongShader;
+    ic::Camera3D *camera;
+    ic::Mesh3D *mesh;
+    ic::Texture<ic::T2D> *woodTexture;
+
+    float time;
+    float rotationX, rotationY;
+    public:
+        bool init() override {
+            displayName = "Example window";
+            scaling = ic::WindowScaling::resizeable;
+
+            return true;
+        }
+        
+        bool load() override {
+            states.enable_depth_testing(ic::LESS);
+            states.enable_face_culling(ic::FRONT, ic::CCW);
+
+            mesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_cube(0.5f));
+            mesh->jump_attribute();
+            mesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped());
+            mesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
+            mesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
+            
+            std::string blinnPhongFragment = IC_ADD_GLSL_DEFINITION(
+                precision mediump float;
+                
+                in vec3 vPosition;
+                in vec2 vTCoords;
+                in vec3 vNormal;
+
+                struct PointLight {
+                    vec3 position;
+
+                    float constant;
+                    float linear;
+                    float quadratic;
+                };
+
+                const PointLight l = PointLight(vec3(0.0, 2.0, 1.0), 1.0, 0.09, 0.032);
+                
+                uniform sampler2D sampleTexture;
+                uniform vec3 viewPosition;
+
+                out vec4 outColor;
+
+                vec4 compute_lighting(PointLight light) {
+                    float distance = length(light.position - vPosition);
+                    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+
+
+                    vec3 normal = normalize(vNormal);
+                    vec3 lightDirection = normalize(light.position - vPosition);
+                    vec3 viewDirection = normalize(vPosition);
+                    float dotProduct = dot(lightDirection, normal);
+
+                    // Ambient reflection (indirect illumination approximation)
+                    float ambientIntensity = 0.05 * attenuation;
+                    vec4 ambientColor = vec4(ambientIntensity, ambientIntensity, ambientIntensity, 1.0);
+
+                    // Diffuse reflection
+                    float diffuseIntensity = clamp(dotProduct, 0.0, 1.0) * attenuation;
+                    vec4 diffuseColor = texture(sampleTexture, vTCoords);
+                    if (diffuseColor.a <= 0.1) diffuseColor = vec4(0.0, 0.0, 0.0, 0.0);
+                    diffuseColor *= diffuseIntensity;
+
+                    // Specular reflection
+                    vec3 reflectDirection = normalize(lightDirection + viewDirection); // Blinn-Phong reflection
+                    //vec3 reflectDirection = reflect(-lightDirection, normal); // Basic Phong reflection
+                    float specularIntensity = pow(max(dot(viewDirection, reflectDirection), 0.0), (0.2 * 128.0) / 4.0) * attenuation;
+                    vec4 specularColor = vec4(specularIntensity, specularIntensity, specularIntensity, 1.0);
+
+                    vec4 result = ambientColor + diffuseColor + specularColor;
+
+                    return result;
+                }
+
+                void main() {
+                    vec4 color = compute_lighting(l);
+                    outColor = color;
+                }
+            );
+
+            blinnPhongShader = new ic::Shader(shaders.meshShaderVertex3D, blinnPhongFragment, false);
+            woodTexture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
+            
+
+            camera = new ic::Camera3D();
+            camera->position = { -3.0f, 1.0f, 0.0f };
+            camera->lookingAt = { 0.0f, 1.0f, 3.0f };
+
+            inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
+            inputHandler.add_input(new ic::MouseController(), "mouse");
+
+            time = 0.0f;
+            rotationX = rotationY = 0.0f;
+
+            return true;
+        }
+
+        bool handle_event(ic::Event event, float dt) override { 
+            return true;
+        }
+    
+        bool update(float dt) override {
+            time += dt;
+
+            float speed = 3.0f, sensitivity = 0.01f;
+            auto controller = inputHandler.find_keyboard("WASD");
+            auto mouse = inputHandler.find_mouse("mouse");
+
+            ic::Vec2i dir = controller->get_direction();
+            ic::Vec2i offset = mouse->get_relative_motion();
+
+            camera->position.x() += dir.x() * speed * dt;
+            camera->position.z() += dir.y() * speed * dt;
+            rotationX -= offset.x() * sensitivity;
+            rotationY -= offset.y() * sensitivity;
+
+            if (rotationX > 2 * M_PI) rotationX = 0;
+            if (rotationX < 0) rotationX = 2 * M_PI;
+               
+            if (rotationY > (89.0f / 180.0f * M_PI)) rotationY = (89.0f / 180.0f * M_PI);
+            if (rotationY < -(89.0f / 180.0f * M_PI)) rotationY = -(89.0f / 180.0f * M_PI);
+              
+            //camera->lookingAt.x() = camera->position.x() + cos(rotationX) * cos(rotationY);
+            //camera->lookingAt.y() = camera->position.y() + sin(rotationY);
+            //camera->lookingAt.z() = camera->position.z() + sin(rotationX) * cos(rotationY);
+            
+            camera->update();
+            
+            clear_color(ic::Colors::blue);
+            blinnPhongShader->use();
+            woodTexture->use();
+            camera->upload_to_shader(blinnPhongShader);
+            blinnPhongShader->set_uniform_vec3f("viewPosition", camera->position);
+
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    float x = i * 2.0f;
+                    float z = j * 2.0f;
+
+                    mesh->set_transformation(ic::Mat4x4().set_translation<3>({ x, 0.0f, z }));
+                    mesh->draw(blinnPhongShader);
+                }
+            }
+
+            return true; 
+        }
+
+        void dispose() override {
+            blinnPhongShader->clear();
+            mesh->dispose();
+            woodTexture->dispose();
+        }
+};
+
+int main(int argc, char *argv[]) {
+    Example7 application;
 
     if (application.construct(640, 480)) {
         application.start();

@@ -47,6 +47,7 @@ namespace ic {
 // Input
 #include <Icosahedron/input/Input.h>
 #include <Icosahedron/input/KeyboardController.h>
+#include <Icosahedron/input/MouseController.h>
 #include <Icosahedron/input/InputHandler.h>
 
 // Scene
@@ -56,6 +57,7 @@ namespace ic {
 #include <Icosahedron/scene/2d/Mesh2D.h>
 #include <Icosahedron/scene/2d/Camera2D.h>
 
+#include <Icosahedron/scene/3d/Mesh3D.h>
 #include <Icosahedron/scene/3d/Camera3D.h>
 
 // Utilities

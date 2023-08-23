@@ -24,13 +24,13 @@ void Camera2D::use(ic::Shader *shader) {
     translation.set_translation((pos * -1));
     this->aspectRatioCorrection.set_orthographic(-aspect, aspect, -1, 1);
 
-    projection = this->aspectRatioCorrection * translation * scaling;
+    projection = this->aspectRatioCorrection * scaling * translation;
     
     shader->set_uniform_mat4("projection", projection);
-    shader->set_uniform_bool("useCamera", true);
 }
+
 void Camera2D::unuse(ic::Shader *shader) {
-    shader->set_uniform_bool("useCamera", false);
+    shader->set_uniform_mat4("projection", ic::Mat4x4());
 }
 
 ic::Vec2f Camera2D::project(ic::Vec2f &worldPosition) {

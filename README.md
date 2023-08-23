@@ -1,5 +1,5 @@
 # Icosahedron
-A game engine that uses OpenGL.
+A game engine that uses OpenGL. It is supposed to be for both 2D and 3D applications.
 
 # Library structure
 The following table's contents may be prone to change:
@@ -11,7 +11,7 @@ The following table's contents may be prone to change:
 | input | Contains controllers for input devices such as your keyboard. They are added and handled via `InputHandler`. |
 | math | Header-only definitions to mathematical objects and functions. |
 | math/geom | Same thing, but for geometrical concepts such as the vector, or the axis-aligned rectangle. |
-| Icosahedron/scene | It is currently in 2D, but it has objects that can be represented in a game scene, such as a camera, or a polygon. |
+| Icosahedron/scene | Contains both 2D and 3D elements of an usual scene. |
 | util | Utilities, like the `GeometryGenerator`. |
 
 The rest of the files that may not belong to the folders mentioned above are `Application`,  `Core`, and `Renderer`.

@@ -4,6 +4,8 @@
 #include <map>
 
 #include <Icosahedron/input/Input.h>
+#include <Icosahedron/input/KeyboardController.h>
+#include <Icosahedron/input/MouseController.h>
 
 namespace ic {
     class InputHandler {
@@ -15,7 +17,10 @@ namespace ic {
             
             void add_input(ic::Input* input, const INPUT_LOCATION &location);
             ic::Input *find_input(const INPUT_LOCATION &location);
-            
+
+            ic::KeyboardController *find_keyboard(const INPUT_LOCATION &location);
+            ic::MouseController *find_mouse(const INPUT_LOCATION &location);
+
         private:
             std::map<INPUT_LOCATION, ic::Input*> inputs;
     };

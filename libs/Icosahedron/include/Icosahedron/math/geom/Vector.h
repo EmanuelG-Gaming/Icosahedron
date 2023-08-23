@@ -87,6 +87,28 @@ namespace ic {
             }
             return result;
         }
+
+        float dst(Vec &other) {
+            float result = 0.0f;
+            for (int i = 0; i < dimensions; i++) {
+                T v = other[i] - values[i];
+                result += v * v;
+            }
+            result = sqrt(result);
+
+            return result;
+        }
+        
+        float dst2(Vec &other) {
+            float result = 0.0f;
+            for (int i = 0; i < dimensions; i++) {
+                T v = other[i] - values[i];
+                result += v * v;
+            }
+            
+            return result;
+        }
+
         float len() {
             float result = 0.0f;
             for (int i = 0; i < dimensions; i++) {
@@ -96,6 +118,17 @@ namespace ic {
 
             return result;
         }
+
+        /** @brief The squared length of this vector. */
+        float len2() {
+            float result = 0.0f;
+            for (int i = 0; i < dimensions; i++) {
+                result += values[i] * values[i];
+            }
+            
+            return result;
+        }
+
         Vec nor() {
             Vec result;
             float length = len();

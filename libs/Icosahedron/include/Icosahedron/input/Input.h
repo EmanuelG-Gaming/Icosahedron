@@ -75,6 +75,15 @@ enum KeyboardInputActionTypes {
     KB_INPUT_HOLD = 2,
 };
 
+enum MouseInputActionTypes {
+    INVALID_MOUSE_INPUT_ACTION = -1,
+
+    MOUSE_INPUT_UP = 0,
+    MOUSE_INPUT_DOWN = 1,
+
+    MOUSE_INPUT_MOVED = 2,
+};
+
 namespace ic {
     using Event = SDL_Event;
     using KeyboardEvent = SDL_KeyboardEvent;
@@ -82,6 +91,11 @@ namespace ic {
 
     struct KeyboardInputAction {
         KeyboardInputActionTypes type;
+        std::function<void()> callback;
+    };
+
+    struct MouseInputAction {
+        MouseInputActionTypes type;
         std::function<void()> callback;
     };
 

@@ -39,7 +39,8 @@ namespace ic {
     enum GLCullSettings {
         INVALID_CULL_SETTING = -1,
 
-
+        FRONT = GL_FRONT,
+        BACK = GL_BACK,
     };
 
     enum GLFaceWindingOrder {

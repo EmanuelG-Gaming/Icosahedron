@@ -29,6 +29,8 @@ namespace ic {
         std::string meshShaderVertex2D,
                     meshShaderFrag2D;
 
+        std::string meshShaderVertex3D;
+
         void load_shaders() {
             basicShaderVertex2D = IC_ADD_GLSL_DEFINITION(
                 layout (location = 0) in vec2 position;
@@ -107,23 +109,21 @@ namespace ic {
                 layout (location = 1) in vec3 color;
                 layout (location = 2) in vec2 tCoords;
 
-                uniform mat4 projection;
+                uniform mat4 projection = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
                 uniform mat4 model = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
-                uniform int useCamera;
                 
+                out vec2 vPosition;
                 out vec3 vColor;
                 out vec2 vTCoords;
 
                 void main() {
-                    vColor = color;
-                    vTCoords = tCoords;
                     vec4 pos = model * vec4(position, 0.0, 1.0);
 
-                    if (useCamera == 1) {
-                        pos = projection * pos;
-                    }
-
-                    gl_Position = pos;
+                    vPosition = pos.xy;
+                    vColor = color;
+                    vTCoords = tCoords;
+                    
+                    gl_Position = projection * pos;
                 }
             );
 
@@ -134,10 +134,11 @@ namespace ic {
                     float colorBlending;
                     vec3 baseColor;
                 };
-            
+
+                in vec2 vPosition;
                 in vec3 vColor;
                 in vec2 vTCoords;
-
+                
                 uniform Material material;
                 uniform sampler2D sampleTexture;
 
@@ -149,6 +150,34 @@ namespace ic {
                     if (color.a <= 0.1) discard;
 
                     outColor = color * c;
+                }
+            );
+
+
+            meshShaderVertex3D = IC_ADD_GLSL_DEFINITION(
+                layout (location = 0) in vec3 position;
+                layout (location = 1) in vec3 color;
+                layout (location = 2) in vec2 tCoords;
+                layout (location = 3) in vec3 normal;
+
+                uniform mat4 projection = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+                uniform mat4 view = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+                uniform mat4 model = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+                
+                out vec3 vPosition;
+                out vec3 vColor;
+                out vec2 vTCoords;
+                out vec3 vNormal;
+
+                void main() {
+                    vec4 pos = model * vec4(position, 1.0);
+
+                    vPosition = pos.xyz;
+                    vColor = color;
+                    vTCoords = tCoords;
+                    vNormal = normal;
+                    
+                    gl_Position = projection * view * pos;
                 }
             );
         }

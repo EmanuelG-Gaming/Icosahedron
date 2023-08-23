@@ -13,7 +13,7 @@ void ic::Application::clear_color() {
 
 void ic::Application::clear_color(float r, float g, float b) {
     glClearColor(r, g, b, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void ic::Application::clear_color(const ic::Color &color) {
@@ -148,7 +148,6 @@ void ic::Application::start() {
         }
         SDL_Delay(10);
         
-
         Uint64 now = SDL_GetPerformanceCounter();
         delta = (now - then) / (float) SDL_GetPerformanceFrequency();
         then = now;

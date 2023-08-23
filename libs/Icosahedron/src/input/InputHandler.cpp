@@ -17,3 +17,10 @@ void ic::InputHandler::add_input(ic::Input* input, const INPUT_LOCATION &locatio
 ic::Input *ic::InputHandler::find_input(const INPUT_LOCATION &location) {
     return inputs[location];
 }
+
+ic::KeyboardController *ic::InputHandler::find_keyboard(const INPUT_LOCATION &location) {
+    return static_cast<ic::KeyboardController*>(find_input(location));
+}
+ic::MouseController *ic::InputHandler::find_mouse(const INPUT_LOCATION &location) {
+    return static_cast<ic::MouseController*>(find_input(location));
+}

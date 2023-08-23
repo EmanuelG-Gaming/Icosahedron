@@ -22,14 +22,13 @@ Camera3D::Camera3D(float fov, float zNear, float zFar, float width, float height
 void ic::Camera3D::update() {
     this->viewMatrix.set_look_at(this->position, this->lookingAt, this->up);
 
+    float width = this->settings.width;
+    float height = this->settings.height;
+    float aspectRatio = width / height;
+    
     if (this->settings.perspective) {
-        float aspectRatio = settings.width / settings.height;
-
         this->projectionMatrix.set_perspective(settings.fov, settings.zNear, settings.zFar, aspectRatio);
     } else {
-        float width = this->settings.width;
-        float height = this->settings.height;
-
         this->projectionMatrix.set_orthographic(-width / 2, width / 2, -height / 2, height / 2, settings.zNear, settings.zFar);
     }
 
