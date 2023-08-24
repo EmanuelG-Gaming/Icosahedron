@@ -30,11 +30,14 @@ namespace ic {
             ic::KeyboardController *with_WASD();
 
             Uint8* get_keyboard_state();
+            Uint8 &is_key_pressed(KeyboardInput input);
             ic::Vec2i get_direction();
+            bool key_pressed();
 
         protected:
             ic::Vec2i direction;
-            
+            bool keyIsPressed;
+
             Uint8* keyboardState;
             std::map<Uint8, ic::KeyboardInputAction> inputActions;
     };

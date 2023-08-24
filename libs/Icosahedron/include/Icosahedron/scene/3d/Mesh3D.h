@@ -25,8 +25,15 @@ namespace ic {
             /** @brief Overrides the mesh's current model-level transformation matrix. */
             void set_transformation(const ic::Mat4x4 &to);
 
+            /** @brief Overrides the mesh normals' current model-level transformation matrix. */
+            void set_normal_transformation(const ic::Mat4x4 &to);
+
             void add_attribute(const std::string &location, int dimensions, const std::vector<float> &content);
+            
             void add_attribute(const std::string &location, int dimensions, const std::vector<ic::Color> &content);
+            void add_attribute(const std::string &location, const std::vector<ic::Vec2f> &content);
+            void add_attribute(const std::string &location, const std::vector<ic::Vec3f> &content);
+
             void set_index_buffer(const std::vector<unsigned int> &content);
             
             void jump_attribute();
@@ -45,6 +52,7 @@ namespace ic {
             ic::VertexArray *vao = nullptr;
             
             ic::Mat4x4 model;
+            ic::Mat4x4 normalModel;
     };
 }
 #endif

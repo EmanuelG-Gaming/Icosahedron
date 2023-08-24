@@ -11,6 +11,13 @@ void ic::MouseController::update(float dt) {
 }
 
 void ic::MouseController::handle_event(ic::Event event, float dt) {
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+
+    this->cursorPosition = { x, y };
+    this->relativeMotion = { 0, 0 };
+    if (event.type == SDL_MOUSEMOTION) this->relativeMotion = { event.motion.xrel, event.motion.yrel };
+    
     if (event.type == SDL_MOUSEBUTTONDOWN) {
         for (auto &action : inputActions) {
             if (action.type != MOUSE_INPUT_DOWN) continue;

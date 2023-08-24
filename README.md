@@ -8,10 +8,11 @@ The following table's contents may be prone to change:
 | --- | --- |
 | graphics | For things graphics-related. Also contains a FreeType 2 wrapper that is made to render text to a `TextAtlas`. |
 | graphics/gl | OpenGL wrappers. |
-| input | Contains controllers for input devices such as your keyboard. They are added and handled via `InputHandler`. |
+| input | Contains controllers for input devices such as your keyboard or your mouse. They are added and handled via `InputHandler`. |
 | math | Header-only definitions to mathematical objects and functions. |
 | math/geom | Same thing, but for geometrical concepts such as the vector, or the axis-aligned rectangle. |
 | Icosahedron/scene | Contains both 2D and 3D elements of an usual scene. |
+| Icosahedron/scene/controllers | Preset controllers for scene objects, such as the `Camera3D`. |
 | util | Utilities, like the `GeometryGenerator`. |
 
 The rest of the files that may not belong to the folders mentioned above are `Application`,  `Core`, and `Renderer`.

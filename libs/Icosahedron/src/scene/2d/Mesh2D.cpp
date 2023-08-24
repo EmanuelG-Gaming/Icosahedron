@@ -5,7 +5,7 @@
 using namespace ic;
 
 Mesh2D::Mesh2D() {
-    this->vao = nullptr;
+    this->vao = new ic::VertexArray();
 }
 
 Mesh2D::Mesh2D(std::vector<float> vertexPositions) {

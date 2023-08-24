@@ -52,6 +52,10 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Mesh3D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Camera3D.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/controllers/FreeRoamCameraController3D.h
+
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/modeling/OBJLoader.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/Global.h
     ${LIBRARY_HEADERS_DIRECTORY}/Application.h
     ${LIBRARY_HEADERS_DIRECTORY}/Core.h
@@ -67,7 +71,9 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/TextAtlas.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/FreeType.cpp
 
-    ${LIBRARY_SOURCE_DIRECTORY}/Renderer.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/input/KeyboardController.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/input/MouseController.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/input/InputHandler.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/RectangleShape.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/PolygonShape.cpp
@@ -77,10 +83,10 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Mesh3D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Camera3D.cpp
 
-    ${LIBRARY_SOURCE_DIRECTORY}/input/KeyboardController.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/input/MouseController.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/input/InputHandler.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/controllers/FreeRoamCameraController3D.cpp
 
+    ${LIBRARY_SOURCE_DIRECTORY}/assets/modeling/OBJLoader.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/Renderer.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/Application.cpp
 )
 

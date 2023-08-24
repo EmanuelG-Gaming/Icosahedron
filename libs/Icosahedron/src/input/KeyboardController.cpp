@@ -8,6 +8,7 @@ KeyboardController::KeyboardController() {
 
 void ic::KeyboardController::update(float dt) {
     direction = { 0, 0 };
+    this->keyIsPressed = false;
 
     for (auto pair : inputActions) {
         auto act = pair.second;
@@ -15,6 +16,7 @@ void ic::KeyboardController::update(float dt) {
 
         const Uint8 keyCode = pair.first;
         if (keyboardState[keyCode]) {
+            this->keyIsPressed = true;
             act.callback();
         }
     }
@@ -80,4 +82,12 @@ Uint8* ic::KeyboardController::get_keyboard_state() {
 
 ic::Vec2i ic::KeyboardController::get_direction() {
     return direction;
+}
+
+Uint8 &ic::KeyboardController::is_key_pressed(KeyboardInput input) {
+    return keyboardState[input];
+}
+
+bool ic::KeyboardController::key_pressed() {
+    return keyIsPressed;
 }

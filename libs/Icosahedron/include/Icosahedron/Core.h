@@ -59,10 +59,13 @@ namespace ic {
 
 #include <Icosahedron/scene/3d/Mesh3D.h>
 #include <Icosahedron/scene/3d/Camera3D.h>
+#include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
 
 // Utilities
 #include <Icosahedron/util/GeometryGenerator.h>
 
+// Assets
+#include <Icosahedron/assets/modeling/OBJLoader.h>
 
 // Global
 #include <Icosahedron/Global.h>

@@ -5,7 +5,7 @@
 using namespace ic;
 
 Mesh3D::Mesh3D() {
-    this->vao = nullptr;
+    this->vao = new ic::VertexArray();
 }
 
 Mesh3D::Mesh3D(std::vector<float> vertexPositions) {
@@ -18,6 +18,9 @@ Mesh3D::Mesh3D(std::vector<float> vertexPositions) {
 
 void ic::Mesh3D::set_transformation(const ic::Mat4x4 &to) {
     this->model = to;
+}
+void ic::Mesh3D::set_normal_transformation(const ic::Mat4x4 &to) {
+    this->normalModel = to;
 }
 
 void ic::Mesh3D::add_attribute(const std::string &location, int dimensions, const std::vector<float> &content) {
@@ -40,7 +43,30 @@ void ic::Mesh3D::add_attribute(const std::string &location, int dimensions, cons
     }
     add_attribute(location, dimensions, colorValues);
 }
-            
+
+void ic::Mesh3D::add_attribute(const std::string &location, const std::vector<ic::Vec2f> &content) {
+    std::vector<float> values;
+    for (int i = 0; i < content.size(); i++) {
+        ic::Vec2f vector = content[i];
+
+        values.push_back(vector.x());
+        values.push_back(vector.y());
+    }
+    add_attribute(location, 2, values);
+}
+void ic::Mesh3D::add_attribute(const std::string &location, const std::vector<ic::Vec3f> &content) {
+    std::vector<float> values;
+    for (int i = 0; i < content.size(); i++) {
+        ic::Vec3f vector = content[i];
+
+        values.push_back(vector.x());
+        values.push_back(vector.y());
+        values.push_back(vector.z());
+    }
+    add_attribute(location, 3, values);
+}
+    
+
 void ic::Mesh3D::set_index_buffer(const std::vector<unsigned int> &content) {
     if (this->vao == nullptr) {
         throw std::runtime_error("Couldn't add index buffer. VAO was not initialized.");
@@ -70,6 +96,7 @@ void ic::Mesh3D::draw(ic::Shader *shader) {
     auto drawable = this->vao->get_drawable();
 
     shader->set_uniform_mat4("model", this->model);
+    shader->set_uniform_mat4("normalModel", this->normalModel);
     drawable.use_and_draw();
 }
 

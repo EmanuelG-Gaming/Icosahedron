@@ -67,6 +67,8 @@ bool ic::Application::construct(int w, int h) {
     window = win;
     context = cont;
     
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
         std::cerr << "Couldn't initialize GLEW." << "\n";
@@ -146,14 +148,14 @@ void ic::Application::start() {
                 break;
             }
         }
-        SDL_Delay(10);
+        SDL_Delay(17);
         
         Uint64 now = SDL_GetPerformanceCounter();
         delta = (now - then) / (float) SDL_GetPerformanceFrequency();
         then = now;
 
         inputHandler.update(delta);
-
+        
     	// Update and render to screen code
     	if (!update(delta)) {
             disabled = true;
