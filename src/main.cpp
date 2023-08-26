@@ -1114,7 +1114,7 @@ int main(int argc, char *argv[]) {
 */
 
 /* Example8: An example that shows how "post-processing" can be achieved.
- * In this case, the effect is a box-blur convolution. */
+ * In this case, the effect is an approximation of a gaussian blur filter. */
 #include <Icosahedron/Core.h>
 
 std::string screenVertex = IC_ADD_GLSL_DEFINITION(
@@ -1128,7 +1128,7 @@ std::string screenVertex = IC_ADD_GLSL_DEFINITION(
         vPosition = position;
         vTCoords = tCoords;
         
-        gl_Position = vec4(vPosition.x, vPosition.y, 1.0, 1.0);
+        gl_Position = vec4(vPosition, 0.0, 1.0);
     }
 );
 
@@ -1139,13 +1139,14 @@ std::string screenFragment = IC_ADD_GLSL_DEFINITION(
     in vec2 vTCoords;
 
     const float offset = 1.0 / 300.0;
+    const int convolutionArea = 3 * 3;
 
     uniform sampler2D screenTexture;
 
     out vec4 outColor;
 
     void main() {
-        vec2 offsets[9] = vec2[](
+        vec2 offsets[convolutionArea] = vec2[](
             vec2(-offset, offset),
             vec2(0.0, offset),
             vec2(offset, offset),
@@ -1159,19 +1160,19 @@ std::string screenFragment = IC_ADD_GLSL_DEFINITION(
             vec2(offset, -offset)
         );
 
-        float convolution[9] = float[](
-            1.0 / 16.0, 2.0 / 16.0, 1.0 / 16.0,
-            2.0 / 16.0, 4.0 / 16.0, 2.0 / 16.0,
-            1.0 / 16.0, 2.0 / 16.0, 1.0 / 16.0
+        float convolution[convolutionArea] = float[](
+            1.0 / 16.0, 1.0 / 8.0, 1.0 / 16.0,
+            1.0 / 8.0, 1.0 / 4.0, 1.0 / 8.0,
+            1.0 / 16.0, 1.0 / 8.0, 1.0 / 16.0
         );
 
         vec4 samples[9];
         vec4 color = vec4(0.0);
 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < convolutionArea; i++) {
             samples[i] = texture(screenTexture, vTCoords + offsets[i]);
         }
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < convolutionArea; i++) {
             color += samples[i] * convolution[i];
         }
 

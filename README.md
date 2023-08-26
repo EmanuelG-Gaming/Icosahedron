@@ -14,6 +14,7 @@ The following table's contents may be prone to change:
 | Icosahedron/scene | Contains both 2D and 3D elements of an usual scene. |
 | Icosahedron/scene/controllers | Preset controllers for scene objects, such as the `Camera3D`. |
 | util | Utilities, like the `GeometryGenerator`. |
+| assets | Asset loaders. |
 
 The rest of the files that may not belong to the folders mentioned above are `Application`,  `Core`, and `Renderer`.
 
