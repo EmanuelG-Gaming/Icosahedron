@@ -97,13 +97,12 @@ void ic::Application::start() {
     }
 
     float delta = 0.0f;
-    Uint64 then = SDL_GetPerformanceCounter();
     bool disabled = false;
 
     SDL_Event e;
     while (!disabled) {
+        Uint64 start = SDL_GetPerformanceCounter();
         SDL_PumpEvents();
-
         while (SDL_PollEvent(&e)) {
             switch (e.type) {
                 case SDL_QUIT:
@@ -136,6 +135,7 @@ void ic::Application::start() {
                         IC_WINDOW_HEIGHT = height;
                         
                         glViewport(0, 0, width, height);
+                        window_size_changed(width, height);
                         //std::cout << width << " " << height << "\n";
                     }
             }
@@ -148,21 +148,20 @@ void ic::Application::start() {
                 break;
             }
         }
-        SDL_Delay(17);
-        
-        Uint64 now = SDL_GetPerformanceCounter();
-        delta = (now - then) / (float) SDL_GetPerformanceFrequency();
-        then = now;
-
+        //Uint64 start = SDL_GetPerformanceCounter();
         inputHandler.update(delta);
         
     	// Update and render to screen code
     	if (!update(delta)) {
             disabled = true;
         }
-    	
-		// Swap buffers
+
+        // Swap buffers
 		SDL_GL_SwapWindow(window);
+        
+        SDL_Delay(17);
+        Uint64 end = SDL_GetPerformanceCounter();
+        delta = ((float) end - start) / (float) SDL_GetPerformanceFrequency();
 	}
 	dispose();
 	ic::FreeType::get().dispose();

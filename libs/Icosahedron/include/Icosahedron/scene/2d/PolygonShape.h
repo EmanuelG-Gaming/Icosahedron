@@ -24,7 +24,7 @@ namespace ic {
             PolygonShape(const std::vector<ic::Vec2f> &from, const std::vector<ic::Color> &colors, ic::Vec2f position = {0, 0});
             PolygonShape(const ic::Polygon &fromPolygon, const std::vector<ic::Color> &colors, ic::Vec2f position = {0, 0});
 
-            void draw(ic::Renderer render, ic::Batch2D *batch, const ic::Color &color) override;
+            void draw(ic::Renderer render, ic::Batch *batch, const ic::Color &color) override;
             
         protected:
             void setup_polygon();

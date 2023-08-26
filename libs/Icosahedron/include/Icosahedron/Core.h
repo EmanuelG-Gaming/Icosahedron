@@ -36,6 +36,7 @@ namespace ic {
 
 #include <Icosahedron/graphics/gl/Shader.h>
 #include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/graphics/gl/Framebuffer.h>
 #include <Icosahedron/graphics/gl/Texture.h>
 #include <Icosahedron/graphics/gl/TextureAtlas.h>
 #include <Icosahedron/graphics/gl/Batch.h>
@@ -60,6 +61,7 @@ namespace ic {
 #include <Icosahedron/scene/3d/Mesh3D.h>
 #include <Icosahedron/scene/3d/Camera3D.h>
 #include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
+#include <Icosahedron/scene/3d/controllers/OrbitalCameraController3D.h>
 
 // Utilities
 #include <Icosahedron/util/GeometryGenerator.h>

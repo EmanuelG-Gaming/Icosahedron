@@ -15,7 +15,7 @@ RectangleShape::RectangleShape(ic::Vec2f position, ic::Vec2f size, std::string t
     this->textureName = textureName;
 }
 
-void ic::RectangleShape::draw(ic::Renderer render, ic::Batch2D *batch, const ic::Color &color) {
+void ic::RectangleShape::draw(ic::Renderer render, ic::Batch *batch, const ic::Color &color) {
     if (atlas != nullptr) {
         if (textureName.empty()) return;
         

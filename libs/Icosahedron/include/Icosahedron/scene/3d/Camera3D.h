@@ -30,6 +30,8 @@ namespace ic {
     /** @brief Represents a camera in a three-dimensional space. */
     class Camera3D {
         public:
+            CameraSettings settings;
+
             ic::Vec3f position;
             ic::Vec3f up;
             ic::Vec3f lookingAt;
@@ -37,7 +39,7 @@ namespace ic {
             /** Initializes a new camera that points in the X direction. */
             Camera3D();
             Camera3D(float fov, float zNear, float zFar, float width, float height, bool perspective);
-
+            Camera3D(bool perspective);
 
             void update();
             void upload_to_shader(ic::Shader *shader, const std::string &viewUniform = "view", const std::string &projectionUniform = "projection");
@@ -48,8 +50,6 @@ namespace ic {
             void resize(float width, float height);
 
         protected:
-            CameraSettings settings;
-
             ic::Mat4x4 viewMatrix, projectionMatrix;
            
             /** The projection matrix multiplied by the view matrix. */

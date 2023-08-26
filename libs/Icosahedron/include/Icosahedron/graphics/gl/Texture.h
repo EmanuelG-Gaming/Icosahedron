@@ -29,7 +29,6 @@ namespace ic {
                     GLenum type = static_cast<GLenum>(T);
                     glBindTexture(type, textureIndex);
                     glActiveTexture(GL_TEXTURE0);
-                    
                 }
             }
             void unuse() {

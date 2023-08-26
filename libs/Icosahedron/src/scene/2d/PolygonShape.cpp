@@ -35,7 +35,7 @@ PolygonShape::PolygonShape(const ic::Polygon &fromPolygon, const std::vector<ic:
 }
 
 
-void ic::PolygonShape::draw(ic::Renderer render, ic::Batch2D *batch, const ic::Color &color) {
+void ic::PolygonShape::draw(ic::Renderer render, ic::Batch *batch, const ic::Color &color) {
     std::vector<float> t = this->poly.get_transformed_vertices();
 
     if (!vertexColors.empty()) {

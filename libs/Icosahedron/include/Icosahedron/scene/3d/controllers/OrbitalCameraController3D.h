@@ -1,30 +1,28 @@
-#ifndef IC_FREE_ROAM_CAMERA_CONTROLLER_3D
-#define IC_FREE_ROAM_CAMERA_CONTROLLER_3D
+#ifndef IC_ORBITAL_CAMERA_CONTROLLER_3D_H
+#define IC_ORBITAL_CAMERA_CONTROLLER_3D_H
 
 #include <Icosahedron/math/geom/Vectors.h>
 
-#include <Icosahedron/input/KeyboardController.h>
 #include <Icosahedron/input/MouseController.h>
 #include <Icosahedron/input/InputHandler.h>
 
 #include <Icosahedron/scene/3d/Camera3D.h>
 
-
 namespace ic {
-    class FreeRoamCameraController3D {
+    class OrbitalCameraController3D {
         public:
+            ic::Vec3f center;
             ic::Vec2f rotation;
             
-            bool flying;
-            float speed, lookSensitivity;
+            float radius;
+            float lookSensitivity;
 
-            FreeRoamCameraController3D(ic::Camera3D *camera, ic::InputHandler *handler);
+            OrbitalCameraController3D(ic::Camera3D *camera, ic::InputHandler *handler);
 
             void act(float dt);
 
         protected:
             ic::Camera3D *camera;
-            ic::KeyboardController *keyboard;
             ic::MouseController *mouse;
     };
 }

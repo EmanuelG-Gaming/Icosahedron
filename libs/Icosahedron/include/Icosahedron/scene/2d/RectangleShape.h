@@ -18,7 +18,7 @@ namespace ic {
             RectangleShape();
             RectangleShape(ic::Vec2f position, ic::Vec2f size, std::string textureName = "");
             
-            void draw(ic::Renderer render, ic::Batch2D *batch, const ic::Color &color) override;
+            void draw(ic::Renderer render, ic::Batch *batch, const ic::Color &color) override;
 
             void set_atlas(ic::TextureAtlas *to);
             

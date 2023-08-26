@@ -20,10 +20,26 @@ namespace ic {
         BatchVertex(float x, float y, ic::Color color) : Position({x, y}), Color({color.r / 255.0f, color.g / 255.0f, color.b / 255.0f}) {}
         BatchVertex(float x, float y, float tx, float ty, ic::Color color) : Position({x, y}), TextureCoords({tx, ty}), Color({color.r / 255.0f, color.g / 255.0f, color.b / 255.0f}) {}
     };
+
+    /*
+    enum BatchVertexAttributeDataType {
+        BATCH_FLOAT,
+        BATCH_INT
+    };
+
+    struct BatchVertexAttribute {
+        ic::BatchVertexAttributeDataType type;
+        std::size_t dimensions;
+    };
+
+    struct BatchVertexLayout {
+        std::vector<ic::BatchVertexAttribute> attributes;
+    };
+    */
     
-    class Batch2D {
+    class Batch {
         public:
-            Batch2D(int capacity, ic::GLPrimitives renderType);
+            Batch(int capacity, ic::GLPrimitives renderType);
             
             void add(const std::vector<ic::BatchVertex> &vertices);
             void render();

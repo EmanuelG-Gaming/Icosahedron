@@ -724,7 +724,8 @@ int main(int argc, char *argv[]) {
 }
 */
 
-/** Exaample6: A scene that shows a rotating cube on a wooden floor. */
+/** Example6: A scene that shows a rotating cube on a wooden floor. */
+/*
 #include <Icosahedron/Core.h>
 
 std::string fragment = IC_ADD_GLSL_DEFINITION(
@@ -757,18 +758,22 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
     vec4 compute_lighting(PointLight light) {
         float distance = length(light.position - vPosition);
         float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+        
         vec3 normal = normalize(vNormal);
         vec3 lightDirection = normalize(light.position - vPosition);
         vec3 viewDirection = normalize(viewPosition - vPosition);
         float dotProduct = dot(lightDirection, normal);
+
         // Ambient reflection (indirect illumination approximation)
         float ambientIntensity = 0.4 * attenuation;
         vec4 ambientColor = vec4(light.ambient, 1.0) * ambientIntensity;
+
         // Diffuse reflection
         float diffuseIntensity = clamp(dotProduct, 0.0, 1.0) * attenuation;
         vec4 diffuseColor = texture(sampleTexture, vTCoords);
         if (diffuseColor.a <= 0.1) diffuseColor = vec4(0.0, 0.0, 0.0, 0.0);
         else diffuseColor *= vec4(light.diffuse, 1.0) * diffuseIntensity;
+
         // Specular reflection
         // Blinn-Phong reflection
         vec3 reflectDirection = normalize(lightDirection + viewDirection);
@@ -782,6 +787,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
         vec4 result = ambientColor + diffuseColor + specularColor;
         return result;
     }
+    
     void main() {
         vec4 color = compute_lighting(l);
         outColor = color;
@@ -793,13 +799,13 @@ class Example6 : public ic::Application {
     ic::Shader *shader;
     ic::Camera3D *camera;
     ic::Mesh3D *mesh, *floorMesh;
-    ic::Texture<ic::T2D> *woodTexture, *whiteTexture;
+    ic::Texture<ic::T2D> *floorTexture, *whiteTexture;
     ic::FreeRoamCameraController3D *controller;
 
     float time;
     public:
         bool init() override {
-            displayName = "Example ndow";
+            displayName = "Example window";
             scaling = ic::WindowScaling::fullscreen;
 
             return true;
@@ -810,7 +816,7 @@ class Example6 : public ic::Application {
             states.enable_face_culling(ic::FRONT, ic::CCW);
 
             shader = new ic::Shader(shaders.meshShaderVertex3D, fragment, false);
-            woodTexture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
+            floorTexture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
             whiteTexture = new ic::Texture<ic::T2D>({"resources/textures/white.png"});
             
 
@@ -821,9 +827,9 @@ class Example6 : public ic::Application {
             mesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
             
             
-            floorMesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_parallelipiped(5.0f, 0.1f, 5.0f));
+            floorMesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_parallelipiped(5.0f * 5, 0.1f, 5.0f * 5));
             floorMesh->jump_attribute();
-            floorMesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped(10.0f, 0.2f, 10.0f));
+            floorMesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped(10.0f * 5, 0.2f, 10.0f * 5));
             floorMesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
             floorMesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
             floorMesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
@@ -833,7 +839,7 @@ class Example6 : public ic::Application {
             camera = new ic::Camera3D();
             camera->position = { -3.0f, 1.5f, 0.0f };
             controller = new ic::FreeRoamCameraController3D(camera, &inputHandler);
-
+            controller->flying = true;
             time = 0.0f;
             
             return true;
@@ -863,7 +869,7 @@ class Example6 : public ic::Application {
             mesh->set_normal_transformation(rotation);
             mesh->draw(shader);
 
-            woodTexture->use();
+            floorTexture->use();
             floorMesh->draw(shader);
 
             return true; 
@@ -873,13 +879,489 @@ class Example6 : public ic::Application {
             shader->clear();
             mesh->dispose();
             floorMesh->dispose();
-            woodTexture->dispose();
+            floorTexture->dispose();
             whiteTexture->dispose();
         }
 };
 
 int main(int argc, char *argv[]) {
     Example6 application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}
+*/
+
+/** Example7: A model viewer. Press up/down keys to increase/decrease the view radius.
+ *  Use the Q key to switch between perspective and orthographic projections, and
+ *  the R key to toggle the rotation of the viewed object.
+*/
+/*
+#include <Icosahedron/Core.h>
+
+std::string fragment = IC_ADD_GLSL_DEFINITION(
+    precision mediump float;
+    
+    in vec3 vPosition;
+    in vec2 vTCoords;
+    in vec3 vNormal;
+
+    struct PointLight {
+        vec3 position;
+        vec3 ambient;
+        vec3 diffuse;
+        vec3 specular;
+        float constant;
+        float linear;
+        float quadratic;
+    };
+    PointLight l = PointLight(
+        vec3(3.0, 3.0, 3.0), 
+        vec3(0.2, 0.2, 0.2), 
+        vec3(0.9, 0.8, 0.65), 
+        vec3(0.8, 0.7, 0.55), 
+        
+        1.0, 0.09, 0.032
+    );
+    
+    struct Material {
+        vec3 ambient;
+        vec3 diffuse;
+        vec3 specular;
+
+        float shininess;
+    };
+
+    uniform sampler2D sampleTexture;
+    uniform Material material;
+    uniform vec3 viewPosition;
+
+    out vec4 outColor;
+    vec4 compute_lighting(PointLight light) {
+        float distance = length(light.position - vPosition);
+        float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+        
+        vec3 normal = normalize(vNormal);
+        vec3 lightDirection = normalize(light.position - vPosition);
+        vec3 viewDirection = normalize(viewPosition - vPosition);
+        float dotProduct = dot(lightDirection, normal);
+
+        // Ambient reflection (indirect illumination approximation)
+        float ambientIntensity = 0.4 * attenuation;
+        vec4 ambientColor = vec4(light.ambient * material.ambient, 1.0) * ambientIntensity;
+
+        // Diffuse reflection
+        float diffuseIntensity = clamp(dotProduct, 0.0, 1.0) * attenuation;
+        vec4 diffuseColor = texture(sampleTexture, vTCoords);
+        if (diffuseColor.a <= 0.1) diffuseColor = vec4(0.0, 0.0, 0.0, 0.0);
+        else diffuseColor *= vec4(light.diffuse * (material.diffuse * diffuseIntensity), 1.0);
+
+        // Specular reflection
+        // Blinn-Phong reflection
+        vec3 reflectDirection = normalize(lightDirection + viewDirection);
+        float specularIntensity = pow(max(dot(vNormal, reflectDirection), 0.0), material.shininess / 4.0) * attenuation;
+        
+        // Basic Phong reflection
+        //vec3 reflectDirection = reflect(-lightDirection, normal); 
+        //float specularIntensity = pow(max(dot(viewDirection, reflectDirection), 0.0), material.shininess * 4.0) * attenuation;
+        
+        vec4 specularColor = vec4(light.specular * (material.specular * specularIntensity), 1.0);
+
+        vec4 result = ambientColor + diffuseColor + specularColor;
+        return result;
+    }
+    
+    void main() {
+        vec4 color = compute_lighting(l);
+        outColor = color;
+    }
+);
+
+
+class Example7 : public ic::Application {
+    ic::Shader *shader;
+    ic::Camera3D *camera;
+    ic::Mesh3D *mesh;
+    ic::Texture<ic::T2D> *whiteTexture;
+    ic::OrbitalCameraController3D *controller;
+    //ic::FreeRoamCameraController3D *controller;
+
+    ic::OBJMaterialInfo material;
+
+    float scale;
+    float delta;
+    float time;
+    bool perspective;
+    bool rotating;
+
+    public:
+        bool init() override {
+            displayName = "Example window";
+            scaling = ic::WindowScaling::fullscreen;
+
+            return true;
+        }
+        
+        bool load() override {
+            states.enable_depth_testing(ic::LESS);
+            states.enable_face_culling(ic::FRONT, ic::CCW);
+
+            shader = new ic::Shader(shaders.meshShaderVertex3D, fragment, false);
+            whiteTexture = new ic::Texture<ic::T2D>({"resources/textures/white.png"});
+            
+            mesh = ic::OBJLoader::get().get_mesh("resources/models/boat.obj");
+            mesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
+
+            material = ic::OBJLoader::get().get_materials("resources/models/icosahedron.mtl")["Material.001"];
+            
+            scale = 3.0f;
+            perspective = true;
+            rotating = false;
+            delta = 0.0f;
+            time = 0.0f;
+
+            camera = new ic::Camera3D(perspective);
+            camera->position = { -3.0f, 1.5f, 0.0f };
+            controller = new ic::OrbitalCameraController3D(camera, &inputHandler);
+            //controller = new ic::FreeRoamCameraController3D(camera, &inputHandler);
+            //controller->flying = true;
+
+            // Inputs
+            auto scaling = new ic::KeyboardController();
+            scaling->add_action([this](){ scale += 5 * delta; }, KEY_UP);
+            scaling->add_action([this](){ scale -= 5 * delta; }, KEY_DOWN);
+
+            inputHandler.add_input(scaling, "orbitScaling");
+
+            auto toggle = new ic::KeyboardController();
+            toggle->add_key_up_action([this](){ perspective = !perspective; }, KEY_Q);
+            toggle->add_key_up_action([this](){ rotating = !rotating; }, KEY_R);
+            
+            inputHandler.add_input(toggle, "toggle");
+
+            return true;
+        }
+
+        bool handle_event(ic::Event event, float dt) override { 
+            return true;
+        }
+    
+        bool update(float dt) override {
+            delta = dt;
+            if (rotating) time += delta;
+            if (scale < 0.2f) scale = 0.2f;
+
+            camera->settings.perspective = perspective;
+            controller->radius = scale;
+
+            float div = perspective ? 1.0f : (1 / scale) * 800.0f;
+            controller->act(dt);
+            camera->resize(IC_WINDOW_WIDTH / div, IC_WINDOW_HEIGHT / div);
+            camera->update();
+            
+            clear_color(ic::Colors::blue);
+            shader->use();
+            whiteTexture->use();
+            camera->upload_to_shader(shader);
+
+            shader->set_uniform_vec3f("viewPosition", camera->position);
+            shader->set_uniform_vec3f("material.ambient", material.ambient);
+            shader->set_uniform_vec3f("material.diffuse", material.diffuse);
+            shader->set_uniform_vec3f("material.specular", material.specular);
+            shader->set_uniform_float("material.shininess", material.shininess);
+            
+            
+            //for (int i = 0; i < 5; i++) for (int j = 0; j < 5; j++) {
+            //    ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
+            //    ic::Mat4x4 rotation = quat.to_rotation_matrix();
+            //    ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({i * 2.0f, 0.0f, j * 2.0f});
+            //    
+            //    mesh->set_transformation(translation * rotation);
+            //    mesh->set_normal_transformation(rotation);
+            //    mesh->draw(shader);
+            //}
+            
+
+            ic::Quaternion quat = ic::Quaternion().from_euler(time, time, 0.0f);
+            ic::Mat4x4 rotation = quat.to_rotation_matrix();
+               
+            mesh->set_transformation(rotation);
+            mesh->set_normal_transformation(rotation);
+            mesh->draw(shader);
+
+            return true; 
+        }
+
+        void dispose() override {
+            shader->clear();
+            mesh->dispose();
+            whiteTexture->dispose();
+        }
+};
+
+int main(int argc, char *argv[]) {
+    Example7 application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}
+*/
+
+/* Example8: An example that shows how "post-processing" can be achieved.
+ * In this case, the effect is a box-blur convolution. */
+#include <Icosahedron/Core.h>
+
+std::string screenVertex = IC_ADD_GLSL_DEFINITION(
+    layout (location = 0) in vec2 position;
+    layout (location = 1) in vec2 tCoords;
+
+    out vec2 vPosition;
+    out vec2 vTCoords;
+
+    void main() {
+        vPosition = position;
+        vTCoords = tCoords;
+        
+        gl_Position = vec4(vPosition.x, vPosition.y, 1.0, 1.0);
+    }
+);
+
+std::string screenFragment = IC_ADD_GLSL_DEFINITION(
+    precision mediump float;
+    
+    in vec2 vPosition;
+    in vec2 vTCoords;
+
+    const float offset = 1.0 / 300.0;
+
+    uniform sampler2D screenTexture;
+
+    out vec4 outColor;
+
+    void main() {
+        vec2 offsets[9] = vec2[](
+            vec2(-offset, offset),
+            vec2(0.0, offset),
+            vec2(offset, offset),
+
+            vec2(-offset, 0.0),
+            vec2(0.0, 0.0),
+            vec2(offset, 0.0),
+
+            vec2(-offset, -offset),
+            vec2(0.0, -offset),
+            vec2(offset, -offset)
+        );
+
+        float convolution[9] = float[](
+            1.0 / 16.0, 2.0 / 16.0, 1.0 / 16.0,
+            2.0 / 16.0, 4.0 / 16.0, 2.0 / 16.0,
+            1.0 / 16.0, 2.0 / 16.0, 1.0 / 16.0
+        );
+
+        vec4 samples[9];
+        vec4 color = vec4(0.0);
+
+        for (int i = 0; i < 9; i++) {
+            samples[i] = texture(screenTexture, vTCoords + offsets[i]);
+        }
+        for (int i = 0; i < 9; i++) {
+            color += samples[i] * convolution[i];
+        }
+
+        outColor = color;
+    }
+);
+
+std::string fragment = IC_ADD_GLSL_DEFINITION(
+    precision mediump float;
+    
+    in vec3 vPosition;
+    in vec2 vTCoords;
+    in vec3 vNormal;
+    struct PointLight {
+        vec3 position;
+        vec3 ambient;
+        vec3 diffuse;
+        vec3 specular;
+        float constant;
+        float linear;
+        float quadratic;
+    };
+    PointLight l = PointLight(
+        vec3(-2.0, 3.0, -3.0), 
+        vec3(0.2, 0.2, 0.2), 
+        vec3(0.9, 0.8, 0.65), 
+        vec3(0.8, 0.7, 0.55), 
+        
+        1.0, 0.09, 0.032
+    );
+    
+    uniform sampler2D sampleTexture;
+    uniform vec3 viewPosition;
+    out vec4 outColor;
+    vec4 compute_lighting(PointLight light) {
+        float distance = length(light.position - vPosition);
+        float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+        
+        vec3 normal = normalize(vNormal);
+        vec3 lightDirection = normalize(light.position - vPosition);
+        vec3 viewDirection = normalize(viewPosition - vPosition);
+        float dotProduct = dot(lightDirection, normal);
+
+        // Ambient reflection (indirect illumination approximation)
+        float ambientIntensity = 0.4 * attenuation;
+        vec4 ambientColor = vec4(light.ambient, 1.0) * ambientIntensity;
+
+        // Diffuse reflection
+        float diffuseIntensity = clamp(dotProduct, 0.0, 1.0) * attenuation;
+        vec4 diffuseColor = texture(sampleTexture, vTCoords);
+        if (diffuseColor.a <= 0.1) diffuseColor = vec4(0.0, 0.0, 0.0, 0.0);
+        else diffuseColor *= vec4(light.diffuse, 1.0) * diffuseIntensity;
+
+        // Specular reflection
+        // Blinn-Phong reflection
+        vec3 reflectDirection = normalize(lightDirection + viewDirection);
+        float specularIntensity = pow(max(dot(vNormal, reflectDirection), 0.0), (0.1 * 128.0) * 4.0) * attenuation;
+        
+        // Basic Phong reflection
+        //vec3 reflectDirection = reflect(-lightDirection, normal); 
+        //float specularIntensity = pow(max(dot(viewDirection, reflectDirection), 0.0), (0.1 * 128.0) * 4.0) * attenuation;
+        
+        vec4 specularColor = vec4(light.specular, 1.0) * specularIntensity;
+        vec4 result = ambientColor + diffuseColor + specularColor;
+        return result;
+    }
+    
+    void main() {
+        vec4 color = compute_lighting(l);
+        outColor = color;
+    }
+);
+
+
+class Example8 : public ic::Application {
+    ic::Shader *shader, *screenShader;
+    ic::Framebuffer *framebuffer;
+    
+    ic::Camera3D *camera;
+    ic::Mesh2D *screenQuad;
+    ic::Mesh3D *mesh, *floorMesh;
+
+    ic::Texture<ic::T2D> *floorTexture, *whiteTexture;
+    ic::FreeRoamCameraController3D *controller;
+
+    float time;
+    public:
+        bool init() override {
+            displayName = "Example window";
+            scaling = ic::WindowScaling::fullscreen;
+
+            return true;
+        }
+        
+        bool load() override {
+            states.enable_face_culling(ic::FRONT, ic::CCW);
+
+            shader = new ic::Shader(shaders.meshShaderVertex3D, fragment, false);
+            screenShader = new ic::Shader(screenVertex, screenFragment, false);
+            
+            floorTexture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
+            whiteTexture = new ic::Texture<ic::T2D>({"resources/textures/white.png"});
+            
+            framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+
+            mesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_cube(0.5f));
+            mesh->jump_attribute();
+            mesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped());
+            mesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
+            mesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
+            
+            
+            floorMesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_parallelipiped(5.0f * 5, 0.1f, 5.0f * 5));
+            floorMesh->jump_attribute();
+            floorMesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped(10.0f * 5, 0.2f, 10.0f * 5));
+            floorMesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
+            floorMesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
+            floorMesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
+
+            screenQuad = new ic::Mesh2D(ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
+            screenQuad->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            screenQuad->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+
+            camera = new ic::Camera3D();
+            camera->position = { -3.0f, 1.5f, 0.0f };
+            controller = new ic::FreeRoamCameraController3D(camera, &inputHandler);
+            controller->flying = true;
+            time = 0.0f;
+            
+            return true;
+        }
+
+        bool handle_event(ic::Event event, float dt) override { 
+            return true;
+        }
+
+        void window_size_changed(int w, int h) override {
+            framebuffer->resize(w, h);
+        }
+
+        bool update(float dt) override {
+            time += dt;
+
+            controller->act(dt);
+            camera->resize(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            camera->update();
+            
+            // First pass - scene drawing
+            framebuffer->use();
+            states.enable_depth_testing(ic::LESS);
+            clear_color(ic::Colors::blue);
+            shader->use();
+            whiteTexture->use();
+            camera->upload_to_shader(shader);
+            shader->set_uniform_vec3f("viewPosition", camera->position);
+
+            ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
+            ic::Mat4x4 rotation = quat.to_rotation_matrix();
+            ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
+            mesh->set_transformation(translation * rotation);
+            mesh->set_normal_transformation(rotation);
+            mesh->draw(shader);
+
+            floorTexture->use();
+            floorMesh->draw(shader);
+
+            // Second pass - drawing via framebuffer
+            framebuffer->unuse();
+            clear_color(ic::Colors::cyan);
+            states.disable_depth_testing();
+            
+            screenShader->use();
+            framebuffer->use_texture();
+            screenQuad->draw(screenShader);
+
+            return true; 
+        }
+
+        void dispose() override {
+            shader->clear();
+            mesh->dispose();
+            floorMesh->dispose();
+            floorTexture->dispose();
+            whiteTexture->dispose();
+            framebuffer->dispose();
+        }
+};
+
+int main(int argc, char *argv[]) {
+    Example8 application;
 
     if (application.construct(640, 480)) {
         application.start();

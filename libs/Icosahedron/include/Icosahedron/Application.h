@@ -40,7 +40,8 @@ namespace ic {
             virtual bool load() { return true; }
 
             virtual bool handle_event(ic::Event event, float dt) { return true; }
-    
+            virtual void window_size_changed(int w, int h) {}
+            
             virtual bool update(float dt) { return true; }
             virtual void dispose() {};
 

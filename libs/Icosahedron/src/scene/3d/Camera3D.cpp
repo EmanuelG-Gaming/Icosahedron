@@ -18,6 +18,9 @@ Camera3D::Camera3D(float fov, float zNear, float zFar, float width, float height
     
     this->settings.perspective = perspective;
 }
+Camera3D::Camera3D(bool perspective) : Camera3D() {
+    this->settings.perspective = perspective;
+}
 
 void ic::Camera3D::update() {
     this->viewMatrix.set_look_at(this->position, this->lookingAt, this->up);

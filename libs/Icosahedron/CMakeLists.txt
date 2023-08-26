@@ -27,6 +27,7 @@ set(LIBRARY_HEADERS
     
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Shader.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Shaders.h
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Framebuffer.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Texture.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/TextureAtlas.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/VertexArray.h
@@ -53,6 +54,7 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Camera3D.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/controllers/FreeRoamCameraController3D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/controllers/OrbitalCameraController3D.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/assets/modeling/OBJLoader.h
 
@@ -65,6 +67,7 @@ set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/GLStateHandler.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Shader.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Framebuffer.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/VertexArray.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Batch.cpp
 
@@ -84,6 +87,7 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Camera3D.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/controllers/FreeRoamCameraController3D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/controllers/OrbitalCameraController3D.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/assets/modeling/OBJLoader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/Renderer.cpp

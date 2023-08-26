@@ -66,9 +66,9 @@ namespace ic {
             value(1, 1) = 2.0f / (top - bottom);
             value(2, 2) = -2.0f / (far - near);
            
-            value(3, 0) = -(right + left) / (right - left);
-            value(3, 1) = -(top + bottom) / (top - bottom);
-            value(3, 2) = -(far + near) / (far - near);
+            value(0, 3) = -(right + left) / (right - left);
+            value(1, 3) = -(top + bottom) / (top - bottom);
+            value(2, 3) = -(far + near) / (far - near);
 
             return *this;
         }

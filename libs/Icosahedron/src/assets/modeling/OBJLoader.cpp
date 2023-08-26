@@ -156,6 +156,9 @@ std::map<std::string, ic::OBJMaterialInfo> ic::OBJLoader::get_materials(const st
         return materials;
     }   
     
+    ic::OBJMaterialInfo material;
+    std::string materialName;
+               
     std::string line; 
     while (std::getline(mtlRead, line)) {
         if (!line.compare("") || !line.compare(" ")) {
@@ -164,45 +167,43 @@ std::map<std::string, ic::OBJMaterialInfo> ic::OBJLoader::get_materials(const st
     
         std::istringstream stream(line);
         std::string key;
-        std::string materialName;
+        
         stream >> key;
         
         // Define a new material
         if (!key.compare("newmtl")) {
-            ic::OBJMaterialInfo material;
             stream >> materialName;
-
-            materials[materialName] = material;
         }
         // Ambient color
         else if (!key.compare("Ka")) {
             ic::Vec3f ambient;
             stream >> ambient[0] >> ambient[1] >> ambient[2];
 
-            materials[materialName].ambient = ambient;
+            material.ambient = ambient;
         }
         // Diffuse color
         else if (!key.compare("Kd")) {
             ic::Vec3f diffuse;
             stream >> diffuse[0] >> diffuse[1] >> diffuse[2];
-
-            materials[materialName].diffuse = diffuse;
+            
+            material.diffuse = diffuse;
         }
         // Specular color
         else if (!key.compare("Ks")) {
             ic::Vec3f specular;
             stream >> specular[0] >> specular[1] >> specular[2];
 
-            materials[materialName].specular = specular;
+            material.specular = specular;
         }
         // Shininess
         else if (!key.compare("Ns")) {
             float shininess;
             stream >> shininess;
 
-            materials[materialName].shininess = shininess;
+            material.shininess = shininess;
         }
     }
+    materials[materialName] = material;
 
     return materials;
 }

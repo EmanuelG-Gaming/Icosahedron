@@ -49,8 +49,8 @@ public:
             std::vector<float> textureCoords = {
                 0.0f, 0.0f, 
                 scaleX, 0.0f, 
-                scaleX, scaleY, 
-                0.0f, scaleY
+                scaleX, -scaleY, 
+                0.0f, -scaleY
             };
 
             return textureCoords;

@@ -22,7 +22,13 @@ namespace ic {
         INVALID_TEXTURE = -1,
 
         T2D = GL_TEXTURE_2D,
-        TCube = GL_TEXTURE_CUBE_MAP,
+        TCUBE = GL_TEXTURE_CUBE_MAP,
+    };
+
+    enum GLTextureAttachments {
+        INVALID_TEXTURE_ATTACHMENT = -1,
+
+        TEXTURE_ATTACH_COLOR_0 = GL_COLOR_ATTACHMENT0
     };
 
     enum GLDepthSettings {

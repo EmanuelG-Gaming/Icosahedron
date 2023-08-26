@@ -10,7 +10,7 @@
 namespace ic {
     class Shape2D {
         public:
-            virtual void draw(ic::Renderer render, ic::Batch2D *batch, const ic::Color &color) {}
+            virtual void draw(ic::Renderer render, ic::Batch *batch, const ic::Color &color) {}
 
             // For shape tesselation:
 

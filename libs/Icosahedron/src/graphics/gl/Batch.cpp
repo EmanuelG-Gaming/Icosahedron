@@ -2,7 +2,7 @@
 
 using namespace ic;
 
-Batch2D::Batch2D(int capacity, GLPrimitives renderType) {
+Batch::Batch(int capacity, GLPrimitives renderType) {
     this->vertexCapacity = capacity;
     this->verticesUsed = 0;
     this->vbo = this->vao = 0;
@@ -12,7 +12,7 @@ Batch2D::Batch2D(int capacity, GLPrimitives renderType) {
     setup();
 }
 
-void Batch2D::setup() {
+void Batch::setup() {
     glGenVertexArrays(1, &this->vao);
     glBindVertexArray(this->vao);
            
@@ -41,7 +41,7 @@ void Batch2D::setup() {
 }
 
 
-void Batch2D::add(const std::vector<BatchVertex> &vertices) {
+void Batch::add(const std::vector<BatchVertex> &vertices) {
     int extra = this->get_extra_vertices();
     if (vertices.size() + extra > vertexCapacity - verticesUsed) {
         return;
@@ -65,7 +65,7 @@ void Batch2D::add(const std::vector<BatchVertex> &vertices) {
     lastUsed = vertices.back();
 }
 
-void Batch2D::render() {
+void Batch::render() {
     if (this->renderType == INVALID_PRIMITIVE) return;
     if (verticesUsed == 0) {
         return;
@@ -77,14 +77,14 @@ void Batch2D::render() {
     this->verticesUsed = 0;
 }
        
-int Batch2D::get_extra_vertices() {
+int Batch::get_extra_vertices() {
     if (this->renderType == INVALID_PRIMITIVE) return 0;
 
     bool mode = (this->renderType == TRIANGLE_STRIPS && verticesUsed > 0);
     return mode ? 2 : 0;
 }
 
-void Batch2D::dispose() {
+void Batch::dispose() {
     if (this->vbo) glDeleteBuffers(1, &this->vbo);
     if (this->vao) glDeleteBuffers(1, &this->vao);
 }

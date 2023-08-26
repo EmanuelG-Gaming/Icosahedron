@@ -2,7 +2,7 @@
 
 using namespace ic;
 
-void Renderer::draw_rectangle(ic::Batch2D *batch, float x, float y, float width, float height, const ic::Color &color) {
+void Renderer::draw_rectangle(ic::Batch *batch, float x, float y, float width, float height, const ic::Color &color) {
     float x1 = x - width, y1 = y - height;
     float x2 = x + width, y2 = y + height;
      
@@ -19,7 +19,7 @@ void Renderer::draw_rectangle(ic::Batch2D *batch, float x, float y, float width,
     batch->add(vertices);
 }
 
-void Renderer::draw_rectangle(ic::Batch2D *batch, AtlasEntry entry, float x, float y, float width, float height, const ic::Color &color) {
+void Renderer::draw_rectangle(ic::Batch *batch, AtlasEntry entry, float x, float y, float width, float height, const ic::Color &color) {
     float x1 = x - width, y1 = y - height;
     float x2 = x + width, y2 = y + height;
     
@@ -36,7 +36,7 @@ void Renderer::draw_rectangle(ic::Batch2D *batch, AtlasEntry entry, float x, flo
     batch->add(vertices);
 }
 
-void Renderer::draw_Line(ic::Batch2D *batch, float x1, float y1, float x2, float y2, const ic::Color &color) {
+void Renderer::draw_Line(ic::Batch *batch, float x1, float y1, float x2, float y2, const ic::Color &color) {
     std::vector<BatchVertex> vertices = {
         BatchVertex(x1, y1, 0.0f, 0.0f, color),
         BatchVertex(x2, y2, 0.0f, 0.0f, color)
@@ -44,7 +44,7 @@ void Renderer::draw_Line(ic::Batch2D *batch, float x1, float y1, float x2, float
 
     batch->add(vertices);
 }
-void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, const ic::Color &color) {
+void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, const ic::Color &color) {
     std::vector<BatchVertex> v;
 
     for (int index = 0; index < vertices.size(); index++) {
@@ -54,7 +54,7 @@ void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices
 
     batch->add(v);
 }
-void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, const ic::Color &color) {
+void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, const ic::Color &color) {
     std::vector<BatchVertex> v;
 
     for (auto &index : indices) {
@@ -65,7 +65,7 @@ void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices
     batch->add(v);
 }
 
-void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, std::vector<ic::Color> vertexColors, const ic::Color &color) {
+void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<ic::Color> vertexColors, const ic::Color &color) {
     if (vertexColors.size() != vertices.size()) {
         printf("Didn't render the vertices. Vertex colors' size didn't correspond to the vertex positions' size.\n");
         return;
@@ -82,7 +82,7 @@ void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices
 
     batch->add(v);
 }
-void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, std::vector<ic::Color> vertexColors, const ic::Color &color) {
+void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, std::vector<ic::Color> vertexColors, const ic::Color &color) {
     if (vertexColors.size() != vertices.size()) {
         printf("Didn't render the vertices. Vertex colors' size didn't correspond to the vertex positions' size.\n");
         return;
@@ -101,7 +101,7 @@ void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices
     batch->add(v);
 }
 
-void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color) {
+void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color) {
     if (vertexColors.size() != vertices.size()) {
         printf("Didn't render the vertices. Vertex colors' size didn't correspond to the vertex positions' size.\n");
         return;
@@ -125,7 +125,7 @@ void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices
     batch->add(v);
 }
 
-void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color) {
+void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color) {
     if (vertexColors.size() != vertices.size()) {
         printf("Didn't render the vertices. Vertex colors' size didn't correspond to the vertex positions' size.\n");
         return;
@@ -151,13 +151,13 @@ void Renderer::draw_vertices(ic::Batch2D *batch, std::vector<ic::Vec2f> vertices
 
 
 
-void Renderer::draw_string(ic::Batch2D *batch, ic::TextAtlas *textAtlas, const std::string &text, float x, float y, float scaleX, float scaleY, const ic::Color &color) {
+void Renderer::draw_string(ic::Batch *batch, ic::TextAtlas *textAtlas, const std::string &text, float x, float y, float scaleX, float scaleY, const ic::Color &color) {
     float sclX = scaleX * 0.002f;
     float sclY = scaleY * 0.002f;
            
     draw_string_itself(batch, textAtlas, text, x, y, sclX, sclY, color);
 }
-void Renderer::draw_string_centered(ic::Batch2D *batch, ic::TextAtlas *textAtlas, const std::string &text, float x, float y, float scaleX, float scaleY, const ic::Color &color) {
+void Renderer::draw_string_centered(ic::Batch *batch, ic::TextAtlas *textAtlas, const std::string &text, float x, float y, float scaleX, float scaleY, const ic::Color &color) {
     float sclX = scaleX * 0.002f;
     float sclY = scaleY * 0.002f;
         
@@ -186,7 +186,7 @@ void Renderer::draw_string_centered(ic::Batch2D *batch, ic::TextAtlas *textAtlas
 }
 
 
-void Renderer::draw_string_itself(ic::Batch2D *batch, ic::TextAtlas *textAtlas, const std::string &text, float x, float y, float sclX, float sclY, const ic::Color &color) {
+void Renderer::draw_string_itself(ic::Batch *batch, ic::TextAtlas *textAtlas, const std::string &text, float x, float y, float sclX, float sclY, const ic::Color &color) {
     std::vector<BatchVertex> vertices;
     
     float px = x;
