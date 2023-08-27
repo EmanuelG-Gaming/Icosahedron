@@ -19,6 +19,8 @@ namespace ic {
             void set_blending(ic::GLBlendingSource source, ic::GLBlendingDestination dest);
             void set_face_culling(ic::GLCullSettings culling, ic::GLFaceWindingOrder winding = ic::CCW);
 
+            void set_viewport(int w, int h);
+            
             void enable(ic::GLContextSettings setting);
             void disable(ic::GLContextSettings setting);
 

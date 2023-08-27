@@ -26,6 +26,9 @@ void ic::GLStateHandler::set_face_culling(ic::GLCullSettings culling, ic::GLFace
     glFrontFace(winding);
 }
 
+void ic::GLStateHandler::set_viewport(int w, int h) {
+    glViewport(0, 0, w, h);
+}
 
 void ic::GLStateHandler::enable(ic::GLContextSettings setting) {
     glEnable(setting);

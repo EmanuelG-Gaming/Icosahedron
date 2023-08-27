@@ -28,7 +28,16 @@ namespace ic {
     enum GLTextureAttachments {
         INVALID_TEXTURE_ATTACHMENT = -1,
 
-        TEXTURE_ATTACH_COLOR_0 = GL_COLOR_ATTACHMENT0
+        TEXTURE_ATTACH_COLOR_0 = GL_COLOR_ATTACHMENT0,
+        TEXTURE_ATTACH_DEPTH = GL_DEPTH_ATTACHMENT,
+    };
+
+    enum GLTextureColorChannels {
+        INVALID_TEXTURE_COLOR_CHANNEL = -1,
+
+        TEXTURE_RGB = GL_RGB,
+        TEXTURE_RGBA = GL_RGBA,
+        TEXTURE_DEPTH = GL_DEPTH_COMPONENT,
     };
 
     enum GLDepthSettings {

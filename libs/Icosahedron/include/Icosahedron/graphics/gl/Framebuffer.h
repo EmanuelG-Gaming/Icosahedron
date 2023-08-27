@@ -6,13 +6,14 @@
 #include <Icosahedron/graphics/gl/GL.h>
 
 namespace ic {
+    /** @brief Wraps an OpenGL framebuffer. */
     class Framebuffer {
         public:
-            Framebuffer(ic::GLTextureAttachments attachment, int width, int height);
+            Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColorChannels channel, int width, int height);
 
             void use();
             void unuse();
-            void use_texture();
+            void use_texture(int index = 0);
             
             void resize(int w, int h);
             
@@ -28,6 +29,7 @@ namespace ic {
 
             int width, height;
             ic::GLTextureAttachments textureAttachment;
+            ic::GLTextureColorChannels textureColorChannel;
     };
 }
 #endif
