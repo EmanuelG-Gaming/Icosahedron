@@ -25,7 +25,7 @@ void Camera2D::use(ic::Shader *shader) {
     this->aspectRatioCorrection.set_orthographic(-aspect, aspect, -1, 1);
 
     projection = this->aspectRatioCorrection * scaling * translation;
-    
+
     shader->set_uniform_mat4("projection", projection);
 }
 

@@ -56,7 +56,7 @@ namespace ic {
             return *this;           
         }
 
-        Mat set_orthographic(float left, float right, float bottom, float top, float near, float far) {
+        Mat set_orthographic(float left, float right, float bottom, float top, float near = 0.0f, float far = 1000.0f) {
             //static_assert(is_square(), "Orthographic matrices work if they're square.");
             static_assert(n == 4, "Tried to initialize an orthographic matrix with a size != 4.");
             
@@ -72,10 +72,6 @@ namespace ic {
 
             return *this;
         }
-        Mat set_orthographic(float left, float right, float bottom, float top) {
-            return set_orthographic(left, right, bottom, top, 0.1f, 1000.0f);
-        }
-
 
         Mat set_look_at(ic::Vec3f cameraPosition, ic::Vec3f lookingAt, ic::Vec3f up) {
             //static_assert(is_square(), "View matrices work if they're square.");

@@ -1,8 +1,11 @@
 #include <Application.h>
 
+#include <filesystem>
 #include <iostream>
+
 #include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/math/Mathf.h>
+
 
 int IC_WINDOW_WIDTH = 0;
 int IC_WINDOW_HEIGHT = 0;
@@ -45,6 +48,8 @@ bool ic::Application::construct(int w, int h) {
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 
+    set_current_working_directory();
+    
     if (!init()) {
         std::cerr << "Couldn't initialize the application." << "\n";
         return false;
@@ -67,17 +72,19 @@ bool ic::Application::construct(int w, int h) {
     window = win;
     context = cont;
     
-    SDL_SetRelativeMouseMode(SDL_TRUE);
-
+    if (hideCursor) {
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+    }
+    
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
         std::cerr << "Couldn't initialize GLEW." << "\n";
         return false;
     }
     
-    send_application_information();
-
     pre_load();
+
+    send_application_information();
 
     if (!load()) {
         std::cerr << "Couldn't load the application." << "\n";
@@ -159,7 +166,9 @@ void ic::Application::start() {
         // Swap buffers
 		SDL_GL_SwapWindow(window);
         
-        SDL_Delay(17);
+        // Slightly delay the application loop, so that the computer will not explode
+        SDL_Delay(16);
+
         Uint64 end = SDL_GetPerformanceCounter();
         delta = ((float) end - start) / (float) SDL_GetPerformanceFrequency();
 	}
@@ -182,6 +191,7 @@ void ic::Application::send_application_information() {
     glGetIntegerv(GL_MINOR_VERSION, &minorGL);
 
     std::cout << "----- Icosahedron -----" << "\n\n";
+
     std::cout << "OpenGL driver compactibility: " << majorGL << "." << minorGL << " / " << glGetString(GL_VENDOR) << "\n";
     std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << "\n";
     fprintf(stdout, "Compiled SDL2 version: %u.%u.%u\n", compiled.major, compiled.minor, compiled.patch);
@@ -193,6 +203,13 @@ void ic::Application::pre_load() {
     ic::FreeType::get().load();
 }
 
+void ic::Application::set_current_working_directory() {
+    std::string dir = std::string(SDL_GetBasePath());
+    std::replace(dir.begin(), dir.end(), '\\', '/');
+    dir.erase(dir.find("/build"));
+    
+    std::filesystem::current_path(dir);
+}
 
 int ic::Application::screen_width() {
     return width;

@@ -44,6 +44,7 @@ namespace ic {
             return *this;
         }
 
+        /** @brief Converts a base 16 description without the hash sign into an RGB color. */
         Color hexadecimal_to_RGB(const std::string &stringValue) {
             int tempR, tempG, tempB;
             sscanf(stringValue.c_str(), "%02x%02x%02x", &tempR, &tempG, &tempB);

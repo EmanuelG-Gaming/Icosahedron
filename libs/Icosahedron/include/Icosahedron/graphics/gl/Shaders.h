@@ -37,9 +37,8 @@ namespace ic {
                 layout (location = 1) in vec3 color;
                 layout (location = 2) in vec2 tCoords;
 
-                uniform mat4 projection;
-                uniform int useCamera;
-
+                uniform mat4 projection = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+                
                 out vec3 vColor;
                 out vec2 vTCoords;
 
@@ -48,10 +47,8 @@ namespace ic {
                     vTCoords = tCoords;
                     vec4 pos = vec4(position, 0.0, 1.0);
 
-                    if (useCamera == 1) {
-                        pos = projection * pos;
-                    }
-
+                    pos = projection * pos;
+                    
                     gl_Position = pos;
                 }
             );

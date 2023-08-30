@@ -1,3 +1,5 @@
+![Icosahedron cover art](resources/icosahedron-cover-art.png)
+
 # Icosahedron
 A game engine that uses OpenGL. It is supposed to be for both 2D and 3D applications.
 

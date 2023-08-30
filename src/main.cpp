@@ -43,10 +43,11 @@ int main(int argc, char *argv[]) {
 class Example2 : public ic::Application {
     ic::Texture<ic::T2D> *texture;
     ic::Shader *shader;
+    ic::Camera2D *camera;
 
     ic::Mesh2D *shape;
     ic::Vec2f shapePosition;
-
+    
     public:
         bool init() override {
             displayName = "Example window";
@@ -58,13 +59,15 @@ class Example2 : public ic::Application {
             shape = new ic::Mesh2D(ic::GeometryGenerator::get().generate_rectangle(0.2f, 0.2f));
 
             shape->jump_attribute();
-            shape->add_attribute("textureCoords", 2, { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f });
+            shape->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_rectangle());
             shape->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
             shape->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
 
-            texture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
+            texture = new ic::Texture<ic::T2D>("resources/textures/wood.png");
             shader = new ic::Shader(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D, false);
 
+            camera = new ic::Camera2D();
+        
             inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
             shapePosition = { 0.0f, 0.0f };
 
@@ -75,19 +78,22 @@ class Example2 : public ic::Application {
             return true;
         }
     
-        bool update(float dt) override { 
-            float speed = 1.0f;
-            ic::KeyboardController *controller = (ic::KeyboardController*) inputHandler.find_input("WASD");
-            ic::Vec2i dir = controller->direction;
+        bool update(float dt) override {
+            auto *controller = inputHandler.find_keyboard("WASD");
+            ic::Vec2i dir = controller->get_direction();
 
+            float speed = 1.0f;
             shapePosition.x() += dir.x() * speed * dt;
             shapePosition.y() += dir.y() * speed * dt;
             
-            shape->set_transformation(ic::Mat4x4().set_translation<2>(shapePosition));
+            shape->set_transformation(ic::Mat4x4().set_translation(shapePosition));
+            
 
             clear_color(ic::Colors::blue);
-
+            
             shader->use();
+            camera->use(shader);
+
             texture->use();
             shape->draw(shader);
             
@@ -97,7 +103,7 @@ class Example2 : public ic::Application {
         void dispose() override {
             texture->dispose();
             shader->clear();
-
+            
             shape->dispose();
         }
 };
@@ -118,14 +124,15 @@ int main(int argc, char *argv[]) {
 #include <Icosahedron/Core.h>
 
 class Example3 : public ic::Application {
-    ic::Batch2D *batch, *textBatch;
+    ic::Batch *batch, *textBatch;
     ic::TextureAtlas *texture;
     ic::TextAtlas *atlas;
     ic::Shader *shader, *textShader;
+    ic::Camera2D *camera;
 
     ic::RectangleShape *paddle1, *paddle2, *ball;
     ic::Vec2f vel;
-    int points1 = 0, points2 = 0;
+    int points1, points2;
 
     public:
         bool init() override {
@@ -139,8 +146,8 @@ class Example3 : public ic::Application {
             shader = new ic::Shader(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D, false);
             textShader = new ic::Shader(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D, false);
 
-            // We use the arial font
-            ic::FreeType::get().add_atlas("score", "C:/Windows/Fonts/arial.ttf", 48);
+            // We use the roboto font
+            ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
             atlas = ic::FreeType::get().find_atlas("score");
 
             texture = new ic::TextureAtlas();
@@ -148,9 +155,11 @@ class Example3 : public ic::Application {
                                    "paddle2", "resources/textures/white.png",
                                    "ball", "resources/textures/ball.png" });
 
-            batch = new ic::Batch2D(1000, ic::TRIANGLES);
-            textBatch = new ic::Batch2D(1000, ic::TRIANGLES);
+            batch = new ic::Batch(1000, ic::TRIANGLES);
+            textBatch = new ic::Batch(1000, ic::TRIANGLES);
             
+            camera = new ic::Camera2D();
+
             paddle1 = new ic::RectangleShape({ -0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle1");
             paddle2 = new ic::RectangleShape({ 0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle2");
             ball = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.05f, 0.05f }, "ball");
@@ -158,6 +167,9 @@ class Example3 : public ic::Application {
             paddle1->set_atlas(texture);
             paddle2->set_atlas(texture);
             ball->set_atlas(texture);
+
+            points1 = 0;
+            points2 = 0;
 
             restart(nullptr);
 
@@ -231,11 +243,11 @@ class Example3 : public ic::Application {
 
 
             float speed = 1.0f;
-            ic::KeyboardController *controller1 = (ic::KeyboardController*) inputHandler.find_input("paddle1");
-            ic::KeyboardController *controller2 = (ic::KeyboardController*) inputHandler.find_input("paddle2");
+            auto *controller1 = inputHandler.find_keyboard("paddle1");
+            auto *controller2 = inputHandler.find_keyboard("paddle2");
             
-            ic::Vec2i dir1 = controller1->direction;
-            ic::Vec2i dir2 = controller2->direction;
+            ic::Vec2i dir1 = controller1->get_direction();
+            ic::Vec2i dir2 = controller2->get_direction();
 
             
             paddle1->r.position.y() += dir1.y() * speed * dt;
@@ -248,6 +260,7 @@ class Example3 : public ic::Application {
             clear_color(ic::Colors::black);
 
             shader->use();
+            camera->use(shader);
             texture->use();
             paddle1->draw(renderer, batch, ic::Colors::white);
             paddle2->draw(renderer, batch, ic::Colors::white);
@@ -256,6 +269,7 @@ class Example3 : public ic::Application {
 
             // Text rendering
             textShader->use();
+            camera->use(textShader);
             atlas->use();
             renderer.draw_string_centered(textBatch, atlas, std::to_string(points1) + " | " + std::to_string(points2), 0.0f, 0.7f);
             textBatch->render();
@@ -759,11 +773,11 @@ std::string depthShaderFrag = IC_ADD_GLSL_DEFINITION(
         vec3 normal = normalize(vNormal);
         vec3 lightDir = normalize(vec3(0.0, 0.0, 0.0) - vec3(-2.0, 3.0, -3.0));
 
-        float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+        float bias = max(0.01 * (1.0 - dot(normal, lightDir)), 0.001);
         //float bias = 0.01;
 
-        float depth = gl_FragCoord.z + (gl_FrontFacing ? bias : 0.0);
-
+        //float depth = gl_FragCoord.z + (gl_FrontFacing ? bias : 0.0);
+        float depth = gl_FragCoord.z + bias;
         gl_FragDepth = depth; 
     }
 );
@@ -847,13 +861,13 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
         float result = 0.0;
         // Hard shadows
         //float closestDepth = texture(shadowMap, projCoords.xy).r;
-        //result = currentDepth > closestDepth ? 0.8 : 0.0;
+        //result = currentDepth > closestDepth ? 0.85 : 0.0;
 
         // PCF soft shadows
         vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
         for (int i = -1; i <= 1; i++) for (int j = -1; j <= 1; j++) {
             float pcfDepth = texture(shadowMap, projCoords.xy + vec2(i, j) * texelSize).r;
-            result += currentDepth > pcfDepth ? 0.8 : 0.0;
+            result += currentDepth > pcfDepth ? 0.85 : 0.0;
         }
         result /= 9.0;
 
@@ -924,6 +938,7 @@ class Example6 : public ic::Application {
         bool init() override {
             displayName = "Example window";
             scaling = ic::WindowScaling::fullscreen;
+            hideCursor = true;
 
             return true;
         }
@@ -939,7 +954,7 @@ class Example6 : public ic::Application {
 
             depthShader = new ic::Shader(depthShaderVert, depthShaderFrag, false);
             
-            floorTexture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
+            floorTexture = new ic::Texture<ic::T2D>({"resources/textures/stone-bricks.png"});
             whiteTexture = new ic::Texture<ic::T2D>({"resources/textures/white.png"});
 
             shadowWidth = 1028;
@@ -951,9 +966,10 @@ class Example6 : public ic::Application {
             //mesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped());
             //mesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
             //mesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
-            
-            mesh = ic::OBJLoader::get().get_mesh("resources/models/rooms.obj");
 
+
+            //mesh = ic::OBJLoader::get().get_mesh(ic::File("resources/models/monkey.obj").get_path());
+            mesh = ic::OBJLoader::get().get_mesh("resources/models/monkey.obj");
 
             floorMesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_parallelipiped(5.0f * 5, 0.1f, 5.0f * 5));
             floorMesh->jump_attribute();
@@ -979,7 +995,8 @@ class Example6 : public ic::Application {
     
         bool update(float dt) override {
             time += dt;
-
+            
+            
             controller->act(dt);
             camera->resize(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
             camera->update();
@@ -1017,15 +1034,29 @@ class Example6 : public ic::Application {
 
         void render_scene(ic::Shader *passShader) {
             // Mesh
-            ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, 0.0f, 0.0f);
-            ic::Mat4x4 rotation = quat.to_rotation_matrix();
-            ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f});
+            //for (int i = 0; i < 5; i++) for (int j = 0; j < 5; j++) for (int k = 0; k < 5; k++) {
+            //    float x = i * 1.5f;
+            //    float y = 0.6f + j * 1.5f;
+            //    float z = k * 1.5f;
+            //
+            //    ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
+            //    ic::Mat4x4 rotation = quat.to_rotation_matrix();
+            //    ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({x, y, z});
+            //
+            //    mesh->set_transformation(translation * rotation);
+            //    mesh->set_normal_transformation(rotation);
+            //    whiteTexture->use();
+            //    mesh->draw(passShader);
+            //}
 
+            ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
+            ic::Mat4x4 rotation = quat.to_rotation_matrix();
+            ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
+            
             mesh->set_transformation(translation * rotation);
             mesh->set_normal_transformation(rotation);
             whiteTexture->use();
             mesh->draw(passShader);
-            
 
             // Floor
             floorTexture->use();
@@ -1055,7 +1086,6 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
 
 /** Example7: A model viewer. Press up/down keys to increase/decrease the view radius.
  *  Use the Q key to switch between perspective and orthographic projections, and
@@ -1163,6 +1193,7 @@ class Example7 : public ic::Application {
         bool init() override {
             displayName = "Example window";
             scaling = ic::WindowScaling::fullscreen;
+            hideCursor = true;
 
             return true;
         }
@@ -1426,6 +1457,7 @@ class Example8 : public ic::Application {
         bool init() override {
             displayName = "Example window";
             scaling = ic::WindowScaling::fullscreen;
+            hideCursor = true;
 
             return true;
         }

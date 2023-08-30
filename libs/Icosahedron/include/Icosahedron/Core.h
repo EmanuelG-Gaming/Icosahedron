@@ -27,6 +27,9 @@ namespace ic {
 
 #include <Icosahedron/math/geom/Quaternion.h>
 
+// Files
+#include <Icosahedron/files/File.h>
+
 // Graphics
 #include <Icosahedron/graphics/Color.h>
 #include <Icosahedron/graphics/Colors.h>

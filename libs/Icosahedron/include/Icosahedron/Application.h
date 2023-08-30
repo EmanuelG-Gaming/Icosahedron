@@ -58,16 +58,24 @@ namespace ic {
             int screen_height();
             
         private:
-            /* Sends relevant information about the current OpenGL, GLEW, and SDL contexts. */
+            /* Sends relevant information such as the current OpenGL, GLEW, and SDL contexts' versions. */
             void send_application_information();
+
             /* Called before load(). */
             void pre_load();
+
+            /** @brief Sets the app's working directory.
+             *  @note The working directory would not be the generated "build" folder.
+            */
+            void set_current_working_directory();
 
         protected:
             /* The name that is displayed on the window. */
             std::string displayName = "test";
             /* The type of scaling that this window uses. */
             ic::WindowScaling scaling = ic::WindowScaling::fixed;
+            /** Whether or not the cursor is hidden. Note that the mouse's motion would still be there in the game loop. */
+            bool hideCursor = false;
 
             ic::InputHandler inputHandler;
             ic::GLStateHandler states;

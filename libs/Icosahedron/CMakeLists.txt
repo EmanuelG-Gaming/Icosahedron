@@ -22,6 +22,8 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/files/File.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/GL.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/GLStateHandler.h
     
@@ -65,6 +67,8 @@ set(LIBRARY_HEADERS
 
 set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
+    ${LIBRARY_SOURCE_DIRECTORY}/files/File.cpp
+
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/GLStateHandler.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Shader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Framebuffer.cpp

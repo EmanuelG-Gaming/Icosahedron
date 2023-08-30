@@ -11,6 +11,8 @@
 namespace ic {
     struct KeyboardController : public Input {
         public:
+            ic::Vec2i direction;
+            
             KeyboardController();
 
             void update(float dt) override;
@@ -35,7 +37,6 @@ namespace ic {
             bool key_pressed();
 
         protected:
-            ic::Vec2i direction;
             bool keyIsPressed;
 
             Uint8* keyboardState;
