@@ -54,7 +54,7 @@ void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, 
 
     batch->add(v);
 }
-void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, const ic::Color &color) {
+void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<unsigned int> indices, const ic::Color &color) {
     std::vector<BatchVertex> v;
 
     for (auto &index : indices) {
@@ -82,7 +82,7 @@ void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, 
 
     batch->add(v);
 }
-void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, std::vector<ic::Color> vertexColors, const ic::Color &color) {
+void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<unsigned int> indices, std::vector<ic::Color> vertexColors, const ic::Color &color) {
     if (vertexColors.size() != vertices.size()) {
         printf("Didn't render the vertices. Vertex colors' size didn't correspond to the vertex positions' size.\n");
         return;
@@ -125,7 +125,7 @@ void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, 
     batch->add(v);
 }
 
-void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color) {
+void Renderer::draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<unsigned int> indices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color) {
     if (vertexColors.size() != vertices.size()) {
         printf("Didn't render the vertices. Vertex colors' size didn't correspond to the vertex positions' size.\n");
         return;

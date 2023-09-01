@@ -76,7 +76,7 @@ namespace ic {
             ic::WindowScaling scaling = ic::WindowScaling::fixed;
             /** Whether or not the cursor is hidden. Note that the mouse's motion would still be there in the game loop. */
             bool hideCursor = false;
-
+            
             ic::InputHandler inputHandler;
             ic::GLStateHandler states;
             ic::Shaders shaders;

@@ -10,7 +10,7 @@
 #include <Icosahedron/graphics/gl/GL.h>
 
 namespace ic {
-    /* A vertex for a Batch2D. */
+    /* A vertex for a batch. */
     struct BatchVertex {
         ic::Vec2f Position;
         ic::Vec3f Color;

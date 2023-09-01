@@ -6,27 +6,46 @@
 class Example1 : public ic::Application {
     public:
         bool init() override {
+            // Use this to set up window settings, although this can also be done in the constructor
             displayName = "Example window";
+
             return true;
         }
         
         bool load() override {
+            // This function is called after init() and after setting up the window
+
             return true;
         }
 
+        void window_size_changed(int w, int h) override {
+            // Called when the window is resized, and also if it is changed to fullscreen mode
+            
+        }
+
         bool handle_event(ic::Event event, float dt) override { 
+            // Called when events are retrieved and polled 
+
             return true;
         }
-    
-        bool update(float dt) override { 
+
+        bool update(float dt) override {
+            // This is called once every frame
+        
             clear_color(ic::Colors::blue);
             return true; 
+        }
+
+        void dispose() override {
+            // Occurs when the application has to close
+
         }
 };
 
 int main(int argc, char *argv[]) {
     Example1 application;
 
+    // Constructs a window that is 640 pixels wide and 480 pixels tall
     if (application.construct(640, 480)) {
         application.start();
     }
@@ -34,7 +53,6 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 */
-
 
 /* Example2: Displays a textured rectangle that can be moved around using the WASD keys or the arrow keys. */
 /*
@@ -123,6 +141,15 @@ int main(int argc, char *argv[]) {
 /*
 #include <Icosahedron/Core.h>
 
+struct RectangleShape {
+    ic::Rectangle r;
+    std::string atlasEntryName;
+
+    RectangleShape(ic::Vec2f position, ic::Vec2f size, std::string atlasEntryName) : r(position, size), atlasEntryName(atlasEntryName) {
+
+    }
+};
+
 class Example3 : public ic::Application {
     ic::Batch *batch, *textBatch;
     ic::TextureAtlas *texture;
@@ -130,7 +157,7 @@ class Example3 : public ic::Application {
     ic::Shader *shader, *textShader;
     ic::Camera2D *camera;
 
-    ic::RectangleShape *paddle1, *paddle2, *ball;
+    RectangleShape *paddle1, *paddle2, *ball;
     ic::Vec2f vel;
     int points1, points2;
 
@@ -160,13 +187,9 @@ class Example3 : public ic::Application {
             
             camera = new ic::Camera2D();
 
-            paddle1 = new ic::RectangleShape({ -0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle1");
-            paddle2 = new ic::RectangleShape({ 0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle2");
-            ball = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.05f, 0.05f }, "ball");
-
-            paddle1->set_atlas(texture);
-            paddle2->set_atlas(texture);
-            ball->set_atlas(texture);
+            paddle1 = new RectangleShape({ -0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle1");
+            paddle2 = new RectangleShape({ 0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle2");
+            ball = new RectangleShape({ 0.0f, 0.0f }, { 0.05f, 0.05f }, "ball");
 
             points1 = 0;
             points2 = 0;
@@ -262,9 +285,20 @@ class Example3 : public ic::Application {
             shader->use();
             camera->use(shader);
             texture->use();
-            paddle1->draw(renderer, batch, ic::Colors::white);
-            paddle2->draw(renderer, batch, ic::Colors::white);
-            ball->draw(renderer, batch, ic::Colors::white);
+
+            renderer.draw_rectangle(batch, texture->get_entry(paddle1->atlasEntryName),
+                paddle1->r.position.x(), paddle1->r.position.y(), 
+                paddle1->r.size.x(),     paddle1->r.size.y(), 
+                ic::Colors::white);
+            renderer.draw_rectangle(batch, texture->get_entry(paddle2->atlasEntryName),
+                paddle2->r.position.x(), paddle2->r.position.y(), 
+                paddle2->r.size.x(),     paddle2->r.size.y(), 
+                ic::Colors::white);
+            renderer.draw_rectangle(batch, texture->get_entry(ball->atlasEntryName),
+                ball->r.position.x(), ball->r.position.y(), 
+                ball->r.size.x(),     ball->r.size.y(), 
+                ic::Colors::white);
+
             batch->render();
 
             // Text rendering
@@ -284,7 +318,7 @@ class Example3 : public ic::Application {
             shader->clear();
         }
 
-        void restart(ic::RectangleShape *winner) {
+        void restart(RectangleShape *winner) {
             if (winner == paddle1) {
                 points1++;
             } else if (winner == paddle2) {
@@ -359,31 +393,66 @@ const std::array<int, MAP_AREA> obstructing = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
+struct RectangleShape {
+    ic::Rectangle r;
+    std::string atlasEntryName;
+
+    RectangleShape(ic::Vec2f position, ic::Vec2f size, std::string atlasEntryName) : r(position, size), atlasEntryName(atlasEntryName) {
+
+    }
+};
+
+struct PolygonShape {
+    ic::Polygon poly;
+    ic::Vec2f position;
+    std::vector<unsigned int> indices;
+
+    PolygonShape(std::vector<float> vertCoords, ic::Vec2f pos = { 0.0f, 0.0f }) : poly(vertCoords), position(pos) {
+        poly.translate(position);
+        indices = ic::EarClippingTriangulation::get().triangulate(vertCoords);
+    }
+
+    void draw(ic::Renderer &renderer, ic::Batch *batch, ic::Color color) {
+        std::vector<ic::Vec2f> positions;
+        auto components = poly.get_transformed_vertices();
+
+        for (int i = 0; i < components.size(); i += 2) {
+            float x = components[i], y = components[i + 1];
+            ic::Vec2f position = { x, y };
+
+            positions.push_back(position);
+        }
+        
+        
+        renderer.draw_vertices(batch, positions, indices, ic::Colors::lightGray);
+    }
+};
+
 struct Drop {
-    ic::PolygonShape *shape;
+    PolygonShape *shape;
     ic::Rectangle hitbox;
 
     Drop() {
-        this->shape = new ic::PolygonShape(ic::GeometryGenerator::get().generate_regular_polygon(3));
+        this->shape = new PolygonShape(ic::GeometryGenerator::get().generate_regular_polygon(3));
         this->hitbox = ic::Rectangle({ 0.0f, 0.0f }, { 0.8f, 0.8f });
     }
 
     Drop(ic::Vec2f position, int sides, float radius) {
-        this->shape = new ic::PolygonShape(ic::GeometryGenerator::get().generate_regular_polygon(sides, radius), position);
+        this->shape = new PolygonShape(ic::GeometryGenerator::get().generate_regular_polygon(sides, radius), position);
         this->hitbox = ic::Rectangle(position, { radius - radius * 0.2f, radius - radius * 0.2f });
     }
 };
 
 class Example4 : public ic::Application {
-    ic::Batch2D *batch, *textBatch;
+    ic::Batch *batch, *textBatch;
     ic::TextureAtlas *texture;
     ic::Shader *shader, *textShader;
     ic::TextAtlas *atlas;
 
-    ic::RectangleShape *shape;
+    RectangleShape *shape;
     std::vector<Drop*> drops;
     
-    ic::Camera2D *camera;
+    ic::Camera2D *camera, *uiCamera;
 
     bool collisionDebug;
     int collected;
@@ -395,7 +464,7 @@ class Example4 : public ic::Application {
     public:
         bool init() override {
             displayName = "Example window";
-            //scaling = ic::WindowScaling::fullscreen;
+            scaling = ic::WindowScaling::fullscreen;
 
             return true;
         }
@@ -405,9 +474,10 @@ class Example4 : public ic::Application {
             textShader = new ic::Shader(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D, false);
 
             camera = new ic::Camera2D(0.3f);
+            uiCamera = new ic::Camera2D();
 
-            batch = new ic::Batch2D(10000, ic::TRIANGLES);
-            textBatch = new ic::Batch2D(1000, ic::TRIANGLES);
+            batch = new ic::Batch(10000, ic::TRIANGLES);
+            textBatch = new ic::Batch(1000, ic::TRIANGLES);
             texture = new ic::TextureAtlas();
             texture->add_entries({ "white", "resources/textures/white.png",
                                    "ball", "resources/textures/ball.png",
@@ -417,8 +487,8 @@ class Example4 : public ic::Application {
                                    "dirt", "resources/textures/dirt.png",
                                    "grass", "resources/textures/grass.png" });
 
-            // We use the arial font
-            ic::FreeType::get().add_atlas("score", "C:/Windows/Fonts/arial.ttf", 48);
+            // We use the roboto font
+            ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
             atlas = ic::FreeType::get().find_atlas("score");
 
             
@@ -429,8 +499,7 @@ class Example4 : public ic::Application {
             inputHandler.add_input(debugCont, "collisionDebug");
 
 
-            shape = new ic::RectangleShape({ 0.0f, 0.0f }, { 0.4f, 0.4f }, "player");
-            shape->set_atlas(texture);
+            shape = new RectangleShape({ 0.0f, 0.0f }, { 0.4f, 0.4f }, "player");
             
             collisionDebug = false;
             reset();
@@ -445,6 +514,7 @@ class Example4 : public ic::Application {
         bool update(float dt) override {
             // Collision detection
             std::vector<ic::Rectangle> possibleCollisions;
+
             int px = (int) shape->r.position.x();
             int py = (int) shape->r.position.y();
 
@@ -493,7 +563,7 @@ class Example4 : public ic::Application {
 
             // Dynamics
             float speed = 3.0f;
-            ic::KeyboardController *controller = (ic::KeyboardController*) inputHandler.find_input("WASD");
+            auto *controller = inputHandler.find_keyboard("WASD");
             ic::Vec2i dir = controller->direction;
 
             shape->r.position.x() += dir.x() * speed * dt;
@@ -549,7 +619,11 @@ class Example4 : public ic::Application {
                 }
             }
 
-            shape->draw(renderer, batch, ic::Colors::green);
+            renderer.draw_rectangle(batch, texture->get_entry(shape->atlasEntryName),
+                shape->r.position.x(), shape->r.position.y(), 
+                shape->r.size.x(),     shape->r.size.y(), 
+                ic::Colors::green);
+
             for (auto &drop : drops) {
                 drop->shape->draw(renderer, batch, ic::Colors::lightGray);
             }
@@ -558,6 +632,8 @@ class Example4 : public ic::Application {
 
             // Text rendering
             textShader->use();
+            uiCamera->use(textShader);
+
             atlas->use();
             renderer.draw_string(textBatch, atlas, "T key - toggle potential collisions", -1.0f, 0.9f, 0.8f, 0.8f);
             renderer.draw_string(textBatch, atlas, std::to_string(collected) + "/" + std::to_string(initialSize) + " polygons remaining", -1.0f, 0.75f, 0.8f, 0.8f);
@@ -739,6 +815,7 @@ int main(int argc, char *argv[]) {
 */
 
 /** Example6: A scene that shows a rotating cube on a wooden floor. */
+/*
 #include <Icosahedron/Core.h>
 
 std::string depthShaderVert = IC_ADD_GLSL_DEFINITION(
@@ -944,7 +1021,6 @@ class Example6 : public ic::Application {
         }
         
         bool load() override {
-            glEnable(GL_DEPTH_TEST);
             states.enable_depth_testing(ic::LESS);
 
             shader = new ic::Shader(vert, fragment, false);
@@ -954,8 +1030,8 @@ class Example6 : public ic::Application {
 
             depthShader = new ic::Shader(depthShaderVert, depthShaderFrag, false);
             
-            floorTexture = new ic::Texture<ic::T2D>({"resources/textures/stone-bricks.png"});
-            whiteTexture = new ic::Texture<ic::T2D>({"resources/textures/white.png"});
+            floorTexture = new ic::Texture<ic::T2D>("resources/textures/stone-bricks.png");
+            whiteTexture = new ic::Texture<ic::T2D>("resources/textures/white.png");
 
             shadowWidth = 1028;
             shadowHeight = 1028;
@@ -1086,6 +1162,7 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+*/
 
 /** Example7: A model viewer. Press up/down keys to increase/decrease the view radius.
  *  Use the Q key to switch between perspective and orthographic projections, and
@@ -1203,7 +1280,7 @@ class Example7 : public ic::Application {
             states.enable_face_culling(ic::FRONT, ic::CCW);
 
             shader = new ic::Shader(shaders.meshShaderVertex3D, fragment, false);
-            whiteTexture = new ic::Texture<ic::T2D>({"resources/textures/white.png"});
+            whiteTexture = new ic::Texture<ic::T2D>("resources/textures/white.png");
             
             mesh = ic::OBJLoader::get().get_mesh("resources/models/boat.obj");
             mesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
@@ -1468,8 +1545,8 @@ class Example8 : public ic::Application {
             shader = new ic::Shader(shaders.meshShaderVertex3D, fragment, false);
             screenShader = new ic::Shader(screenVertex, screenFragment, false);
             
-            floorTexture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
-            whiteTexture = new ic::Texture<ic::T2D>({"resources/textures/white.png"});
+            floorTexture = new ic::Texture<ic::T2D>("resources/textures/wood.png");
+            whiteTexture = new ic::Texture<ic::T2D>("resources/textures/white.png");
             
             framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
 
@@ -1566,3 +1643,325 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 */
+
+/* Example9: A very simple ray tracer. */
+#include <Icosahedron/Core.h>
+
+const std::size_t RAYTRACING_WIDTH = 640;
+const std::size_t RAYTRACING_HEIGHT = 480;
+
+std::string rayVertex = IC_ADD_GLSL_DEFINITION(
+    layout (location = 0) in vec2 position;
+    layout (location = 1) in vec3 color;
+    layout (location = 2) in vec2 tCoords;
+
+    out vec2 vPosition;
+    out vec2 vTCoords;
+
+    void main() {
+        vPosition = position;
+        vTCoords = tCoords;
+        
+        gl_Position = vec4(vPosition, 0.0, 1.0);
+    }
+);
+
+std::string rayFragment = IC_ADD_GLSL_DEFINITION(
+    precision mediump float;
+
+    in vec2 vPosition;
+    in vec2 vTCoords;
+
+    struct RayResult {
+        vec3 intersection;
+        vec3 normal;
+        float t;
+        bool hit;
+    };
+
+    struct Ray {
+        vec3 origin;
+        vec3 direction;
+    };
+    
+    
+    struct Sphere {
+        vec3 center;
+        float radius;
+        vec3 diffuse;
+    };
+
+
+    const int MAX_SPHERE_COUNT = 3;
+    uniform Sphere spheres[MAX_SPHERE_COUNT];
+    uniform vec3 lightPosition = vec3(1.0, 1.0, 1.0);
+    uniform mat4 projection;
+
+
+    RayResult ray_trace_sphere(Ray ray, Sphere sphere) {
+        vec3 offset = ray.origin - sphere.center;
+
+        // Form a 2nd order polynominal ax^2 + bx + c
+        float a = dot(ray.direction, ray.direction);
+        float b = 2.0 * dot(ray.direction, offset);
+        float c = dot(offset, offset) - sphere.radius * sphere.radius;
+
+        float discriminant = b*b - 4.0*a*c;
+        
+        RayResult result;
+        if (discriminant > 0.0) {
+            float alpha = (-b + sqrt(discriminant)) / (2.0 * a);
+            float alpha2 = -b / a - alpha;
+            if (abs(alpha2) < abs(alpha)) alpha = alpha2;
+    
+            result.intersection = ray.origin + ray.direction * alpha;
+            result.normal = normalize(result.intersection - sphere.center);
+            result.t = alpha;
+            result.hit = true;
+
+            return result;
+        } else if (discriminant == 0.0) {
+            // Tries to fix background noise
+        
+            float alpha = -b / (2.0 * a);
+            float alpha2 = -b / a - alpha;
+            if (abs(alpha2) < abs(alpha)) alpha = alpha2;
+    
+            result.intersection = ray.origin + ray.direction * alpha;
+            result.normal = normalize(result.intersection - sphere.center);
+            result.t = alpha;
+            result.hit = true;
+
+            return result;
+        }
+
+        result.hit = false;
+        return result;
+    }
+
+    vec4 sphere_shading(RayResult intersection, Sphere sphere) {
+        vec3 lightDir = normalize(lightPosition - intersection.intersection);
+        vec3 normal = normalize(intersection.normal);
+        float intensity = clamp(dot(lightDir, normal), 0.0, 1.0);
+
+        vec3 diffuse = sphere.diffuse * intensity;
+        vec4 color = vec4(diffuse, 1.0);
+
+        return color;
+    }
+
+
+    vec4 ray_color(Ray ray, inout RayResult minIntersection) {
+        float minimumT = 90000.0;
+        vec4 color = vec4(0.0, 0.0, 1.0, 1.0);
+        
+        for (int i = 0; i < MAX_SPHERE_COUNT; i++) {
+            Sphere base = spheres[i];
+
+            RayResult rayRes = ray_trace_sphere(ray, base);
+            if (rayRes.hit) {
+                float intersectionT = rayRes.t;
+
+                // Keep track of the minimum distance between the spheres and the ray position
+                if (intersectionT < minimumT) {
+                    minimumT = intersectionT;
+                    color = sphere_shading(rayRes, base);
+                    minIntersection = rayRes;
+                }
+            }
+        }
+
+        return color;    
+    }
+
+    vec4 reflect_ray(Ray ray, int iterations) {
+        vec4 sum = vec4(0.0, 0.0, 0.0, 0.0);
+        Ray currentRay = ray;
+
+        for (int i = 0; i < iterations; i++) {
+            RayResult intersection1;
+            vec4 color1 = ray_color(currentRay, intersection1);
+    
+            vec3 reflectPosition = intersection1.intersection;
+            vec3 reflectDirection = reflect(-ray.direction, intersection1.normal);
+    
+            RayResult intersection2;
+            Ray reflected = Ray(reflectPosition, reflectDirection);
+    
+            vec4 color2 = ray_color(reflected, intersection2);
+            sum += color1 + color2;
+            currentRay = reflected;
+        }
+        sum /= (iterations * 2);
+
+        return sum;
+    }
+
+    vec4 shadowing(Ray ray) {
+        float minimumT = 90000.0;
+        RayResult minRes;
+        Sphere baseSphere;
+
+        for (int i = 0; i < MAX_SPHERE_COUNT; i++) {
+            Sphere base = spheres[i];
+
+            RayResult rayRes = ray_trace_sphere(ray, base);
+            if (!rayRes.hit) continue;
+            float intersectionT = rayRes.t;
+
+            // Keep track of the minimum distance between the spheres and the ray position
+            if (intersectionT < minimumT) {
+                minimumT = intersectionT;
+                baseSphere = base;
+                minRes = rayRes;
+            }
+        }
+
+        vec3 biased = minRes.intersection + minRes.normal * 0.001;
+        Ray shadowRay = Ray(biased, normalize(biased - lightPosition));
+        for (int j = 0; j < MAX_SPHERE_COUNT; j++) {
+            Sphere base2 = spheres[j];
+            if (baseSphere == base2) continue;
+
+            RayResult shadowRes = ray_trace_sphere(shadowRay, base2);
+            if (shadowRes.hit) {
+                return vec4(0.2, 0.2, 0.2, 1.0);
+            }
+        }
+
+        return vec4(1.0, 1.0, 1.0, 1.0);
+    }
+
+    out vec4 outColor;
+
+    void main() {
+        vec2 centered = vTCoords * 2.0 - 1.0;
+
+        mat4 inverseProj = inverse(projection);
+        vec3 pos = vec3(centered.xy, 0.0);
+        vec3 dir = normalize((inverseProj * vec4(pos, -1.0))).xyz;
+        Ray ray = Ray(vec3(0.0, 0.0, 0.0), dir);
+
+        vec4 average = reflect_ray(ray, 2);
+        vec4 shadow = shadowing(ray);
+
+        outColor = average * shadow;
+    }
+);
+
+
+std::string screenFragment = IC_ADD_GLSL_DEFINITION(
+    precision mediump float;
+    
+    in vec2 vPosition;
+    in vec2 vTCoords;
+
+    uniform sampler2D screenTexture;
+
+    out vec4 outColor;
+
+    void main() {
+        vec2 opposite = vec2(vTCoords.x, vTCoords.y);
+        vec4 color = texture(screenTexture, opposite);
+        outColor = color;
+    }
+);
+
+class Example9 : public ic::Application {
+    ic::Shader *screenShader, *rayShader;
+    ic::Framebuffer *framebuffer;
+    
+    ic::Mesh2D *screenQuad;
+    ic::Camera3D *camera;
+    float time;
+
+    public:
+        bool init() override {
+            displayName = "Example window";
+            
+            return true;
+        }
+        
+        bool load() override {
+            rayShader = new ic::Shader(rayVertex, rayFragment, false);
+            screenShader = new ic::Shader(shaders.meshShaderVertex2D, screenFragment, false);
+            
+            // Initialize these values directly
+            rayShader->use();
+            rayShader->set_uniform_vec3f("spheres[0].center", { 0.0f, 0.2f, 1.5f });
+            rayShader->set_uniform_color("spheres[0].diffuse", ic::Colors::red);
+            rayShader->set_uniform_float("spheres[0].radius", 0.05f);
+
+            rayShader->set_uniform_vec3f("spheres[1].center", { 0.5f, 0.0f, 1.5f });
+            rayShader->set_uniform_color("spheres[1].diffuse", ic::Colors::green);
+            rayShader->set_uniform_float("spheres[1].radius", 0.35f);
+
+            rayShader->set_uniform_vec3f("spheres[2].center", { -0.4f, -0.1f, 1.5f });
+            rayShader->set_uniform_color("spheres[2].diffuse", ic::Colors::cyan);
+            rayShader->set_uniform_float("spheres[2].radius", 0.5f);
+
+            framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, RAYTRACING_WIDTH, RAYTRACING_HEIGHT);
+
+            screenQuad = new ic::Mesh2D(ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
+            screenQuad->jump_attribute();
+            screenQuad->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            screenQuad->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+
+            camera = new ic::Camera3D();
+
+            time = 0.0f;
+
+            return true;
+        }
+
+        void window_size_changed(int w, int h) override {
+            
+        }
+
+        bool handle_event(ic::Event event, float dt) override { 
+            
+            return true;
+        }
+
+        bool update(float dt) override {
+            time += dt;
+            camera->update();
+
+            clear_color(ic::Colors::blue);
+            
+            // First pass - getting raytraced information
+            framebuffer->use();
+            rayShader->use();
+            rayShader->set_uniform_vec3f("lightPosition", { 0.5f, 0.1f, 0.0f });
+            camera->upload_to_shader(rayShader);
+            rayShader->set_uniform_vec3f("spheres[0].center", { ic::Mathf::get().sinf(time * 0.5f) * 0.3f, 0.0f, 0.5f });
+            
+            screenQuad->draw(rayShader);
+            framebuffer->unuse();
+
+            // Second pass - drawing the screen-covering quadrilateral
+            screenShader->use();
+            framebuffer->use_texture();
+            screenQuad->draw(screenShader);
+
+            return true; 
+        }
+
+        void dispose() override {
+            screenShader->clear();
+            rayShader->clear();
+
+            framebuffer->dispose();
+            screenQuad->dispose();
+        }
+};
+
+int main(int argc, char *argv[]) {
+    Example9 application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}

@@ -175,6 +175,8 @@ void ic::Application::start() {
 	dispose();
 	ic::FreeType::get().dispose();
     
+    std::cout << displayName << " exited." << "\n";
+
 	SDL_DestroyWindow(window);
     SDL_GL_DeleteContext(context);
 
@@ -186,13 +188,12 @@ void ic::Application::send_application_information() {
     SDL_VERSION(&compiled);
     SDL_GetVersion(&linked);
 
-    GLint majorGL, minorGL;
-    glGetIntegerv(GL_MAJOR_VERSION, &majorGL);
-    glGetIntegerv(GL_MINOR_VERSION, &minorGL);
+    std::string version = std::string((char*) glGetString(GL_VERSION));
+    std::string sub = version.substr(0, 5);
 
     std::cout << "----- Icosahedron -----" << "\n\n";
 
-    std::cout << "OpenGL driver compactibility: " << majorGL << "." << minorGL << " / " << glGetString(GL_VENDOR) << "\n";
+    std::cout << "OpenGL driver compactibility: " << sub << " / " << glGetString(GL_RENDERER) << "\n";
     std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << "\n";
     fprintf(stdout, "Compiled SDL2 version: %u.%u.%u\n", compiled.major, compiled.minor, compiled.patch);
     fprintf(stdout, "Linked SDL2 version: %u.%u.%u\n", linked.major, linked.minor, linked.patch);

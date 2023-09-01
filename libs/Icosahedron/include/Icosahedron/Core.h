@@ -55,9 +55,6 @@ namespace ic {
 #include <Icosahedron/input/InputHandler.h>
 
 // Scene
-#include <Icosahedron/scene/2d/Shape2D.h>
-#include <Icosahedron/scene/2d/RectangleShape.h>
-#include <Icosahedron/scene/2d/PolygonShape.h>
 #include <Icosahedron/scene/2d/Mesh2D.h>
 #include <Icosahedron/scene/2d/Camera2D.h>
 

@@ -23,6 +23,9 @@ namespace ic {
             Texture(std::vector<std::string> fileNames, bool smooth = false, bool repeating = true) : Texture(smooth, repeating) {
                 setup(fileNames);
             }
+            Texture(const std::string &fileName, bool smooth = false, bool repeating = true) : Texture(smooth, repeating) {
+                setup({fileName});
+            }
 
             void use() {
                 if (textureIndex) {

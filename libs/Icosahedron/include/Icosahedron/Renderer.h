@@ -22,13 +22,13 @@ namespace ic {
             
             
             void draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, const ic::Color &color = { 255, 255, 255 }); 
-            void draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, const ic::Color &color = { 255, 255, 255 }); 
+            void draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<unsigned int> indices, const ic::Color &color = { 255, 255, 255 }); 
 
             void draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<ic::Color> vertexColors, const ic::Color &color = { 255, 255, 255 }); 
-            void draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, std::vector<ic::Color> vertexColors, const ic::Color &color = { 255, 255, 255 }); 
+            void draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<unsigned int> indices, std::vector<ic::Color> vertexColors, const ic::Color &color = { 255, 255, 255 }); 
             
             void draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color = { 255, 255, 255 }); 
-            void draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<int> indices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color = { 255, 255, 255 }); 
+            void draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, std::vector<unsigned int> indices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color = { 255, 255, 255 }); 
 
 
 
