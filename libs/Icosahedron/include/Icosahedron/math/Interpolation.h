@@ -33,10 +33,18 @@ namespace ic {
             }
 
             /** @brief Provides a shaping function for the exponential e^x. 
-             *  @note This is an approximation, as it reaches about 0.982 when x = 1. */
+             *  @note This is an approximation, as it reaches about 0.952 when x = 1. */
             float exponential(float x) {
-                float scale = 4.0f / 7.0f;
-                return (exp(x) - 1) * scale;
+                float sum = 0.0f;
+                int factorial = 1;
+                
+                // Calculate power series
+                for (int i = 1; i <= 3; i++) {
+                    factorial *= i;
+                    sum += pow(x, i) / (float) factorial;
+                }
+
+                return sum * (4.0f / 7.0f);
             }
 
             float smoothstep(float x) {

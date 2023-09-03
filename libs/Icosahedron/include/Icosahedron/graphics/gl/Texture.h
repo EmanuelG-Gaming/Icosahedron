@@ -20,8 +20,8 @@ namespace ic {
         public:
             Texture() {}
             Texture(bool smooth, bool repeating) : smooth(smooth), repeating(repeating) {}
-            Texture(std::vector<std::string> fileNames, bool smooth = false, bool repeating = true) : Texture(smooth, repeating) {
-                setup(fileNames);
+            Texture(const std::initializer_list<std::string> &fileNames, bool smooth = false, bool repeating = true) : Texture(smooth, repeating) {
+                setup(std::vector(fileNames));
             }
             Texture(const std::string &fileName, bool smooth = false, bool repeating = true) : Texture(smooth, repeating) {
                 setup({fileName});

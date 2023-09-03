@@ -33,10 +33,11 @@ void ic::Framebuffer::dispose() {
 }
 
 void ic::Framebuffer::resize(int w, int h) {
-    this->dispose();
     this->fbo = 0;
     this->rbo = 0;
     this->textureIndex = 0;
+    this->dispose();
+    
 
     glGenFramebuffers(1, &this->fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
@@ -56,11 +57,13 @@ void ic::Framebuffer::resize(int w, int h) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-
-    glGenRenderbuffers(1, &this->rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, this->rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    if (this->textureAttachment != GL_DEPTH_ATTACHMENT) {
+        glGenRenderbuffers(1, &this->rbo);
+        glBindRenderbuffer(GL_RENDERBUFFER, this->rbo);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this->rbo);
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
     glFramebufferTexture2D(GL_FRAMEBUFFER, this->textureAttachment, GL_TEXTURE_2D, this->textureIndex, 0);
@@ -70,7 +73,6 @@ void ic::Framebuffer::resize(int w, int h) {
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this->rbo);
     
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "Framebuffer is not complete!\n";
@@ -82,34 +84,4 @@ void ic::Framebuffer::resize(int w, int h) {
             
 void ic::Framebuffer::setup(int w, int h) {
     this->resize(w, h);
-    /*
-    glGenFramebuffers(1, &this->fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
-
-
-    glGenTextures(1, &this->textureIndex);
-    glBindTexture(GL_TEXTURE_2D, this->textureIndex);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-
-    glGenRenderbuffers(1, &this->rbo);
-    glBindRenderbuffer(GL_RENDERBUFFER, this->rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, this->textureAttachment, GL_TEXTURE_2D, this->textureIndex, 0);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this->rbo);
-    
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        std::cout << "Framebuffer is not complete!\n";
-        return;
-    }
-
-    this->unuse();
-    */
 }

@@ -714,22 +714,25 @@ int main(int argc, char *argv[]) {
 }
 */
 
-/* Example5: Polygon example. Demonstrates the use of per-vertex colors, separate texturing (no atlas), matrix transformations, all in the same shader program. */
+/* Example5: Polygon example. Demonstrates the use of per-vertex colors, separate texturing (no atlas), matrix transformations, and materials, all in the same shader program. */
 /*
 #include <Icosahedron/Core.h>
 
 class Example5 : public ic::Application {
     ic::Mesh2D *mesh1;
     ic::Mesh2D *mesh2;
+
     ic::Texture<ic::T2D> *texture, *whiteTexture;
-    
+    ic::Camera2D *camera;
+
     ic::Shader *shader;
-    float time = 0;
+    float time;
 
     public:
         bool init() override {
             displayName = "Example window";
-            
+            scaling = ic::WindowScaling::fullscreen;
+
             return true;
         }
         
@@ -758,8 +761,12 @@ class Example5 : public ic::Application {
 
             shader = new ic::Shader(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D, false);
             
-            texture = new ic::Texture<ic::T2D>({"resources/textures/wood.png"});
-            whiteTexture = new ic::Texture<ic::T2D>({"resources/textures/white.png"});
+            texture = new ic::Texture<ic::T2D>("resources/textures/wood.png");
+            whiteTexture = new ic::Texture<ic::T2D>("resources/textures/white.png");
+
+            camera = new ic::Camera2D();
+
+            time = 0.0f;
 
             return true;
         }
@@ -770,6 +777,7 @@ class Example5 : public ic::Application {
     
         bool update(float dt) override {
             time += dt;
+
             clear_color(ic::Colors::blue);
             
             ic::Mat4x4 combined, scaling, rotation, translation;
@@ -784,6 +792,8 @@ class Example5 : public ic::Application {
             mesh1->set_transformation(combined);
             
             shader->use();
+            camera->use(shader);
+
             texture->use();
             mesh1->draw(shader);
             whiteTexture->use();
@@ -814,8 +824,7 @@ int main(int argc, char *argv[]) {
 }
 */
 
-/** Example6: A scene that shows a rotating cube on a wooden floor. */
-/*
+/** Example6: A scene that shows a rotating monkey head on a floor. */
 #include <Icosahedron/Core.h>
 
 std::string depthShaderVert = IC_ADD_GLSL_DEFINITION(
@@ -969,7 +978,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
         // Diffuse reflection
         float diffuseIntensity = clamp(dotProduct, 0.0, 1.0) * attenuation;
         vec4 diffuseColor = texture(sampleTexture, vTCoords);
-        if (diffuseColor.a <= 0.1) diffuseColor = vec4(0.0, 0.0, 0.0, 0.0);
+        if (diffuseColor.a <= 0.1) discard; //diffuseColor = vec4(0.0, 0.0, 0.0, 0.0);
         else diffuseColor *= vec4(light.diffuse, 1.0) * diffuseIntensity;
 
         // Specular reflection
@@ -1006,7 +1015,7 @@ class Example6 : public ic::Application {
     ic::Camera3D *camera;
     ic::Mesh3D *mesh, *floorMesh;
     ic::Texture<ic::T2D> *floorTexture, *whiteTexture;
-    ic::FreeRoamCameraController3D *controller;
+    ic::OrbitalCameraController3D *controller;
 
     float time;
     int shadowWidth, shadowHeight;
@@ -1022,7 +1031,7 @@ class Example6 : public ic::Application {
         
         bool load() override {
             states.enable_depth_testing(ic::LESS);
-
+            
             shader = new ic::Shader(vert, fragment, false);
             shader->use();
             shader->set_uniform_int("sampleTexture", 0);
@@ -1033,8 +1042,8 @@ class Example6 : public ic::Application {
             floorTexture = new ic::Texture<ic::T2D>("resources/textures/stone-bricks.png");
             whiteTexture = new ic::Texture<ic::T2D>("resources/textures/white.png");
 
-            shadowWidth = 1028;
-            shadowHeight = 1028;
+            shadowWidth = 1024;
+            shadowHeight = 1024;
             shadowMap = new ic::Framebuffer(ic::TEXTURE_ATTACH_DEPTH, ic::TEXTURE_DEPTH, shadowWidth, shadowHeight);
 
             //mesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_cube(0.5f));
@@ -1058,8 +1067,10 @@ class Example6 : public ic::Application {
 
             camera = new ic::Camera3D();
             camera->position = { -3.0f, 1.5f, 0.0f };
-            controller = new ic::FreeRoamCameraController3D(camera, &inputHandler);
-            controller->flying = true;
+            controller = new ic::OrbitalCameraController3D(camera, &inputHandler);
+            //controller->flying = true;
+            controller->center = { 0.0f, 0.5f, 0.0f };
+
             time = 0.0f;
             
             return true;
@@ -1071,7 +1082,6 @@ class Example6 : public ic::Application {
     
         bool update(float dt) override {
             time += dt;
-            
             
             controller->act(dt);
             camera->resize(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
@@ -1162,7 +1172,6 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-*/
 
 /** Example7: A model viewer. Press up/down keys to increase/decrease the view radius.
  *  Use the Q key to switch between perspective and orthographic projections, and
@@ -1381,7 +1390,7 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-*/
+
 
 /* Example8: An example that shows how "post-processing" can be achieved.
  * In this case, the effect is an approximation of a gaussian blur filter. */
@@ -1397,7 +1406,7 @@ std::string screenVertex = IC_ADD_GLSL_DEFINITION(
 
     void main() {
         vPosition = position;
-        vTCoords = tCoords;
+        vTCoords = vec2(tCoords.x, 1.0 - tCoords.y);
         
         gl_Position = vec4(vPosition, 0.0, 1.0);
     }
@@ -1540,8 +1549,8 @@ class Example8 : public ic::Application {
         }
         
         bool load() override {
-            states.enable_face_culling(ic::FRONT, ic::CCW);
-
+            states.enable_depth_testing(ic::LESS);
+            
             shader = new ic::Shader(shaders.meshShaderVertex3D, fragment, false);
             screenShader = new ic::Shader(screenVertex, screenFragment, false);
             
@@ -1594,13 +1603,15 @@ class Example8 : public ic::Application {
             
             // First pass - scene drawing
             framebuffer->use();
-            states.enable_depth_testing(ic::LESS);
             clear_color(ic::Colors::blue);
+            states.enable_face_culling(ic::FRONT, ic::CCW);
+            
             shader->use();
-            whiteTexture->use();
-            camera->upload_to_shader(shader);
             shader->set_uniform_vec3f("viewPosition", camera->position);
-
+            camera->upload_to_shader(shader);
+            
+            whiteTexture->use();
+            
             ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
@@ -1610,12 +1621,14 @@ class Example8 : public ic::Application {
 
             floorTexture->use();
             floorMesh->draw(shader);
+            
+            framebuffer->unuse();
+
 
             // Second pass - drawing via framebuffer
-            framebuffer->unuse();
             clear_color(ic::Colors::cyan);
-            states.disable_depth_testing();
-            
+            states.disable_face_culling();
+
             screenShader->use();
             framebuffer->use_texture();
             screenQuad->draw(screenShader);
@@ -1645,6 +1658,7 @@ int main(int argc, char *argv[]) {
 */
 
 /* Example9: A very simple ray tracer. */
+/*
 #include <Icosahedron/Core.h>
 
 const std::size_t RAYTRACING_WIDTH = 640;
@@ -1861,8 +1875,7 @@ std::string screenFragment = IC_ADD_GLSL_DEFINITION(
     out vec4 outColor;
 
     void main() {
-        vec2 opposite = vec2(vTCoords.x, vTCoords.y);
-        vec4 color = texture(screenTexture, opposite);
+        vec4 color = texture(screenTexture, vTCoords);
         outColor = color;
     }
 );
@@ -1965,3 +1978,4 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+*/
