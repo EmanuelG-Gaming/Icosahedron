@@ -825,6 +825,7 @@ int main(int argc, char *argv[]) {
 */
 
 /** Example6: A scene that shows a rotating monkey head on a floor. */
+/*
 #include <Icosahedron/Core.h>
 
 std::string depthShaderVert = IC_ADD_GLSL_DEFINITION(
@@ -1172,6 +1173,7 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+*/
 
 /** Example7: A model viewer. Press up/down keys to increase/decrease the view radius.
  *  Use the Q key to switch between perspective and orthographic projections, and
@@ -1390,7 +1392,7 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-
+*/
 
 /* Example8: An example that shows how "post-processing" can be achieved.
  * In this case, the effect is an approximation of a gaussian blur filter. */
