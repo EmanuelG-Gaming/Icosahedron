@@ -18,7 +18,7 @@ namespace ic {
         float colorBlending;
         ic::Vec3f baseColor;
 
-        MeshMaterial2D() : baseColor({1.0f, 1.0f, 1.0f}), colorBlending(0.0f) {}
+        MeshMaterial2D() : baseColor({1.0f, 1.0f, 1.0f}), colorBlending(1.0f) {}
         MeshMaterial2D(ic::Color baseColor, float colorBlending = 1.0f) : baseColor({ baseColor.r / 255.0f, baseColor.g / 255.0f, baseColor.b / 255.0f }), colorBlending(colorBlending) {}
     };
 

@@ -1537,7 +1537,7 @@ class Example8 : public ic::Application {
     ic::Mesh2D *screenQuad;
     ic::Mesh3D *mesh, *floorMesh;
 
-    ic::Texture<ic::T2D> *floorTexture, *whiteTexture;
+    ic::Texture *floorTexture, *whiteTexture;
     ic::FreeRoamCameraController3D *controller;
 
     float time;
@@ -1556,8 +1556,8 @@ class Example8 : public ic::Application {
             shader = new ic::Shader(shaders.meshShaderVertex3D, fragment, false);
             screenShader = new ic::Shader(screenVertex, screenFragment, false);
             
-            floorTexture = new ic::Texture<ic::T2D>("resources/textures/wood.png");
-            whiteTexture = new ic::Texture<ic::T2D>("resources/textures/white.png");
+            floorTexture = ic::TextureLoader::get().load("resources/textures/wood.png");
+            whiteTexture = ic::TextureLoader::get().load("resources/textures/white.png");
             
             framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
 

@@ -97,7 +97,23 @@ namespace ic {
         FACE_CULLING = GL_CULL_FACE
     };
 
+    enum GLTextureFilter {
+        INVALID_TEXTURE_FILTER = -1,
 
+        TEXTURE_FILTER_NEAREST = GL_NEAREST,
+        TEXTURE_FILTER_LINEAR = GL_LINEAR,
+    };
+
+    enum GLTextureWrap {
+        INVALID_TEXTURE_WRAP = -1,
+
+        TEXTURE_WRAP_REPEAT = GL_REPEAT,
+        TEXTURE_WRAP_MIRRORED_REPEAT = GL_MIRRORED_REPEAT,
+        TEXTURE_WRAP_CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,
+        TEXTURE_WRAP_CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER,
+    };
+
+    
     struct GLAttribute {
         std::vector<float> content;
         int dimensions;

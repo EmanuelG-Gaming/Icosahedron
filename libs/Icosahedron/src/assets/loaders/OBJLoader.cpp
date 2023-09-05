@@ -1,4 +1,4 @@
-#include <Icosahedron/assets/modeling/OBJLoader.h>
+#include <Icosahedron/assets/loaders/OBJLoader.h>
 
 ic::Mesh3D *ic::OBJLoader::get_mesh(const std::string &objectFileName) {
     std::ifstream objRead(objectFileName);

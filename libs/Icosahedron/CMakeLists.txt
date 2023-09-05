@@ -19,11 +19,14 @@ set(LIBRARY_HEADERS
     
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Quaternion.h
 
-    ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h
-    ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/files/File.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/Image.h
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/ImageIO.h
+    
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/GL.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/GLStateHandler.h
     
@@ -55,7 +58,8 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/controllers/FreeRoamCameraController3D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/controllers/OrbitalCameraController3D.h
 
-    ${LIBRARY_HEADERS_DIRECTORY}/assets/modeling/OBJLoader.h
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/TextureLoader.h
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/OBJLoader.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/Global.h
     ${LIBRARY_HEADERS_DIRECTORY}/Application.h
@@ -66,9 +70,13 @@ set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/files/File.cpp
 
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/Image.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/ImageIO.cpp
+
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/GLStateHandler.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Shader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Framebuffer.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Texture.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/VertexArray.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Batch.cpp
 
@@ -88,7 +96,9 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/controllers/FreeRoamCameraController3D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/controllers/OrbitalCameraController3D.cpp
 
-    ${LIBRARY_SOURCE_DIRECTORY}/assets/modeling/OBJLoader.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/TextureLoader.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/OBJLoader.cpp
+    
     ${LIBRARY_SOURCE_DIRECTORY}/Renderer.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/Application.cpp
 )

@@ -66,6 +66,17 @@ namespace ic {
                 return value;
             }
 
+            int logarithm(int base, int exponent) {
+                return (log2(exponent) / log2(base));
+            }
+
+            bool is_power_of(int base, int value) {
+                if (base == 0) return false;
+
+                int v = logarithm(base, value);
+                return (ceil(value) == floor(v));
+            }
+
         private:
             Mathf() {}
             ~Mathf() {}

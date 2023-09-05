@@ -29,12 +29,42 @@ namespace ic {
             float nb2 = other.b / f;
 
             Color result;
+
             result.r = (color_t)((nr1 * nr2) * f);
             result.g = (color_t)((ng1 * ng2) * f);
             result.b = (color_t)((nb1 * nb2) * f);
 
             return result;
         }
+        Color operator*(float value) {
+            Color result;
+
+            result.r = (color_t)(r * value);
+            result.g = (color_t)(g * value);
+            result.b = (color_t)(b * value);
+
+            return result;
+        }
+
+        Color operator+(Color &other) {
+            Color result;
+
+            result.r = r + other.r;
+            result.g = g + other.g;
+            result.b = b + other.b;
+
+            return result;
+        }
+        Color operator-(Color &other) {
+            Color result;
+
+            result.r = r - other.r;
+            result.g = g - other.g;
+            result.b = b - other.b;
+
+            return result;
+        }
+        
 
         Color hexadecimal_to_RGB(int hexadecimal) {
             r = (hexadecimal >> 16) & 0xFF;
