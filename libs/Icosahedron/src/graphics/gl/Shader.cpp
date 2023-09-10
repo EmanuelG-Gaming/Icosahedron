@@ -1,23 +1,10 @@
 #include <Icosahedron/graphics/gl/Shader.h>
 
-#include <fstream>
-#include <sstream>
-
 using namespace ic;
 
-Shader::Shader(std::string vertexFile, std::string fragmentFile, bool loadingFromFile) {
-    std::string vertContent, fragContent;
-    vertexFileName = vertexFile;
-    fragmentFileName = fragmentFile;
 
-    if (loadingFromFile) {
-        this->load_content_from_files(vertexFile, fragmentFile, vertContent, fragContent);
-    } else {
-        vertContent = vertexFile;
-        fragContent = fragmentFile;
-    }
-
-    this->load(vertContent, fragContent);
+Shader::Shader(std::string vertexContent, std::string fragmentContent) {
+    this->load(vertexContent, fragmentContent);
 }
 
 
@@ -35,7 +22,7 @@ void Shader::load(const std::string &vertSource, const std::string &fragSource) 
     glGetShaderiv(vert, GL_COMPILE_STATUS, &check); 
     if (!check) {
         glGetShaderInfoLog(vert, 512, NULL, log);
-        printf("%s: %s\n", this->vertexFileName, log);
+        printf("%s: %s\n", vertSource, log);
     }
             
             
@@ -46,7 +33,7 @@ void Shader::load(const std::string &vertSource, const std::string &fragSource) 
     glGetShaderiv(fragm, GL_COMPILE_STATUS, &check); 
     if (!check) {
         glGetShaderInfoLog(fragm, 512, NULL, log);
-        printf("%s: %s\n", this->fragmentFileName, log);
+        printf("%s: %s\n", fragSource, log);
     }
             
 
@@ -65,29 +52,6 @@ void Shader::load(const std::string &vertSource, const std::string &fragSource) 
     glDeleteShader(fragm);
 
     std::cout << "Shader loaded with index: " << this->program << "\n";
-}
-void Shader::load_content_from_files(const std::string &vertFile, const std::string &fragFile, std::string &vertContent, std::string &fragContent) {
-    std::ifstream vert;
-    std::ifstream frag;
-
-    vert.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    frag.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    try {
-        vert.open(vertFile);
-        frag.open(fragFile);
-                
-        std::stringstream stringVert, stringFrag;
-        stringVert << vert.rdbuf();
-        stringFrag << frag.rdbuf();
-                
-        vert.close();
-        frag.close();
-                  
-        vertContent = stringVert.str();
-        fragContent = stringFrag.str();
-    } catch (std::ifstream::failure except) {
-        printf("Couldn't open the shader file: %s\n", except.what());
-    }
 }
 
 

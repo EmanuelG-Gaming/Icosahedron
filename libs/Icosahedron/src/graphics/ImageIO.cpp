@@ -122,19 +122,10 @@ ic::Image ic::ImageIO::read_ppm(ic::File file) {
 
 
 void ic::ImageIO::write_png(ic::File file, ic::Image &image) {
-    int bytes = sizeof(uint8_t);
-    
-    int width = image.get_width();
-    int height = image.get_height();
-    int pitch = width * 3;
-    int depth = 24;
-
-    SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormatFrom(image.data(), width, height, depth, pitch, SDL_PIXELFORMAT_RGB24);
+    SDL_Surface *surface = this->to_surface(image);
     if (surface == NULL) {
-        printf("SDL_CreateRGBSurfaceWithFormatFrom Error: %s\n", SDL_GetError());
         return;
     }
-
     if (IMG_SavePNG(surface, file.get_path().c_str()) == -1) {
         printf("PNG image couldn't be saved!\n");
     }
@@ -142,19 +133,10 @@ void ic::ImageIO::write_png(ic::File file, ic::Image &image) {
 }
 
 void ic::ImageIO::write_bmp(ic::File file, ic::Image &image) {
-    int bytes = sizeof(uint8_t);
-    
-    int width = image.get_width();
-    int height = image.get_height();
-    int pitch = width * 3;
-    int depth = 24;
-
-    SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormatFrom(image.data(), width, height, depth, pitch, SDL_PIXELFORMAT_RGB24);
+    SDL_Surface *surface = this->to_surface(image);
     if (surface == NULL) {
-        printf("SDL_CreateRGBSurfaceWithFormatFrom Error: %s\n", SDL_GetError());
         return;
     }
-
     if (SDL_SaveBMP(surface, file.get_path().c_str()) == -1) {
         printf("Bitmap image couldn't be saved!\n");
     }
@@ -179,4 +161,22 @@ void ic::ImageIO::write_ppm(ic::File file, ic::Image &image) {
     }
 
     output.close();
+}
+
+
+SDL_Surface *ic::ImageIO::to_surface(ic::Image &image) {
+    int bytes = sizeof(uint8_t);
+    
+    int width = image.get_width();
+    int height = image.get_height();
+    int pitch = width * 3;
+    int depth = 24;
+
+    SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormatFrom(image.data(), width, height, depth, pitch, SDL_PIXELFORMAT_RGB24);
+    if (surface == NULL) {
+        printf("SDL_CreateRGBSurfaceWithFormatFrom Error: %s\n", SDL_GetError());
+        return NULL;
+    }
+
+    return surface;
 }

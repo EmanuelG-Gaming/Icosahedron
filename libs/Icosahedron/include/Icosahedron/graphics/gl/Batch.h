@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include <Icosahedron/math/geom/Vectors.h>
 #include <Icosahedron/graphics/Color.h>

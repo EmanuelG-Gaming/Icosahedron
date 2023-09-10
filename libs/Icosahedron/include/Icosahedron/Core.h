@@ -1,8 +1,7 @@
 #ifndef IC_CORE_H
 #define IC_CORE_H
 
-#define GLEW_STATIC
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
@@ -35,6 +34,7 @@ namespace ic {
 #include <Icosahedron/graphics/Colors.h>
 #include <Icosahedron/graphics/Image.h>
 #include <Icosahedron/graphics/ImageIO.h>
+#include <Icosahedron/graphics/Images.h>
 
 #include <Icosahedron/graphics/gl/GL.h>
 #include <Icosahedron/graphics/gl/GLStateHandler.h>
@@ -56,6 +56,10 @@ namespace ic {
 #include <Icosahedron/input/MouseController.h>
 #include <Icosahedron/input/InputHandler.h>
 
+
+#include <Icosahedron/audio/Music.h>
+
+
 // Scene
 #include <Icosahedron/scene/2d/Mesh2D.h>
 #include <Icosahedron/scene/2d/Camera2D.h>
@@ -69,7 +73,9 @@ namespace ic {
 #include <Icosahedron/util/GeometryGenerator.h>
 
 // Assets
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/assets/loaders/TextureLoader.h>
+#include <Icosahedron/assets/loaders/TextureAtlasLoader.h>
 #include <Icosahedron/assets/loaders/OBJLoader.h>
 
 // Global

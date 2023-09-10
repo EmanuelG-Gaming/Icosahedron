@@ -3,10 +3,11 @@
 
 #include <string>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_mixer.h>
 
 #include <Icosahedron/Global.h>
 
@@ -18,6 +19,7 @@
 #include <Icosahedron/input/InputHandler.h>
 
 #include <Icosahedron/graphics/FreeType.h>
+#include <Icosahedron/graphics/Image.h>
 #include <Icosahedron/Renderer.h>
 
 
@@ -49,7 +51,10 @@ namespace ic {
             bool construct(int w, int h);
             /* The actual starting point of the application. */
             void start();
-            
+
+            /** @note This would dispose the image. */
+            void set_window_image(ic::Image image);
+
             void clear_color(float r, float g, float b);
             void clear_color(const ic::Color &color);
             void clear_color();
@@ -69,6 +74,8 @@ namespace ic {
             */
             void set_current_working_directory();
 
+            void close();
+            
         protected:
             /* The name that is displayed on the window. */
             std::string displayName = "test";

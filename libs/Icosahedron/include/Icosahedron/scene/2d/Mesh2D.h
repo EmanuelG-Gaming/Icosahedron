@@ -44,7 +44,7 @@ namespace ic {
 
             void unuse_attribute_definitions();
 
-            void draw(ic::Shader *shader);
+            void draw(ic::Shader *shader, ic::GLPrimitives primitive = ic::TRIANGLES);
             void dispose();
 
         protected:

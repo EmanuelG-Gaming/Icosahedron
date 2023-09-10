@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <iostream>
 
+#include <Icosahedron/graphics/ImageIO.h>
 #include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/math/Mathf.h>
 
@@ -27,9 +28,23 @@ void ic::Application::clear_color(const ic::Color &color) {
     clear_color(r, g, b);
 }
 
+void ic::Application::set_window_image(ic::Image image) {
+    if (window == NULL) {
+        printf("Couldn't change the window's image. Window needs to be loaded first!\n");
+        return;
+    }
+
+    SDL_Surface *surface = ic::ImageIO::get().to_surface(image);
+    SDL_SetWindowIcon(window, surface);
+
+    SDL_FreeSurface(surface);
+    image.dispose();
+}
+
 bool ic::Application::construct(int w, int h) {
     width = w;
     height = h;
+    window = NULL;
 
     IC_WINDOW_WIDTH = width;
     IC_WINDOW_HEIGHT = height;
@@ -40,6 +55,14 @@ bool ic::Application::construct(int w, int h) {
 		return false;
 	}
     
+    int frequencyHertz = 44100;
+    if (Mix_OpenAudio(frequencyHertz, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
+        std::cerr << "Mix_OpenAudio Error: " << Mix_GetError();
+        return false;
+    }
+
+    set_current_working_directory();
+    
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
@@ -48,7 +71,6 @@ bool ic::Application::construct(int w, int h) {
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 
-    set_current_working_directory();
     
     if (!init()) {
         std::cerr << "Couldn't initialize the application." << "\n";
@@ -76,22 +98,26 @@ bool ic::Application::construct(int w, int h) {
         SDL_SetRelativeMouseMode(SDL_TRUE);
     }
     
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) {
-        std::cerr << "Couldn't initialize GLEW." << "\n";
+    //glewExperimental = GL_TRUE;
+    //if (glewInit() != GLEW_OK) {
+    //    std::cerr << "Couldn't initialize GLEW." << "\n";
+    //    return false;
+    //}
+    if (!gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress)) {
+        std::cerr << "Couldn't initialize GLAD." << "\n";
         return false;
     }
-    
+
     pre_load();
 
     send_application_information();
 
+    glViewport(0, 0, w, h);
+    
     if (!load()) {
         std::cerr << "Couldn't load the application." << "\n";
         return false;
     }
-    
-    glViewport(0, 0, w, h);
     
     constructed = true;
     return true;
@@ -109,17 +135,20 @@ void ic::Application::start() {
     SDL_Event e;
     while (!disabled) {
         Uint64 start = SDL_GetPerformanceCounter();
+
         SDL_PumpEvents();
         while (SDL_PollEvent(&e)) {
             switch (e.type) {
                 case SDL_QUIT:
                     disabled = true;
                     break;
+    
                 case SDL_KEYUP:
                     if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
                         disabled = true;
                         break;
                     }
+    
                 case SDL_WINDOWEVENT:
                     if (scaling != WindowScaling::fixed &&
                        (e.window.event == SDL_WINDOWEVENT_RESIZED || e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)) {
@@ -131,11 +160,11 @@ void ic::Application::start() {
                         } else if (scaling == WindowScaling::fullscreen) {
                             SDL_Rect displayRectangle;
                             SDL_GetDisplayBounds(0, &displayRectangle);
-
+    
                             w = displayRectangle.w;
                             h = displayRectangle.h;
                         }
-
+    
                         width = w;
                         height = h;
                         IC_WINDOW_WIDTH = width;
@@ -143,19 +172,18 @@ void ic::Application::start() {
                         
                         glViewport(0, 0, width, height);
                         window_size_changed(width, height);
-                        //std::cout << width << " " << height << "\n";
                     }
             }
-
+    
             inputHandler.handle(e, delta);
-
-            // Event-handling code
+    
             if (!handle_event(e, delta)) {
                 disabled = true;
                 break;
             }
         }
-        //Uint64 start = SDL_GetPerformanceCounter();
+        
+        
         inputHandler.update(delta);
         
     	// Update and render to screen code
@@ -167,20 +195,12 @@ void ic::Application::start() {
 		SDL_GL_SwapWindow(window);
         
         // Slightly delay the application loop, so that the computer will not explode
-        SDL_Delay(16);
+        SDL_Delay(17);
 
         Uint64 end = SDL_GetPerformanceCounter();
         delta = ((float) end - start) / (float) SDL_GetPerformanceFrequency();
 	}
-	dispose();
-	ic::FreeType::get().dispose();
-    
-    std::cout << displayName << " exited." << "\n";
-
-	SDL_DestroyWindow(window);
-    SDL_GL_DeleteContext(context);
-
-	SDL_Quit();
+    close();
 }
 
 void ic::Application::send_application_information() {
@@ -193,8 +213,8 @@ void ic::Application::send_application_information() {
 
     std::cout << "----- Icosahedron -----" << "\n\n";
 
-    std::cout << "OpenGL driver compactibility: " << sub << " / " << glGetString(GL_RENDERER) << "\n";
-    std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << "\n";
+    std::cout << "OpenGL driver compactibility: " << sub << " / " << glGetString(GL_VENDOR) << " / " << glGetString(GL_RENDERER) << "\n";
+    //std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << "\n";
     fprintf(stdout, "Compiled SDL2 version: %u.%u.%u\n", compiled.major, compiled.minor, compiled.patch);
     fprintf(stdout, "Linked SDL2 version: %u.%u.%u\n", linked.major, linked.minor, linked.patch);
 }
@@ -202,6 +222,20 @@ void ic::Application::send_application_information() {
 void ic::Application::pre_load() {
     shaders.load_shaders();
     ic::FreeType::get().load();
+}
+
+void ic::Application::close() {
+    std::cout << displayName << " exited." << "\n";
+
+	dispose();
+	ic::FreeType::get().dispose();
+    
+	SDL_DestroyWindow(window);
+    SDL_GL_DeleteContext(context);
+
+    IMG_Quit();
+    Mix_CloseAudio();
+	SDL_Quit();
 }
 
 void ic::Application::set_current_working_directory() {

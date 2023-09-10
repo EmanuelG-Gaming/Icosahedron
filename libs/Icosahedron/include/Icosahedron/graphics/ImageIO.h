@@ -29,6 +29,8 @@ namespace ic {
             void write_bmp(ic::File file, ic::Image &image);
             void write_ppm(ic::File file, ic::Image &image);
 
+            SDL_Surface *to_surface(ic::Image &image);
+
         private:
             ImageIO() {}
             ~ImageIO() {}

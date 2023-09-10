@@ -1015,7 +1015,7 @@ class Example6 : public ic::Application {
 
     ic::Camera3D *camera;
     ic::Mesh3D *mesh, *floorMesh;
-    ic::Texture<ic::T2D> *floorTexture, *whiteTexture;
+    ic::Texture *floorTexture, *whiteTexture;
     ic::OrbitalCameraController3D *controller;
 
     float time;
@@ -1033,15 +1033,18 @@ class Example6 : public ic::Application {
         bool load() override {
             states.enable_depth_testing(ic::LESS);
             
-            shader = new ic::Shader(vert, fragment, false);
+            shader = ic::ShaderLoader::get().load(vert, fragment);
             shader->use();
             shader->set_uniform_int("sampleTexture", 0);
             shader->set_uniform_int("shadowMap", 1);
 
-            depthShader = new ic::Shader(depthShaderVert, depthShaderFrag, false);
+            depthShader = ic::ShaderLoader::get().load(depthShaderVert, depthShaderFrag);
+
+            ic::TextureParameters floorParams;
+            floorParams.usesMipmapping = true;
             
-            floorTexture = new ic::Texture<ic::T2D>("resources/textures/stone-bricks.png");
-            whiteTexture = new ic::Texture<ic::T2D>("resources/textures/white.png");
+            floorTexture = ic::TextureLoader::get().load_png("resources/textures/stone-bricks.png", floorParams);
+            whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
 
             shadowWidth = 1024;
             shadowHeight = 1024;
@@ -1054,8 +1057,8 @@ class Example6 : public ic::Application {
             //mesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
 
 
-            //mesh = ic::OBJLoader::get().get_mesh(ic::File("resources/models/monkey.obj").get_path());
-            mesh = ic::OBJLoader::get().get_mesh("resources/models/monkey.obj");
+            mesh = ic::OBJLoader::get().get_mesh(ic::File("resources/models/monkey.obj").get_path());
+            //mesh = ic::OBJLoader::get().get_mesh("resources/models/monkey.obj");
 
             floorMesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_parallelipiped(5.0f * 5, 0.1f, 5.0f * 5));
             floorMesh->jump_attribute();
@@ -1174,6 +1177,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 */
+
 
 /** Example7: A model viewer. Press up/down keys to increase/decrease the view radius.
  *  Use the Q key to switch between perspective and orthographic projections, and
@@ -1974,6 +1978,91 @@ class Example9 : public ic::Application {
 int main(int argc, char *argv[]) {
     Example9 application;
 
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}
+*/
+
+/*
+#include <Icosahedron/Core.h>
+
+class Example10 : public ic::Application {
+    ic::Texture *texture;
+    ic::Shader *shader;
+    ic::Camera2D *camera;
+
+    ic::Mesh2D *shape;
+    ic::Vec2f shapePosition;
+    
+    public:
+        bool init() override {
+            displayName = "Example window";
+            
+            return true;
+        }
+        
+        bool load() override {
+            shape = new ic::Mesh2D(ic::GeometryGenerator::get().generate_rectangle(0.2f, 0.2f));
+
+            shape->jump_attribute();
+            shape->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            shape->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+            shape->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
+
+            ic::TextureParameters params;
+            params.usesMipmapping = true;
+
+            texture = ic::TextureLoader::get().load_png("resources/textures/wood.png", params);
+            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+
+            camera = new ic::Camera2D();
+        
+            inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
+            shapePosition = { 0.0f, 0.0f };
+
+            return true;
+        }
+
+        bool handle_event(ic::Event event, float dt) override {
+            return true;
+        }
+    
+        bool update(float dt) override {
+            auto *controller = inputHandler.find_keyboard("WASD");
+            ic::Vec2i dir = controller->get_direction();
+
+            float speed = 1.0f;
+            shapePosition.x() += dir.x() * speed * dt;
+            shapePosition.y() += dir.y() * speed * dt;
+            
+            shape->set_transformation(ic::Mat4x4().set_translation(shapePosition));
+            
+
+            clear_color(ic::Colors::blue);
+            
+            shader->use();
+            camera->use(shader);
+
+            texture->use();
+            shape->draw(shader);
+            
+            return true; 
+        }
+
+        void dispose() override {
+            texture->dispose();
+            shader->clear();
+            
+            shape->dispose();
+        }
+};
+
+int main(int argc, char *argv[]) {
+    Example10 application;
+    
     if (application.construct(640, 480)) {
         application.start();
     }

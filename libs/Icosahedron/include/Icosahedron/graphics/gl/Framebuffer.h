@@ -1,7 +1,7 @@
 #ifndef IC_FRAMEBUFFER_H
 #define IC_FRAMEBUFFER_H
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include <Icosahedron/graphics/gl/GL.h>
 

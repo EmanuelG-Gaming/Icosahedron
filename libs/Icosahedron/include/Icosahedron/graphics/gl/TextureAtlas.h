@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

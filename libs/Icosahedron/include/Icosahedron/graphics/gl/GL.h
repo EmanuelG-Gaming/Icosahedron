@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include <Icosahedron/math/geom/Vector.h>
 
@@ -13,6 +13,8 @@ namespace ic {
 
         POINTS = GL_POINTS,
         LINES = GL_LINES,
+        LINE_STRIPS = GL_LINE_STRIP,
+
         TRIANGLES = GL_TRIANGLES,
         TRIANGLE_FANS = GL_TRIANGLE_FAN,
         TRIANGLE_STRIPS = GL_TRIANGLE_STRIP,

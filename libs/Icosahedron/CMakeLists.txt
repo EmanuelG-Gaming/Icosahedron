@@ -26,7 +26,8 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Image.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/ImageIO.h
-    
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/Images.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/GL.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/GLStateHandler.h
     
@@ -49,6 +50,9 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/input/KeyboardController.h
     ${LIBRARY_HEADERS_DIRECTORY}/input/MouseController.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/audio/Sound.h
+    ${LIBRARY_HEADERS_DIRECTORY}/audio/Music.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Mesh2D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Camera2D.h
 
@@ -58,7 +62,9 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/controllers/FreeRoamCameraController3D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/controllers/OrbitalCameraController3D.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/ShaderLoader.h
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/TextureLoader.h
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/TextureAtlasLoader.h
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/OBJLoader.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/Global.h
@@ -72,6 +78,7 @@ set(LIBRARY_SOURCE
 
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/Image.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/ImageIO.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/Images.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/GLStateHandler.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Shader.cpp
@@ -87,6 +94,9 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/input/MouseController.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/input/InputHandler.cpp
 
+    ${LIBRARY_SOURCE_DIRECTORY}/audio/Sound.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/audio/Music.cpp
+
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Mesh2D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Camera2D.cpp
 
@@ -96,6 +106,7 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/controllers/FreeRoamCameraController3D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/controllers/OrbitalCameraController3D.cpp
 
+    ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/ShaderLoader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/TextureLoader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/OBJLoader.cpp
     
@@ -119,4 +130,9 @@ target_include_directories(${LIBRARY_NAME} PRIVATE
 target_include_directories(${LIBRARY_NAME} PUBLIC
     $<BUILD_INTERFACE: ${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE: include>
+)
+
+
+target_link_libraries(${LIBRARY_NAME} glad ${SDL2_LIBRARIES} 
+freetype
 )

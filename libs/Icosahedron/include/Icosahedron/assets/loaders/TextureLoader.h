@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -37,16 +37,17 @@ namespace ic {
             }
 
 
-            ic::Texture *load(const std::string &filePath, ic::TextureParameters parameters = ic::TextureParameters());
+            ic::Texture *load_png(const std::string &filePath, ic::TextureParameters parameters = ic::TextureParameters());
+            ic::Texture *load_bmp(const std::string &filePath, ic::TextureParameters parameters = ic::TextureParameters());
 
             /** @brief Loads a texture based on an RGB image. 
              *  @note The source image won't get disposed automatically, yet the underlying SDL_Surface will be. */
             ic::Texture *load(ic::Image &image, ic::TextureParameters parameters = ic::TextureParameters());
 
         private:
-            SDL_Surface *load_surface(const std::string &path);
             GLenum map_to_texture_format(uint32_t format);
-        
+            ic::Texture *load_texture(int width, int height, GLenum format, const void *data, const ic::TextureParameters &parameters);
+
         private:
             TextureLoader() {}
             ~TextureLoader() {}

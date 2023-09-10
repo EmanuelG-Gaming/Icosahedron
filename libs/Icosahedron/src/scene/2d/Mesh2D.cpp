@@ -68,14 +68,14 @@ void ic::Mesh2D::unuse_attribute_definitions() {
     this->vao->unuse_attribute_definitions();
 }
 
-void ic::Mesh2D::draw(ic::Shader *shader) {
+void ic::Mesh2D::draw(ic::Shader *shader, ic::GLPrimitives primitive) {
     if (this->vao == nullptr) return;
 
     auto drawable = this->vao->get_drawable();
 
     this->upload_material(shader, this->material);
     shader->set_uniform_mat4("model", this->model);
-    drawable.use_and_draw();
+    drawable.use_and_draw(primitive);
 }
 
 void ic::Mesh2D::dispose() {

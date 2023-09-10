@@ -74,7 +74,7 @@ namespace ic {
                 if (base == 0) return false;
 
                 int v = logarithm(base, value);
-                return (ceil(value) == floor(v));
+                return (ceil(v) == floor(v));
             }
 
         private:

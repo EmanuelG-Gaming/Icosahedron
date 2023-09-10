@@ -77,7 +77,7 @@ void ic::FreeRoamCameraController3D::act(float dt) {
     rotation.y() -= motion.y() * this->lookSensitivity * dt;
 
     if (rotation.x() > 2 * M_PI) rotation.x() = 0;
-    if (rotation.x() < 0) rotation.x() = 2 * M_PI;
+    //if (rotation.x() < 0) rotation.x() = 2 * M_PI;
        
     if (rotation.y() > (89.0f / 180.0f * M_PI)) rotation.y() = (89.0f / 180.0f * M_PI);
     if (rotation.y() < -(89.0f / 180.0f * M_PI)) rotation.y() = -(89.0f / 180.0f * M_PI);

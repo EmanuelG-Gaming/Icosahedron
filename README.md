@@ -12,6 +12,7 @@ The following table's contents may be prone to change:
 | graphics/gl | OpenGL wrappers. |
 | files | Filesystem. |
 | input | Contains controllers for input devices such as your keyboard or your mouse. These are added and handled via `InputHandler`. |
+| audio | Audio-type abstractions. Currently supports music that plays across the entire scene. |
 | math | Header-only definitions to mathematical objects and functions. |
 | math/geom | Same thing, but for geometrical concepts such as the vector, or the axis-aligned rectangle. |
 | scene | Contains both 2D and 3D elements of an usual scene. |
@@ -30,15 +31,15 @@ The rest of the files that may not belong to the folders mentioned above are `Ap
 For some, this can be pretty straightforward, but here it is:
 
 - On VSCode:
-    - Download the C/C++ extension on [their website](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools);
+    - Download the C/C++ extension on [their website](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), and CMake tools might come in handy;
     - Install MingW with CMake;
     - Clone this repository;
-    - Open Visual Studio Code (VSCode);
-    - (Optional) Uncomment one of the examples in `src/main.cpp`;
-    - Build the code;
+    - Open Visual Studio Code;
+    - Write code or (optionally) uncomment one of the examples in `src/main.cpp`;
+    - Build the project;
     - Run it.
 
-(Assuming you've got a C++ compiler, OpenGL >= 3.0 support on the computer, and SDL2 installed)
+(Assuming you've got a C++ compiler, and a computer with OpenGL >= 3.0 support)
 
 If you've managed to build this project successfully, you may see a `build` folder being created, with something like `engine.exe`. You can use the `.\build\engine` command on the terminal, and this will start your application.
 

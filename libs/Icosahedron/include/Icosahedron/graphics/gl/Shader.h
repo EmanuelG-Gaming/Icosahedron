@@ -2,7 +2,7 @@
 #define IC_SHADER_H
 
 #include <string>
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 #include <Icosahedron/math/geom/Vector.h>
 #include <Icosahedron/math/geom/Vectors.h>
@@ -15,9 +15,7 @@
 namespace ic {
     class Shader {
         public:
-            std::string vertexContent, fragmentContent;
-
-            Shader(std::string vertexFile, std::string fragmentFile, bool loadingFromFile = true);
+            Shader(std::string vertexContent, std::string fragmentContent);
 
             void use();
             void clear();
@@ -42,11 +40,9 @@ namespace ic {
 
         private:
             void load(const std::string &vertSource, const std::string &fragSource);
-            void load_content_from_files(const std::string &vertFile, const std::string &fragFile, std::string &vertContent, std::string &fragContent);
-
+            
         protected:
             GLuint program;
-            std::string vertexFileName, fragmentFileName;
     };
 }
 #endif

@@ -1,13 +1,7 @@
 #ifndef IC_TEXTURE_H
 #define IC_TEXTURE_H
 
-#include <vector>
-#include <string>
-
-#include <GL/glew.h>
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <glad/glad.h>
 
 #include <Icosahedron/graphics/gl/GL.h>
 
