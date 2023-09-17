@@ -43,7 +43,7 @@ namespace ic {
             /** @brief Loads a texture based on an RGB image. 
              *  @note The source image won't get disposed automatically, yet the underlying SDL_Surface will be. */
             ic::Texture *load(ic::Image &image, ic::TextureParameters parameters = ic::TextureParameters());
-
+            
         private:
             GLenum map_to_texture_format(uint32_t format);
             ic::Texture *load_texture(int width, int height, GLenum format, const void *data, const ic::TextureParameters &parameters);

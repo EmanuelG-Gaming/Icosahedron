@@ -26,19 +26,18 @@ enable_testing()
 
 # Subdirectories
 add_subdirectory("${ENGINE_THIRD_PARTY_DIRECTORY}/glad")
+add_subdirectory("${ENGINE_THIRD_PARTY_DIRECTORY}/soloud")
 add_subdirectory("${ENGINE_THIRD_PARTY_DIRECTORY}/testing")
 
 if (WIN32)
     set(SDL2_DIR ${CMAKE_SOURCE_DIR}/third-party/SDL2)
     set(SDL2_IMAGE_DIR ${CMAKE_SOURCE_DIR}/third-party/SDL2_image)
-    set(SDL2_MIXER_DIR ${CMAKE_SOURCE_DIR}/third-party/SDL2_mixer)
-
+    
     set(FREETYPE2_DIR ${CMAKE_SOURCE_DIR}/third-party/freetype2)
 endif (WIN32)
 
 include(${SDL2_DIR}/sdl2-config.cmake)
 include(${SDL2_IMAGE_DIR}/sdl2-image-config.cmake)
-include(${SDL2_MIXER_DIR}/sdl2-mixer-config.cmake)
 include(${FREETYPE2_DIR}/freetype2-config.cmake)
 
 add_executable(${ENGINE_PROJECT_NAME} ${ENGINE_SOURCE})
@@ -46,7 +45,6 @@ add_executable(${ENGINE_PROJECT_NAME} ${ENGINE_SOURCE})
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
-
 
 # Third-party libraries #
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
@@ -80,16 +78,15 @@ find_package(OpenGL)
 if (NOT WIN32)
     string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
     string(STRIP ${SDL2_IMAGE_LIBRARIES} SDL2_IMAGE_LIBRARIES)
-    string(STRIP ${SDL2_MIXER_LIBRARIES} SDL2_MIXER_LIBRARIES)
-
+    
     string(STRIP ${FREETYPE2_LIBRARIES} FREETYPE2_LIBRARIES)
 endif (NOT WIN32)
 
 
-set(SDL2_LIBRARIES ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_MIXER_LIBRARIES})
+set(SDL2_LIBRARIES ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
 set(FREETYPE2_LIBRARIES ${FREETYPE2_LIBRARIES})
 
-set(SDL2_INCLUDES ${SDL2_DIR}/include ${SDL2_IMAGE_DIR}/include ${SDL2_MIXER_DIR}/include)
+set(SDL2_INCLUDES ${SDL2_DIR}/include ${SDL2_IMAGE_DIR}/include)
 set(FREETYPE2_INCLUDES ${FREETYPE2_DIR}/include)
 
 

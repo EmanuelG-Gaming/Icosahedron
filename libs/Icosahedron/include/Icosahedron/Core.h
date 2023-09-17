@@ -58,7 +58,7 @@ namespace ic {
 
 
 #include <Icosahedron/audio/Music.h>
-
+#include <Icosahedron/audio/Audio.h>
 
 // Scene
 #include <Icosahedron/scene/2d/Mesh2D.h>

@@ -3,6 +3,8 @@
 #include <filesystem>
 #include <iostream>
 
+#include <Icosahedron/audio/Audio.h>
+
 #include <Icosahedron/graphics/ImageIO.h>
 #include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/math/Mathf.h>
@@ -12,7 +14,7 @@ int IC_WINDOW_WIDTH = 0;
 int IC_WINDOW_HEIGHT = 0;
 
 void ic::Application::clear_color() {
-    clear_color(0.0f, 0.0f, 0.0f);
+    this->clear_color(0.0f, 0.0f, 0.0f);
 }
 
 void ic::Application::clear_color(float r, float g, float b) {
@@ -25,183 +27,116 @@ void ic::Application::clear_color(const ic::Color &color) {
     float g = color.g / 255.0f;
     float b = color.b / 255.0f;
     
-    clear_color(r, g, b);
+    this->clear_color(r, g, b);
 }
 
 void ic::Application::set_window_image(ic::Image image) {
-    if (window == NULL) {
+    if (this->window == NULL) {
         printf("Couldn't change the window's image. Window needs to be loaded first!\n");
         return;
     }
 
     SDL_Surface *surface = ic::ImageIO::get().to_surface(image);
-    SDL_SetWindowIcon(window, surface);
+    SDL_SetWindowIcon(this->window, surface);
 
     SDL_FreeSurface(surface);
     image.dispose();
 }
+void ic::Application::set_window_size(int w, int h) {
+    if (this->window == NULL) {
+        printf("Couldn't change the window's size. Window needs to be loaded first!\n");
+        return;
+    }
+    
+    this->width = w;
+    this->height = h;
+    IC_WINDOW_WIDTH = this->width;
+    IC_WINDOW_HEIGHT = this->height;
+
+    SDL_SetWindowSize(this->window, this->width, this->height);
+    glViewport(0, 0, this->width, this->height);
+    window_size_changed(this->width, this->height);
+}
+
+
+
+
 
 bool ic::Application::construct(int w, int h) {
-    width = w;
-    height = h;
-    window = NULL;
+    this->width = w;
+    this->height = h;
+    this->window = NULL;
 
     IC_WINDOW_WIDTH = width;
     IC_WINDOW_HEIGHT = height;
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-	{
+
+    this->set_current_working_directory();
+    
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) != 0) {
 		std::cerr << "SDL_Init Error: " << SDL_GetError();
 		return false;
 	}
-    
-    int frequencyHertz = 44100;
-    if (Mix_OpenAudio(frequencyHertz, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
-        std::cerr << "Mix_OpenAudio Error: " << Mix_GetError();
-        return false;
-    }
 
-    set_current_working_directory();
+    this->set_window_attributes();
     
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-
-	// We want at least 8 bits per color
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-
-    
-    if (!init()) {
+    if (!this->init()) {
         std::cerr << "Couldn't initialize the application." << "\n";
         return false;
     }
 
-    Uint32 flags = 0;
-    if (scaling == WindowScaling::resizeable) flags |= SDL_WINDOW_RESIZABLE;
-    else if (scaling == WindowScaling::fullscreen) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-    flags |= SDL_WINDOW_OPENGL;
+    this->prepare_window();
+    
+    this->pre_load();
 
-    SDL_Window *win = SDL_CreateWindow(displayName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
-	if (win == NULL)
-	{
-		std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << "\n";
-		return false;
-	}
-    
-	// We will not actually need a context created, but we should create one
-	SDL_GLContext cont = SDL_GL_CreateContext(win);
-    window = win;
-    context = cont;
-    
-    if (hideCursor) {
-        SDL_SetRelativeMouseMode(SDL_TRUE);
-    }
-    
-    //glewExperimental = GL_TRUE;
-    //if (glewInit() != GLEW_OK) {
-    //    std::cerr << "Couldn't initialize GLEW." << "\n";
-    //    return false;
-    //}
-    if (!gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress)) {
-        std::cerr << "Couldn't initialize GLAD." << "\n";
-        return false;
-    }
-
-    pre_load();
-
-    send_application_information();
-
-    glViewport(0, 0, w, h);
-    
-    if (!load()) {
-        std::cerr << "Couldn't load the application." << "\n";
-        return false;
-    }
-    
-    constructed = true;
+    this->constructed = true;
     return true;
 }
 
 void ic::Application::start() {
-    if (!constructed) {
+    if (!this->constructed) {
         std::cerr << "Couldn't start the application. It wasn't constructed first." << "\n";
         return;
     }
 
-    float delta = 0.0f;
-    bool disabled = false;
+    //ic::Music music = ic::Music("resources/music/monkey.mp3");
+    //ic::Audio::get().play(music);
+        
+    if (!load()) {
+        std::cerr << "Couldn't load the application." << "\n";
+        return;
+    }
 
-    SDL_Event e;
-    while (!disabled) {
+    while (true) {
         Uint64 start = SDL_GetPerformanceCounter();
 
-        SDL_PumpEvents();
-        while (SDL_PollEvent(&e)) {
-            switch (e.type) {
-                case SDL_QUIT:
-                    disabled = true;
-                    break;
-    
-                case SDL_KEYUP:
-                    if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
-                        disabled = true;
-                        break;
-                    }
-    
-                case SDL_WINDOWEVENT:
-                    if (scaling != WindowScaling::fixed &&
-                       (e.window.event == SDL_WINDOWEVENT_RESIZED || e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)) {
-                        
-                        int w = 0, h = 0;
-                        if (scaling == WindowScaling::resizeable) {
-                            w = e.window.data1;
-                            h = e.window.data2;
-                        } else if (scaling == WindowScaling::fullscreen) {
-                            SDL_Rect displayRectangle;
-                            SDL_GetDisplayBounds(0, &displayRectangle);
-    
-                            w = displayRectangle.w;
-                            h = displayRectangle.h;
-                        }
-    
-                        width = w;
-                        height = h;
-                        IC_WINDOW_WIDTH = width;
-                        IC_WINDOW_HEIGHT = height;
-                        
-                        glViewport(0, 0, width, height);
-                        window_size_changed(width, height);
-                    }
-            }
-    
-            inputHandler.handle(e, delta);
-    
-            if (!handle_event(e, delta)) {
-                disabled = true;
-                break;
-            }
+
+        if (!this->poll_events()) {
+            break;
         }
         
-        
-        inputHandler.update(delta);
-        
-    	// Update and render to screen code
-    	if (!update(delta)) {
-            disabled = true;
+        // Update and render to screen code
+        if (!this->update(delta)) {
+            break;
         }
 
+        ic::Audio::get().playback();
+        
         // Swap buffers
-		SDL_GL_SwapWindow(window);
+	    SDL_GL_SwapWindow(this->window);
         
         // Slightly delay the application loop, so that the computer will not explode
         SDL_Delay(17);
-
+        
         Uint64 end = SDL_GetPerformanceCounter();
-        delta = ((float) end - start) / (float) SDL_GetPerformanceFrequency();
+        this->delta = ((float) end - start) / (float) SDL_GetPerformanceFrequency();
 	}
-    close();
+
+    this->close();
 }
+
+
+
 
 void ic::Application::send_application_information() {
     SDL_version compiled, linked;
@@ -211,30 +146,121 @@ void ic::Application::send_application_information() {
     std::string version = std::string((char*) glGetString(GL_VERSION));
     std::string sub = version.substr(0, 5);
 
-    std::cout << "----- Icosahedron -----" << "\n\n";
-
     std::cout << "OpenGL driver compactibility: " << sub << " / " << glGetString(GL_VENDOR) << " / " << glGetString(GL_RENDERER) << "\n";
-    //std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << "\n";
     fprintf(stdout, "Compiled SDL2 version: %u.%u.%u\n", compiled.major, compiled.minor, compiled.patch);
     fprintf(stdout, "Linked SDL2 version: %u.%u.%u\n", linked.major, linked.minor, linked.patch);
 }
 
+
+void ic::Application::set_window_attributes() {
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
+	// We want at least 8 bits per color
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+}
+
+
+void ic::Application::prepare_window() {
+    Uint32 flags = 0;
+    if (this->scaling != ic::WindowScaling::invalid && this->scaling != ic::WindowScaling::fixed) {
+        flags |= (SDL_WindowFlags) this->scaling;
+    }
+    flags |= SDL_WINDOW_OPENGL;
+    flags |= SDL_WINDOW_SHOWN;
+
+
+    SDL_Window *win = SDL_CreateWindow(this->displayName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
+	if (win == NULL) {
+		auto errorMessage = "SDL_CreateWindow Error: " + std::string(SDL_GetError()) + "\n";
+        throw std::runtime_error(errorMessage);
+	}
+    
+
+	// We will not actually need a context created, but we should create one
+	SDL_GLContext cont = SDL_GL_CreateContext(win);
+    this->window = win;
+    this->context = cont;
+}
+
 void ic::Application::pre_load() {
+    if (!gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress)) {
+        throw std::runtime_error("Couldn't initialize GLAD.\n");
+    }
+
+    SDL_GL_SetSwapInterval(1);
+    glViewport(0, 0, this->width, this->height);
+
+    if (this->hideCursor) {
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+    }
+    
+    
     shaders.load_shaders();
     ic::FreeType::get().load();
+    ic::Audio::get().init();
+
+    this->send_application_information();
+}
+
+
+bool ic::Application::poll_events() {
+    SDL_Event e;
+    
+    while (SDL_PollEvent(&e)) {
+        switch (e.type) {
+            case SDL_QUIT: 
+                return false;
+
+            case SDL_KEYUP:
+                if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+                    return false;
+
+            case SDL_WINDOWEVENT:
+                bool resized = e.window.event == SDL_WINDOWEVENT_RESIZED || e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED;
+                if (scaling == WindowScaling::fixed || !resized) {
+                    continue;
+                }
+
+                if (scaling == WindowScaling::resizeable) {
+                    set_window_size(e.window.data1, e.window.data2);
+                } else if (scaling == WindowScaling::fullscreen) {
+                    SDL_Rect displayRectangle;
+                    SDL_GetDisplayBounds(0, &displayRectangle);
+
+                    set_window_size(displayRectangle.w, displayRectangle.h);
+                }
+        }
+
+        this->inputHandler.handle(e, delta);
+
+        if (!this->handle_event(e, delta)) {
+            return false;
+        }
+    }
+    this->inputHandler.update(delta);
+        
+    
+    return true;
 }
 
 void ic::Application::close() {
     std::cout << displayName << " exited." << "\n";
 
-	dispose();
+	this->dispose();
+
 	ic::FreeType::get().dispose();
-    
+    ic::Audio::get().dispose();
+
 	SDL_DestroyWindow(window);
     SDL_GL_DeleteContext(context);
 
     IMG_Quit();
-    Mix_CloseAudio();
 	SDL_Quit();
 }
 
@@ -247,8 +273,8 @@ void ic::Application::set_current_working_directory() {
 }
 
 int ic::Application::screen_width() {
-    return width;
+    return this->width;
 }
 int ic::Application::screen_height() {
-    return height;
+    return this->height;
 }

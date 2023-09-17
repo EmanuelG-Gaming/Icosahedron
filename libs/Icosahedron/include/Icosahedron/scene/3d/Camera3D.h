@@ -13,7 +13,7 @@
 namespace ic {
     /** @brief Settings for a Camera3D. */
     struct CameraSettings {
-        /** The field of view of this camera. */
+        /** The field of view of this camera, in degrees. */
         float fov = 90.0f;
 
         /** The near and the far clipping planes. */

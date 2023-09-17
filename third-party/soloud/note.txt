@@ -1,0 +1,2 @@
+This is a stripped-down version of the SoLoud library, having Miniaudio as the backend.
+It doesn't include the whole library, though.

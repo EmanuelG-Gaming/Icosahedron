@@ -1556,12 +1556,13 @@ class Example8 : public ic::Application {
         
         bool load() override {
             states.enable_depth_testing(ic::LESS);
+            states.enable_face_culling(ic::FRONT, ic::CCW);
             
-            shader = new ic::Shader(shaders.meshShaderVertex3D, fragment, false);
-            screenShader = new ic::Shader(screenVertex, screenFragment, false);
+            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
+            screenShader = ic::ShaderLoader::get().load(screenVertex, screenFragment);
             
-            floorTexture = ic::TextureLoader::get().load("resources/textures/wood.png");
-            whiteTexture = ic::TextureLoader::get().load("resources/textures/white.png");
+            floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
+            whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
             
             framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
 
@@ -1597,6 +1598,7 @@ class Example8 : public ic::Application {
         }
 
         void window_size_changed(int w, int h) override {
+            camera->resize(w, h);
             framebuffer->resize(w, h);
         }
 
@@ -1604,37 +1606,36 @@ class Example8 : public ic::Application {
             time += dt;
 
             controller->act(dt);
-            camera->resize(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
             camera->update();
             
             // First pass - scene drawing
             framebuffer->use();
             clear_color(ic::Colors::blue);
-            states.enable_face_culling(ic::FRONT, ic::CCW);
             
             shader->use();
             shader->set_uniform_vec3f("viewPosition", camera->position);
             camera->upload_to_shader(shader);
             
-            whiteTexture->use();
-            
+
             ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
             mesh->set_transformation(translation * rotation);
             mesh->set_normal_transformation(rotation);
+            
+
+            whiteTexture->use();
             mesh->draw(shader);
 
             floorTexture->use();
             floorMesh->draw(shader);
-            
+
             framebuffer->unuse();
 
 
             // Second pass - drawing via framebuffer
             clear_color(ic::Colors::cyan);
-            states.disable_face_culling();
-
+            
             screenShader->use();
             framebuffer->use_texture();
             screenQuad->draw(screenShader);
@@ -2000,11 +2001,14 @@ class Example10 : public ic::Application {
     public:
         bool init() override {
             displayName = "Example window";
-            
+            //scaling = ic::WindowScaling::fullscreen;
+
             return true;
         }
         
         bool load() override {
+            //set_window_size(100, 10);
+
             shape = new ic::Mesh2D(ic::GeometryGenerator::get().generate_rectangle(0.2f, 0.2f));
 
             shape->jump_attribute();
@@ -2023,6 +2027,7 @@ class Example10 : public ic::Application {
             inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
             shapePosition = { 0.0f, 0.0f };
 
+            
             return true;
         }
 
@@ -2033,19 +2038,19 @@ class Example10 : public ic::Application {
         bool update(float dt) override {
             auto *controller = inputHandler.find_keyboard("WASD");
             ic::Vec2i dir = controller->get_direction();
-
+   
             float speed = 1.0f;
             shapePosition.x() += dir.x() * speed * dt;
             shapePosition.y() += dir.y() * speed * dt;
             
             shape->set_transformation(ic::Mat4x4().set_translation(shapePosition));
             
-
+   
             clear_color(ic::Colors::blue);
             
             shader->use();
             camera->use(shader);
-
+            
             texture->use();
             shape->draw(shader);
             

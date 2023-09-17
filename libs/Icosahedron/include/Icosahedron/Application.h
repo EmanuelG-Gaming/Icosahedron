@@ -27,18 +27,18 @@ namespace ic {
     enum class WindowScaling {
         invalid = -1,
         
-        fixed,
-        resizeable,
-        fullscreen
+        fixed = 0,
+        resizeable = SDL_WINDOW_RESIZABLE,
+        fullscreen = SDL_WINDOW_FULLSCREEN_DESKTOP,
     };
 
     class Application {
         public:
-            /* Initializes the application. Called before load(). 
+            /* Initializes the application. Called before load(), inside the construct() function.
              * Don't use this to add OpenGL stuff, as a GL context doesn't exist during this stage. */
             virtual bool init() { return true; }
 
-            /* Called after setting a window and a valid OpenGL context. */
+            /* Called after setting a window and a valid OpenGL context, inside the start() function. */
             virtual bool load() { return true; }
 
             virtual bool handle_event(ic::Event event, float dt) { return true; }
@@ -54,6 +54,7 @@ namespace ic {
 
             /** @note This would dispose the image. */
             void set_window_image(ic::Image image);
+            void set_window_size(int w, int h);
 
             void clear_color(float r, float g, float b);
             void clear_color(const ic::Color &color);
@@ -66,6 +67,9 @@ namespace ic {
             /* Sends relevant information such as the current OpenGL, GLEW, and SDL contexts' versions. */
             void send_application_information();
 
+            void set_window_attributes();
+            void prepare_window();
+
             /* Called before load(). */
             void pre_load();
 
@@ -74,14 +78,18 @@ namespace ic {
             */
             void set_current_working_directory();
 
+            bool poll_events();
+            
             void close();
             
         protected:
             /* The name that is displayed on the window. */
             std::string displayName = "test";
+
             /* The type of scaling that this window uses. */
             ic::WindowScaling scaling = ic::WindowScaling::fixed;
-            /** Whether or not the cursor is hidden. Note that the mouse's motion would still be there in the game loop. */
+
+            /** Whether or not the cursor is hidden. Note that the mouse's motion would still be registered in the game loop. */
             bool hideCursor = false;
             
             ic::InputHandler inputHandler;
@@ -91,9 +99,11 @@ namespace ic {
 
         private:
             int width = 0, height = 0;
+            float delta = 0.0f;
+            
             SDL_Window *window;
             SDL_GLContext context;
-
+            
             bool constructed = false;
     };
 }
