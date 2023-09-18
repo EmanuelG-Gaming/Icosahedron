@@ -6,6 +6,7 @@
 #include "soloud.h"
 #include "soloud_wavstream.h"
 
+
 namespace ic {
     /** @brief An audio instance that plays accross the entire scene.
     */
@@ -16,7 +17,7 @@ namespace ic {
             void play();
             void set_volume(float amount);
 
-            SoLoud::WavStream &get_handler();
+            SoLoud::WavStream &get_stream();
             bool &is_played();
             float &get_volume();
             
@@ -24,7 +25,7 @@ namespace ic {
             void load(const std::string &filePath);
 
         private:
-            SoLoud::WavStream handler;
+            SoLoud::WavStream stream;
             bool played = false;
             float volume = 1.0f;
     };

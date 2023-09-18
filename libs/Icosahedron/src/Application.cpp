@@ -99,9 +99,6 @@ void ic::Application::start() {
         return;
     }
 
-    //ic::Music music = ic::Music("resources/music/monkey.mp3");
-    //ic::Audio::get().play(music);
-        
     if (!load()) {
         std::cerr << "Couldn't load the application." << "\n";
         return;

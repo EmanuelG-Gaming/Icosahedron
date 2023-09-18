@@ -10,7 +10,10 @@ ic::Texture *ic::TextureLoader::load_png(const std::string &filePath, ic::Textur
     }
 
     GLenum textureFormat = this->map_to_texture_format(texture->format->format);
-    return this->load_texture(texture->w, texture->h, textureFormat, texture->pixels, parameters);
+    ic::Texture *result = this->load_texture(texture->w, texture->h, textureFormat, texture->pixels, parameters);
+    SDL_FreeSurface(texture);
+
+    return result;
 }
 
 ic::Texture *ic::TextureLoader::load_bmp(const std::string &filePath, ic::TextureParameters parameters) {
@@ -22,7 +25,10 @@ ic::Texture *ic::TextureLoader::load_bmp(const std::string &filePath, ic::Textur
     }
 
     GLenum textureFormat = this->map_to_texture_format(texture->format->format);
-    return this->load_texture(texture->w, texture->h, textureFormat, texture->pixels, parameters);
+    ic::Texture *result = this->load_texture(texture->w, texture->h, textureFormat, texture->pixels, parameters);
+    SDL_FreeSurface(texture);
+
+    return result;
 }
 
 ic::Texture *ic::TextureLoader::load(ic::Image &image, ic::TextureParameters parameters) {

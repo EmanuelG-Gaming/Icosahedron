@@ -50,8 +50,17 @@ namespace ic {
              *                                                            x2, y2,  ... n2,
              *                                                            ... }, where n is the number of dimensions.
             */
-            void add_vertex_buffer(int dimensions, const std::vector<GLfloat> &content);
-            void set_index_buffer(const std::vector<GLuint> &content);
+            void add_vertex_buffer(int dimensions, const std::vector<float> &content);
+
+            /** @brief Adds an integer vertex buffer to this VAO.
+             *  @param dimensions The number of dimensions of the attribute vector.
+             *  @param content Attribute content in the following form: { x1, y1, ... n1,
+             *                                                            x2, y2,  ... n2,
+             *                                                            ... }, where n is the number of dimensions.
+            */
+            void add_vertex_buffer(int dimensions, const std::vector<int> &content);
+
+            void set_index_buffer(const std::vector<unsigned int> &content);
 
             void unuse_attribute_definitions();
 

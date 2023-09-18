@@ -30,8 +30,10 @@ void ic::Audio::play(ic::Music *music) {
 void ic::Audio::playback() {
     for (auto &element : this->music) {
         if (!element->is_played()) {
-            element->get_handler().setVolume(element->get_volume());
-            this->handler->play(element->get_handler());
+            auto stream = element->get_stream();
+
+            stream.setVolume(element->get_volume());
+            this->handler->play(stream);
 
             element->play();
         }

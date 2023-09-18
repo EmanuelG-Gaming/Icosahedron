@@ -35,6 +35,8 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Shaders.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Framebuffer.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Texture.h
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/TextureArray.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/TextureAtlas.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/VertexArray.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Batch.h
@@ -84,6 +86,7 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Shader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Framebuffer.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Texture.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/TextureArray.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/VertexArray.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Batch.cpp
 

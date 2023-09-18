@@ -9,7 +9,7 @@ Music::Music(const std::string &filePath) {
 }
 
 void ic::Music::load(const std::string &filePath) {
-    this->handler.load(filePath.c_str());
+    this->stream.load(filePath.c_str());
     //if (!result) printf("Couldn't load the music.\n");
 }
 
@@ -21,8 +21,8 @@ void ic::Music::set_volume(float amount) {
 }
 
 
-SoLoud::WavStream &ic::Music::get_handler() {
-    return this->handler;
+SoLoud::WavStream &ic::Music::get_stream() {
+    return this->stream;
 }
 
 

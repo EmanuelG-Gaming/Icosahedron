@@ -43,6 +43,7 @@ namespace ic {
 #include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/graphics/gl/Framebuffer.h>
 #include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/gl/TextureArray.h>
 #include <Icosahedron/graphics/gl/TextureAtlas.h>
 #include <Icosahedron/graphics/gl/Batch.h>
 #include <Icosahedron/graphics/gl/VertexArray.h>
