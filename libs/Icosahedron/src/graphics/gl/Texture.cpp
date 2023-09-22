@@ -6,8 +6,7 @@ using namespace ic;
 Texture::Texture(ic::GLTextureTypes type) {
     this->type = type;
 
-    glGenTextures(1, &this->textureIndex);
-    glBindTexture(this->type, this->textureIndex);
+    this->setup(this->type);
 }
 
 void ic::Texture::use(int index) {
@@ -28,4 +27,9 @@ void ic::Texture::dispose() {
 
 ic::GLTextureTypes ic::Texture::get_type() {
     return this->type;
+}
+
+void ic::Texture::setup(const ic::GLTextureTypes &textureType) {
+    glGenTextures(1, &this->textureIndex);
+    glBindTexture(textureType, this->textureIndex);
 }

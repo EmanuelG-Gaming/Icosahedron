@@ -52,6 +52,12 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/input/KeyboardController.h
     ${LIBRARY_HEADERS_DIRECTORY}/input/MouseController.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/ShaderLoader.h
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/TextureLoader.h
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/TextureAtlasLoader.h
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/CubemapLoader.h
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/OBJLoader.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/audio/Music.h
     ${LIBRARY_HEADERS_DIRECTORY}/audio/Audio.h
 
@@ -60,15 +66,12 @@ set(LIBRARY_HEADERS
 
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Mesh3D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Camera3D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Skybox.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/controllers/FreeRoamCameraController3D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/controllers/OrbitalCameraController3D.h
 
-    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/ShaderLoader.h
-    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/TextureLoader.h
-    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/TextureAtlasLoader.h
-    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/OBJLoader.h
-
+    
     ${LIBRARY_HEADERS_DIRECTORY}/Global.h
     ${LIBRARY_HEADERS_DIRECTORY}/Application.h
     ${LIBRARY_HEADERS_DIRECTORY}/Core.h
@@ -97,6 +100,11 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/input/MouseController.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/input/InputHandler.cpp
 
+    ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/ShaderLoader.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/TextureLoader.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/CubemapLoader.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/OBJLoader.cpp
+    
     ${LIBRARY_SOURCE_DIRECTORY}/audio/Music.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/audio/Audio.cpp
 
@@ -105,13 +113,11 @@ set(LIBRARY_SOURCE
 
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Mesh3D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Camera3D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Skybox.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/controllers/FreeRoamCameraController3D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/controllers/OrbitalCameraController3D.cpp
 
-    ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/ShaderLoader.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/TextureLoader.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/OBJLoader.cpp
     
     ${LIBRARY_SOURCE_DIRECTORY}/Renderer.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/Application.cpp

@@ -66,7 +66,10 @@ namespace ic {
 #include <Icosahedron/scene/2d/Camera2D.h>
 
 #include <Icosahedron/scene/3d/Mesh3D.h>
+#include <Icosahedron/scene/3d/Skybox.h>
 #include <Icosahedron/scene/3d/Camera3D.h>
+
+
 #include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
 #include <Icosahedron/scene/3d/controllers/OrbitalCameraController3D.h>
 
@@ -77,6 +80,7 @@ namespace ic {
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/assets/loaders/TextureLoader.h>
 #include <Icosahedron/assets/loaders/TextureAtlasLoader.h>
+#include <Icosahedron/assets/loaders/CubemapLoader.h>
 #include <Icosahedron/assets/loaders/OBJLoader.h>
 
 // Global

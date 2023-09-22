@@ -21,6 +21,9 @@ namespace ic {
             ic::GLTextureTypes get_type();
 
         private:
+            void setup(const ic::GLTextureTypes &textureType);
+            
+        private:
             GLuint textureIndex = 0;
             ic::GLTextureTypes type;
     };
