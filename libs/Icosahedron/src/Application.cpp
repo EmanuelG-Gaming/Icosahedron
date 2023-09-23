@@ -31,6 +31,19 @@ void ic::Application::clear_color(const ic::Color &color) {
     this->clear_color(r, g, b);
 }
 
+
+ic::Image ic::Application::take_screenshot(int x, int y, int width, int height) {
+    ic::Image result = ic::Image(width, height);
+
+    glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, result.data());
+
+    return result;
+}
+ic::Image ic::Application::take_screenshot() {
+    return this->take_screenshot(0, 0, this->width, this->height);
+}
+
+
 void ic::Application::set_window_image(ic::Image image) {
     if (this->window == NULL) {
         printf("Couldn't change the window's image. Window needs to be loaded first!\n");

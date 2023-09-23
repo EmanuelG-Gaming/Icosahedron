@@ -2361,6 +2361,10 @@ class Example12 : public ic::Application {
             shader->clear();
             
             shape->dispose();
+
+            ic::Image screenshot = take_screenshot();
+            ic::ImageIO::get().write_png(ic::File("resources/screenshot.png"), screenshot);
+            screenshot.dispose();
         }
 };
 

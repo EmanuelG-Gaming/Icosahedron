@@ -59,7 +59,10 @@ namespace ic {
             void clear_color(float r, float g, float b);
             void clear_color(const ic::Color &color);
             void clear_color();
-    
+
+            ic::Image take_screenshot(int x, int y, int width, int height);
+            ic::Image take_screenshot();
+            
             int screen_width();
             int screen_height();
             
