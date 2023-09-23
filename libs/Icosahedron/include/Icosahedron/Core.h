@@ -75,6 +75,7 @@ namespace ic {
 
 // Utilities
 #include <Icosahedron/util/GeometryGenerator.h>
+#include <Icosahedron/util/Noise.h>
 
 // Assets
 #include <Icosahedron/assets/loaders/ShaderLoader.h>

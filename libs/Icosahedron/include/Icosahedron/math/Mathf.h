@@ -51,7 +51,7 @@ namespace ic {
                 return std::max(min, std::min(x, max));
             }
 
-            /* Linear interpolation. */
+            /* @brief Linear interpolation. */
             float interpolate(float from, float to, float alpha) {
                 // pt = p1 + (p2 - p1) * t
                 // pt = p1 + p2t - p1t

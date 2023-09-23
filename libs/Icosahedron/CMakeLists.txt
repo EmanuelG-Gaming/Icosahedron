@@ -44,7 +44,9 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/TextAtlas.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/FreeType.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/util/Noise.h
     ${LIBRARY_HEADERS_DIRECTORY}/util/GeometryGenerator.h
+    
     ${LIBRARY_HEADERS_DIRECTORY}/Renderer.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/input/Input.h

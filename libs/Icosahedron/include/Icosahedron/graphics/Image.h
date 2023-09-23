@@ -49,6 +49,7 @@ namespace ic {
             /** @brief Bresenham's line algorithm. */
             void draw_line(int x0, int y0, int x1, int y1, const image_t &with);
             void line_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with);
+            void fill_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with);
 
             /** @brief Iterates over each pixel of the image. */
             void each(const std::function<void(int, int)> &call);

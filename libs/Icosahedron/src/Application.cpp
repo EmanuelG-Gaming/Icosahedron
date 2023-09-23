@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <Icosahedron/audio/Audio.h>
+#include <Icosahedron/util/Noise.h>
 
 #include <Icosahedron/graphics/ImageIO.h>
 #include <Icosahedron/graphics/gl/Shaders.h>
@@ -201,6 +202,7 @@ void ic::Application::pre_load() {
     shaders.load_shaders();
     ic::FreeType::get().load();
     ic::Audio::get().init();
+    ic::Noise::get().init();
 
     this->send_application_information();
 }

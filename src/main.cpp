@@ -2295,3 +2295,81 @@ int main(int argc, char *argv[]) {
 }
 */
 
+#include <Icosahedron/Core.h>
+
+class Example12 : public ic::Application {
+    ic::Texture *texture;
+    ic::Shader *shader;
+    ic::Camera2D *camera;
+
+    ic::Mesh2D *shape;
+    ic::Vec2f shapePosition;
+    
+    public:
+        bool init() override {
+            displayName = "Example window";
+            scaling = ic::WindowScaling::fullscreen;
+            
+            return true;
+        }
+        
+        bool load() override {
+            shape = new ic::Mesh2D(ic::GeometryGenerator::get().generate_rectangle(0.7f, 0.7f));
+
+            shape->jump_attribute();
+            shape->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_rectangle(2.0f, 2.0f));
+            shape->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+            shape->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
+
+            ic::ImageNoiseParameters params;
+            params.octaves = 5;
+            params.scaling = 0.015f;
+
+            ic::Image image = ic::Images::get().perlin_solid(128, 128, params);
+            //texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
+            texture = ic::TextureLoader::get().load(image);
+            shader = new ic::Shader(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+
+            camera = new ic::Camera2D();
+        
+            shapePosition = { 0.0f, 0.0f };
+
+            return true;
+        }
+
+        bool handle_event(ic::Event event, float dt) override {
+            return true;
+        }
+    
+        bool update(float dt) override {
+            shape->set_transformation(ic::Mat4x4().set_translation(shapePosition));
+            
+
+            clear_color(ic::Colors::blue);
+            
+            shader->use();
+            camera->use(shader);
+
+            texture->use();
+            shape->draw(shader);
+            
+            return true; 
+        }
+
+        void dispose() override {
+            texture->dispose();
+            shader->clear();
+            
+            shape->dispose();
+        }
+};
+
+int main(int argc, char *argv[]) {
+    Example12 application;
+    
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}
