@@ -19,7 +19,7 @@ namespace ic {
         float x, y, z, w;
         Quaternion() {}
         Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
-
+        
         /** @note Roll - X rotation; Pitch - Y rotation; Yaw - Z rotation */
         Quaternion from_euler(float roll, float pitch, float yaw) {
             float halfRoll = roll * 0.5f;

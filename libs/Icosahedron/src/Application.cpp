@@ -281,6 +281,8 @@ void ic::Application::set_current_working_directory() {
     std::replace(dir.begin(), dir.end(), '\\', '/');
     dir.erase(dir.find("/build"));
     
+    std::cout << dir << "\n";
+    
     std::filesystem::current_path(dir);
 }
 

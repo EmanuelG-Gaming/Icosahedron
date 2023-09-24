@@ -1,7 +1,9 @@
-/* A prime example: Displays a blue window on startup. */
+#ifndef IC_EXAMPLE_WINDOW_EXAMPLE_H
+#define IC_EXAMPLE_WINDOW_EXAMPLE_H
+
 #include <Icosahedron/Core.h>
 
-class FirstProject : public ic::Application {
+class WindowExample : public ic::Application {
     public:
         bool init() override {
             // Use this to set up window settings, although this can also be done in the constructor
@@ -40,13 +42,4 @@ class FirstProject : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
-    FirstProject application;
-
-    // Constructs a window that is 640 pixels wide and 480 pixels tall
-    if (application.construct(640, 480)) {
-        application.start();
-    }
-
-    return 0;
-}
+#endif
