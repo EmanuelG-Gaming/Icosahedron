@@ -35,69 +35,13 @@ For some, this can be pretty straightforward, but here it is:
     - Install MingW with CMake;
     - Clone this repository;
     - Open Visual Studio Code;
-    - Write code or (optionally) uncomment one of the examples in `src/main.cpp`;
+    - Write some code or use an example provided from `examples/include`;
     - Build the project;
     - Run it.
 
 (Assuming you've got a C++ compiler, and a computer with OpenGL >= 3.0 support)
 
-If you've managed to build this project successfully, you may see a `build` folder being created, with something like `engine.exe`. You can use the `.\build\engine` command on the terminal, and this will start your application.
+If you've managed to build this project successfully, you may see a `build` folder being created, with something like `engine.exe` or `icosahedron-examples.exe`. You can run either `.\build\engine` or `.build\icosahedron-examples` on the terminal, and these will start your application.
 
-# Example usage
-More examples are available inside the `src/main.cpp` file.
-
-For instance, a very simple application that shows an empty blue window on startup can be defined as follows:
-
-```
-#include <Icosahedron/Core.h>
-
-class Example : public ic::Application {
-    public:
-        bool init() override {
-            // Use this to set up window settings, although this can also be done in the constructor
-            displayName = "Example window";
-            
-            return true;
-        }
-        
-        bool load() override {
-            // This function is called after init() and after setting up the window
-
-            return true;
-        }
-
-        void window_size_changed(int w, int h) override {
-            // Called when the window is resized, and also if it is changed to fullscreen mode
-            
-        }
-
-        bool handle_event(ic::Event event, float dt) override { 
-            // Called when events are retrieved and polled 
-
-            return true;
-        }
-
-        bool update(float dt) override {
-            // This is called once every frame
-        
-            clear_color(ic::Colors::blue);
-            return true; 
-        }
-
-        void dispose() override {
-            // Occurs when the application has to close
-
-        }
-};
-
-int main(int argc, char *argv[]) {
-    Example application;
-
-    // Constructs a window that is 640 pixels wide and 480 pixels tall
-    if (application.construct(640, 480)) {
-        application.start();
-    }
-
-    return 0;
-}
-```
+# Documentation
+See [https://github.com/EmanuelG-Gaming/Icosahedron/wiki](https://github.com/EmanuelG-Gaming/Icosahedron/wiki).
