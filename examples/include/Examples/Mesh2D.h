@@ -1,14 +1,14 @@
 #ifndef IC_EXAMPLE_MESH_2D_H
 #define IC_EXAMPLE_MESH_2D_H
 
-/* Polygon example. Demonstrates the use of per-vertex colors, separate texturing (no atlas), matrix transformations, and materials, all in the same shader program. */
 #include <Icosahedron/Core.h>
 
+/* Polygon example. Demonstrates the use of per-vertex colors, separate texturing (no atlas), matrix transformations, and materials, all in the same shader program. */
 class Mesh2D : public ic::Application {
     ic::Mesh2D *mesh1;
     ic::Mesh2D *mesh2;
 
-    ic::Texture<ic::T2D> *texture, *whiteTexture;
+    ic::Texture *texture, *whiteTexture;
     ic::Camera2D *camera;
 
     ic::Shader *shader;
@@ -45,10 +45,10 @@ class Mesh2D : public ic::Application {
             mesh2->set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
 
 
-            shader = new ic::Shader(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D, false);
+            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
             
-            texture = new ic::Texture<ic::T2D>("resources/textures/wood.png");
-            whiteTexture = new ic::Texture<ic::T2D>("resources/textures/white.png");
+            texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
+            whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
 
             camera = new ic::Camera2D();
 

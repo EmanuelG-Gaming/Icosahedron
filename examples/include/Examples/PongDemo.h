@@ -1,7 +1,6 @@
 #ifndef IC_EXAMPLE_PONG_DEMO_H
 #define IC_EXAMPLE_PONG_DEMO_H
 
-/* A recreation of pong. The left paddle uses WS keys and the right one uses up-down keys. */
 #include <Icosahedron/Core.h>
 
 struct RectangleShape {
@@ -13,6 +12,7 @@ struct RectangleShape {
     }
 };
 
+/* A recreation of pong. The left paddle uses WS keys and the right one uses up-down keys. */
 class PongDemo : public ic::Application {
     ic::Batch *batch, *textBatch;
     ic::TextureAtlas *texture;
@@ -33,8 +33,8 @@ class PongDemo : public ic::Application {
         }
         
         bool load() override {
-            shader = new ic::Shader(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D, false);
-            textShader = new ic::Shader(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D, false);
+            shader = ic::ShaderLoader::get().load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
+            textShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
 
             // We use the roboto font
             ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);

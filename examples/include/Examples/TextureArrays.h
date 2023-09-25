@@ -1,9 +1,6 @@
 #ifndef IC_EXAMPLE_TEXTURE_ARRAYS_H
 #define IC_EXAMPLE_TEXTURE_ARRAYS_H
 
-/** Texture arrays can be used to efficiently sample from successive texture layers,
- *  making them an alternative to texture atlases.
-*/
 #include <Icosahedron/Core.h>
 
 
@@ -164,6 +161,9 @@ std::string textureArrayFragment = IC_ADD_GLSL_DEFINITION(
     }
 );
 
+/** Texture arrays can be used to efficiently sample from successive texture layers,
+ *  making them an alternative to texture atlases.
+*/
 class TextureArrays : public ic::Application {
     ic::Shader *singleTextureShader, *textureArrayShader;
     

@@ -137,7 +137,16 @@ endforeach(LIBRARY)
 
 
 
-target_include_directories(icosahedron-examples PRIVATE examples/include)
+#target_include_directories(icosahedron-examples PRIVATE examples/include)
+target_include_directories(icosahedron-examples PRIVATE
+    $<BUILD_INTERFACE: ${CMAKE_CURRENT_SOURCE_DIR}/examples/include/Examples>
+    $<INSTALL_INTERFACE: examples/include/Examples>
+)
+
+target_include_directories(icosahedron-examples PUBLIC
+    $<BUILD_INTERFACE: ${CMAKE_CURRENT_SOURCE_DIR}/examples/include>
+    $<INSTALL_INTERFACE: examples/include>
+)
 target_link_libraries(icosahedron-examples ${ENGINE_LIBRARIES})
 
 

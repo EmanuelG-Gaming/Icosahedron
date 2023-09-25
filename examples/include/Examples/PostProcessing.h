@@ -1,8 +1,6 @@
 #ifndef IC_EXAMPLE_POST_PROCESSING_H
 #define IC_EXAMPLE_POST_PROCESSING_H
 
-/* An example that shows how "post-processing" can be achieved.
- * In this case, the effect is an approximation of a gaussian blur filter. */
 #include <Icosahedron/Core.h>
 
 std::string screenVertex = IC_ADD_GLSL_DEFINITION(
@@ -135,6 +133,8 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 );
 
 
+/* An example that shows how "post-processing" can be achieved.
+ * In this case, the effect is an approximation of a gaussian blur filter. */
 class PostProcessing : public ic::Application {
     ic::Shader *shader, *screenShader;
     ic::Framebuffer *framebuffer;

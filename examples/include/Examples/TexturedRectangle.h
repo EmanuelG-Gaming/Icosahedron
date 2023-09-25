@@ -1,11 +1,11 @@
 #ifndef IC_EXAMPLE_TEXTURED_RECTANGLE_H
 #define IC_EXAMPLE_TEXTURED_RECTANGLE_H
 
-/* Displays a textured rectangle that can be moved around using the WASD keys or the arrow keys. */
 #include <Icosahedron/Core.h>
 
+/* Displays a textured rectangle that can be moved around using the WASD keys or the arrow keys. */
 class TexturedRectangle : public ic::Application {
-    ic::Texture<ic::T2D> *texture;
+    ic::Texture *texture;
     ic::Shader *shader;
     ic::Camera2D *camera;
 
@@ -27,8 +27,8 @@ class TexturedRectangle : public ic::Application {
             shape->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
             shape->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
 
-            texture = new ic::Texture<ic::T2D>("resources/textures/wood.png");
-            shader = new ic::Shader(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D, false);
+            texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
+            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
 
             camera = new ic::Camera2D();
         

@@ -1,7 +1,6 @@
 #ifndef IC_EXAMPLE_RAYTRACING_DEMO_H
 #define IC_EXAMPLE_RAYTRACING_DEMO_H
 
-/* A very simple ray tracer. */
 #include <Icosahedron/Core.h>
 
 const std::size_t RAYTRACING_WIDTH = 640;
@@ -223,6 +222,7 @@ std::string screenFragment = IC_ADD_GLSL_DEFINITION(
     }
 );
 
+/* A very simple ray tracer. */
 class RaytracingDemo : public ic::Application {
     ic::Shader *screenShader, *rayShader;
     ic::Framebuffer *framebuffer;

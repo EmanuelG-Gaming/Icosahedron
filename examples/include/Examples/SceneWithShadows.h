@@ -1,8 +1,6 @@
 #ifndef IC_EXAMPLE_SCENE_WITH_SHADOWS_H
 #define IC_EXAMPLE_SCENE_WITH_SHADOWS_H
 
-
-/** A scene that shows a rotating monkey head on a floor. */
 #include <Icosahedron/Core.h>
 
 std::string depthShaderVert = IC_ADD_GLSL_DEFINITION(
@@ -185,7 +183,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 
 
 
-
+/** A scene that shows a rotating monkey head on a floor. */
 class SceneWithShadows : public ic::Application {
     ic::Shader *shader, *depthShader;
     ic::Framebuffer *shadowMap;

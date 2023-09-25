@@ -1,7 +1,7 @@
-#include <Examples/TiledDemo.h>
+#include <Examples/WindowExample.h>
 
 int main(int argc, char *argv[]) {
-    TiledDemo application;
+    WindowExample application;
 
     if (application.construct(640, 480)) {
         application.start();

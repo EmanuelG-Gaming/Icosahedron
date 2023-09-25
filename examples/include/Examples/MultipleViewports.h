@@ -108,7 +108,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
     }
 );
 
-
+/** Renders the same scene to two different viewports (the first one is the player's view). */
 class MultipleViewports : public ic::Application {
     ic::Shader *shader, *screenShader;
     ic::Framebuffer *framebuffer;
@@ -241,11 +241,8 @@ class MultipleViewports : public ic::Application {
 
 
             ic::Mat4x4 translation2 = ic::Mat4x4().set_translation<3>(camera->position);
-            ic::Quaternion quat2 = ic::Quaternion(camera->lookingAt - camera->position);
-            ic::Mat4x4 rotation2 = quat2.to_rotation_matrix();
-            mainCameraMesh->set_transformation(translation2 * rotation2);
-            mainCameraMesh->set_normal_transformation(rotation2);
-
+            mainCameraMesh->set_transformation(translation2);
+            
             ic::Mat4x4 translation3 = ic::Mat4x4().set_translation<3>(secondaryCamera->position);
             secondCameraMesh->set_transformation(translation3);
 

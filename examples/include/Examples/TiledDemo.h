@@ -1,7 +1,6 @@
 #ifndef IC_EXAMPLE_TILED_DEMO_H
 #define IC_EXAMPLE_TILED_DEMO_H
 
-/* A tiled game. Collision detection is via AABBs (ic::Rectangles). */
 #include <Icosahedron/Core.h>
 
 const std::size_t MAP_WIDTH = 16;
@@ -99,6 +98,7 @@ struct Drop {
     }
 };
 
+/* A tiled game. Collision detection is via AABBs (ic::Rectangles). */
 class TiledDemo : public ic::Application {
     ic::Batch *batch, *textBatch;
     ic::TextureAtlas *texture;

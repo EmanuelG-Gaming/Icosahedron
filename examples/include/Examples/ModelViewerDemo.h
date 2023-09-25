@@ -1,10 +1,6 @@
 #ifndef IC_EXAMPLE_MODEL_VIEWER_DEMO_H
 #define IC_EXAMPLE_MODEL_VIEWER_DEMO_H
 
-/** A model viewer. Press up/down keys to increase/decrease the view radius.
- *  Use the Q key to switch between perspective and orthographic projections, and
- *  the R key to toggle the rotation of the viewed object.
-*/
 #include <Icosahedron/Core.h>
 
 std::string fragment = IC_ADD_GLSL_DEFINITION(
@@ -86,11 +82,15 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 );
 
 
+/** A model viewer. Press up/down keys to increase/decrease the view radius.
+ *  Use the Q key to switch between perspective and orthographic projections, and
+ *  the R key to toggle the rotation of the viewed object.
+*/
 class ModelViewerDemo : public ic::Application {
     ic::Shader *shader;
     ic::Camera3D *camera;
     ic::Mesh3D *mesh;
-    ic::Texture<ic::T2D> *whiteTexture;
+    ic::Texture *whiteTexture;
     ic::OrbitalCameraController3D *controller;
     //ic::FreeRoamCameraController3D *controller;
 
@@ -115,8 +115,8 @@ class ModelViewerDemo : public ic::Application {
             states.enable_depth_testing(ic::LESS);
             states.enable_face_culling(ic::FRONT, ic::CCW);
 
-            shader = new ic::Shader(shaders.meshShaderVertex3D, fragment, false);
-            whiteTexture = new ic::Texture<ic::T2D>("resources/textures/white.png");
+            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
+            whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
             
             mesh = ic::OBJLoader::get().get_mesh("resources/models/boat.obj");
             mesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
