@@ -1,7 +1,7 @@
-#include <Examples/WindowExample.h>
+#include <Examples/MultipleViewports.h>
 
 int main(int argc, char *argv[]) {
-    WindowExample application;
+    MultipleViewports application;
 
     if (application.construct(640, 480)) {
         application.start();

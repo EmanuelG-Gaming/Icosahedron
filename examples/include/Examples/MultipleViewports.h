@@ -138,17 +138,23 @@ class MultipleViewports : public ic::Application {
             screenShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
             
             meshTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
+            
             mainCameraTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
             
             framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
             
-            mesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_cube(0.5f));
+            mesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_UV_sphere(0.5f, 14, 14));
             mesh->jump_attribute();
-            mesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped());
-            mesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
-            mesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
+            mesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_sphere_UVs(14, 14));
+            mesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_UV_sphere_normals(14, 14));
+            mesh->set_index_buffer(ic::GeometryGenerator::get().generate_UV_sphere_indices(14, 14));
             
-            mainCameraMesh = mesh;
+            mainCameraMesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_cube(0.5f));
+            mainCameraMesh->jump_attribute();
+            mainCameraMesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped());
+            mainCameraMesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
+            mainCameraMesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
+            
             secondCameraMesh = ic::OBJLoader::get().get_mesh("resources/models/icosahedron.obj");
 
             screenQuad = new ic::Mesh3D({ 0.0f, 0.0f, 0.0f, 

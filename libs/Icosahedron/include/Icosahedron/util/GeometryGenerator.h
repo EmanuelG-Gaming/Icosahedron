@@ -238,6 +238,92 @@ public:
             };
         }
 
+        std::vector<float> generate_UV_sphere(float radius, int latitudeLines, int longitudeLines) {
+            std::vector<float> result;
+
+            float latitudeSpacing = ic::Mathf::get().pi / (float) latitudeLines;
+            float longitudeSpacing = 2 * ic::Mathf::get().pi / (float) longitudeLines;
+
+            for (int i = 0; i <= latitudeLines; i++) {
+                for (int j = 0; j <= longitudeLines; j++) {
+                    float theta = j * longitudeSpacing;
+                    float phi = ic::Mathf::get().pi * 0.5f - i * latitudeSpacing;
+
+                    result.push_back(ic::Mathf::get().cosf(phi) * ic::Mathf::get().cosf(theta) * radius);
+                    result.push_back(ic::Mathf::get().cosf(phi) * ic::Mathf::get().sinf(theta) * radius);
+                    result.push_back(ic::Mathf::get().sinf(phi) * radius);
+                }
+            }
+            return result;
+        }
+
+        std::vector<float> generate_UV_sphere_normals(int latitudeLines, int longitudeLines) {
+            std::vector<float> result;
+
+            float latitudeSpacing = ic::Mathf::get().pi / (float) latitudeLines;
+            float longitudeSpacing = 2 * ic::Mathf::get().pi / (float) longitudeLines;
+
+            for (int i = 0; i <= latitudeLines; i++) {
+                for (int j = 0; j <= longitudeLines; j++) {
+                    float theta = j * longitudeSpacing;
+                    float phi = ic::Mathf::get().pi * 0.5f - i * latitudeSpacing;
+
+                    result.push_back(ic::Mathf::get().cosf(phi) * ic::Mathf::get().cosf(theta));
+                    result.push_back(ic::Mathf::get().cosf(phi) * ic::Mathf::get().sinf(theta));
+                    result.push_back(ic::Mathf::get().sinf(phi));
+                }
+            }
+            return result;
+        }
+
+        std::vector<float> generate_UV_sphere_UVs(int latitudeLines, int longitudeLines) {
+            std::vector<float> result;
+
+            float latitudeSpacing = ic::Mathf::get().pi / (float) latitudeLines;
+            float longitudeSpacing = 2 * ic::Mathf::get().pi / (float) longitudeLines;
+
+            for (int i = 0; i <= latitudeLines; i++) {
+                for (int j = 0; j <= longitudeLines; j++) {
+                    float theta = j * longitudeSpacing;
+                    float phi = ic::Mathf::get().pi * 0.5f - i * latitudeSpacing;
+
+                    ic::Vec3f position = {
+                        ic::Mathf::get().cosf(phi) * ic::Mathf::get().cosf(theta),
+                        ic::Mathf::get().cosf(phi) * ic::Mathf::get().sinf(theta),
+                        ic::Mathf::get().sinf(phi)
+                    };
+
+                    result.push_back(0.5f + atan2(position.z(), position.x()) / (2 * ic::Mathf::get().pi));
+                    result.push_back(0.5f + asin(position.y()) / ic::Mathf::get().pi);
+                }
+            }
+            return result;
+        }
+
+
+        std::vector<unsigned int> generate_UV_sphere_indices(int latitudeLines, int longitudeLines) {
+            std::vector<unsigned int> result;
+
+            int k1, k2;
+            for (int i = 0; i < latitudeLines; i++) {
+                k1 = i * (latitudeLines + 1);
+                k2 = k1 + latitudeLines + 1;
+                for (int j = 0; j < longitudeLines; j++, k1++, k2++) {
+                    if (i != 0) {
+                        result.push_back(k1);
+                        result.push_back(k2);
+                        result.push_back(k1 + 1);
+                    }
+                    if (i != (latitudeLines - 1)) {
+                        result.push_back(k1 + 1);
+                        result.push_back(k2); 
+                        result.push_back(k2 + 1);
+                    }
+                }
+            }
+
+            return result;
+        }
 private:
         GeometryGenerator() {}
         ~GeometryGenerator() {}
