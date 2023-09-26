@@ -39,26 +39,23 @@ namespace ic {
 
             void dispose();
 
-            /** @brief Jumps to the next attribute, based on the location
-             *  inside the shader program, without adding any vertex buffer.
-            */
-            void jump();
-
             /** @brief Adds a floating-point vertex buffer to this VAO.
+             *  @param attributeIndex The index of the attribute, as in the shader code.
              *  @param dimensions The number of dimensions of the attribute vector.
              *  @param content Attribute content in the following form: { x1, y1, ... n1,
              *                                                            x2, y2,  ... n2,
              *                                                            ... }, where n is the number of dimensions.
             */
-            void add_vertex_buffer(int dimensions, const std::vector<float> &content);
+            void add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<float> &content);
 
             /** @brief Adds an integer vertex buffer to this VAO.
+             *  @param attributeIndex The index of the attribute, as in the shader code.
              *  @param dimensions The number of dimensions of the attribute vector.
              *  @param content Attribute content in the following form: { x1, y1, ... n1,
              *                                                            x2, y2,  ... n2,
              *                                                            ... }, where n is the number of dimensions.
             */
-            void add_vertex_buffer(int dimensions, const std::vector<int> &content);
+            void add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<int> &content);
 
             void set_index_buffer(const std::vector<unsigned int> &content);
 
@@ -72,7 +69,6 @@ namespace ic {
             std::vector<GLuint> bufferObjects;
             GLuint vao = 0, ibo = 0;
             GLsizei indicesUsed = 0;
-            int lastVertexBufferPosition = 0;
     };
 }
 

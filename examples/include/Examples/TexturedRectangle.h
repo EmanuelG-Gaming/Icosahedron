@@ -20,12 +20,7 @@ class TexturedRectangle : public ic::Application {
         }
         
         bool load() override {
-            shape = new ic::Mesh2D(ic::GeometryGenerator::get().generate_rectangle(0.2f, 0.2f));
-
-            shape->jump_attribute();
-            shape->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_rectangle());
-            shape->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
-            shape->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
+            shape = ic::GeometryGenerator::get().generate_rectangle_mesh(0.2f, 0.2f);
 
             texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);

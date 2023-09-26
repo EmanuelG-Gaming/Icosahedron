@@ -134,10 +134,9 @@ ic::Mesh3D *ic::OBJLoader::get_mesh(const std::string &objectFileName) {
         normals[i] = normalReference[indexReference[referenceAmount++] - 1];
     }
 
-    mesh->add_attribute("position", vertices);
-    mesh->jump_attribute();
-    mesh->add_attribute("textureCoords", textureCoords);
-    mesh->add_attribute("normal", normals);
+    mesh->add_attribute("position", 0, vertices);
+    mesh->add_attribute("textureCoords", 2, textureCoords);
+    mesh->add_attribute("normal", 3, normals);
 
     mesh->set_index_buffer(indices);
 

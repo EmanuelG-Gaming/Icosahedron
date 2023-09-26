@@ -225,29 +225,15 @@ class SceneWithShadows : public ic::Application {
             shadowHeight = 1024;
             shadowMap = new ic::Framebuffer(ic::TEXTURE_ATTACH_DEPTH, ic::TEXTURE_DEPTH, shadowWidth, shadowHeight);
 
-            //mesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_cube(0.5f));
-            //mesh->jump_attribute();
-            //mesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped());
-            //mesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
-            //mesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
-
-
             mesh = ic::OBJLoader::get().get_mesh(ic::File("resources/models/monkey.obj").get_path());
-            //mesh = ic::OBJLoader::get().get_mesh("resources/models/monkey.obj");
-
-            floorMesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_parallelipiped(5.0f * 5, 0.1f, 5.0f * 5));
-            floorMesh->jump_attribute();
-            floorMesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped(10.0f * 5, 0.2f, 10.0f * 5));
-            floorMesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
-            floorMesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
-            floorMesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
-
             
+            floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 25.0f, 0.1f, 25.0f);
+            floorMesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
 
             camera = new ic::Camera3D();
             camera->position = { -3.0f, 1.5f, 0.0f };
+
             controller = new ic::OrbitalCameraController3D(camera, &inputHandler);
-            //controller->flying = true;
             controller->center = { 0.0f, 0.5f, 0.0f };
 
             time = 0.0f;

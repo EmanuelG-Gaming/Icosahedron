@@ -6,8 +6,13 @@
 
 #include <Icosahedron/math/geom/Vectors.h>
 #include <Icosahedron/math/geom/Polygon.h>
+#include <Icosahedron/math/EarClippingTriangulation.h>
+
+#include <Icosahedron/scene/2d/Mesh2D.h>
+#include <Icosahedron/scene/3d/Mesh3D.h>
 
 #include <Icosahedron/math/Mathf.h>
+
 
 namespace ic {
     /** @brief Utilities for procedurally loading geometry. */
@@ -17,6 +22,61 @@ public:
             static GeometryGenerator ins;
             return ins;
         }
+        
+        // Shorthand notations
+
+        ic::Mesh2D *generate_regular_polygon_mesh(int sides = 3, float radius = 1.0f) {
+            std::vector<float> positions = generate_regular_polygon(sides, radius);
+            
+            ic::Mesh2D *result = new ic::Mesh2D();
+            result->add_attribute("position", 0, 2, positions);
+            result->add_attribute("textureCoords", 2, 2, generate_UV_polygon(positions));
+            result->set_index_buffer(ic::EarClippingTriangulation::get().triangulate(positions));
+
+            return result;
+        }
+
+
+        ic::Mesh2D *generate_rectangle_mesh(float width, float height, float uScale = 1.0f, float vScale = 1.0f) {
+            ic::Mesh2D *result = new ic::Mesh2D();
+            result->add_attribute("position", 0, 2, generate_rectangle(width, height));
+            result->add_attribute("textureCoords", 2, 2, generate_UV_rectangle(uScale, vScale));
+            result->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+
+            return result;
+        }
+
+
+        ic::Mesh3D *generate_parallelipiped_mesh(float width, float height, float depth, float sScale = 1.0f, float tScale = 1.0f, float uScale = 1.0f) {
+            ic::Mesh3D *result = new ic::Mesh3D();
+            result->add_attribute("position", 0, 3, generate_parallelipiped(width, height, depth));
+            result->add_attribute("textureCoords", 2, 2, generate_UV_parallelipiped(sScale, tScale, uScale));
+            result->add_attribute("normal", 3, 3, generate_normal_parallelipiped());
+            result->set_index_buffer(generate_parallelipiped_indices());
+
+            return result;
+        }
+
+        ic::Mesh3D *generate_cube_mesh(float length, float sScale, float tScale, float uScale) {
+            return this->generate_parallelipiped_mesh(length, length, length, sScale, tScale, uScale);
+        }
+        ic::Mesh3D *generate_cube_mesh(float length, float texCoordScale = 1.0f) {
+            return this->generate_parallelipiped_mesh(length, length, length, texCoordScale, texCoordScale, texCoordScale);
+        }
+
+
+        ic::Mesh3D *generate_UV_sphere_mesh(float radius, int latitudeLines, int longitudeLines) {
+            ic::Mesh3D *result = new ic::Mesh3D();
+            result->add_attribute("position", 0, 3, generate_UV_sphere(radius, latitudeLines, longitudeLines));
+            result->add_attribute("textureCoords", 2, 2, generate_UV_sphere_UVs(latitudeLines, longitudeLines));
+            result->add_attribute("normal", 3, 3, generate_UV_sphere_normals(latitudeLines, longitudeLines));
+            result->set_index_buffer(generate_UV_sphere_indices(latitudeLines, longitudeLines));
+
+            return result;
+        }
+
+
+
 
         std::vector<float> generate_regular_polygon(int sides = 3, float radius = 1.0f) {
             std::vector<float> vertices;

@@ -26,22 +26,17 @@ namespace ic {
         public:
             /** @brief Constructs a new, but empty mesh. */
             Mesh2D();
-            /** @brief Constructs a mesh that has a position vertex attribute. */
-            Mesh2D(std::vector<float> vertexPositions);
-
+            
             /** @brief Overrides the mesh's current model-level transformation matrix. */
             void set_transformation(const ic::Mat4x4 &to);
 
             void set_material(ic::MeshMaterial2D newMaterial);
 
-            void add_attribute(const std::string &location, int dimensions, const std::vector<float> &content);
-            void add_attribute(const std::string &location, int dimensions, const std::vector<ic::Color> &content);
+            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<float> &content);
+            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<int> &content);
+            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<ic::Color> &content);
             void set_index_buffer(const std::vector<unsigned int> &content);
             
-            void jump_attribute();
-            
-            ic::GLAttribute &get_attribute(const std::string &location);
-
             void unuse_attribute_definitions();
 
             void draw(ic::Shader *shader, ic::GLPrimitives primitive = ic::TRIANGLES);
@@ -51,7 +46,6 @@ namespace ic {
             void upload_material(ic::Shader *shader, const ic::MeshMaterial2D &mat);
 
         private:
-            std::map<std::string, ic::GLAttribute> vertexAttributes;
             std::vector<unsigned int> indices;
 
             ic::VertexArray *vao = nullptr;

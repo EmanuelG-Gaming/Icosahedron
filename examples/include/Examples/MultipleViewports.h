@@ -143,28 +143,15 @@ class MultipleViewports : public ic::Application {
             
             framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
             
-            mesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_UV_sphere(0.5f, 14, 14));
-            mesh->jump_attribute();
-            mesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_sphere_UVs(14, 14));
-            mesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_UV_sphere_normals(14, 14));
-            mesh->set_index_buffer(ic::GeometryGenerator::get().generate_UV_sphere_indices(14, 14));
-            
-            mainCameraMesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_cube(0.5f));
-            mainCameraMesh->jump_attribute();
-            mainCameraMesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped());
-            mainCameraMesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
-            mainCameraMesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
-            
+
+            mesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.5f, 14, 14);
+            mainCameraMesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
             secondCameraMesh = ic::OBJLoader::get().get_mesh("resources/models/icosahedron.obj");
 
-            screenQuad = new ic::Mesh3D({ 0.0f, 0.0f, 0.0f, 
-                                          1.0f, 0.0f, 0.0f,
-                                          1.0f, 1.0f, 0.0f,
-                                          0.0f, 1.0f, 0.0f });
-            screenQuad->jump_attribute();
-            screenQuad->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_rectangle());
-            screenQuad->add_attribute("normal", 3, { 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f });
-            
+            screenQuad = new ic::Mesh3D();
+            screenQuad->add_attribute("position", 0, 3, std::vector<float>({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f }));
+            screenQuad->add_attribute("textureCoords", 2, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            screenQuad->add_attribute("normal", 3, 3, std::vector<float>({ 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f }));
             screenQuad->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
             camera = new ic::Camera3D();

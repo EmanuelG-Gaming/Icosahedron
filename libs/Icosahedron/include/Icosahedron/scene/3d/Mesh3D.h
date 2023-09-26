@@ -19,34 +19,27 @@ namespace ic {
         public:
             /** @brief Constructs a new, but empty mesh. */
             Mesh3D();
-            /** @brief Constructs a mesh that has a position vertex attribute. */
-            Mesh3D(std::vector<float> vertexPositions);
-
+            
             /** @brief Overrides the mesh's current model-level transformation matrix. */
             void set_transformation(const ic::Mat4x4 &to);
 
             /** @brief Overrides the mesh normals' current model-level transformation matrix. */
             void set_normal_transformation(const ic::Mat4x4 &to);
 
-            void add_attribute(const std::string &location, int dimensions, const std::vector<float> &content);
-            
-            void add_attribute(const std::string &location, int dimensions, const std::vector<ic::Color> &content);
-            void add_attribute(const std::string &location, const std::vector<ic::Vec2f> &content);
-            void add_attribute(const std::string &location, const std::vector<ic::Vec3f> &content);
+            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<float> &content);
+            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<int> &content);
+            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<ic::Color> &content);
+            void add_attribute(const std::string &location, int attributeIndex, const std::vector<ic::Vec2f> &content);
+            void add_attribute(const std::string &location, int attributeIndex, const std::vector<ic::Vec3f> &content);
 
             void set_index_buffer(const std::vector<unsigned int> &content);
             
-            void jump_attribute();
-            
-            ic::GLAttribute &get_attribute(const std::string &location);
-
             void unuse_attribute_definitions();
 
             void draw(ic::Shader *shader, ic::GLPrimitives primitive = ic::TRIANGLES);
             void dispose();
 
         private:
-            std::map<std::string, ic::GLAttribute> vertexAttributes;
             std::vector<unsigned int> indices;
 
             ic::VertexArray *vao = nullptr;

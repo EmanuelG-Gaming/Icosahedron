@@ -8,14 +8,6 @@ Mesh2D::Mesh2D() {
     this->vao = new ic::VertexArray();
 }
 
-Mesh2D::Mesh2D(std::vector<float> vertexPositions) {
-    this->vao = new ic::VertexArray();
-
-    this->vao->add_vertex_buffer(2, vertexPositions);
-    
-    this->vao->unuse_attribute_definitions();
-}
-
 void ic::Mesh2D::set_material(ic::MeshMaterial2D newMaterial) {
     this->material = newMaterial;
 }
@@ -24,16 +16,21 @@ void ic::Mesh2D::set_transformation(const ic::Mat4x4 &to) {
     this->model = to;
 }
 
-void ic::Mesh2D::add_attribute(const std::string &location, int dimensions, const std::vector<float> &content) {
+void ic::Mesh2D::add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<float> &content) {
     if (this->vao == nullptr) {
         throw std::runtime_error("Couldn't add vertex attribute. The VAO was not initialized.");
     }
-    ic::GLAttribute attribute = { content, dimensions };
-    this->vao->add_vertex_buffer(dimensions, content);
-
-    vertexAttributes[location] = attribute;
+    this->vao->add_vertex_buffer(attributeIndex, dimensions, content);
 }
-void ic::Mesh2D::add_attribute(const std::string &location, int dimensions, const std::vector<ic::Color> &content) {
+void ic::Mesh2D::add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<int> &content) {
+    if (this->vao == nullptr) {
+        throw std::runtime_error("Couldn't add vertex attribute. The VAO was not initialized.");
+    }
+    this->vao->add_vertex_buffer(attributeIndex, dimensions, content);
+}
+
+
+void ic::Mesh2D::add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<ic::Color> &content) {
     std::vector<float> colorValues;
     for (int i = 0; i < content.size(); i++) {
         ic::Color color = content[i];
@@ -42,25 +39,17 @@ void ic::Mesh2D::add_attribute(const std::string &location, int dimensions, cons
         colorValues.push_back(color.g / 255.0f);
         colorValues.push_back(color.b / 255.0f);
     }
-    add_attribute(location, dimensions, colorValues);
+    add_attribute(location, attributeIndex, dimensions, colorValues);
 }
-            
+
+
+
+
 void ic::Mesh2D::set_index_buffer(const std::vector<unsigned int> &content) {
     if (this->vao == nullptr) {
         throw std::runtime_error("Couldn't add index buffer. VAO was not initialized.");
     }
     this->vao->set_index_buffer(content);
-}
-
-void ic::Mesh2D::jump_attribute() {
-    if (this->vao == nullptr) {
-        throw std::runtime_error("Couldn't jump to next attribute. VAO was not initialized.");
-    }
-    this->vao->jump();
-}
-
-ic::GLAttribute &ic::Mesh2D::get_attribute(const std::string &location) {
-    return vertexAttributes[location];
 }
 
 void ic::Mesh2D::unuse_attribute_definitions() {

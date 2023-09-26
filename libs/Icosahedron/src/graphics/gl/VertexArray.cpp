@@ -51,17 +51,12 @@ void ic::VertexArray::dispose() {
 
 void ic::VertexArray::reset() {
     bufferObjects.clear();
-    lastVertexBufferPosition = 0;
     vao = 0;
     ibo = 0;
     indicesUsed = 0;
 }
 
-
-void ic::VertexArray::jump() {
-    lastVertexBufferPosition++;
-}
-void ic::VertexArray::add_vertex_buffer(int dimensions, const std::vector<float> &content) {
+void ic::VertexArray::add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<float> &content) {
     use();
 
     GLuint vertexBuffer;
@@ -69,15 +64,13 @@ void ic::VertexArray::add_vertex_buffer(int dimensions, const std::vector<float>
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, content.size() * sizeof(GLfloat), content.data(), GL_STATIC_DRAW); 
     
-    int position = lastVertexBufferPosition;
-    glVertexAttribPointer(position, dimensions, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(0));
-    glEnableVertexAttribArray(position);
+    glVertexAttribPointer(attributeIndex, dimensions, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(0));
+    glEnableVertexAttribArray(attributeIndex);
 
     bufferObjects.push_back(vertexBuffer);
-    lastVertexBufferPosition++;
 }
 
-void ic::VertexArray::add_vertex_buffer(int dimensions, const std::vector<int> &content) {
+void ic::VertexArray::add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<int> &content) {
     use();
 
     GLuint vertexBuffer;
@@ -85,13 +78,14 @@ void ic::VertexArray::add_vertex_buffer(int dimensions, const std::vector<int> &
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, content.size() * sizeof(GLint), content.data(), GL_STATIC_DRAW); 
     
-    int position = lastVertexBufferPosition;
-    glVertexAttribIPointer(position, dimensions, GL_INT, 0, (GLvoid*)(0));
-    glEnableVertexAttribArray(position);
+    glVertexAttribIPointer(attributeIndex, dimensions, GL_INT, 0, (GLvoid*)(0));
+    glEnableVertexAttribArray(attributeIndex);
 
     bufferObjects.push_back(vertexBuffer);
-    lastVertexBufferPosition++;
 }
+
+
+
 
 void ic::VertexArray::set_index_buffer(const std::vector<unsigned int> &content) {
     use();
@@ -105,6 +99,8 @@ void ic::VertexArray::set_index_buffer(const std::vector<unsigned int> &content)
     indicesUsed = content.size();
 }
 
+
+
 void ic::VertexArray::unuse_attribute_definitions() {
     unuse();
     for (int i = 0; i < bufferObjects.size(); i++) {
@@ -113,6 +109,7 @@ void ic::VertexArray::unuse_attribute_definitions() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
+
 
 
 void ic::VertexArray::setup() {

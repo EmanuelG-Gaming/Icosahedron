@@ -114,12 +114,6 @@ namespace ic {
         TEXTURE_WRAP_CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,
         TEXTURE_WRAP_CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER,
     };
-
-    
-    struct GLAttribute {
-        std::vector<float> content;
-        int dimensions;
-    };
 }
 
 #endif

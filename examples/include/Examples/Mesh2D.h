@@ -24,23 +24,21 @@ class Mesh2D : public ic::Application {
         
         bool load() override {
             // Mesh 1
-            std::vector<float> positions = ic::GeometryGenerator::get().generate_regular_polygon(7, 0.3f);
-            std::vector<float> textureCoords = ic::GeometryGenerator::get().generate_UV_polygon(positions);
-            std::vector<unsigned int> indices = ic::EarClippingTriangulation::get().triangulate(positions);
-            
-            mesh1 = new ic::Mesh2D(positions);
-            // Jump past the color attribute
-            mesh1->jump_attribute();
-            mesh1->add_attribute("textureCoords", 2, textureCoords);
-            mesh1->set_index_buffer(indices);
+            mesh1 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(7, 0.3f);
+
+            // Note that this can also be more verbosely expressed as
+            //mesh1 = new ic::Mesh2D();
+            //mesh1->add_attribute("position", 0, 2, positions);
+            //mesh1->add_attribute("textureCoords", 2, 2, textureCoords);
+            //mesh1->set_index_buffer(indices);
+
             mesh1->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
             
-            // Mesh 2
-            std::vector<float> triangle = ic::GeometryGenerator::get().generate_regular_polygon(3, 0.3f);
             
-            mesh2 = new ic::Mesh2D(triangle);
-            mesh2->add_attribute("color", 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue });
-            mesh2->set_index_buffer({ 0, 1, 2 });
+            // Mesh 2
+            mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(3, 0.3f);
+            mesh2->add_attribute("color", 1, 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue });
+
             mesh2->set_material(ic::MeshMaterial2D(ic::Colors::white, 0.2f));
             mesh2->set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
 
