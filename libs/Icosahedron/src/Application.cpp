@@ -118,11 +118,11 @@ void ic::Application::start() {
         return;
     }
 
+    Uint32 lastUpdate = SDL_GetTicks();
+    SDL_Event e;
     while (true) {
-        Uint64 start = SDL_GetPerformanceCounter();
 
-
-        if (!this->poll_events()) {
+        if (!this->poll_events(e)) {
             break;
         }
         
@@ -136,11 +136,12 @@ void ic::Application::start() {
         // Swap buffers
 	    SDL_GL_SwapWindow(this->window);
         
+        Uint32 current = SDL_GetTicks();
+        this->delta = (current - lastUpdate) / 1000.0f;
+        lastUpdate = current;
+
         // Slightly delay the application loop, so that the computer will not explode
-        SDL_Delay(17);
-        
-        Uint64 end = SDL_GetPerformanceCounter();
-        this->delta = ((float) end - start) / (float) SDL_GetPerformanceFrequency();
+        SDL_Delay(floor(17.0f - this->delta));
 	}
 
     this->close();
@@ -204,7 +205,7 @@ void ic::Application::pre_load() {
         throw std::runtime_error("Couldn't initialize GLAD.\n");
     }
 
-    //SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(1);
     glViewport(0, 0, this->width, this->height);
 
     if (this->hideCursor) {
@@ -221,9 +222,8 @@ void ic::Application::pre_load() {
 }
 
 
-bool ic::Application::poll_events() {
-    SDL_Event e;
-    
+bool ic::Application::poll_events(ic::Event &e) {
+    SDL_PumpEvents();
     while (SDL_PollEvent(&e)) {
         switch (e.type) {
             case SDL_QUIT: 
@@ -250,7 +250,6 @@ bool ic::Application::poll_events() {
         }
 
         this->inputHandler.handle(e, delta);
-
         if (!this->handle_event(e, delta)) {
             return false;
         }

@@ -255,11 +255,8 @@ class RaytracingDemo : public ic::Application {
 
             framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, RAYTRACING_WIDTH, RAYTRACING_HEIGHT);
 
-            screenQuad = new ic::Mesh2D(ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
-            screenQuad->jump_attribute();
-            screenQuad->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_rectangle());
-            screenQuad->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
-
+            screenQuad = ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f);
+            
             camera = new ic::Camera3D();
 
             time = 0.0f;

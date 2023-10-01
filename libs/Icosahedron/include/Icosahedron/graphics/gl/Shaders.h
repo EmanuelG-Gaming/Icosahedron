@@ -142,11 +142,12 @@ namespace ic {
                 out vec4 outColor;
 
                 void main() {
-                    vec4 c = mix(vec4(vColor, 1.0), vec4(material.baseColor, 1.0), material.colorBlending);
                     vec4 color = texture(sampleTexture, vTCoords);
                     if (color.a <= 0.1) discard;
 
-                    outColor = color * c;
+                    vec4 c = mix(vec4(vColor, 1.0) * color, vec4(material.baseColor, 1.0), material.colorBlending);
+                    
+                    outColor = c;
                 }
             );
 

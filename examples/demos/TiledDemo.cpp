@@ -255,6 +255,8 @@ class TiledDemo : public ic::Application {
             }
 
             if (collisionDebug) {
+                printf("yes");
+                
                 for (int i = -detectionRadius1; i < detectionRadius1 + 1; i++) {
                     for (int j = -detectionRadius2; j < detectionRadius2 + 1; j++) {
                         int cx = px + i;

@@ -81,7 +81,7 @@ namespace ic {
             */
             void set_current_working_directory();
 
-            bool poll_events();
+            bool poll_events(ic::Event &e);
             
             void close();
             

@@ -50,8 +50,6 @@ void Shader::load(const std::string &vertSource, const std::string &fragSource) 
 
     glDeleteShader(vert);
     glDeleteShader(fragm);
-
-    std::cout << "Shader loaded with index: " << this->program << "\n";
 }
 
 
