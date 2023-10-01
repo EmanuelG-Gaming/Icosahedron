@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 
-set(PROJECT_NAME IcosahedronLibrary)
+set(PROJECT_NAME Icosahedron)
 set(LIBRARY_NAME Icosahedron)
 
 set(LIBRARY_HEADERS_DIRECTORY include/${LIBRARY_NAME})
@@ -10,7 +10,7 @@ set(LIBRARY_HEADERS
 
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Rectangle.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Polygon.h
-    
+    ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Circle.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/math/Matrix.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/Matrices.h

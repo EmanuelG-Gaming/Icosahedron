@@ -46,7 +46,7 @@ namespace ic {
 
                 return sum * (4.0f / 7.0f);
             }
-
+            
             float smoothstep(float x) {
                 return (3.0f - x * 2.0f) * x * x;
             }

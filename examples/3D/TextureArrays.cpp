@@ -1,6 +1,3 @@
-#ifndef IC_EXAMPLE_TEXTURE_ARRAYS_H
-#define IC_EXAMPLE_TEXTURE_ARRAYS_H
-
 #include <Icosahedron/Core.h>
 
 
@@ -178,7 +175,7 @@ class TextureArrays : public ic::Application {
     float time;
     public:
         bool init() override {
-            displayName = "Example window";
+            displayName = "Texture Array Example";
             scaling = ic::WindowScaling::fullscreen;
             hideCursor = true;
 
@@ -288,4 +285,12 @@ class TextureArrays : public ic::Application {
         }
 };
 
-#endif
+int main(int argc, char *argv[]) {
+    TextureArrays application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}

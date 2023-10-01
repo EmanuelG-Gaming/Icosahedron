@@ -18,10 +18,12 @@ namespace ic {
         
         std::array<T, n * m> values;
 
+        /** @brief Initializes an identity matrix, with diagonal terms being 1. */
         Matrix() {
             identity();
         }
-        /* Initialises the matrix in column-major order. */
+
+        /** @brief Initialises the matrix in column-major order. */
         Matrix(std::initializer_list<T> from) {
             for (auto position = from.begin(); position != from.end(); position++) {
                 values[std::distance(from.begin(), position)] = *position;
@@ -38,7 +40,6 @@ namespace ic {
         }
 
         Mat set_perspective(float fovDegrees, float zNear, float zFar, float aspectRatio) {
-            //static_assert(is_square(), "Perspective matrices work if they're square.");
             static_assert(n == 4, "Tried to initialize a perspective matrix with a size != 4.");
             
             float fovR = float(1.0f / tan(fovDegrees * (M_PI / 180.0f) / 2.0f));           

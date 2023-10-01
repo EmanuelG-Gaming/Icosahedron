@@ -1,6 +1,3 @@
-#ifndef IC_EXAMPLE_TEXTURED_RECTANGLE_H
-#define IC_EXAMPLE_TEXTURED_RECTANGLE_H
-
 #include <Icosahedron/Core.h>
 
 /* Displays a textured rectangle that can be moved around using the WASD keys or the arrow keys. */
@@ -14,7 +11,7 @@ class TexturedRectangle : public ic::Application {
     
     public:
         bool init() override {
-            displayName = "Example window";
+            displayName = "Textured Rectangle Example";
             
             return true;
         }
@@ -67,4 +64,12 @@ class TexturedRectangle : public ic::Application {
         }
 };
 
-#endif
+int main(int argc, char *argv[]) {
+    TexturedRectangle application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}

@@ -1,6 +1,3 @@
-#ifndef IC_EXAMPLE_MODEL_VIEWER_DEMO_H
-#define IC_EXAMPLE_MODEL_VIEWER_DEMO_H
-
 #include <Icosahedron/Core.h>
 
 std::string fragment = IC_ADD_GLSL_DEFINITION(
@@ -104,7 +101,7 @@ class ModelViewerDemo : public ic::Application {
 
     public:
         bool init() override {
-            displayName = "Example window";
+            displayName = "Model Viewer Demo";
             scaling = ic::WindowScaling::fullscreen;
             hideCursor = true;
 
@@ -208,4 +205,13 @@ class ModelViewerDemo : public ic::Application {
         }
 };
 
-#endif
+
+int main(int argc, char *argv[]) {
+    ModelViewerDemo application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}

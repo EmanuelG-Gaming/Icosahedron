@@ -4,6 +4,8 @@
 #include <cmath>
 #include <iostream>
 #include <array>
+#include <cstring>
+
 
 namespace ic {
     /** @brief Represents an n-dimensional geometric vector. */
@@ -12,7 +14,12 @@ namespace ic {
         using Vec = Vector<T, dimensions>;
         std::array<T, dimensions> values;
 
-        Vector() {}
+        /** @brief Initializes a vector at the origin. */
+        Vector() {
+            memset(&values, 0, sizeof(values));
+        }
+
+        /** @brief Initializes a vector whose coordinates correspond to the elements of a list. */
         Vector(std::initializer_list<T> from) {
             for (auto position = from.begin(); position != from.end(); position++) {
                 values[std::distance(from.begin(), position)] = *position;

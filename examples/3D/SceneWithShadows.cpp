@@ -1,6 +1,3 @@
-#ifndef IC_EXAMPLE_SCENE_WITH_SHADOWS_H
-#define IC_EXAMPLE_SCENE_WITH_SHADOWS_H
-
 #include <Icosahedron/Core.h>
 
 std::string depthShaderVert = IC_ADD_GLSL_DEFINITION(
@@ -198,7 +195,7 @@ class SceneWithShadows : public ic::Application {
             
     public:
         bool init() override {
-            displayName = "Example window";
+            displayName = "Scene Example";
             scaling = ic::WindowScaling::fullscreen;
             hideCursor = true;
 
@@ -328,4 +325,12 @@ class SceneWithShadows : public ic::Application {
         }
 };
 
-#endif
+int main(int argc, char *argv[]) {
+    SceneWithShadows application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}

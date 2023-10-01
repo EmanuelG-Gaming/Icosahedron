@@ -204,7 +204,7 @@ void ic::Application::pre_load() {
         throw std::runtime_error("Couldn't initialize GLAD.\n");
     }
 
-    SDL_GL_SetSwapInterval(1);
+    //SDL_GL_SetSwapInterval(1);
     glViewport(0, 0, this->width, this->height);
 
     if (this->hideCursor) {

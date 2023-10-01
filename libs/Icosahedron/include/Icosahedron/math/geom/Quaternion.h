@@ -17,7 +17,11 @@ namespace ic {
     */
     struct Quaternion {
         float x, y, z, w;
-        Quaternion() {}
+
+        /** @brief Initializes a quaternion at the origin. */
+        Quaternion() {
+            x = y = z = w = 0.0f;
+        }
         Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
         
         /** @note Roll - X rotation; Pitch - Y rotation; Yaw - Z rotation */

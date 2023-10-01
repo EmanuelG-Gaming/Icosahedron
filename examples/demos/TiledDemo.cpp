@@ -1,6 +1,3 @@
-#ifndef IC_EXAMPLE_TILED_DEMO_H
-#define IC_EXAMPLE_TILED_DEMO_H
-
 #include <Icosahedron/Core.h>
 
 const std::size_t MAP_WIDTH = 16;
@@ -119,7 +116,7 @@ class TiledDemo : public ic::Application {
 
     public:
         bool init() override {
-            displayName = "Example window";
+            displayName = "Tiled Demo";
             scaling = ic::WindowScaling::fullscreen;
 
             return true;
@@ -359,4 +356,12 @@ class TiledDemo : public ic::Application {
         }
 };
 
-#endif
+int main(int argc, char *argv[]) {
+    TiledDemo application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}

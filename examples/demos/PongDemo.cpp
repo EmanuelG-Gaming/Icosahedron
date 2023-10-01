@@ -1,6 +1,3 @@
-#ifndef IC_EXAMPLE_PONG_DEMO_H
-#define IC_EXAMPLE_PONG_DEMO_H
-
 #include <Icosahedron/Core.h>
 
 struct RectangleShape {
@@ -26,7 +23,7 @@ class PongDemo : public ic::Application {
 
     public:
         bool init() override {
-            displayName = "Example window";
+            displayName = "Pong Demo";
             //scaling = ic::WindowScaling::fullscreen;
 
             return true;
@@ -196,4 +193,12 @@ class PongDemo : public ic::Application {
         }
 };
 
-#endif
+int main(int argc, char *argv[]) {
+    PongDemo application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}

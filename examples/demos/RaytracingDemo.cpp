@@ -1,6 +1,3 @@
-#ifndef IC_EXAMPLE_RAYTRACING_DEMO_H
-#define IC_EXAMPLE_RAYTRACING_DEMO_H
-
 #include <Icosahedron/Core.h>
 
 const std::size_t RAYTRACING_WIDTH = 640;
@@ -233,7 +230,7 @@ class RaytracingDemo : public ic::Application {
 
     public:
         bool init() override {
-            displayName = "Example window";
+            displayName = "Raytracer Demo";
             
             return true;
         }
@@ -312,4 +309,12 @@ class RaytracingDemo : public ic::Application {
         }
 };
 
-#endif
+int main(int argc, char *argv[]) {
+    RaytracingDemo application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}

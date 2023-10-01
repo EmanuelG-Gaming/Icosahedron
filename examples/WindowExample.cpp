@@ -1,8 +1,6 @@
-#ifndef IC_EXAMPLE_WINDOW_EXAMPLE_H
-#define IC_EXAMPLE_WINDOW_EXAMPLE_H
-
 #include <Icosahedron/Core.h>
 
+/** @brief Shows an empty blue window. */
 class WindowExample : public ic::Application {
     public:
         bool init() override {
@@ -42,4 +40,12 @@ class WindowExample : public ic::Application {
         }
 };
 
-#endif
+int main(int argc, char *argv[]) {
+    WindowExample application;
+
+    if (application.construct(640, 480)) {
+        application.start();
+    }
+
+    return 0;
+}
