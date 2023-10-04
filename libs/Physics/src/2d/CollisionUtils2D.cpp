@@ -9,7 +9,7 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::circle_circle(Circl
     if (!intersecting || distance2 < 0.00001f) {
         return ic::Physics::ManifoldPoints2D();
     }
-    
+
     // Points on the circles
     Vec2f AtoB = (transformB->position - transformA->position).nor();
     Vec2f BtoA = AtoB * -1;
@@ -18,5 +18,5 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::circle_circle(Circl
     
     Vec2f direction = BtoA - AtoB;
     Vec2f normal = direction.nor();
-    return ic::Physics::ManifoldPoints2D(AtoB, BtoA, normal, direction.len());
+    return ic::Physics::ManifoldPoints2D(AtoB, BtoA, normal, direction.len() + 0.01f); // Add a slight padding to account for simulation time
 }

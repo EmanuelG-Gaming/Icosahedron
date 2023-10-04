@@ -14,9 +14,9 @@ void ic::Physics::PositionSolver2D::solve(const std::vector<ic::Physics::Manifol
         ic::Vec2f normal = manifold.points.normal;
         ic::Vec2f displacement = normal * (1 / (float) std::max(1, dynamic1 + dynamic2));
         displacement = displacement * manifold.points.depth * 0.5f;
-        
-        objA->transform->position = objA->transform->position - displacement * (1 - dynamic1);
-        objB->transform->position = objB->transform->position + displacement * (1 - dynamic2);
+
+        objA->transform->position = objA->transform->position - displacement * dynamic1;
+        objB->transform->position = objB->transform->position + displacement * dynamic2;
     }
 }
 
@@ -30,15 +30,20 @@ void ic::Physics::ImpulseSolver2D::solve(const std::vector<ic::Physics::Manifold
         
         ic::Vec2f normal = manifold.points.normal;
         ic::Vec2f gradientVelocity = object1->velocity - object2->velocity;
-        
-        float dot = normal.dot(gradientVelocity);
-        float j = 2 * dot / (object1->mass + object2->mass);
-        
-        if (object1->dynamic) {
-            object1->velocity = object1->velocity - normal * j * object2->mass;
-        }
-        if (object2->dynamic) {
-            object2->velocity = object2->velocity + normal * j * object1->mass;
+
+        float j = 2.0f * normal.dot(gradientVelocity);
+        ic::Vec2f reflectionDisplacement = normal * j;
+
+        if (object1->dynamic && object2->dynamic) {
+            // If both objects are dynamic, simply use the elastic collision formula
+            float c = object1->mass + object2->mass;
+            
+            if (object1->dynamic) object1->velocity = object1->velocity - reflectionDisplacement / c * object2->mass;
+            if (object2->dynamic) object2->velocity = object2->velocity + reflectionDisplacement / c * object1->mass;
+        } else {
+            // If one of the objects is completely immovable, the other object will ricochet off
+            if (!object2->dynamic) object1->velocity = object1->velocity - reflectionDisplacement;
+            if (!object1->dynamic) object2->velocity = object2->velocity + reflectionDisplacement;
         }
     }
 }

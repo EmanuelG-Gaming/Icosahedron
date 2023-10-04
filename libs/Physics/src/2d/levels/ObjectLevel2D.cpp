@@ -18,6 +18,8 @@ void ic::Physics::ObjectLevel2D::send_collision_callbacks(const std::vector<ic::
         
         if (callback1) callback1();
         if (callback2) callback2();
+
+        printf("yes");
     }
 }
         
@@ -29,13 +31,13 @@ void ic::Physics::ObjectLevel2D::resolve_collisions(float timeTook) {
     // Collision detection
     for (auto &object1 : objects) {
         for (auto &object2 : objects) {
+            if (!object1->dynamic && !object2->dynamic) continue;
             if (object1->index == object2->index) break;
             if (!object1->collider || !object2->collider) continue;
-            if (!object1->dynamic && !object2->dynamic) continue;
             
             ic::Physics::ManifoldPoints2D points = object1->collider->test(object1->transform, object2->collider, object2->transform);
             if (!points.collided) continue;
-                 
+            
             ic::Physics::Manifold2D manifold = ic::Physics::Manifold2D(object1, object2, points);
             bool trigger = object1->isTrigger || object2->isTrigger;
             

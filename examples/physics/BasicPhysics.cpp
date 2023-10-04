@@ -17,7 +17,7 @@ class BasicPhysics : public ic::Application {
     public:
         bool init() override {
             displayName = "Basic physics example";
-
+            
             return true;
         }
         
@@ -25,7 +25,7 @@ class BasicPhysics : public ic::Application {
             mesh1 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(5, 0.3f);
             mesh1->set_material(ic::MeshMaterial2D(ic::Colors::yellow, 1.0f));
 
-            mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(3, 0.3f);
+            mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(30, 1.0f);
             mesh2->set_material(ic::MeshMaterial2D(ic::Colors::green, 1.0f));
 
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
@@ -37,19 +37,22 @@ class BasicPhysics : public ic::Application {
 
 
             level = new ic::Physics::PhysicsLevel2D();
-            level->load();
+            level->gravity = { 0.0f, 0.0f };
+            level->simulationSteps = 10;
 
             rigidBody1 = new ic::Physics::RigidObject2D();
             rigidBody1->collider = new ic::Physics::CircleCollider(0.3f);
             rigidBody1->dynamic = true;
-            rigidBody1->apply_velocity(2.0f, 5.0f);
+            rigidBody1->transform->position = { 0.0f, -1.0f };
+            rigidBody1->apply_velocity(1.0f, 1.0f);
             level->add_object(rigidBody1);
 
 
             rigidBody2 = new ic::Physics::RigidObject2D();
-            rigidBody2->collider = new ic::Physics::CircleCollider(0.3f);
+            rigidBody2->collider = new ic::Physics::CircleCollider(1.0f);
             rigidBody2->dynamic = false;
-            rigidBody2->transform->position = { 1.7f, -0.5f };
+            rigidBody2->transform->position = { 2.3f, 0.0f };
+            
             level->add_object(rigidBody2);
 
 

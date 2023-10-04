@@ -11,11 +11,11 @@ namespace ic { namespace Physics {
     };
 
     struct PositionSolver2D : Solver2D {
-        void solve(const std::vector<ic::Physics::Manifold2D> &manifolds);
+        void solve(const std::vector<ic::Physics::Manifold2D> &manifolds) override;
     };
 
     struct ImpulseSolver2D : Solver2D {
-        void solve(const std::vector<ic::Physics::Manifold2D> &manifolds);
+        void solve(const std::vector<ic::Physics::Manifold2D> &manifolds) override;
     };
 }}
 

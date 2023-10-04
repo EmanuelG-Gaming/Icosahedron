@@ -40,6 +40,7 @@ add_library(${LIBRARY_NAME} STATIC
     ${LIBRARY_SOURCE_DIRECTORY}/2d/Solver2D.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/2d/levels/ObjectLevel2D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/2d/levels/PhysicsLevel2D.cpp
 )
 
 target_include_directories(${LIBRARY_NAME} PRIVATE
