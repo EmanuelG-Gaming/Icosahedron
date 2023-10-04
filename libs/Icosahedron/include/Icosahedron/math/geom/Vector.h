@@ -26,7 +26,7 @@ namespace ic {
             }
         }
     
-        Vec operator+(Vec &other) {
+        Vec operator+(Vec other) {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
                 result.values[i] = values[i] + other[i];
@@ -34,7 +34,7 @@ namespace ic {
             return result;
         }
 
-        Vec operator-(Vec &other) {
+        Vec operator-(Vec other) {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
                 result.values[i] = values[i] - other[i];
@@ -42,7 +42,7 @@ namespace ic {
             return result;
         }
     
-        Vec operator*(Vec &other) {
+        Vec operator*(Vec other) {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
                 result.values[i] = values[i] * other[i];
@@ -50,7 +50,7 @@ namespace ic {
             return result;
         }
 
-        Vec operator/(Vec &other) {
+        Vec operator/(Vec other) {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
                 result.values[i] = values[i] / other[i];

@@ -17,6 +17,7 @@ OrbitalCameraController3D::OrbitalCameraController3D(ic::Camera3D *camera, ic::I
 
 void ic::OrbitalCameraController3D::act(float dt) {
     ic::Vec2i motion = this->mouse->get_relative_motion();
+    if (motion.len2() < 16) motion = { 0, 0 };
     
     rotation.x() -= motion.x() * this->lookSensitivity * dt;
     rotation.y() += motion.y() * this->lookSensitivity * dt;
