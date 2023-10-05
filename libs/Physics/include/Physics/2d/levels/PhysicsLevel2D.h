@@ -1,6 +1,10 @@
 #ifndef IC_PHYSICS_PHYSICS_LEVEL_2D_H
 #define IC_PHYSICS_PHYSICS_LEVEL_2D_H
 
+#include <thread>
+#include <mutex>
+#include <vector>
+
 #include <Icosahedron/math/geom/Vectors.h>
 
 #include <Physics/2d/levels/ObjectLevel2D.h>
@@ -17,19 +21,26 @@ namespace ic { namespace Physics {
             PhysicsLevel2D();
 
             void load() override;
-            void update(float timeTook) override;
-
-            void set_fixed_time_length(int framesPerSecond);
             
+            void set_fixed_time_length(int framesPerSecond);
+
             void set_gravity(float x, float y);
             void set_gravity(ic::Vec2f &acceleration);
 
+            void dispose();
+
         private:
+            void update_thread();
             void update_with_sub_steps(float timeTook);
-        
+
         private:
             float timeAccumulator;
             float fixedTimeLength;
+            uint32_t lastUpdate;
+
+            std::vector<std::thread> physicsSimulationThreads;
+            std::mutex physicsMutex;
+            bool disabled;
     };
 }}
 

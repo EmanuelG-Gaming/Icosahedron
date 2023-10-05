@@ -13,25 +13,36 @@ void ic::Physics::PhysicsLevel2D::load() {
 
     timeAccumulator = 0.0f;
     fixedTimeLength = 1 / 40.0f;
-    
+    lastUpdate = SDL_GetTicks();
+    disabled = false;
+
     objects.clear();
     solvers.clear();
     
     add_solver(new ic::Physics::PositionSolver2D());
     add_solver(new ic::Physics::ImpulseSolver2D());
+
+    physicsSimulationThreads.push_back(std::thread([&]() { update_thread(); }));
 }
 
-void ic::Physics::PhysicsLevel2D::update(float timeTook) {
-    timeAccumulator += timeTook;
+void ic::Physics::PhysicsLevel2D::update_thread() {
+    while (!disabled) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
 
-    if (timeAccumulator >= fixedTimeLength) {
-        float stepSize = fixedTimeLength / (float)simulationSteps;
-        for (int i = 0; i < simulationSteps; i++) {
-            update_with_sub_steps(stepSize);
+        uint32_t now = SDL_GetTicks();
+        timeAccumulator += (now - lastUpdate) / 1000.0f;
+        lastUpdate = now;
+        
+        if (timeAccumulator >= fixedTimeLength) {
+            float stepSize = fixedTimeLength / (float)simulationSteps;
+            for (int i = 0; i < simulationSteps; i++) {
+                update_with_sub_steps(stepSize);
+            }
+    
+            timeAccumulator -= fixedTimeLength;
         }
-
-        timeAccumulator -= fixedTimeLength;
-        std::cout << "Physics update.\n";
+    
+        std::lock_guard<std::mutex> lock(physicsMutex);
     }
 }
 
@@ -63,7 +74,13 @@ void ic::Physics::PhysicsLevel2D::update_with_sub_steps(float timeTook) {
     }
 }
 
+void ic::Physics::PhysicsLevel2D::dispose() {
+    disabled = true;
 
+    for (auto &thread : physicsSimulationThreads) {
+        thread.join();
+    }
+}
 void ic::Physics::PhysicsLevel2D::set_fixed_time_length(int framesPerSecond) {
     fixedTimeLength = 1 / (float) framesPerSecond;
 }

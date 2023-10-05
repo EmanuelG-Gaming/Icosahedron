@@ -33,7 +33,6 @@ class BasicPhysics : public ic::Application {
 
             level = new ic::Physics::PhysicsLevel2D();
             level->set_gravity(0.0f, -9.81f);
-            level->set_fixed_time_length(10);
             level->simulationSteps = 10;
 
             rigidBody1 = new ic::Physics::RigidObject2D();
@@ -65,8 +64,6 @@ class BasicPhysics : public ic::Application {
         }
 
         bool update(float dt) override {
-            level->update(dt);
-
             mesh1->set_transformation(ic::Mat4x4().set_translation<2>(rigidBody1->transform->position));
             mesh2->set_transformation(ic::Mat4x4().set_translation<2>(rigidBody2->transform->position));
             
@@ -86,6 +83,7 @@ class BasicPhysics : public ic::Application {
             shader->clear();
             mesh1->dispose();
             mesh2->dispose();
+            level->dispose();
         }
 };
 
