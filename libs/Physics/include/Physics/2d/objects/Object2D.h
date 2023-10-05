@@ -23,6 +23,9 @@ namespace ic { namespace Physics {
         virtual ~Object2D() {}
 
         void collision(const std::function<void()> &to);
+
+        void set_position(float x, float y);
+        void set_position(ic::Vec2f &to);
     };
 }}
 

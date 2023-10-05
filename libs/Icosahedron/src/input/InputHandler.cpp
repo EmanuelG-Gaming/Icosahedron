@@ -2,12 +2,12 @@
 
 void ic::InputHandler::handle(ic::Event event, float dt) {
     for (auto pair : inputs) {
-         pair.second->handle_event(event, dt);
+        pair.second->handle_event(event, dt);
     }
 }
 void ic::InputHandler::update(float dt) {
     for (auto pair : inputs) {
-         pair.second->update(dt);
+        pair.second->update(dt);
     }
 }
             

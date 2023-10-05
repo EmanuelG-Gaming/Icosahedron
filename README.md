@@ -27,6 +27,9 @@ The rest of the files that may not belong to the folders mentioned above are `Ap
 - `Renderer` has functions for rendering geometry;
 - `Global` provides entry for global-scope variables, like the window size via `IC_WINDOW_WIDTH` and `IC_WINDOW_HEIGHT`.
 
+# Extensions
+Right now, Icosahedron only has the `Physics` extension.
+
 # Building the code:
 For some, this can be pretty straightforward, but here it is:
 
@@ -35,7 +38,7 @@ For some, this can be pretty straightforward, but here it is:
     - Install MingW with CMake;
     - Clone this repository;
     - Open Visual Studio Code;
-    - Write some code or use an example provided from `examples/include`;
+    - Write some code or use an example;
     - Build the project;
     - Run it.
 

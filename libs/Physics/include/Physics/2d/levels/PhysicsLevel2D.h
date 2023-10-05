@@ -19,8 +19,17 @@ namespace ic { namespace Physics {
             void load() override;
             void update(float timeTook) override;
 
+            void set_fixed_time_length(int framesPerSecond);
+            
+            void set_gravity(float x, float y);
+            void set_gravity(ic::Vec2f &acceleration);
+
         private:
             void update_with_sub_steps(float timeTook);
+        
+        private:
+            float timeAccumulator;
+            float fixedTimeLength;
     };
 }}
 

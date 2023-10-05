@@ -18,8 +18,6 @@ void ic::Physics::ObjectLevel2D::send_collision_callbacks(const std::vector<ic::
         
         if (callback1) callback1();
         if (callback2) callback2();
-
-        printf("yes");
     }
 }
         

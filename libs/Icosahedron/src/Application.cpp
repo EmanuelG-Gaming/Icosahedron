@@ -120,12 +120,12 @@ void ic::Application::start() {
 
     Uint32 lastUpdate = SDL_GetTicks();
     SDL_Event e;
-    while (true) {
-
+    bool disabled = false;
+    while (!disabled) {
         if (!this->poll_events(e)) {
             break;
         }
-        
+
         // Update and render to screen code
         if (!this->update(delta)) {
             break;
@@ -141,7 +141,7 @@ void ic::Application::start() {
         lastUpdate = current;
 
         // Slightly delay the application loop, so that the computer will not explode
-        SDL_Delay(floor(17.0f - this->delta));
+        //SDL_Delay(floor(17.0f - this->delta));
 	}
 
     this->close();
@@ -205,7 +205,7 @@ void ic::Application::pre_load() {
         throw std::runtime_error("Couldn't initialize GLAD.\n");
     }
 
-    SDL_GL_SetSwapInterval(1);
+    SDL_GL_SetSwapInterval(1); // Enables VSync
     glViewport(0, 0, this->width, this->height);
 
     if (this->hideCursor) {
@@ -225,13 +225,21 @@ void ic::Application::pre_load() {
 bool ic::Application::poll_events(ic::Event &e) {
     SDL_PumpEvents();
     while (SDL_PollEvent(&e)) {
+        this->inputHandler.handle(e, delta);
+
+        if (!this->handle_event(e, delta)) {
+            return false;
+        }
+
+        
         switch (e.type) {
             case SDL_QUIT: 
                 return false;
 
             case SDL_KEYUP:
-                if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+                if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
                     return false;
+                }
 
             case SDL_WINDOWEVENT:
                 bool resized = e.window.event == SDL_WINDOWEVENT_RESIZED || e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED;
@@ -248,15 +256,10 @@ bool ic::Application::poll_events(ic::Event &e) {
                     set_window_size(displayRectangle.w, displayRectangle.h);
                 }
         }
-
-        this->inputHandler.handle(e, delta);
-        if (!this->handle_event(e, delta)) {
-            return false;
-        }
     }
-    this->inputHandler.update(delta);
-        
     
+    this->inputHandler.update(delta);
+
     return true;
 }
 

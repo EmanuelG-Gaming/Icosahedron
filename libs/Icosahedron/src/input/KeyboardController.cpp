@@ -21,6 +21,8 @@ void ic::KeyboardController::update(float dt) {
         }
     }
 }
+
+
 void ic::KeyboardController::handle_event(ic::Event event, float dt) {
     ic::Event *e = &event;
 

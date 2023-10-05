@@ -20,3 +20,8 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::circle_circle(Circl
     Vec2f normal = direction.nor();
     return ic::Physics::ManifoldPoints2D(AtoB, BtoA, normal, direction.len() + 0.01f); // Add a slight padding to account for simulation time
 }
+
+
+ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::polygon_polygon_separating_axis(PolygonCollider *colliderA, Transform2D *transformA, PolygonCollider *colliderB, Transform2D *transformB) {
+    return ic::Physics::ManifoldPoints2D();
+}

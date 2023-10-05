@@ -65,18 +65,8 @@ struct PolygonShape {
     }
 
     void draw(ic::Renderer &renderer, ic::Batch *batch, ic::Color color) {
-        std::vector<ic::Vec2f> positions;
         auto components = poly.get_transformed_vertices();
-
-        for (int i = 0; i < components.size(); i += 2) {
-            float x = components[i], y = components[i + 1];
-            ic::Vec2f position = { x, y };
-
-            positions.push_back(position);
-        }
-        
-        
-        renderer.draw_vertices(batch, positions, indices, ic::Colors::lightGray);
+        renderer.draw_vertices(batch, components, indices, ic::Colors::lightGray);
     }
 };
 
@@ -146,7 +136,7 @@ class TiledDemo : public ic::Application {
 
             
             ic::KeyboardController *debugCont = new ic::KeyboardController();
-            debugCont->add_key_up_action([this]() {collisionDebug = !collisionDebug;}, KEY_T);
+            debugCont->add_key_up_action([this]() {collisionDebug = !collisionDebug; }, KEY_T);
             
             inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
             inputHandler.add_input(debugCont, "collisionDebug");
@@ -255,8 +245,6 @@ class TiledDemo : public ic::Application {
             }
 
             if (collisionDebug) {
-                printf("yes");
-                
                 for (int i = -detectionRadius1; i < detectionRadius1 + 1; i++) {
                     for (int j = -detectionRadius2; j < detectionRadius2 + 1; j++) {
                         int cx = px + i;

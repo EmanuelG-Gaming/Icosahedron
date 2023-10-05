@@ -24,13 +24,23 @@ namespace ic {
              *  @throws An invalid argument, if the size of the set is smaller than 6, AKA if the vertex
              *  count is smaller than 3. */
             Polygon(const std::vector<float> &from) {
-                if (from.size() < 6) throw std::invalid_argument("A polygon isn't defined for vertex counts smaller than 3."); 
+                if (from.size() < 6) throw std::invalid_argument("A polygon isn't defined for vertex counts smaller than 3.");
+
+                std::vector<ic::Vec2f> vertices;
+                for (int i = 0; i < from.size(); i += 2) {
+                    vertices.push_back({ from[i], from[i + 1] });
+                }
+
+                this->localVertices = vertices;
+            }
+            Polygon(const std::vector<ic::Vec2f> &from) {
+                if (from.size() < 3) throw std::invalid_argument("A polygon isn't defined for vertex counts smaller than 3."); 
 
                 this->localVertices = from;
             }
 
 
-            std::vector<float> &get_vertices() {
+            std::vector<ic::Vec2f> &get_vertices() {
                 return localVertices;
             }
 
@@ -42,10 +52,21 @@ namespace ic {
             void set_vertices(const std::vector<float> &from) {
                 if (from.size() < 6) throw std::invalid_argument("Cannot set vertices if counts are smaller than 3."); 
 
+                std::vector<ic::Vec2f> vertices;
+                for (int i = 0; i < from.size(); i += 2) {
+                    vertices.push_back({ from[i], from[i + 1] });
+                }
+                
+                this->localVertices = vertices;
+            }
+
+            void set_vertices(const std::vector<ic::Vec2f> &from) {
+                if (from.size() < 3) throw std::invalid_argument("Cannot set vertices if counts are smaller than 3."); 
+
                 this->localVertices = from;
             }
 
-            std::vector<float> &get_transformed_vertices() {
+            std::vector<ic::Vec2f> &get_transformed_vertices() {
                 if (!dirty) return transformedVertices;
                 dirty = false;
 
@@ -58,8 +79,8 @@ namespace ic {
 
                 float sine = ic::Mathf::get().sinf(rotation);
                 float cosine = ic::Mathf::get().cosf(rotation);
-                for (int i = 0; i < localVertices.size(); i += 2) {
-                    float tx = localVertices[i], ty = localVertices[i + 1];
+                for (int i = 0; i < localVertices.size(); i++) {
+                    float tx = localVertices[i].x(), ty = localVertices[i].y();
 
                     // Scaling
                     if (scales) {
@@ -78,24 +99,24 @@ namespace ic {
                     tx += x;
                     ty += y;
 
-                    transformedVertices[i] = tx;
-                    transformedVertices[i + 1] = ty;
+                    transformedVertices[i].x() = tx;
+                    transformedVertices[i].y() = ty;
                 }
 
                 return transformedVertices;
             }
 
             ic::Rectangle &get_bounding_box() {
-                std::vector<float> verts = get_transformed_vertices();
+                std::vector<ic::Vec2f> verts = get_transformed_vertices();
 
-                float minX = verts[0];
-                float minY = verts[1];
-                float maxX = verts[0];
-                float maxY = verts[1];
+                float minX = verts[0].x();
+                float minY = verts[0].y();
+                float maxX = verts[0].x();
+                float maxY = verts[0].y();
 
                 for (int i = 0; i < verts.size(); i += 2) {
-                    float dx = verts[i];
-                    float dy = verts[i + 1];
+                    float dx = verts[i].x();
+                    float dy = verts[i].y();
 
                     minX = minX > dx ? dx : minX;
                     minY = minY > dy ? dy : minY;
@@ -175,17 +196,17 @@ namespace ic {
                 return rotation;
             }
 
-
             bool is_dirty() {
                 return dirty;
             }
+
             std::size_t size() {
                 return localVertices.size();
             }
 
         protected:
-            std::vector<float> localVertices;
-            std::vector<float> transformedVertices;
+            std::vector<ic::Vec2f> localVertices;
+            std::vector<ic::Vec2f> transformedVertices;
 
             ic::Rectangle bounding;
 
