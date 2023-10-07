@@ -12,8 +12,6 @@ namespace ic { namespace Physics {
         Transform2D *transform;
         Collider2D *collider;
         
-        int index;
-
         std::function<void()> onCollision;
 
         bool dynamic;

@@ -1,5 +1,4 @@
 #include <Physics/2d/levels/PhysicsLevel2D.h>
-#include <SDL2/SDL.h>
 
 using namespace ic::Physics;
 
@@ -13,36 +12,24 @@ void ic::Physics::PhysicsLevel2D::load() {
 
     timeAccumulator = 0.0f;
     fixedTimeLength = 1 / 40.0f;
-    lastUpdate = SDL_GetTicks();
-    disabled = false;
-
+    
     objects.clear();
     solvers.clear();
     
     add_solver(new ic::Physics::PositionSolver2D());
     add_solver(new ic::Physics::ImpulseSolver2D());
-
-    physicsSimulationThreads.push_back(std::thread([&]() { update_thread(); }));
 }
 
-void ic::Physics::PhysicsLevel2D::update_thread() {
-    while (!disabled) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+void ic::Physics::PhysicsLevel2D::update(float timeTook) {
+    timeAccumulator += timeTook;
 
-        uint32_t now = SDL_GetTicks();
-        timeAccumulator += (now - lastUpdate) / 1000.0f;
-        lastUpdate = now;
-        
-        if (timeAccumulator >= fixedTimeLength) {
-            float stepSize = fixedTimeLength / (float)simulationSteps;
-            for (int i = 0; i < simulationSteps; i++) {
-                update_with_sub_steps(stepSize);
-            }
-    
-            timeAccumulator -= fixedTimeLength;
+    if (timeAccumulator >= fixedTimeLength) {
+        float stepSize = fixedTimeLength / (float)simulationSteps;
+        for (int i = 0; i < simulationSteps; i++) {
+            update_with_sub_steps(stepSize);
         }
-    
-        std::lock_guard<std::mutex> lock(physicsMutex);
+
+        timeAccumulator -= fixedTimeLength;
     }
 }
 
@@ -55,13 +42,11 @@ void ic::Physics::PhysicsLevel2D::update_with_sub_steps(float timeTook) {
         if (body == nullptr) continue;
         
         body->force = { 0.0f, 0.0f };
-        body->force = body->force + gravity * body->mass;
+        if (body->dynamic) body->force = body->force + gravity * body->mass;
     }
 
     // Motion integration
     for (auto &object : objects) {
-        if (!object->dynamic) continue;
-        
         ic::Physics::RigidObject2D *body = dynamic_cast<ic::Physics::RigidObject2D*>(object);
         if (body == nullptr) continue;
         
@@ -74,13 +59,66 @@ void ic::Physics::PhysicsLevel2D::update_with_sub_steps(float timeTook) {
     }
 }
 
-void ic::Physics::PhysicsLevel2D::dispose() {
-    disabled = true;
 
-    for (auto &thread : physicsSimulationThreads) {
-        thread.join();
+void ic::Physics::PhysicsLevel2D::add_object(ic::Physics::Object2D *object) {
+    objects.push_back(object);
+}
+
+ic::Physics::Object2D *ic::Physics::PhysicsLevel2D::get_object(int index) {
+    return objects[index];
+}
+
+
+void ic::Physics::PhysicsLevel2D::add_solver(ic::Physics::Solver2D *solver) {
+    solvers.push_back(solver);
+}
+        
+void ic::Physics::PhysicsLevel2D::send_collision_callbacks(const std::vector<ic::Physics::Manifold2D> &collisions, float timeTook) {
+    for (auto &manifold : collisions) {
+        auto &callback1 = manifold.object1->onCollision;
+        auto &callback2 = manifold.object2->onCollision;
+        
+        if (callback1) callback1();
+        if (callback2) callback2();
     }
 }
+        
+        
+void ic::Physics::PhysicsLevel2D::resolve_collisions(float timeTook) {
+    manifolds.clear();
+    triggers.clear();
+    
+    // Collision detection
+    for (auto &object1 : objects) {
+        for (auto &object2 : objects) {
+            if (object1 == object2) break;
+            if (!object1->dynamic && !object2->dynamic) continue;
+            if (!object1->collider || !object2->collider) continue;
+            
+            ic::Physics::ManifoldPoints2D points = object1->collider->test(object1->transform, object2->collider, object2->transform);
+            if (!points.collided) continue;
+            
+            ic::Physics::Manifold2D manifold = ic::Physics::Manifold2D(object1, object2, points);
+            bool trigger = object1->isTrigger || object2->isTrigger;
+            
+            if (trigger) triggers.emplace_back(manifold);
+            else manifolds.emplace_back(manifold);
+        }
+    }
+    
+    
+    // Don't resolve collisions with triggers
+    for (auto &solver : solvers) {
+         solver->solve(manifolds);
+    }
+    send_collision_callbacks(manifolds, timeTook);
+    send_collision_callbacks(triggers, timeTook);
+}
+
+std::vector<ic::Physics::Object2D*> &ic::Physics::PhysicsLevel2D::get_objects() { 
+    return objects;
+}
+
 void ic::Physics::PhysicsLevel2D::set_fixed_time_length(int framesPerSecond) {
     fixedTimeLength = 1 / (float) framesPerSecond;
 }

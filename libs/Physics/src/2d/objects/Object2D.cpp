@@ -9,7 +9,6 @@ Object2D::Object2D() {
     
     this->dynamic = true;
     this->isTrigger = false;
-    this->index = 0;
 }
 
 void ic::Physics::Object2D::collision(const std::function<void()> &to) {
