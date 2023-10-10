@@ -78,8 +78,8 @@ void ic::Physics::PhysicsLevel2D::send_collision_callbacks(const std::vector<ic:
         auto &callback1 = manifold.object1->onCollision;
         auto &callback2 = manifold.object2->onCollision;
         
-        if (callback1) callback1();
-        if (callback2) callback2();
+        if (callback1) callback1(manifold, timeTook);
+        if (callback2) callback2(manifold, timeTook);
     }
 }
         

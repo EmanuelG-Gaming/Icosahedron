@@ -144,8 +144,9 @@ namespace ic {
                 void main() {
                     vec4 color = texture(sampleTexture, vTCoords);
                     if (color.a <= 0.1) discard;
-
-                    vec4 c = mix(vec4(vColor, 1.0) * color, vec4(material.baseColor, 1.0), material.colorBlending);
+                    if (color.rgb == vec3(0.0, 0.0, 0.0)) color = vec4(1.0, 1.0, 1.0, 1.0);
+                    
+                    vec4 c = mix(vec4(vColor, 1.0), vec4(material.baseColor, 1.0), material.colorBlending) * color;
                     
                     outColor = c;
                 }

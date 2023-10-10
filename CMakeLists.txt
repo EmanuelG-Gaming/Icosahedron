@@ -196,8 +196,8 @@ target_link_libraries(icosahedron-main PUBLIC Icosahedron Physics testing)
 
 
 ##### Examples #####
-add_executable(icosahedron-examples "examples/physics/Debug.cpp")
-#add_executable(icosahedron-examples "examples/demos/RaytracingDemo.cpp")
+add_executable(icosahedron-examples "examples/physics/PiCounting.cpp")
+#add_executable(icosahedron-examples "examples/2D/Mesh2D.cpp")
 
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(OpenGL)

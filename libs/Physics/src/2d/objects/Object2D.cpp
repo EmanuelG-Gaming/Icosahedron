@@ -11,7 +11,7 @@ Object2D::Object2D() {
     this->isTrigger = false;
 }
 
-void ic::Physics::Object2D::collision(const std::function<void()> &to) {
+void ic::Physics::Object2D::collision(const std::function<void(ic::Physics::Manifold2D, float)> &to) {
     this->onCollision = to;
 }
 

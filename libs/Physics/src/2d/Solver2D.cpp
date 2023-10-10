@@ -3,8 +3,6 @@
 
 void ic::Physics::PositionSolver2D::solve(const std::vector<ic::Physics::Manifold2D> &manifolds) {
     for (auto &manifold : manifolds) {
-        if (manifold.points.depth < 0.001f) continue;
-
         ic::Physics::Object2D *objA = manifold.object1;
         ic::Physics::Object2D *objB = manifold.object2;
 
@@ -21,8 +19,6 @@ void ic::Physics::PositionSolver2D::solve(const std::vector<ic::Physics::Manifol
 
 void ic::Physics::ImpulseSolver2D::solve(const std::vector<ic::Physics::Manifold2D> &manifolds) {
     for (auto &manifold : manifolds) {
-        if (manifold.points.depth < 0.001f) continue;
-
         ic::Physics::RigidObject2D *object1 = dynamic_cast<ic::Physics::RigidObject2D*>(manifold.object1);
         ic::Physics::RigidObject2D *object2 = dynamic_cast<ic::Physics::RigidObject2D*>(manifold.object2);
         if (object1 == nullptr || object2 == nullptr) continue;

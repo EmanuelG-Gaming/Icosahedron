@@ -139,9 +139,13 @@ namespace ic {
         Vec nor() {
             Vec result;
             float length = len();
-            for (int i = 0; i < dimensions; i++) {
-                result.values[i] = values[i] / length;
+
+            if (length != 0.0f) {
+                for (int i = 0; i < dimensions; i++) {
+                    result.values[i] = values[i] / length;
+                }
             }
+
             return result;
         }
 
@@ -158,10 +162,14 @@ namespace ic {
             return result;
         }
 
-        void clamp(Vec lower, Vec upper) {
+        Vec clamp(Vec lower, Vec upper) {
+            Vec result;
+
             for (int i = 0; i < dimensions; i++) {
-                values[i] = std::max(lower[i], std::min(upper[i], values[i]));
+                result.values[i] = std::max(lower[i], std::min(upper[i], values[i]));
             }
+
+            return result;
         }
 
         /** @brief Applies linear interpolation over each vector's components. */

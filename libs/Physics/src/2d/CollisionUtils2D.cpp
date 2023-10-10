@@ -6,7 +6,7 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::circle_circle(Circl
     float radiusOther = colliderB->radius;
 
     bool intersecting = distance2 <= (radius + radiusOther) * (radius + radiusOther);
-    if (!intersecting || distance2 < 0.00001f) {
+    if (!intersecting || distance2 < 0.001f) {
         return ic::Physics::ManifoldPoints2D();
     }
 
@@ -18,10 +18,36 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::circle_circle(Circl
     
     Vec2f direction = BtoA - AtoB;
     Vec2f normal = direction.nor();
-    return ic::Physics::ManifoldPoints2D(AtoB, BtoA, normal, direction.len() + 0.01f); // Add a slight padding to account for simulation time
+
+    return ic::Physics::ManifoldPoints2D(AtoB, BtoA, normal, direction.len());
 }
 
 
-ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::polygon_polygon_separating_axis(PolygonCollider *colliderA, Transform2D *transformA, PolygonCollider *colliderB, Transform2D *transformB) {
-    return ic::Physics::ManifoldPoints2D();
+ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::rectangle_circle(RectangleCollider *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) {
+    float width = colliderA->width;
+    float height = colliderA->height;
+
+    ic::Vec2f pointing = transformA->position - transformB->position;
+    if ((transformB->position.x() >= transformA->position.x() - width && transformB->position.x() <= transformA->position.x() + width) &&
+        (transformB->position.y() >= transformA->position.y() - height && transformB->position.y() <= transformA->position.y() + height)) {
+        // If the circle's center is inside the rectangle
+        pointing = pointing * 100000.0f;
+    }
+
+    ic::Vec2f clamped = pointing.clamp(ic::Vec2f({ -width, -height }), ic::Vec2f({ width, height }));
+    ic::Vec2f closest = clamped + transformB->position;
+
+    float distance2 = closest.dst2(transformA->position);
+    bool intersecting = distance2 <= (colliderB->radius * colliderB->radius);
+    if (!intersecting || distance2 < 0.001f) {
+        return ic::Physics::ManifoldPoints2D();
+    }
+
+    ic::Vec2f AtoB = (closest - transformA->position).nor() * colliderB->radius + transformA->position;
+    ic::Vec2f BtoA = closest;
+             
+    ic::Vec2f dir = BtoA - AtoB;
+    ic::Vec2f normal = dir.nor();
+
+    return ic::Physics::ManifoldPoints2D(AtoB, BtoA, normal, dir.len());
 }

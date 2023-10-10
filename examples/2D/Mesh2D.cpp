@@ -33,14 +33,12 @@ class Mesh2D : public ic::Application {
             
             
             // Mesh 2
-            ic::Vec2f pos;
             mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(3, 0.3f);
             mesh2->add_attribute("color", 1, 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue });
 
             mesh2->set_material(ic::MeshMaterial2D(ic::Colors::white, 0.2f));
-            //mesh2->set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
-            mesh2->set_transformation(ic::Mat4x4().set_translation<2>(pos));
-
+            mesh2->set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
+            
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
             
             texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");

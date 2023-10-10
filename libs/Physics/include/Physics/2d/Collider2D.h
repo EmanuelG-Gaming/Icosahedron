@@ -13,14 +13,14 @@
 namespace ic { namespace Physics {
     struct Collider2D;
     struct CircleCollider;
-    struct PolygonCollider;
+    struct RectangleCollider;
 
     struct Collider2D {
         Collider2D() {}
 
         virtual ManifoldPoints2D test(Transform2D *TransformA, Collider2D *colliderB, Transform2D *transformB) = 0;
         virtual ManifoldPoints2D test(Transform2D *TransformA, CircleCollider *colliderB, Transform2D *TransformB) = 0;
-        virtual ManifoldPoints2D test(Transform2D *TransformA, PolygonCollider *colliderB, Transform2D *TransformB) = 0;
+        virtual ManifoldPoints2D test(Transform2D *TransformA, RectangleCollider *colliderB, Transform2D *TransformB) = 0;
     };
 
     struct CircleCollider : Collider2D {
@@ -32,21 +32,19 @@ namespace ic { namespace Physics {
 
             ManifoldPoints2D test(Transform2D *transformA, Collider2D *colliderB, Transform2D *transformB) override;
             ManifoldPoints2D test(Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) override;
-            ManifoldPoints2D test(Transform2D *TransformA, PolygonCollider *colliderB, Transform2D *TransformB) override;
+            ManifoldPoints2D test(Transform2D *TransformA, RectangleCollider *colliderB, Transform2D *TransformB) override;
     };
 
-    struct PolygonCollider : Collider2D {
+    struct RectangleCollider : Collider2D {
         public:
-            ic::Polygon poly;
+            float width = 1.0f, height = 1.0f;
             
-            PolygonCollider() {}
-            PolygonCollider(const std::vector<float> &coords) {
-                poly = ic::Polygon(coords);
-            }
+            RectangleCollider() {}
+            RectangleCollider(float width, float height) : width(width), height(height) {}
 
             ManifoldPoints2D test(Transform2D *transformA, Collider2D *colliderB, Transform2D *transformB) override;
             ManifoldPoints2D test(Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) override;
-            ManifoldPoints2D test(Transform2D *TransformA, PolygonCollider *colliderB, Transform2D *TransformB) override;
+            ManifoldPoints2D test(Transform2D *TransformA, RectangleCollider *colliderB, Transform2D *TransformB) override;
     };
 }}
 

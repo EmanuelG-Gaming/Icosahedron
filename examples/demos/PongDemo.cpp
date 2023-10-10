@@ -136,8 +136,8 @@ class PongDemo : public ic::Application {
             paddle1->r.position.y() += dir1.y() * speed * dt;
             paddle2->r.position.y() += dir2.y() * speed * dt;
 
-            paddle1->r.position.clamp({ -1.0f, -1.0f + paddle1->r.size.y() }, { 1.0f, 1.0f - paddle1->r.size.y() });
-            paddle2->r.position.clamp({ -1.0f, -1.0f + paddle2->r.size.y() }, { 1.0f, 1.0f - paddle2->r.size.y() });
+            paddle1->r.position = paddle1->r.position.clamp({ -1.0f, -1.0f + paddle1->r.size.y() }, { 1.0f, 1.0f - paddle1->r.size.y() });
+            paddle2->r.position = paddle2->r.position.clamp({ -1.0f, -1.0f + paddle2->r.size.y() }, { 1.0f, 1.0f - paddle2->r.size.y() });
             
             // Rendering
             clear_color(ic::Colors::black);

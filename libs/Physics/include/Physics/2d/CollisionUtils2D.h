@@ -14,10 +14,8 @@ namespace ic { namespace Physics {
             }
             
             ManifoldPoints2D circle_circle(CircleCollider *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB);
+            ManifoldPoints2D rectangle_circle(RectangleCollider *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB);
             
-            /** @brief Uses the separating axis theorem. */
-            ManifoldPoints2D polygon_polygon_separating_axis(PolygonCollider *colliderA, Transform2D *transformA, PolygonCollider *colliderB, Transform2D *transformB);
-    
         private:
             CollisionUtils2D() {}
             ~CollisionUtils2D() {}
