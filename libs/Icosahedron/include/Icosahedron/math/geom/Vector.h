@@ -162,6 +162,17 @@ namespace ic {
             return result;
         }
 
+
+        ic::Vector<T, 2> perpendicular(int facing) {
+            int j = facing >= 0 ? 1 : -1;
+            float ax = x();
+
+            ic::Vector<T, 2> result;
+            result.x() = j * y();
+            result.y() = -j * ax;
+
+            return result;
+        }
         Vec clamp(Vec lower, Vec upper) {
             Vec result;
 

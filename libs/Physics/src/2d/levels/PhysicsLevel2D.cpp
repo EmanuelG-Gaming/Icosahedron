@@ -39,29 +39,68 @@ void ic::Physics::PhysicsLevel2D::update_with_sub_steps(float timeTook) {
     // Reseting the forces + applying
     for (auto &object : objects) {
         ic::Physics::RigidObject2D *body = dynamic_cast<ic::Physics::RigidObject2D*>(object);
-        if (body == nullptr) continue;
-        
-        body->force = { 0.0f, 0.0f };
-        if (body->dynamic) body->force = body->force + gravity * body->mass;
+        ic::Physics::SpringMassSystem2D *system = dynamic_cast<ic::Physics::SpringMassSystem2D*>(object);
+
+        if (body != nullptr) {
+            body->force = { 0.0f, 0.0f };
+            body->torque = 0.0f;
+
+            if (body->dynamic) body->force = body->force + (gravity + body->gravity) * body->mass;
+
+        } else if (system != nullptr) {
+            for (auto &force : system->get_vertex_forces()) {
+                force = { 0.0f, 0.0f };
+                if (system->dynamic) force = force + gravity * system->pointMass;
+            }
+
+        }
     }
 
     // Motion integration
     for (auto &object : objects) {
         ic::Physics::RigidObject2D *body = dynamic_cast<ic::Physics::RigidObject2D*>(object);
-        if (body == nullptr) continue;
-        
-        // Calculate acceleration based on the formula F = ma, with a = F/m
-        ic::Vec2f acceleration = body->force / body->mass;
+        ic::Physics::SpringMassSystem2D *system = dynamic_cast<ic::Physics::SpringMassSystem2D*>(object);
 
-        // Currently uses Euler's method
-        body->velocity = body->velocity + acceleration * timeTook;
-        body->transform->position = body->transform->position + body->velocity * timeTook;
+        if (body != nullptr) {
+            // Calculate acceleration and angular acceleration based on the formula F = ma, with a = F/m
+            ic::Vec2f acceleration = body->force / body->mass;
+            float angularAcceleration = body->torque / body->inertia;
+
+            // Currently uses Euler's method
+            // Linear part
+            body->velocity = body->velocity + acceleration * timeTook;
+            body->transform->position = body->transform->position + body->velocity * timeTook;
+
+            // Angular part
+            body->angularVelocity = body->angularVelocity + angularAcceleration * timeTook;
+            body->transform->angle = body->transform->angle + body->angularVelocity * timeTook;
+            
+        } else if (system != nullptr) {
+            for (int i = 0; i < system->get_vertex_positions().size(); i++) {
+                ic::Vec2f &force = system->get_vertex_forces()[i];
+                ic::Vec2f &velocity = system->get_vertex_velocities()[i];
+                ic::Vec2f &position = system->get_vertex_positions()[i];
+                
+                ic::Vec2f acceleration = force / system->pointMass;
+        
+                velocity = velocity + acceleration * timeTook;
+                position = position + velocity * timeTook;
+            }
+        }
     }
 }
 
 
 void ic::Physics::PhysicsLevel2D::add_object(ic::Physics::Object2D *object) {
     objects.push_back(object);
+}
+void ic::Physics::PhysicsLevel2D::remove_object(ic::Physics::Object2D *object) {
+    if (!object) return;
+
+    auto iterator = std::find(objects.begin(), objects.end(), object);
+    if (iterator == objects.end()) return;
+
+    objects.erase(iterator);
 }
 
 ic::Physics::Object2D *ic::Physics::PhysicsLevel2D::get_object(int index) {

@@ -15,6 +15,8 @@ namespace ic { namespace Physics {
             
             ManifoldPoints2D circle_circle(CircleCollider *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB);
             ManifoldPoints2D rectangle_circle(RectangleCollider *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB);
+            //ManifoldPoints2D spMass2D_circle(SpringMassCollider2D *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB);
+            //ManifoldPoints2D spMass2D_rectangle(SpringMassCollider2D *colliderA, Transform2D *transformA, RectangleCollider *colliderB, Transform2D *transformB);
             
         private:
             CollisionUtils2D() {}

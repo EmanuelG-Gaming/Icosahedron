@@ -3,7 +3,6 @@
 using namespace ic;
 
 Camera2D::Camera2D() : width(IC_WINDOW_WIDTH), height(IC_WINDOW_HEIGHT) {
-    this->position = { 0.0f, 0.0f };
     this->scale = 1.0f;
 }
 Camera2D::Camera2D(ic::Vec2f position, float scale) : Camera2D() {
@@ -11,7 +10,6 @@ Camera2D::Camera2D(ic::Vec2f position, float scale) : Camera2D() {
     this->scale = scale;
 }
 Camera2D::Camera2D(float scale) : Camera2D() {
-    this->position = { 0.0f, 0.0f };
     this->scale = scale;
 }
 
@@ -44,8 +42,19 @@ ic::Vec2f Camera2D::project(ic::Vec2f &worldPosition) {
 ic::Vec2f Camera2D::unproject(ic::Vec2f &screenPosition) {
     ic::Vec2f result;
 
-    result.x() = screenPosition.x() / this->scale + position.x();
-    result.y() = screenPosition.y() / this->scale + position.y();
+    ic::Vec2f pos = screenPosition;
+    pos.x() /= width;
+    pos.y() /= height;
+
+    pos.x() *= 2.0f;
+    pos.y() *= 2.0f;
+    pos.x() -= 1.0f;
+    pos.y() -= 1.0f;
+    pos.y() *= -1.0f;
+
+
+    result.x() = (pos.x() / this->scale) * (width / (float) height) + position.x();
+    result.y() = (pos.y() / this->scale) + position.y();
 
     return result;
 }

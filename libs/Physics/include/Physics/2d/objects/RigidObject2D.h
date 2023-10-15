@@ -1,5 +1,5 @@
-#ifndef IC_PHYSICS_RIGID_OBJECT_2D
-#define IC_PHYSICS_RIGID_OBJECT_2D
+#ifndef IC_PHYSICS_RIGID_OBJECT_2D_H
+#define IC_PHYSICS_RIGID_OBJECT_2D_H
 
 #include <Icosahedron/math/geom/Vectors.h>
 
@@ -10,8 +10,14 @@ namespace ic { namespace Physics {
     struct RigidObject2D : public Object2D {
         public:
             ic::Vec2f force, velocity;
-            float mass;
+            float torque, angularVelocity;
 
+            float mass, inertia;
+            float restitution;
+            float staticFriction, dynamicFriction;
+            
+            ic::Vec2f gravity;
+            
             RigidObject2D();
 
             

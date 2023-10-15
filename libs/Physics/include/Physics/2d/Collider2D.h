@@ -14,13 +14,15 @@ namespace ic { namespace Physics {
     struct Collider2D;
     struct CircleCollider;
     struct RectangleCollider;
+    //struct SpringMassCollider2D;
 
     struct Collider2D {
         Collider2D() {}
 
-        virtual ManifoldPoints2D test(Transform2D *TransformA, Collider2D *colliderB, Transform2D *transformB) = 0;
-        virtual ManifoldPoints2D test(Transform2D *TransformA, CircleCollider *colliderB, Transform2D *TransformB) = 0;
-        virtual ManifoldPoints2D test(Transform2D *TransformA, RectangleCollider *colliderB, Transform2D *TransformB) = 0;
+        virtual ManifoldPoints2D test(Transform2D *TransformA, Collider2D *colliderB, Transform2D *transformB)           = 0;
+        virtual ManifoldPoints2D test(Transform2D *TransformA, CircleCollider *colliderB, Transform2D *TransformB)       = 0;
+        virtual ManifoldPoints2D test(Transform2D *TransformA, RectangleCollider *colliderB, Transform2D *TransformB)    = 0;
+        //virtual ManifoldPoints2D test(Transform2D *TransformA, SpringMassCollider2D *colliderB, Transform2D *TransformB) = 0;
     };
 
     struct CircleCollider : Collider2D {
@@ -30,9 +32,10 @@ namespace ic { namespace Physics {
             CircleCollider() {}
             CircleCollider(float radius) : radius(radius) {}
 
-            ManifoldPoints2D test(Transform2D *transformA, Collider2D *colliderB, Transform2D *transformB) override;
-            ManifoldPoints2D test(Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) override;
-            ManifoldPoints2D test(Transform2D *TransformA, RectangleCollider *colliderB, Transform2D *TransformB) override;
+            ManifoldPoints2D test(Transform2D *TransformA, Collider2D *colliderB, Transform2D *transformB)           override;
+            ManifoldPoints2D test(Transform2D *TransformA, CircleCollider *colliderB, Transform2D *TransformB)       override;
+            ManifoldPoints2D test(Transform2D *TransformA, RectangleCollider *colliderB, Transform2D *TransformB)    override;
+            //ManifoldPoints2D test(Transform2D *TransformA, SpringMassCollider2D *colliderB, Transform2D *TransformB) override;
     };
 
     struct RectangleCollider : Collider2D {
@@ -42,10 +45,21 @@ namespace ic { namespace Physics {
             RectangleCollider() {}
             RectangleCollider(float width, float height) : width(width), height(height) {}
 
-            ManifoldPoints2D test(Transform2D *transformA, Collider2D *colliderB, Transform2D *transformB) override;
-            ManifoldPoints2D test(Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) override;
-            ManifoldPoints2D test(Transform2D *TransformA, RectangleCollider *colliderB, Transform2D *TransformB) override;
+            ManifoldPoints2D test(Transform2D *TransformA, Collider2D *colliderB, Transform2D *transformB)           override;
+            ManifoldPoints2D test(Transform2D *TransformA, CircleCollider *colliderB, Transform2D *TransformB)       override;
+            ManifoldPoints2D test(Transform2D *TransformA, RectangleCollider *colliderB, Transform2D *TransformB)    override;
+            //ManifoldPoints2D test(Transform2D *TransformA, SpringMassCollider2D *colliderB, Transform2D *TransformB) override;
     };
+
+    //struct SpringMassCollider2D : Collider2D {
+    //    public:
+    //        SpringMassCollider2D() {}
+    //        
+    //        ManifoldPoints2D test(Transform2D *TransformA, Collider2D *colliderB, Transform2D *transformB)           override;
+    //        ManifoldPoints2D test(Transform2D *TransformA, CircleCollider *colliderB, Transform2D *TransformB)       override;
+    //        ManifoldPoints2D test(Transform2D *TransformA, RectangleCollider *colliderB, Transform2D *TransformB)    override;
+    //        ManifoldPoints2D test(Transform2D *TransformA, SpringMassCollider2D *colliderB, Transform2D *TransformB) override;
+    //};
 }}
 
 #endif

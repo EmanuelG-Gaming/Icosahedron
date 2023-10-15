@@ -51,3 +51,15 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::rectangle_circle(Re
 
     return ic::Physics::ManifoldPoints2D(AtoB, BtoA, normal, dir.len());
 }
+
+
+
+//ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::spMass2D_circle(SpringMassCollider2D *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) {
+//
+//}
+//
+//
+//ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::spMass2D_rectangle(SpringMassCollider2D *colliderA, Transform2D *transformA, RectangleCollider *colliderB, Transform2D *transformB) {
+//
+//}
+            

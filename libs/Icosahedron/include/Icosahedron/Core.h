@@ -16,6 +16,11 @@ namespace ic {
 #include <Icosahedron/math/geom/Vector.h>
 #include <Icosahedron/math/geom/Vectors.h>
 
+#include <Icosahedron/math/geom/Raycast.h>
+
+#include <Icosahedron/math/geom/Spring2D.h>
+#include <Icosahedron/math/geom/Spring3D.h>
+
 #include <Icosahedron/math/geom/Rectangle.h>
 #include <Icosahedron/math/geom/Polygon.h>
 #include <Icosahedron/math/EarClippingTriangulation.h>

@@ -6,6 +6,7 @@
 #include <Icosahedron/math/geom/Vectors.h>
 
 #include <Physics/2d/objects/RigidObject2D.h>
+#include <Physics/2d/objects/SpringMassSystem2D.h>
 #include <Physics/2d/Solver2D.h>
 
 
@@ -27,6 +28,7 @@ namespace ic { namespace Physics {
             void set_gravity(ic::Vec2f &acceleration);
 
             void add_object(ic::Physics::Object2D *object);
+            void remove_object(ic::Physics::Object2D *object);
             ic::Physics::Object2D *get_object(int index);
             
             std::vector<ic::Physics::Object2D*> &get_objects();

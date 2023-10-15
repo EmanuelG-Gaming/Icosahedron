@@ -60,7 +60,7 @@ class PiCounting : public ic::Application {
             
 
             level = new ic::Physics::PhysicsLevel2D();
-            level->set_gravity(0.0f, 0.0f);
+            level->set_gravity(0.0f, -9.81f);
             level->set_fixed_time_length(60);
             level->simulationSteps = 1000;
 
@@ -84,7 +84,7 @@ class PiCounting : public ic::Application {
             moving->collider = new ic::Physics::CircleCollider(0.2f);
             moving->dynamic = true;
             moving->set_mass(100.0f);
-            moving->set_position(5.0f, -0.3f);
+            moving->set_position(5.0f, -0.3f + 0.2f);
             moving->apply_velocity(-1.0f, 0.0f);
         
             level->add_object(moving);

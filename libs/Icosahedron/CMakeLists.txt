@@ -8,6 +8,11 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Vector.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Vectors.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Raycast.h
+
+    ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Spring2D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Spring3D.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Rectangle.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Polygon.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Circle.h

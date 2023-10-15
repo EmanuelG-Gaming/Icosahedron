@@ -20,7 +20,7 @@ add_library(${LIBRARY_NAME} STATIC
     
     ${LIBRARY_HEADERS_DIRECTORY}/2d/objects/Object2D.h
     ${LIBRARY_HEADERS_DIRECTORY}/2d/objects/RigidObject2D.h
-
+    ${LIBRARY_HEADERS_DIRECTORY}/2d/objects/SpringMassSystem2D.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/2d/Manifold2D.h
     ${LIBRARY_HEADERS_DIRECTORY}/2d/Solver2D.h
@@ -35,6 +35,7 @@ add_library(${LIBRARY_NAME} STATIC
 
     ${LIBRARY_SOURCE_DIRECTORY}/2d/objects/Object2D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/2d/objects/RigidObject2D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/2d/objects/SpringMassSystem2D.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/2d/Solver2D.cpp
 
