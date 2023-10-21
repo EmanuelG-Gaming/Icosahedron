@@ -12,6 +12,8 @@ RigidObject2D::RigidObject2D() : Object2D() {
     this->restitution = 1.0f;
     this->staticFriction = 0.0f;
     this->dynamicFriction = 0.0f;
+
+    this->crossSectionalArea = nullptr;
 }
 
 
@@ -26,4 +28,9 @@ void ic::Physics::RigidObject2D::apply_velocity(ic::Vec2f &vel) {
 
 void ic::Physics::RigidObject2D::set_mass(float to) {
     this->mass = to;
+}
+
+
+void ic::Physics::RigidObject2D::set_section_area(const std::function<float(ic::Vec2f)> &crossSectionalArea) {
+    this->crossSectionalArea = crossSectionalArea;
 }

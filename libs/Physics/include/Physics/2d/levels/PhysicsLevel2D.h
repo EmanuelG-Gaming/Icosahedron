@@ -7,13 +7,15 @@
 
 #include <Physics/2d/objects/RigidObject2D.h>
 #include <Physics/2d/objects/SpringMassSystem2D.h>
+
 #include <Physics/2d/Solver2D.h>
+#include <Physics/2d/forces/Force2D.h>
+#include <Physics/2d/forces/Gravity2D.h>
 
 
 namespace ic { namespace Physics {
     class PhysicsLevel2D {
         public:
-            ic::Vec2f gravity;
             int simulationSteps;
 
             PhysicsLevel2D();
@@ -25,14 +27,16 @@ namespace ic { namespace Physics {
             
             void set_fixed_time_length(int framesPerSecond);
             void set_gravity(float x, float y);
-            void set_gravity(ic::Vec2f &acceleration);
+            void set_gravity(ic::Vec2f &force);
 
             void add_object(ic::Physics::Object2D *object);
             void remove_object(ic::Physics::Object2D *object);
             ic::Physics::Object2D *get_object(int index);
-            
             std::vector<ic::Physics::Object2D*> &get_objects();
-        
+            
+            void add_force(ic::Physics::Force2D *force);
+            void reset_forces();
+            
         private:
             void update_with_sub_steps(float timeTook);
 
@@ -45,9 +49,14 @@ namespace ic { namespace Physics {
         private:
             float timeAccumulator;
             float fixedTimeLength;
+            bool shouldResetForces;
+
+            ic::Physics::Gravity2D *gravity;
 
             std::vector<ic::Physics::Object2D*> objects;
             std::vector<ic::Physics::Solver2D*> solvers;
+            std::vector<ic::Physics::Force2D*> forces;
+
             std::vector<ic::Physics::Manifold2D> manifolds, triggers;
     };
 }}

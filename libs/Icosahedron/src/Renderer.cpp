@@ -7,13 +7,13 @@ void Renderer::draw_rectangle(ic::Batch *batch, float x, float y, float width, f
     float x2 = x + width, y2 = y + height;
     
     std::vector<BatchVertex> vertices = {
-        BatchVertex(x1, y1, color),
-        BatchVertex(x2, y2, color),
-        BatchVertex(x2, y1, color),
+        BatchVertex(x1, y1, 0.0f, 0.0f, color),
+        BatchVertex(x2, y2, 1.0f, 1.0f, color),
+        BatchVertex(x2, y1, 1.0f, 0.0f, color),
                    
-        BatchVertex(x1, y1, color),
-        BatchVertex(x2, y2, color),
-        BatchVertex(x1, y2, color)
+        BatchVertex(x1, y1, 0.0f, 0.0f, color),
+        BatchVertex(x2, y2, 1.0f, 1.0f, color),
+        BatchVertex(x1, y2, 0.0f, 1.0f, color)
     };
 
     batch->add(vertices);
@@ -36,7 +36,7 @@ void Renderer::draw_rectangle(ic::Batch *batch, AtlasEntry entry, float x, float
     batch->add(vertices);
 }
 
-void Renderer::draw_Line(ic::Batch *batch, float x1, float y1, float x2, float y2, const ic::Color &color) {
+void Renderer::draw_line(ic::Batch *batch, float x1, float y1, float x2, float y2, const ic::Color &color) {
     std::vector<BatchVertex> vertices = {
         BatchVertex(x1, y1, 0.0f, 0.0f, color),
         BatchVertex(x2, y2, 0.0f, 0.0f, color)

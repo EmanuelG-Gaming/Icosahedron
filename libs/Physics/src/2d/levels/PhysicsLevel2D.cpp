@@ -12,12 +12,17 @@ void ic::Physics::PhysicsLevel2D::load() {
 
     timeAccumulator = 0.0f;
     fixedTimeLength = 1 / 40.0f;
+    shouldResetForces = true;
     
     objects.clear();
     solvers.clear();
     
+    gravity = new ic::Physics::Gravity2D();
+
     add_solver(new ic::Physics::PositionSolver2D());
     add_solver(new ic::Physics::ImpulseSolver2D());
+
+    add_force(gravity);
 }
 
 void ic::Physics::PhysicsLevel2D::update(float timeTook) {
@@ -34,27 +39,27 @@ void ic::Physics::PhysicsLevel2D::update(float timeTook) {
 }
 
 void ic::Physics::PhysicsLevel2D::update_with_sub_steps(float timeTook) {
-    resolve_collisions(timeTook);
-                
     // Reseting the forces + applying
-    for (auto &object : objects) {
-        ic::Physics::RigidObject2D *body = dynamic_cast<ic::Physics::RigidObject2D*>(object);
-        ic::Physics::SpringMassSystem2D *system = dynamic_cast<ic::Physics::SpringMassSystem2D*>(object);
-
-        if (body != nullptr) {
-            body->force = { 0.0f, 0.0f };
-            body->torque = 0.0f;
-
-            if (body->dynamic) body->force = body->force + (gravity + body->gravity) * body->mass;
-
-        } else if (system != nullptr) {
-            for (auto &force : system->get_vertex_forces()) {
-                force = { 0.0f, 0.0f };
-                if (system->dynamic) force = force + gravity * system->pointMass;
+    if (this->shouldResetForces) {
+        for (auto &object : objects) {
+            ic::Physics::RigidObject2D *body = dynamic_cast<ic::Physics::RigidObject2D*>(object);
+            ic::Physics::SpringMassSystem2D *system = dynamic_cast<ic::Physics::SpringMassSystem2D*>(object);
+    
+            if (body != nullptr) {
+                body->force = { 0.0f, 0.0f };
+                body->torque = 0.0f;
+            } else if (system != nullptr) {
+                for (auto &force : system->get_vertex_forces()) {
+                    force = { 0.0f, 0.0f };
+                }
             }
-
+            
+            for (auto &force : forces) {
+                force->apply(object);
+            }
         }
     }
+    this->shouldResetForces = true;
 
     // Motion integration
     for (auto &object : objects) {
@@ -88,6 +93,8 @@ void ic::Physics::PhysicsLevel2D::update_with_sub_steps(float timeTook) {
             }
         }
     }
+
+    resolve_collisions(timeTook);
 }
 
 
@@ -107,6 +114,9 @@ ic::Physics::Object2D *ic::Physics::PhysicsLevel2D::get_object(int index) {
     return objects[index];
 }
 
+void ic::Physics::PhysicsLevel2D::add_force(ic::Physics::Force2D *force) {
+    forces.push_back(force);
+}
 
 void ic::Physics::PhysicsLevel2D::add_solver(ic::Physics::Solver2D *solver) {
     solvers.push_back(solver);
@@ -163,10 +173,33 @@ void ic::Physics::PhysicsLevel2D::set_fixed_time_length(int framesPerSecond) {
 }
 
 void ic::Physics::PhysicsLevel2D::set_gravity(float x, float y) {
-    gravity.x() = x;
-    gravity.y() = y;
+    gravity->force.x() = x;
+    gravity->force.y() = y;
 }
 
-void ic::Physics::PhysicsLevel2D::set_gravity(ic::Vec2f &acceleration) {
-    set_gravity(acceleration.x(), acceleration.y());
+void ic::Physics::PhysicsLevel2D::set_gravity(ic::Vec2f &force) {
+    set_gravity(force.x(), force.y());
+}
+
+
+void ic::Physics::PhysicsLevel2D::reset_forces() {
+    for (auto &object : objects) {
+        ic::Physics::RigidObject2D *body = dynamic_cast<ic::Physics::RigidObject2D*>(object);
+        ic::Physics::SpringMassSystem2D *system = dynamic_cast<ic::Physics::SpringMassSystem2D*>(object);
+    
+        if (body != nullptr) {
+            body->force = { 0.0f, 0.0f };
+            body->torque = 0.0f;
+        } else if (system != nullptr) {
+            for (auto &force : system->get_vertex_forces()) {
+                force = { 0.0f, 0.0f };
+            }
+        }
+        
+        for (auto &force : forces) {
+            force->apply(object);
+        }
+    }
+
+    this->shouldResetForces = false;
 }

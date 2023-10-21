@@ -82,6 +82,10 @@ enum MouseInputActionTypes {
     MOUSE_INPUT_DOWN = 1,
 
     MOUSE_INPUT_MOVED = 2,
+    MOUSE_INPUT_HOLD = 3,
+
+    MOUSE_INPUT_SCROLL_UP = 4,
+    MOUSE_INPUT_SCROLL_DOWN = 5,
 };
 
 namespace ic {

@@ -18,7 +18,7 @@ namespace ic {
         public:
             void draw_rectangle(ic::Batch *batch, float x, float y, float width, float height, const ic::Color &color = { 255, 255, 255 });
             void draw_rectangle(ic::Batch *batch, AtlasEntry entry, float x, float y, float width, float height, const ic::Color &color = { 255, 255, 255 });
-            void draw_Line(ic::Batch *batch, float x1, float y1, float x2, float y2, const ic::Color &color = { 255, 255, 255 });
+            void draw_line(ic::Batch *batch, float x1, float y1, float x2, float y2, const ic::Color &color = { 255, 255, 255 });
             
             
             void draw_vertices(ic::Batch *batch, std::vector<ic::Vec2f> vertices, const ic::Color &color = { 255, 255, 255 }); 

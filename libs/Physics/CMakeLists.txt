@@ -25,6 +25,10 @@ add_library(${LIBRARY_NAME} STATIC
     ${LIBRARY_HEADERS_DIRECTORY}/2d/Manifold2D.h
     ${LIBRARY_HEADERS_DIRECTORY}/2d/Solver2D.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/2d/forces/Force2D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/2d/forces/Gravity2D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/2d/forces/WindForce2D.h
+
     ${LIBRARY_HEADERS_DIRECTORY}/2d/levels/PhysicsLevel2D.h
 
     # Sources
@@ -38,6 +42,10 @@ add_library(${LIBRARY_NAME} STATIC
     ${LIBRARY_SOURCE_DIRECTORY}/2d/objects/SpringMassSystem2D.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/2d/Solver2D.cpp
+
+    ${LIBRARY_SOURCE_DIRECTORY}/2d/forces/Gravity2D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/2d/forces/WindForce2D.cpp
+
 
     ${LIBRARY_SOURCE_DIRECTORY}/2d/levels/PhysicsLevel2D.cpp
 )

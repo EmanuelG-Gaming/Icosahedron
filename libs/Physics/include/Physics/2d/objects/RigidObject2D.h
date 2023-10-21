@@ -18,6 +18,9 @@ namespace ic { namespace Physics {
             
             ic::Vec2f gravity;
             
+            /** @returns The area of a cross-section with a plane perpendicular to a direction. */
+            std::function<float(ic::Vec2f)> crossSectionalArea;
+
             RigidObject2D();
 
             
@@ -25,6 +28,8 @@ namespace ic { namespace Physics {
             void apply_velocity(ic::Vec2f &vel);
 
             void set_mass(float to);
+
+            void set_section_area(const std::function<float(ic::Vec2f)> &crossSectionalArea);
     };
 }}
 #endif
