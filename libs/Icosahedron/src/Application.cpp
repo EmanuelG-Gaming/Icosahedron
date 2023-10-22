@@ -131,8 +131,6 @@ void ic::Application::start() {
             break;
         }
 
-        ic::Audio::get().playback();
-        
         // Swap buffers
 	    SDL_GL_SwapWindow(this->window);
         

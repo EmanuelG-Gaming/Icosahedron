@@ -14,20 +14,13 @@ namespace ic {
         public:
             Music(const std::string &filePath);
 
-            void play();
-            void set_volume(float amount);
-
             SoLoud::WavStream &get_stream();
-            bool &is_played();
-            float &get_volume();
             
         private:
             void load(const std::string &filePath);
 
         private:
             SoLoud::WavStream stream;
-            bool played = false;
-            float volume = 1.0f;
     };
 }
 #endif

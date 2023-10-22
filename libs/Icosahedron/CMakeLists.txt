@@ -66,6 +66,7 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/OBJLoader.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/audio/Music.h
+    ${LIBRARY_HEADERS_DIRECTORY}/audio/Sound.h
     ${LIBRARY_HEADERS_DIRECTORY}/audio/Audio.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Mesh2D.h
@@ -113,6 +114,7 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/OBJLoader.cpp
     
     ${LIBRARY_SOURCE_DIRECTORY}/audio/Music.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/audio/Sound.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/audio/Audio.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Mesh2D.cpp

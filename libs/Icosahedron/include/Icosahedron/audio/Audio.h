@@ -8,6 +8,7 @@
 #include "soloud.h"
 
 #include <Icosahedron/audio/Music.h>
+#include <Icosahedron/audio/Sound.h>
 
 
 namespace ic {
@@ -22,8 +23,8 @@ namespace ic {
             void dispose();
 
             void play(ic::Music *music);
-            void playback();
-
+            void play(ic::Sound *sound);
+           
             /** @brief Calculates the fast Fourier Transform of the entire audio pool. 
              *  The amount of "bars", or frequencies of the resulting array is 256.
             */
@@ -40,7 +41,6 @@ namespace ic {
         
         private:
             std::unique_ptr<SoLoud::Soloud> handler;
-            std::vector<ic::Music*> music;
             
             bool initialized = false;
             bool disposed = false;

@@ -125,6 +125,7 @@ class Electrostatics : public ic::Application {
 
             inputHandler.add_input(keyboard, "keyboard");
 
+            
             return true;
         }
 
@@ -235,17 +236,23 @@ class Electrostatics : public ic::Application {
                 for (int j = 0; j < fieldHeight; j++) {
                     for (int i = 0; i < fieldWidth; i++) {
                         ic::Vec2f v = electrostaticVectors[j * fieldWidth + i];
-                        v = v;
-
+                        
                         float x = i * 0.1f - 2.0f;
                         float y = j * 0.1f - 2.0f;
 
+                        float length = v.len();
                         ic::Vec2f perpendicular = v.perpendicular(0);
-                        perpendicular = perpendicular.nor() * 0.1f * v.len();
+                        perpendicular = perpendicular.nor() * 0.1f * length;
 
-                        renderer.draw_line(vectorFieldBatch, x, y, x + v.x(), y + v.y());
-                        renderer.draw_line(vectorFieldBatch, x + v.x(), y + v.y(), x + v.x() * 0.9f - perpendicular.x(), y + v.y() * 0.9f - perpendicular.y());
-                        renderer.draw_line(vectorFieldBatch, x + v.x(), y + v.y(), x + v.x() * 0.9f + perpendicular.x(), y + v.y() * 0.9f + perpendicular.y());
+                        ic::Vec3f c = { length, length, length };
+                        c = (c * 5.0f).clamp({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
+                        c = c * 255.0f;
+
+                        ic::Color color = ic::Color(c);
+
+                        renderer.draw_line(vectorFieldBatch, x, y, x + v.x(), y + v.y(), color);
+                        renderer.draw_line(vectorFieldBatch, x + v.x(), y + v.y(), x + v.x() * 0.9f - perpendicular.x(), y + v.y() * 0.9f - perpendicular.y(), color);
+                        renderer.draw_line(vectorFieldBatch, x + v.x(), y + v.y(), x + v.x() * 0.9f + perpendicular.x(), y + v.y() * 0.9f + perpendicular.y(), color);
                     }
                 }
                 vectorFieldBatch->render();
@@ -296,7 +303,7 @@ class Electrostatics : public ic::Application {
         void add_object(float x, float y, float velX, float velY, float chargeValue, float mass) {
             PointCharge *charge = new PointCharge(chargeValue, 0.1f);
             charge->set_mass(mass);
-            charge->isTrigger = true;
+            //charge->isTrigger = true;
 
             charge->set_position(x, y);
             charge->apply_velocity(velX, velY);

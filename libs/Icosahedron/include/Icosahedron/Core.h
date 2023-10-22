@@ -64,6 +64,7 @@ namespace ic {
 
 
 #include <Icosahedron/audio/Music.h>
+#include <Icosahedron/audio/Sound.h>
 #include <Icosahedron/audio/Audio.h>
 
 // Scene

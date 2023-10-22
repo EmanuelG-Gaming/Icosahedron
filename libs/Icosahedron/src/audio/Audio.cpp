@@ -24,22 +24,11 @@ void ic::Audio::dispose() {
 }
 
 void ic::Audio::play(ic::Music *music) {
-    this->music.emplace_back(music);
+    this->handler->play(music->get_stream());
 }
-
-void ic::Audio::playback() {
-    for (auto &element : this->music) {
-        if (!element->is_played()) {
-            auto stream = element->get_stream();
-
-            stream.setVolume(element->get_volume());
-            this->handler->play(stream);
-
-            element->play();
-        }
-    }
+void ic::Audio::play(ic::Sound *sound) {
+    this->handler->play(sound->get_stream());
 }
-
 
 float *ic::Audio::calculate_FFT() {
     return this->handler->calcFFT();

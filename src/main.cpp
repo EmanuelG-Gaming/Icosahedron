@@ -60,7 +60,7 @@ class Example : public ic::Application {
     ic::Mesh2D *testMesh;
     ic::Mesh2D *testSquare;
     ic::Camera2D *camera;
-
+    
     ic::Texture *squareTexture;
 
     public:
@@ -111,13 +111,18 @@ class Example : public ic::Application {
         }
 
         void dispose() override {
+            testShader->clear();
+
+            squareTexture->dispose();
+            
+            testMesh->dispose();
+            testSquare->dispose();
         }
 };
 
 int main(int argc, char *argv[]) {
     Example application;
 
-    // Constructs a window that is 640 pixels wide and 480 pixels tall
     if (application.construct(640, 480)) {
         application.start();
     }
