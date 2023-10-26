@@ -15,7 +15,9 @@ namespace ic {
         public:
             ic::Vec2f position;
             float scale;
-
+            bool correctsAspectRatio;
+            int width, height;
+            
             Camera2D();
             Camera2D(ic::Vec2f position, float scale);
             Camera2D(float scale);
@@ -33,8 +35,6 @@ namespace ic {
         protected:
             ic::Mat4x4 projection;
             ic::Mat4x4 aspectRatioCorrection;
-
-            const int &width, &height;
     };
 }
 #endif

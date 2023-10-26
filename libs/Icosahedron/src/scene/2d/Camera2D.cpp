@@ -4,11 +4,13 @@ using namespace ic;
 
 Camera2D::Camera2D() : width(IC_WINDOW_WIDTH), height(IC_WINDOW_HEIGHT) {
     this->scale = 1.0f;
+    this->correctsAspectRatio = true;
 }
 Camera2D::Camera2D(ic::Vec2f position, float scale) : Camera2D() {
     this->position = position;
     this->scale = scale;
 }
+
 Camera2D::Camera2D(float scale) : Camera2D() {
     this->scale = scale;
 }
@@ -20,7 +22,7 @@ void Camera2D::use(ic::Shader *shader) {
 
     scaling.set_scaling(this->scale);
     translation.set_translation((pos * -1));
-    this->aspectRatioCorrection.set_orthographic(-aspect, aspect, -1, 1);
+    if (this->correctsAspectRatio) this->aspectRatioCorrection.set_orthographic(-aspect, aspect, -1, 1);
 
     projection = this->aspectRatioCorrection * scaling * translation;
 

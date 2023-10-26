@@ -6,6 +6,7 @@ Camera3D::Camera3D() {
     this->position = { 0.0f, 0.0f, 0.0f };
     this->up = { 0.0f, 1.0f, 0.0f };
     this->lookingAt = { 1.0f, 0.0f, 0.0f };
+    this->correctsAspectRatio = true;
 }
 
 Camera3D::Camera3D(float fov, float zNear, float zFar, float width, float height, bool perspective) : Camera3D() {
@@ -34,8 +35,9 @@ void ic::Camera3D::update() {
     } else {
         this->projectionMatrix.set_orthographic(-width / 2, width / 2, -height / 2, height / 2, settings.zNear, settings.zFar);
     }
+    if (this->correctsAspectRatio) this->aspectRatioCorrection.set_orthographic(-aspectRatio, aspectRatio, -1, 1);
 
-    this->combined = this->projectionMatrix * this->viewMatrix;
+    this->combined = this->aspectRatioCorrection * this->projectionMatrix * this->viewMatrix;
 }
 
 void ic::Camera3D::upload_to_shader(ic::Shader *shader, const std::string &viewUniform, const std::string &projectionUniform) {

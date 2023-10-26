@@ -64,8 +64,7 @@ target_link_libraries(icosahedron-main PUBLIC Icosahedron Physics testing)
 
 
 ##### Examples #####
-add_executable(icosahedron-examples "examples/physics/Electrostatics.cpp")
-#add_executable(icosahedron-examples "examples/2D/TexturedRectangle.cpp")
+add_executable(icosahedron-examples "examples/3D/MultipleViewports.cpp")
 
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(OpenGL)

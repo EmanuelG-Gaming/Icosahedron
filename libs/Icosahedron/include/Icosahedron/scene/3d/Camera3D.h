@@ -31,7 +31,8 @@ namespace ic {
     class Camera3D {
         public:
             CameraSettings settings;
-
+            bool correctsAspectRatio;
+            
             ic::Vec3f position;
             ic::Vec3f up;
             ic::Vec3f lookingAt;
@@ -50,7 +51,7 @@ namespace ic {
             void resize(float width, float height);
 
         protected:
-            ic::Mat4x4 viewMatrix, projectionMatrix;
+            ic::Mat4x4 viewMatrix, projectionMatrix, aspectRatioCorrection;
         
             /** The projection matrix multiplied by the view matrix. */
             ic::Mat4x4 combined;
