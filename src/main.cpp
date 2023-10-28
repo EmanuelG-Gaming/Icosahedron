@@ -56,6 +56,7 @@ int main(int argc, char *argv[]) {
 #include <Icosahedron/Core.h>
 
 class Example : public ic::Application {
+
     ic::Shader *testShader;
     ic::Mesh2D *testMesh;
     ic::Mesh2D *testSquare;

@@ -5,6 +5,9 @@
 #include <iostream>
 #include <array>
 #include <cstring>
+#include <stdexcept>
+
+#include <Icosahedron/graphics/Color.h>
 
 
 namespace ic {
@@ -21,11 +24,23 @@ namespace ic {
 
         /** @brief Initializes a vector whose coordinates correspond to the elements of a list. */
         Vector(std::initializer_list<T> from) {
+            memset(&values, 0, sizeof(values));
             for (auto position = from.begin(); position != from.end(); position++) {
                 values[std::distance(from.begin(), position)] = *position;
             }
         }
-    
+
+        Vector(ic::Color color) {
+            memset(&values, 0, sizeof(values));
+            if (size() != 3) {
+                throw std::runtime_error("This vector doesn't have three dimensions.\n");
+            }
+
+            values[0] = color.r;
+            values[1] = color.g;
+            values[2] = color.b;
+        }
+
         Vec operator+(Vec other) {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
@@ -224,15 +239,6 @@ namespace ic {
         
         T& operator[](const int index) {
             return values[index];
-        }
-
-        ic::Vector<float, dimensions> convert_float() {
-            ic::Vector<float, dimensions> result;
-            for (int i = 0; i < dimensions; i++) {
-                result[i] = (float) result[i];
-            }
-
-            return result;
         }
 
         std::size_t size() {

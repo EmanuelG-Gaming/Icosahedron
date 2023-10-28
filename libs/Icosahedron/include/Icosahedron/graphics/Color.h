@@ -5,7 +5,6 @@
 
 #include <string>
 #include <stdint.h>
-#include <Icosahedron/math/geom/Vectors.h>
 
 using color_t = uint8_t;
 
@@ -16,7 +15,6 @@ namespace ic {
 
         Color() {}
         Color(color_t r, color_t g, color_t b) : r(r), g(g), b(b) {}
-        Color(ic::Vec3f source) : r((color_t) source[0]), g((color_t) source[1]), b((color_t) source[2]) {}
         
         Color operator*(Color &other) {
             float f = 255.0f;

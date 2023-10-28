@@ -5,6 +5,7 @@ set(LIBRARY_NAME Icosahedron)
 
 set(LIBRARY_HEADERS_DIRECTORY include/${LIBRARY_NAME})
 set(LIBRARY_HEADERS 
+    ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Vector.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Vectors.h
 
@@ -27,7 +28,6 @@ set(LIBRARY_HEADERS
 
     ${LIBRARY_HEADERS_DIRECTORY}/files/File.h
 
-    ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Image.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/ImageIO.h

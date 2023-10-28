@@ -79,9 +79,9 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 );
 
 
-/** A model viewer. Press up/down keys to increase/decrease the view radius.
+/** A model viewer. Press up/down keys to increase or decrease the view radius.
  *  Use the Q key to switch between perspective and orthographic projections, and
- *  the R key to toggle the rotation of the viewed object.
+ *  the R key to make the viewed object rotate.
 */
 class ModelViewerDemo : public ic::Application {
     ic::Shader *shader;
@@ -102,7 +102,7 @@ class ModelViewerDemo : public ic::Application {
     public:
         bool init() override {
             displayName = "Model Viewer Demo";
-            scaling = ic::WindowScaling::fullscreen;
+            //scaling = ic::WindowScaling::fullscreen;
             hideCursor = true;
 
             return true;
@@ -111,7 +111,7 @@ class ModelViewerDemo : public ic::Application {
         bool load() override {
             states.enable_depth_testing(ic::LESS);
             states.enable_face_culling(ic::FRONT, ic::CCW);
-
+            
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
             whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
             
@@ -119,7 +119,7 @@ class ModelViewerDemo : public ic::Application {
             mesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
 
             material = ic::OBJLoader::get().get_materials("resources/models/icosahedron.mtl")["Material.001"];
-            
+
             scale = 3.0f;
             perspective = true;
             rotating = false;
@@ -134,8 +134,8 @@ class ModelViewerDemo : public ic::Application {
 
             // Inputs
             auto scaling = new ic::KeyboardController();
-            scaling->add_action([this](){ scale += 5 * delta; }, KEY_UP);
-            scaling->add_action([this](){ scale -= 5 * delta; }, KEY_DOWN);
+            scaling->add_action([this](){ scale -= 5 * delta; }, KEY_UP);
+            scaling->add_action([this](){ scale += 5 * delta; }, KEY_DOWN);
 
             inputHandler.add_input(scaling, "orbitScaling");
 
@@ -188,7 +188,7 @@ class ModelViewerDemo : public ic::Application {
             //}
             
 
-            ic::Quaternion quat = ic::Quaternion().from_euler(time, time, 0.0f);
+            ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
                
             mesh->set_transformation(rotation);
