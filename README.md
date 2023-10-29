@@ -28,7 +28,7 @@ The rest of the files that may not belong to the folders mentioned above are `Ap
 - `Global` provides entry for global-scope variables, like the window size via `IC_WINDOW_WIDTH` and `IC_WINDOW_HEIGHT`.
 
 # Extensions
-Right now, Icosahedron only has the `Physics` extension.
+Right now, Icosahedron has the `Physics` and `UI` extensions.
 
 # Building the code:
 For some, this can be pretty straightforward, but here it is:

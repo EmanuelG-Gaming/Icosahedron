@@ -65,7 +65,7 @@ namespace ic {
                 uint8_t ny = (uint8_t) floor(y) & 255;
                 int px = nx + 1;
                 int py = ny + 1;
-
+  
                 float dx = x - (float) nx;
                 float dy = y - (float) ny;
 
@@ -129,21 +129,17 @@ namespace ic {
                 }
             }
 
-            ic::Vec2f get_2D_vector_from_permutation(const uint8_t &value) {
+            ic::Vec2f get_2D_vector_from_permutation(uint8_t value) {
                 uint8_t a = value & 3;
-
-                if (a == 0) {
-                    return { 1.0f, 1.0f };
-                } else if (a == 1) {
-                    return { -1.0f, 1.0f };
-                } else if (a == 2) {
-                    return { -1.0f, -1.0f };
+                switch (a) {
+                    case 0:  return {  1.0f, 1.0f  };
+                    case 1:  return { -1.0f, 1.0f  };
+                    case 2:  return { -1.0f, -1.0f };
+                    default: return {  1.0f, -1.0f };
                 }
-
-                return { 1.0f, -1.0f };
             }
 
-            float get_value_from_permutation(const uint8_t &value) {
+            float get_value_from_permutation(uint8_t value) {
                 uint8_t a = value & 3;
 
                 if (a == 0) {
@@ -158,7 +154,7 @@ namespace ic {
             }
 
         private:
-            uint8_t permutations[512];
+            uint8_t permutations[256 * 2];
             bool loaded = false;
 
         private:

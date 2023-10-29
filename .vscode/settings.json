@@ -1,7 +1,8 @@
 {
     "cmake.configureOnOpen": true,
     "files.associations": {
-        "random": "cpp"
+        "random": "cpp",
+        "typeinfo": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }

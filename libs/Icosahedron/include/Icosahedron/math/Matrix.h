@@ -185,6 +185,18 @@ namespace ic {
             return result;
         }
 
+
+        float determinant() {
+            return 1.0f;
+        }
+
+        Mat inverse() {
+            return Mat();
+        }
+
+
+
+
         friend std::ostream& operator<<(std::ostream &stream, Mat &matrix) {
             std::size_t size = matrix.area();
             int r = 0;

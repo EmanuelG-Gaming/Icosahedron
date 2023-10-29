@@ -50,6 +50,9 @@ namespace ic {
 
             void resize(float width, float height);
 
+            /** @brief Returns a vector pointing from the camera's origin to a location on the camera's screen plane. */
+            ic::Vec3f unproject(ic::Vec2f &screenPosition);
+
         protected:
             ic::Mat4x4 viewMatrix, projectionMatrix, aspectRatioCorrection;
         

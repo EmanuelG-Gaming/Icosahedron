@@ -38,6 +38,7 @@ set(FREETYPE2_INCLUDES ${FREETYPE2_DIR}/include)
 # Libraries and extensions
 add_subdirectory(libs/Icosahedron)
 add_subdirectory(libs/Physics)
+add_subdirectory(libs/UI)
 
 
 
@@ -60,11 +61,11 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${SDL2_INCLUDES}
 target_link_libraries(icosahedron-main PUBLIC freetype)
 target_include_directories(icosahedron-main PRIVATE ${FREETYPE2_INCLUDES})
 
-target_link_libraries(icosahedron-main PUBLIC Icosahedron Physics testing)
+target_link_libraries(icosahedron-main PUBLIC Icosahedron Physics UI testing)
 
 
 ##### Examples #####
-add_executable(icosahedron-examples "examples/demos/GLCraft.cpp")
+add_executable(icosahedron-examples "examples/UI/Labels.cpp")
 
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(OpenGL)
@@ -75,7 +76,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${SDL2_INCLUDES} ${FREETYPE2_INC
 target_link_libraries(icosahedron-examples PUBLIC freetype)
 target_include_directories(icosahedron-examples PRIVATE ${FREETYPE2_INCLUDES})
 
-target_link_libraries(icosahedron-examples PUBLIC Icosahedron Physics testing)
+target_link_libraries(icosahedron-examples PUBLIC Icosahedron Physics UI testing)
 
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 include(CTest)

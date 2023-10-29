@@ -51,6 +51,10 @@ namespace ic {
                 return (3.0f - x * 2.0f) * x * x;
             }
 
+            float smootherstep(float x) {
+                return x * x * x * (x * (6.0f * x - 15.0f) + 10.0f);
+            }
+
         private:
             Interpolation() {}
             ~Interpolation() {}

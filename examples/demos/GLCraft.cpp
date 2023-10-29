@@ -52,9 +52,16 @@ std::string chunkFragmentShader = IC_ADD_GLSL_DEFINITION(
         float linear;
         float quadratic;
     };
-    
+
+    struct DirectionalLight {
+        vec3 direction;
+        vec3 ambient;
+        vec3 diffuse;
+        vec3 specular;
+    };
+
     PointLight l = PointLight(
-        vec3(15.0, 5.0, 15.0), 
+        vec3(0.0, 5.0, 0.0), 
 
         vec3(0.2, 0.2, 0.2), 
         vec3(0.9, 0.8, 0.65), 
@@ -63,13 +70,21 @@ std::string chunkFragmentShader = IC_ADD_GLSL_DEFINITION(
         1.0, 0.09, 0.032
     );
     PointLight l2 = PointLight(
-        vec3(3.5, 5.0, 3.5), 
+        vec3(10.0, 5.0, 10.0), 
 
         vec3(0.2, 0.2, 0.2), 
         vec3(0.9, 0.8, 0.65), 
         vec3(0.0, 0.0, 0.0), 
         
         1.0, 0.09, 0.032
+    );
+
+    DirectionalLight d = DirectionalLight(
+        vec3(0.0, 5.0, -3.0), 
+
+        vec3(0.2, 0.2, 0.2), 
+        vec3(0.5, 0.5, 0.6), 
+        vec3(0.1, 0.1, 0.1)
     );
 
     uniform sampler2DArray sampleTexture;
@@ -109,11 +124,42 @@ std::string chunkFragmentShader = IC_ADD_GLSL_DEFINITION(
         return result;
     }
     
+    vec4 compute_lighting(DirectionalLight light) {
+        vec3 normal = normalize(vNormal);
+        vec3 lightDirection = normalize(light.direction);
+        vec3 viewDirection = normalize(viewPosition - vPosition);
+        float dotProduct = dot(lightDirection, normal);
+
+        // Ambient reflection (indirect illumination approximation)
+        float ambientIntensity = 0.4;
+        vec4 ambientColor = vec4(light.ambient, 1.0) * ambientIntensity;
+
+        // Diffuse reflection
+        float diffuseIntensity = clamp(dotProduct, 0.0, 1.0);
+        vec4 diffuseColor = texture(sampleTexture, vTCoords);
+        if (diffuseColor.a <= 0.1) diffuseColor = vec4(0.0, 0.0, 0.0, 0.0);
+        else diffuseColor *= vec4(light.diffuse, 1.0) * diffuseIntensity;
+
+        // Specular reflection
+        // Blinn-Phong reflection
+        vec3 reflectDirection = normalize(lightDirection + viewDirection);
+        float specularIntensity = pow(max(dot(vNormal, reflectDirection), 0.0), (0.1 * 128.0) * 4.0);
+        
+        // Basic Phong reflection
+        //vec3 reflectDirection = reflect(-lightDirection, normal); 
+        //float specularIntensity = pow(max(dot(viewDirection, reflectDirection), 0.0), (0.1 * 128.0) * 4.0);
+        
+        vec4 specularColor = vec4(light.specular, 1.0) * specularIntensity;
+        vec4 result = ambientColor + diffuseColor + specularColor;
+        return result;
+    }
+
     void main() {
         vec4 color1 = compute_lighting(l);
         vec4 color2 = compute_lighting(l2);
+        vec4 color3 = compute_lighting(d);
 
-        outColor = color1 + color2;
+        outColor = color1 + color2 + color3;
         //outColor = vec4((vNormal + 1.0) / 2.0, 1.0);
     }
 );
@@ -124,7 +170,7 @@ std::string chunkFragmentShader = IC_ADD_GLSL_DEFINITION(
 
 
 
-const std::size_t CHUNK_WIDTH = 30, CHUNK_HEIGHT = 30, CHUNK_DEPTH = 30;
+const std::size_t CHUNK_WIDTH = 200, CHUNK_HEIGHT = 16, CHUNK_DEPTH = 200;
 const std::size_t CHUNK_VOLUME = CHUNK_WIDTH * CHUNK_HEIGHT * CHUNK_DEPTH;
 
 using chunk_t = uint8_t;
@@ -326,6 +372,8 @@ class GLCraft : public ic::Application {
     ic::FreeRoamCameraController3D *controller;
     Chunk *chunk;
 
+    float time;
+
     public:
         bool init() override {
             displayName = "GLCraft";
@@ -335,6 +383,8 @@ class GLCraft : public ic::Application {
         }
         
         bool load() override {
+            time = 0.0f;
+
             states.enable_depth_testing(ic::LESS);
             states.enable_face_culling(ic::FRONT, ic::CCW);
             
@@ -348,14 +398,14 @@ class GLCraft : public ic::Application {
             camera->position = { -3.0f, 1.5f, 0.0f };
             controller = new ic::FreeRoamCameraController3D(camera, &inputHandler);
             controller->flying = true;
+            controller->speed = 10.0f;
 
 
             chunk = new Chunk();
             for (int x = 0; x < CHUNK_WIDTH; x++) {
                 for (int z = 0; z < CHUNK_DEPTH; z++) {
-                    float height = (float) ic::Noise::get().perlin_2D(x / 10.0f, z / 10.0f, true);
-                    height = height * 4;
-
+                    float height = ic::Noise::get().perlin_2D(x / 10.0f, z / 10.0f, true) * 8.0f;
+                    
                     for (int y = 0; y <= height; y++) {
                         chunk->blocks[chunk->get_index(x, y, z)] = 1;
                     }
@@ -377,11 +427,13 @@ class GLCraft : public ic::Application {
         }
 
         bool update(float dt) override {
+            time += dt;
+
             controller->act(dt);
             camera->update();
             
+            // Rendering
             clear_color(ic::Colors::blue);
-
             chunkShader->use();
             chunkShader->set_uniform_vec3f("viewPosition", camera->position);
             camera->upload_to_shader(chunkShader);
