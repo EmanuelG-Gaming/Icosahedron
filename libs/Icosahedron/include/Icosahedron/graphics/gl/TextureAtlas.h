@@ -46,11 +46,11 @@ namespace ic {
             }
 
 
-            void add_entry(const std::string &location, const std::string &fileName) {
+            ic::AtlasEntry add_entry(const std::string &location, const std::string &fileName) {
                 SDL_Surface *surface = load_surface(fileName.c_str());
                 if (surface == NULL) {
                     printf("Couldn't load texture.\n");
-                    return;
+                    return AtlasEntry();
                 }
 
                 int width = surface->w;
@@ -80,7 +80,7 @@ namespace ic {
                 // If entry exceeded the maximum height...
                 if (entry.x + entry.height > this->atlasHeight) {
                     printf("Couldn't add texture. It exceeded the maximum atlas height.\n");
-                    return;
+                    return AtlasEntry();
                 }
 
                 this->lastX += entry.width;
@@ -92,7 +92,8 @@ namespace ic {
                 glTexSubImage2D(GL_TEXTURE_2D, 0, entry.x, entry.y, entry.width, entry.height, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
 
                 entries[location] = entry;
-                printf("Texture added.\n");
+                
+                return entry;
             }
 
             /** @brief Loads multiple images based on the format: { image_alias1, image_file_name1, image_alias2, image_file_name2, ... }*/

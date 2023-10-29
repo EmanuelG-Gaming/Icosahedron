@@ -14,6 +14,10 @@ add_library(${LIBRARY_NAME} STATIC
     # Headers
     ${LIBRARY_HEADERS_DIRECTORY}/Global.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/style/Drawable.h
+    ${LIBRARY_HEADERS_DIRECTORY}/style/TextureDrawable.h
+    ${LIBRARY_HEADERS_DIRECTORY}/style/Style.h
+    
     ${LIBRARY_HEADERS_DIRECTORY}/Element.h
     ${LIBRARY_HEADERS_DIRECTORY}/layout/Table.h
     ${LIBRARY_HEADERS_DIRECTORY}/layout/Cell.h

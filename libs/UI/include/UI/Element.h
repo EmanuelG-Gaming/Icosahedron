@@ -13,6 +13,10 @@ namespace ic { namespace UI {
 
 
             virtual void draw() {}
+
+
+            ic::UI::Element *set_position(float x, float y);
+            ic::UI::Element *set_position(ic::Vec2f to);
     };
 }}
 

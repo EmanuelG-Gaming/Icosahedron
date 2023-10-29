@@ -12,9 +12,9 @@ namespace ic { namespace UI {
     class Global {
         public:
             ic::Renderer renderer;
-            ic::Batch *fillBatch;
+            ic::Batch *fillBatch, *fillTextBatch;
             ic::TextAtlas *defaultAtlas;
-
+        
             static Global& get() {
                 static Global ins;
                 return ins;

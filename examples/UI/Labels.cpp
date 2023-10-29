@@ -2,6 +2,7 @@
 
 #include <UI/Core.h>
 #include <UI/Label.h>
+#include <UI/style/TextureDrawable.h>
 
 
 class Labels : public ic::Application {
@@ -16,7 +17,19 @@ class Labels : public ic::Application {
             static auto &ui = ic::UI::Core::get();
             ui.load();
 
-            ui.mainTable->add(new ic::UI::Label("Test"));
+            ic::AtlasEntry woodEntry = ui.atlas->add_entry("wood", "resources/textures/wood.png");
+
+
+            ui.mainTable->add(
+                (new ic::UI::Label("Test"))->set_font_color(ic::Colors::green)
+            );
+
+            ui.mainTable->add(
+                (new ic::UI::Label("Text with wood on the left side"))
+                ->set_font_color(ic::Colors::yellow)
+                ->set_background(new ic::UI::TextureDrawable(woodEntry))
+                ->set_position(-0.5f, 0.4f)
+            );
 
             return true;
         }

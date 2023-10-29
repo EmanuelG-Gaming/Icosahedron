@@ -13,7 +13,7 @@ namespace ic { namespace UI {
     class Core {
         public:
             Table *mainTable;
-
+            ic::TextureAtlas *atlas;
             
             static Core& get() {
                 static Core ins;
@@ -34,7 +34,7 @@ namespace ic { namespace UI {
 
         private:
             ic::Camera2D *uiCamera;
-            ic::Shader *uiShader;
+            ic::Shader *uiTextShader, *uiShader;
     };
 }}
 
