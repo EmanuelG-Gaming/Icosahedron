@@ -223,7 +223,7 @@ void ic::Application::pre_load() {
 bool ic::Application::poll_events(ic::Event &e) {
     SDL_PumpEvents();
     while (SDL_PollEvent(&e)) {
-        this->inputHandler.handle(e, delta);
+        ic::InputHandler::get().handle(e, delta);
 
         if (!this->handle_event(e, delta)) {
             return false;
@@ -256,7 +256,7 @@ bool ic::Application::poll_events(ic::Event &e) {
         }
     }
     
-    this->inputHandler.update(delta);
+    ic::InputHandler::get().update(delta);
 
     return true;
 }

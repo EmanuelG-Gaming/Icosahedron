@@ -16,24 +16,26 @@ add_library(${LIBRARY_NAME} STATIC
 
     ${LIBRARY_HEADERS_DIRECTORY}/style/Drawable.h
     ${LIBRARY_HEADERS_DIRECTORY}/style/TextureDrawable.h
-    ${LIBRARY_HEADERS_DIRECTORY}/style/Style.h
     
     ${LIBRARY_HEADERS_DIRECTORY}/Element.h
+    
     ${LIBRARY_HEADERS_DIRECTORY}/layout/Table.h
     ${LIBRARY_HEADERS_DIRECTORY}/layout/Cell.h
-    
+
     ${LIBRARY_HEADERS_DIRECTORY}/Label.h
+    ${LIBRARY_HEADERS_DIRECTORY}/Button.h
     ${LIBRARY_HEADERS_DIRECTORY}/Core.h
     
     # Sources
     ${LIBRARY_SOURCE_DIRECTORY}/Global.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/Element.cpp
+    
     ${LIBRARY_SOURCE_DIRECTORY}/layout/Table.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/layout/Cell.cpp
 
-
     ${LIBRARY_SOURCE_DIRECTORY}/Label.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/Button.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/Core.cpp
 )
 

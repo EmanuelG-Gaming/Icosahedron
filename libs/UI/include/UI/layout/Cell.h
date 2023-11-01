@@ -13,8 +13,12 @@ namespace ic { namespace UI {
             Element *element;
             ic::Vec2f elementPosition;
 
-
             Cell();
+
+            virtual void mouse_moved_callback() {}
+            virtual void mouse_up_callback() {}
+            virtual void mouse_down_callback() {}
+
 
             void set_layout(Table *table);
 

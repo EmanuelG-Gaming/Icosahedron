@@ -10,8 +10,11 @@
 namespace ic {
     class InputHandler {
         public:
-            InputHandler() {}
-            
+            static InputHandler& get() {
+                static InputHandler ins;
+                return ins;
+            }
+
             void handle(ic::Event event, float dt);
             void update(float dt);
             
@@ -23,6 +26,14 @@ namespace ic {
 
         private:
             std::map<INPUT_LOCATION, ic::Input*> inputs;
+        
+        private:
+            InputHandler() {}
+            ~InputHandler() {}
+
+        public:
+            InputHandler(InputHandler const&) = delete;
+            void operator = (InputHandler const&) = delete;
     };
 }
 #endif

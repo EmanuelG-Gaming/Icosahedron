@@ -2,13 +2,14 @@
 
 #include <UI/Core.h>
 #include <UI/Label.h>
+#include <UI/Button.h>
 #include <UI/style/TextureDrawable.h>
 
 
-class Labels : public ic::Application {
+class UIBasics : public ic::Application {
     public:
         bool init() override {
-            displayName = "Label test";
+            displayName = "UI basics";
 
             return true;
         }
@@ -17,14 +18,15 @@ class Labels : public ic::Application {
             static auto &ui = ic::UI::Core::get();
             ui.load();
 
-            ic::AtlasEntry woodEntry = ui.atlas->add_entry("wood", "resources/textures/wood.png");
-            
-            ui.mainTable->label("Test")->set_font_color(ic::Colors::green);
+            ui.mainTable->label("'Testing'")->set_position(-0.2f, 0.1f);
 
-            ui.mainTable->label("Text with wood on the left side")
-                ->set_font_color(ic::Colors::yellow)
-                ->set_background(new ic::UI::TextureDrawable(woodEntry))
-                ->set_position(-0.5f, 0.4f);
+            ui.mainTable->button([this]() {
+                std::cout << "Testing." << "\n";
+            })->set_style(ic::UI::ButtonStyle(
+                nullptr,
+                new ic::UI::TextureDrawable(ui.atlas->add_entry("ball", "resources/textures/ball.png")),
+                new ic::UI::TextureDrawable(ui.atlas->add_entry("white", "resources/textures/white.png"))
+            ))->set_background(new ic::UI::TextureDrawable(ui.atlas->add_entry("wood", "resources/textures/wood.png")));
 
             return true;
         }
@@ -53,7 +55,7 @@ class Labels : public ic::Application {
 };
 
 int main(int argc, char *argv[]) {
-    Labels application;
+    UIBasics application;
 
     if (application.construct(640, 480)) {
         application.start();

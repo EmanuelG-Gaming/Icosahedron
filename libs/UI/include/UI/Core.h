@@ -35,6 +35,8 @@ namespace ic { namespace UI {
         private:
             ic::Camera2D *uiCamera;
             ic::Shader *uiTextShader, *uiShader;
+
+            ic::MouseController *mouse;
     };
 }}
 

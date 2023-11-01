@@ -1,5 +1,6 @@
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/input/InputHandler.h>
 
 #include <UI/Core.h>
 
@@ -72,6 +73,28 @@ void ic::UI::Core::load() {
     this->atlas = new ic::TextureAtlas();
 
     this->mainTable = new ic::UI::Table();
+
+
+
+    this->mouse = new ic::MouseController();
+    this->mouse->add_mouse_moved_action([this]() {
+        ic::Vec2i p = ic::InputHandler::get().find_mouse("ui mouse")->get_cursor_position();
+        ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
+
+        ic::UI::Global::get().mouseCursorPosition = this->uiCamera->unproject(pos);
+
+        this->mainTable->mouse_moved();
+    });
+
+    this->mouse->add_mouse_up_action([this]() {
+        this->mainTable->mouse_up();
+    });
+
+    this->mouse->add_mouse_down_action([this]() {
+        this->mainTable->mouse_down();
+    });
+
+    ic::InputHandler::get().add_input(this->mouse, "ui mouse");
 }
 
 void ic::UI::Core::render() {

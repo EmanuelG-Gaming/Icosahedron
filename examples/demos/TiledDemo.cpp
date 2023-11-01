@@ -138,8 +138,8 @@ class TiledDemo : public ic::Application {
             ic::KeyboardController *debugCont = new ic::KeyboardController();
             debugCont->add_key_up_action([this]() {collisionDebug = !collisionDebug; }, KEY_T);
             
-            inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
-            inputHandler.add_input(debugCont, "collisionDebug");
+            ic::InputHandler::get().add_input((new ic::KeyboardController())->with_WASD(), "WASD");
+            ic::InputHandler::get().add_input(debugCont, "collisionDebug");
 
 
             shape = new RectangleShape({ 0.0f, 0.0f }, { 0.4f, 0.4f }, "player");

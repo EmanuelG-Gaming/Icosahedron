@@ -7,13 +7,12 @@
 #include <Icosahedron/graphics/FreeType.h>
 
 #include <UI/Element.h>
-#include <UI/style/Style.h>
 #include <UI/style/Drawable.h>
 #include <UI/Global.h>
 
 
 namespace ic { namespace UI {
-    class LabelStyle : public Style {
+    class LabelStyle {
         public:
             ic::TextAtlas *font;
             ic::Color fontColor;

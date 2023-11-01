@@ -1,6 +1,5 @@
 #include <UI/Global.h>
 
-
 void ic::UI::Global::load() {
     this->fillBatch = new ic::Batch(10000, ic::TRIANGLES);
     this->fillTextBatch = new ic::Batch(10000, ic::TRIANGLES);
