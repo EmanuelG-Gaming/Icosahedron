@@ -18,7 +18,7 @@ class UIBasics : public ic::Application {
             static auto &ui = ic::UI::Core::get();
             ui.load();
 
-            ui.mainTable->label("'Testing'")->set_position(-0.2f, 0.1f);
+            ui.mainTable->label("'Testing'")->set_background(new ic::UI::TextureDrawable(ui.atlas->add_entry("wood", "resources/textures/stone-bricks.png")))->set_position(-0.2f, 0.1f);
 
             ui.mainTable->button([this]() {
                 std::cout << "Testing." << "\n";

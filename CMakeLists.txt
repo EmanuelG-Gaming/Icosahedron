@@ -65,7 +65,7 @@ target_link_libraries(icosahedron-main PUBLIC Icosahedron Physics UI testing)
 
 
 ##### Examples #####
-add_executable(icosahedron-examples "examples/UI/UIBasics.cpp")
+add_executable(icosahedron-examples "examples/demos/RaymarchingDemo.cpp")
 
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(OpenGL)

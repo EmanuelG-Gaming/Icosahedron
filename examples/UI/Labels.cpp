@@ -18,13 +18,14 @@ class Labels : public ic::Application {
             ui.load();
 
             ic::AtlasEntry woodEntry = ui.atlas->add_entry("wood", "resources/textures/wood.png");
-            
+
             ui.mainTable->label("Test")->set_font_color(ic::Colors::green);
 
-            ui.mainTable->label("Text with wood on the left side")
-                ->set_font_color(ic::Colors::yellow)
-                ->set_background(new ic::UI::TextureDrawable(woodEntry))
-                ->set_position(-0.5f, 0.4f);
+            ic::UI::Label *label = ui.mainTable->label("Text with wooden background");
+            
+            label->set_font_color(ic::Colors::yellow)
+                 ->set_background(new ic::UI::TextureDrawable(woodEntry))
+                 ->set_position(-0.5f, 0.4f);
 
             return true;
         }

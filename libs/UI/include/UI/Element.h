@@ -6,6 +6,7 @@
 namespace ic { namespace UI {
     class Element {
         public:
+            /** @brief The total displacement of this element over the UI scene. */
             ic::Vec2f translation;
             float width, height;
             

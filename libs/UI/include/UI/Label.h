@@ -17,7 +17,7 @@ namespace ic { namespace UI {
             ic::TextAtlas *font;
             ic::Color fontColor;
             ic::UI::Drawable *background;
-
+            
             LabelStyle() {
                 this->font = ic::UI::Global::get().defaultAtlas;
                 this->fontColor = { 255, 255, 255 };
@@ -40,7 +40,6 @@ namespace ic { namespace UI {
 
     class Label : public Element {
         public:
-            std::string text;
             LabelStyle style;
 
             Label(const std::string &text);
@@ -51,6 +50,16 @@ namespace ic { namespace UI {
             ic::UI::Label *set_style(const ic::UI::LabelStyle &style);
             ic::UI::Label *set_font_color(const ic::Color &color);
             ic::UI::Label *set_background(ic::UI::Drawable *background);
+
+            ic::UI::Label *set_text(const std::string &text);
+
+            std::string &get_text();
+
+        protected:
+            std::string text;
+
+        protected:
+            ic::Vec2f compute_size(ic::TextAtlas *font);
     };
 }}
 
