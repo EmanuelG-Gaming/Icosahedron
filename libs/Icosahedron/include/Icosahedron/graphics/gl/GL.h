@@ -39,6 +39,8 @@ namespace ic {
 
         TEXTURE_RGB = GL_RGB,
         TEXTURE_RGBA = GL_RGBA,
+        TEXTURE_RGBA_16F = GL_RGBA16F,
+        TEXTURE_RGBA_32F = GL_RGBA32F,
         TEXTURE_DEPTH = GL_DEPTH_COMPONENT,
     };
 

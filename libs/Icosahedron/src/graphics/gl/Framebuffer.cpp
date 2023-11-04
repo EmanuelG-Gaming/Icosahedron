@@ -7,7 +7,19 @@ Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColor
     this->data.height = height;
 
     this->data.textureAttachment = attachment;
-    this->data.textureColorChannel = channel;
+    this->data.internalFormat = this->data.outputFormat = channel;
+    this->data.textureType = ic::T2D;
+
+    this->setup(this->data.width, this->data.height);
+}
+
+Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColorChannels internalFormat, ic::GLTextureColorChannels outputFormat, int width, int height) {
+    this->data.width = width;
+    this->data.height = height;
+
+    this->data.textureAttachment = attachment;
+    this->data.internalFormat = internalFormat;
+    this->data.outputFormat = outputFormat;
     this->data.textureType = ic::T2D;
 
     this->setup(this->data.width, this->data.height);
@@ -94,13 +106,13 @@ void ic::Framebuffer::setup(int w, int h) {
 
 void ic::Framebuffer::initialize_texture(int w, int h) {
     if (this->data.textureType == ic::T2D) {
-        glTexImage2D(this->data.textureType, 0, this->data.textureColorChannel, w, h, 0, this->data.textureColorChannel, GL_FLOAT, NULL);
+        glTexImage2D(this->data.textureType, 0, this->data.internalFormat, w, h, 0, this->data.outputFormat, GL_FLOAT, NULL);
         glTexParameteri(this->data.textureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(this->data.textureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
     } else if (this->data.textureType == ic::TCUBE) {
         for (int i = 0; i < 6; i++) { 
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, this->data.textureColorChannel, w, h, 0, this->data.textureColorChannel, GL_FLOAT, NULL);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, this->data.internalFormat, w, h, 0, this->data.outputFormat, GL_FLOAT, NULL);
         }
 
         glTexParameteri(this->data.textureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
