@@ -10,7 +10,7 @@ std::string screenVertex = IC_ADD_GLSL_DEFINITION(
     void main() {
         vPosition = position;
         vTCoords = vec2(tCoords.x, 1.0 - tCoords.y);
-        
+
         gl_Position = vec4(vPosition, 0.0, 1.0);
     }
 );
@@ -25,11 +25,13 @@ std::string screenFragment = IC_ADD_GLSL_DEFINITION(
     uniform float exposure = 0.05;
 
     uniform sampler2D screenTexture;
+    uniform sampler2D bloomTexture;
 
     out vec4 outColor;
 
     void main() {
         vec3 hdrColor = texture(screenTexture, vTCoords).rgb;
+        hdrColor += texture(bloomTexture, vTCoords).rgb;
         
         // Tone mapping
         //vec3 mapped = vec3(1.0) - exp(hdrColor * -exposure);
@@ -48,6 +50,39 @@ std::string screenFragment = IC_ADD_GLSL_DEFINITION(
         mapped = pow(mapped, vec3(1.0 / gamma));
 
         outColor = vec4(mapped, 1.0);
+    }
+);
+
+std::string blurShaderFragment = IC_ADD_GLSL_DEFINITION(
+    precision mediump float;
+
+    in vec2 vPosition;
+    in vec2 vTCoords;
+
+    uniform bool horizontal;
+    const float weight[5] = float[](0.227, 0.194, 0.121, 0.054, 0.016);
+
+    uniform sampler2D image;
+
+    out vec4 outColor;
+
+    void main() {
+        vec2 textureOffset = 1.0 / textureSize(image, 0);
+        vec4 result = texture(image, vTCoords) * weight[0];
+
+        if (horizontal) {
+            for (int i = 1; i < 5; i++) {
+                result += texture(image, vTCoords + vec2(textureOffset.x * i, 0.0)) * weight[i];
+                result += texture(image, vTCoords - vec2(textureOffset.x * i, 0.0)) * weight[i];
+            }
+        } else {
+            for (int i = 1; i < 5; i++) {
+                result += texture(image, vTCoords + vec2(0.0, textureOffset.y * i)) * weight[i];
+                result += texture(image, vTCoords - vec2(0.0, textureOffset.y * i)) * weight[i];
+            }
+        }
+
+        outColor = result;
     }
 );
 
@@ -76,11 +111,15 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
         0.01, 0.02, 0.1
     );
 
+    const float BLOOM_THRESHOLD = 1.0;
+
     uniform sampler2D sampleTexture;
     uniform vec3 viewPosition;
-    out vec4 outColor;
 
-    vec4 compute_lighting(PointLight light) {
+    layout (location = 0) out vec4 outColor;
+    layout (location = 1) out vec4 outBrightColor;
+
+    vec3 compute_lighting(PointLight light) {
         float distance = length(light.position - vPosition);
         float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
         
@@ -91,13 +130,11 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 
         // Ambient reflection (indirect illumination approximation)
         float ambientIntensity = 0.4 * attenuation;
-        vec4 ambientColor = vec4(light.ambient, 1.0) * ambientIntensity;
+        vec3 ambientColor = light.ambient * ambientIntensity;
 
         // Diffuse reflection
         float diffuseIntensity = clamp(dotProduct, 0.0, 1.0) * attenuation;
-        vec4 diffuseColor = texture(sampleTexture, vTCoords);
-        if (diffuseColor.a <= 0.1) diffuseColor = vec4(0.0, 0.0, 0.0, 0.0);
-        else diffuseColor *= vec4(light.diffuse, 1.0) * diffuseIntensity;
+        vec3 diffuseColor = texture(sampleTexture, vTCoords).rgb * light.diffuse * diffuseIntensity;
 
         // Specular reflection
         // Blinn-Phong reflection
@@ -108,26 +145,31 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
         //vec3 reflectDirection = reflect(-lightDirection, normal); 
         //float specularIntensity = pow(max(dot(viewDirection, reflectDirection), 0.0), (0.1 * 128.0) * 4.0) * attenuation;
         
-        vec4 specularColor = vec4(light.specular, 1.0) * specularIntensity;
-        vec4 result = ambientColor + diffuseColor + specularColor;
+        vec3 specularColor = light.specular * ambientIntensity;
+        vec3 result = ambientColor + diffuseColor + specularColor;
         return result;
     }
     
     void main() {
-        vec4 color = compute_lighting(l);
+        vec3 color = compute_lighting(l);
+        float brightness = dot(color, vec3(0.216, 0.715, 0.072));
+
+        outColor = vec4(color, 1.0);
         
-        outColor = color;
+        if (brightness > BLOOM_THRESHOLD) {
+            outBrightColor = vec4(outColor.rgb, 1.0);
+        } else {
+            outBrightColor = vec4(0.0, 0.0, 0.0, 1.0);
+        }
     }
 );
 
 
-/** High dynamic range (HDR) allows the shader to use larger color values.
- *  Use the mouse wheel to change the exposure of the camera.
- */
-class HDR : public ic::Application {
-    ic::Shader *shader, *screenShader;
-    ic::Framebuffer *framebuffer;
-    
+class Bloom : public ic::Application {
+    ic::Shader *shader, *blurShader, *screenShader;
+    ic::Framebuffer *sceneFramebuffer;
+    ic::Framebuffer *pingpong1, *pingpong2;
+
     ic::Camera3D *camera;
     ic::Mesh2D *screenQuad;
     ic::Mesh3D *mesh, *floorMesh;
@@ -140,8 +182,8 @@ class HDR : public ic::Application {
 
     public:
         bool init() override {
-            displayName = "HDR example";
-            scaling = ic::WindowScaling::fullscreen;
+            displayName = "Bloom example";
+            scaling = ic::WindowScaling::resizeable;
             hideCursor = true;
 
             return true;
@@ -152,25 +194,42 @@ class HDR : public ic::Application {
             states.enable_face_culling(ic::FRONT, ic::CCW);
             
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
+            blurShader = ic::ShaderLoader::get().load(screenVertex, blurShaderFragment);
             screenShader = ic::ShaderLoader::get().load(screenVertex, screenFragment);
             
+            // Shader configuration
+            shader->use();
+            shader->set_uniform_int("sampleTexture", 0);
+
+            blurShader->use();
+            blurShader->set_uniform_int("image", 0);
+
+            screenShader->use();
+            screenShader->set_uniform_int("screenTexture", 0);
+            screenShader->set_uniform_int("bloomTexture", 1);
+
+
             ic::TextureParameters params;
             params.usesMipmapping = true;
 
-            // Note that we use sRGB textures
             floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png", params, true);
             whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png", params, true);
             
-            framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            sceneFramebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            sceneFramebuffer->add_render_target(ic::TEXTURE_ATTACH_COLOR_1, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA);
+
+            pingpong1 = pingpong2 = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT, false);
+
 
             mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
             floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
             
             screenQuad = new ic::Mesh2D();
             screenQuad->add_attribute("position", 0, 2, ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
-            screenQuad->add_attribute("textureCoords", 1, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            screenQuad->add_attribute("textureCoords", 1, 2, ic::GeometryGenerator::get().generate_UV_rectangle(1.0f, 1.0f));
             screenQuad->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
+            
             camera = new ic::Camera3D();
             camera->position = { -3.0f, 1.5f, 0.0f };
             controller = new ic::FreeRoamCameraController3D(camera, &ic::InputHandler::get());
@@ -200,7 +259,10 @@ class HDR : public ic::Application {
 
         void window_size_changed(int w, int h) override {
             camera->resize(w, h);
-            framebuffer->resize(w, h);
+
+            sceneFramebuffer->resize(w, h);
+            pingpong1->resize(w, h);
+            pingpong2->resize(w, h);
         }
 
         bool update(float dt) override {
@@ -209,10 +271,9 @@ class HDR : public ic::Application {
             controller->act(dt);
             camera->update();
             
-            // First pass - scene drawing
-            framebuffer->use();
+            // First pass - scene
+            sceneFramebuffer->use();
             clear_color(ic::Colors::blue);
-            
             shader->use();
             shader->set_uniform_vec3f("viewPosition", camera->position);
             camera->upload_to_shader(shader);
@@ -223,25 +284,51 @@ class HDR : public ic::Application {
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
             mesh->set_transformation(translation * rotation);
             mesh->set_normal_transformation(rotation);
-            
 
             whiteTexture->use();
             mesh->draw(shader);
 
             floorTexture->use();
-
             floorMesh->draw(shader);
 
-            framebuffer->unuse();
+            sceneFramebuffer->unuse();
 
+            // Second pass - blurring via the two ping pong framebuffers
+            bool horizontal = true, firstIteration = true;
+            int amount = 5;
 
-            // Second pass - drawing via framebuffer
-            clear_color(ic::Colors::cyan);
+            blurShader->use();
+            for (int i = 0; i < amount; i++) {
+                auto *pingpong = horizontal ? pingpong1 : pingpong2;
+                auto *pingpongOpposite = horizontal ? pingpong2 : pingpong1;
+                pingpong->use();
+                blurShader->set_uniform_bool("horizontal", horizontal);
             
+                if (firstIteration) {
+                    sceneFramebuffer->use_texture(0, 1);
+                } else {
+                    pingpongOpposite->use_texture(0, 0);
+                }
+                screenQuad->draw(blurShader);
+            
+                horizontal = !horizontal;
+                if (firstIteration) {
+                    firstIteration = false;
+                }
+            }
+            pingpong1->unuse();
+            pingpong2->unuse();
+            sceneFramebuffer->unuse();
+            
+            // Third pass - Add the blurred texture to the model screen
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
             screenShader->use();
             screenShader->set_uniform_float("exposure", exposure);
 
-            framebuffer->use_texture();
+            sceneFramebuffer->use_texture(0, 0);
+            (horizontal ? pingpong1 : pingpong2)->use_texture(1, 0);
+
             screenQuad->draw(screenShader);
 
             return true; 
@@ -253,13 +340,13 @@ class HDR : public ic::Application {
             floorMesh->dispose();
             floorTexture->dispose();
             whiteTexture->dispose();
-            framebuffer->dispose();
+            sceneFramebuffer->dispose();
         }
 };
 
 
 int main(int argc, char *argv[]) {
-    HDR application;
+    Bloom application;
 
     if (application.construct(640, 480)) {
         application.start();
