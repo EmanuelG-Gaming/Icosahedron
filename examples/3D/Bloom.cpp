@@ -60,7 +60,7 @@ std::string blurShaderFragment = IC_ADD_GLSL_DEFINITION(
     in vec2 vTCoords;
 
     uniform bool horizontal;
-    const float weight[5] = float[](0.227, 0.194, 0.121, 0.054, 0.016);
+    uniform float weight[5] = float[](0.227, 0.194, 0.121, 0.054, 0.016);
 
     uniform sampler2D image;
 
@@ -68,21 +68,23 @@ std::string blurShaderFragment = IC_ADD_GLSL_DEFINITION(
 
     void main() {
         vec2 textureOffset = 1.0 / textureSize(image, 0);
-        vec4 result = texture(image, vTCoords) * weight[0];
+        vec3 result = texture(image, vTCoords).rgb * weight[0];
 
         if (horizontal) {
             for (int i = 1; i < 5; i++) {
-                result += texture(image, vTCoords + vec2(textureOffset.x * i, 0.0)) * weight[i];
-                result += texture(image, vTCoords - vec2(textureOffset.x * i, 0.0)) * weight[i];
+              result.rgb += texture(image, vTCoords + vec2(textureOffset.x * i, 0.0)).rgb * weight[i];
+              result.rgb += texture(image, vTCoords - vec2(textureOffset.x * i, 0.0)).rgb * weight[i];
             }
-        } else {
+        }
+        else {
             for (int i = 1; i < 5; i++) {
-                result += texture(image, vTCoords + vec2(0.0, textureOffset.y * i)) * weight[i];
-                result += texture(image, vTCoords - vec2(0.0, textureOffset.y * i)) * weight[i];
+                result.rgb += texture(image, vTCoords + vec2(0.0, textureOffset.y * i)).rgb * weight[i];
+                result.rgb += texture(image, vTCoords - vec2(0.0, textureOffset.y * i)).rgb * weight[i];
             }
         }
 
-        outColor = result;
+        
+        outColor = vec4(result, 1.0);
     }
 );
 
@@ -111,7 +113,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
         0.01, 0.02, 0.1
     );
 
-    const float BLOOM_THRESHOLD = 1.0;
+    const float BLOOM_THRESHOLD = 2.5;
 
     uniform sampler2D sampleTexture;
     uniform vec3 viewPosition;
@@ -176,7 +178,7 @@ class Bloom : public ic::Application {
 
     ic::Texture *floorTexture, *whiteTexture;
     ic::FreeRoamCameraController3D *controller;
-
+    
     float time;
     float exposure;
 
@@ -218,7 +220,7 @@ class Bloom : public ic::Application {
             sceneFramebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
             sceneFramebuffer->add_render_target(ic::TEXTURE_ATTACH_COLOR_1, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA);
 
-            pingpong1 = pingpong2 = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT, false);
+            pingpong1 = pingpong2 = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT, false);
 
 
             mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
@@ -271,9 +273,12 @@ class Bloom : public ic::Application {
             controller->act(dt);
             camera->update();
             
+            clear_color(ic::Colors::blue);
+            
             // First pass - scene
             sceneFramebuffer->use();
-            clear_color(ic::Colors::blue);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            
             shader->use();
             shader->set_uniform_vec3f("viewPosition", camera->position);
             camera->upload_to_shader(shader);
@@ -287,7 +292,7 @@ class Bloom : public ic::Application {
 
             whiteTexture->use();
             mesh->draw(shader);
-
+            
             floorTexture->use();
             floorMesh->draw(shader);
 
@@ -299,14 +304,15 @@ class Bloom : public ic::Application {
 
             blurShader->use();
             for (int i = 0; i < amount; i++) {
-                auto *pingpong = horizontal ? pingpong1 : pingpong2;
-                auto *pingpongOpposite = horizontal ? pingpong2 : pingpong1;
+                ic::Framebuffer *pingpong = horizontal ? pingpong1 : pingpong2;
+
                 pingpong->use();
                 blurShader->set_uniform_bool("horizontal", horizontal);
             
                 if (firstIteration) {
                     sceneFramebuffer->use_texture(0, 1);
                 } else {
+                    ic::Framebuffer *pingpongOpposite = horizontal ? pingpong2 : pingpong1;
                     pingpongOpposite->use_texture(0, 0);
                 }
                 screenQuad->draw(blurShader);
@@ -327,7 +333,7 @@ class Bloom : public ic::Application {
             screenShader->set_uniform_float("exposure", exposure);
 
             sceneFramebuffer->use_texture(0, 0);
-            (horizontal ? pingpong1 : pingpong2)->use_texture(1, 0);
+            (horizontal ? pingpong2 : pingpong1)->use_texture(1, 0);
 
             screenQuad->draw(screenShader);
 

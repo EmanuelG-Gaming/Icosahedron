@@ -135,6 +135,31 @@ namespace ic {
             return *this;
         }
 
+        /** @brief Sets this matrix to a rotation about the X axis. */
+        Mat set_rotation_x(float radians) {
+            identity();
+
+            value(1, 1) = ic::Mathf::get().cosf(radians);
+            value(2, 2) = ic::Mathf::get().cosf(radians);
+            value(2, 1) = -ic::Mathf::get().sinf(radians);
+            value(1, 2) = ic::Mathf::get().sinf(radians);
+
+            return *this;
+        }
+
+        /** @brief Sets this matrix to a rotation about the Y axis. */
+        Mat set_rotation_y(float radians) {
+            identity();
+
+            value(0, 0) = ic::Mathf::get().cosf(radians);
+            value(2, 2) = ic::Mathf::get().cosf(radians);
+            value(2, 0) = ic::Mathf::get().sinf(radians);
+            value(0, 2) = -ic::Mathf::get().sinf(radians);
+
+            return *this;
+        }
+
+        /** @brief Sets this matrix to a rotation about the Z axis. */
         Mat set_rotation_z(float radians) {
             identity();
 
@@ -145,6 +170,8 @@ namespace ic {
 
             return *this;
         }
+
+        /** @brief Does the same effect as rotating about the Z axis. */
         Mat set_rotation(float radians) {
             return set_rotation_z(radians);
         }

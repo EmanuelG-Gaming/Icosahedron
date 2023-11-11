@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
 }
 */
 
+
 #include <Icosahedron/Core.h>
 
 class Example : public ic::Application {

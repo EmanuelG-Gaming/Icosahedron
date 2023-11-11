@@ -23,8 +23,15 @@ namespace ic {
             x = y = z = w = 0.0f;
         }
         Quaternion(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
-        
-        /** @note Roll - X rotation; Pitch - Y rotation; Yaw - Z rotation */
+
+        Quaternion identity() {
+            x = y = z = 0.0f;
+            w = 1.0f;
+
+            return *this;
+        }
+
+        /** @note Roll - X rotation; Pitch - Y rotation; Yaw - Z rotation in radians. */
         Quaternion from_euler(float roll, float pitch, float yaw) {
             float halfRoll = roll * 0.5f;
             float halfPitch = pitch * 0.5f;
@@ -133,7 +140,63 @@ namespace ic {
             r.y = newY;
             r.z = newZ;
             r.w = newW;
+
             return r;
+        }
+
+        /** @brief Forms a quaternion that rotates from a starting point to an end point. This
+         *  internally uses axis-angle calculations, and this function's "up" vector is the x axis,
+         *  meaning that an arrow mesh pointing in this axis, in model space, will point from position1 to position2,
+         *  in world space coordinates.
+        */
+        Quaternion look_at(ic::Vec3f &position1, ic::Vec3f &position2) {
+            ic::Vec3f forward = (position2 - position1).nor();
+            ic::Vec3f up = { 1.0f, 0.0f, 0.0f };
+            float dot = forward.dot(up);
+            float threshold = 0.00001f;
+
+            if (abs(dot + 1.0f) < threshold) return Quaternion(up.x(), up.y(), up.z(), M_PI);
+            if (abs(dot - 1.0f) < threshold) return Quaternion().identity();
+
+            float angle = acos(dot);
+
+            ic::Vec3f axis = up.crs(forward).nor();
+            return from_axis_angle(axis, angle);
+        }
+
+        /** @return A quaternion that has the effect of rotating about an arbitrary unit axis by an angle. */
+        Quaternion from_axis_angle(ic::Vec3f &axis, float angle) {
+            float halfAngle = angle / 2.0f;
+            float sine = sin(halfAngle);
+
+            x = axis.x() * sine;
+            y = axis.y() * sine;
+            z = axis.z() * sine;
+            w = cos(halfAngle);
+
+            return *this;
+        }
+
+        Quaternion nor() {
+            Quaternion result;
+
+            float length = len();
+
+            result.x = x / length;
+            result.y = y / length;
+            result.z = z / length;
+            result.w = w / length;
+        
+            return result;
+        }
+
+
+        float len() {
+            return sqrt(x*x + y*y + z*z + w*w);
+        }
+
+        float len2() {
+            return x*x + y*y + z*z + w*w;
         }
     };
 }
