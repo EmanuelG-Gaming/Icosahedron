@@ -177,6 +177,25 @@ namespace ic {
             return *this;
         }
 
+        /** @brief Spherical interpolation. 
+         *  @param other An unit quaternion that often represents a rotation.
+         *  @param alpha A number in the interval [0, 1].
+        */
+        Quaternion interpolate(const Quaternion &other, float alpha) {
+            float cosine = this->dot(other);
+            float angle = acos(cosine);
+
+            float a1 = (sin(1.0f - alpha) * angle) / sin(angle);
+            float a2 = sin(alpha * angle) / sin(angle);
+
+            x = a1 * x + a2 * other.x;
+            y = a1 * y + a2 * other.y;
+            z = a1 * z + a2 * other.z;
+            w = a1 * w + a2 * other.w;
+            
+            return nor();
+        }
+
         Quaternion nor() {
             Quaternion result;
 
@@ -188,6 +207,10 @@ namespace ic {
             result.w = w / length;
         
             return result;
+        }
+
+        float dot(const Quaternion &other) {
+            return x*other.x + y*other.y + z*other.z + w*other.w;
         }
 
 

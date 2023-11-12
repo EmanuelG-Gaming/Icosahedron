@@ -58,8 +58,8 @@ class PhysicsDebug : public ic::Application {
             kineticEnergy = 0.0f;
 
             ic::KeyboardController *keys = new ic::KeyboardController();
-            keys->add_key_up_action([this]() { add_object(-3.0f, 0.0f, 5.0f, 0.01f ); }, KEY_P);
-            inputHandler.add_input(keys, "Keys");
+            keys->add_action([this]() { add_object(-3.0f, 0.0f, 5.0f, 0.01f ); }, KEY_P);
+            ic::InputHandler::get().add_input(keys, "Keys");
 
             return true;
         }
@@ -122,7 +122,7 @@ class PhysicsDebug : public ic::Application {
             int sides = rand() % 5 + 3;
 
             ic::Mesh2D *mesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(sides, radius);
-            mesh->set_material(ic::MeshMaterial2D(ic::Colors::yellow, 1.0f));
+            mesh->set_material(ic::MeshMaterial2D(ic::Colors::lightGray, 1.0f));
 
             ic::Physics::RigidObject2D *rigidBody = new ic::Physics::RigidObject2D();
             rigidBody->collider = new ic::Physics::CircleCollider(radius);
@@ -138,6 +138,11 @@ class PhysicsDebug : public ic::Application {
         void dispose() override {
             shader->clear();
             mesh2->dispose();
+
+
+            for (auto &mesh : meshes) {
+                mesh->dispose();
+            }
         }
 };
 

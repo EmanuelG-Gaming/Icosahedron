@@ -19,7 +19,7 @@ namespace ic {
         ic::Vec3f baseColor;
 
         MeshMaterial2D() : baseColor({1.0f, 1.0f, 1.0f}), colorBlending(1.0f) {}
-        MeshMaterial2D(ic::Color baseColor, float colorBlending = 1.0f) : baseColor({ baseColor.r / 255.0f, baseColor.g / 255.0f, baseColor.b / 255.0f }), colorBlending(colorBlending) {}
+        MeshMaterial2D(ic::Color color, float colorBlending = 1.0f) : baseColor({ color.r / 255.0f, color.g / 255.0f, color.b / 255.0f }), colorBlending(colorBlending) {}
     };
 
     class Mesh2D {
@@ -29,6 +29,10 @@ namespace ic {
             
             /** @brief Overrides the mesh's current model-level transformation matrix. */
             void set_transformation(const ic::Mat4x4 &to);
+
+            /** @brief Incrementally multiplies this mesh's model matrix with another matrix. */
+            void combine_transformation(ic::Mat4x4 &with);
+
 
             void set_material(ic::MeshMaterial2D newMaterial);
 

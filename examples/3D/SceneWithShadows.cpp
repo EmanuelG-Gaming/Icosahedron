@@ -230,7 +230,7 @@ class SceneWithShadows : public ic::Application {
             camera = new ic::Camera3D();
             camera->position = { -3.0f, 1.5f, 0.0f };
 
-            controller = new ic::OrbitalCameraController3D(camera, &inputHandler);
+            controller = new ic::OrbitalCameraController3D(camera, &ic::InputHandler::get());
             controller->center = { 0.0f, 0.5f, 0.0f };
 
             time = 0.0f;

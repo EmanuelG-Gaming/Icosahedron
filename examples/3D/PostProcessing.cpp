@@ -165,27 +165,17 @@ class PostProcessing : public ic::Application {
             
             framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
 
-            mesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_cube(0.5f));
-            mesh->jump_attribute();
-            mesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped());
-            mesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
-            mesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
+            mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
+            floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
             
-            
-            floorMesh = new ic::Mesh3D(ic::GeometryGenerator::get().generate_parallelipiped(5.0f * 5, 0.1f, 5.0f * 5));
-            floorMesh->jump_attribute();
-            floorMesh->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_parallelipiped(10.0f * 5, 0.2f, 10.0f * 5));
-            floorMesh->add_attribute("normal", 3, ic::GeometryGenerator::get().generate_normal_parallelipiped());
-            floorMesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
-            floorMesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
-
-            screenQuad = new ic::Mesh2D(ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
-            screenQuad->add_attribute("textureCoords", 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            screenQuad = new ic::Mesh2D();
+            screenQuad->add_attribute("positions", 0, 2, ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
+            screenQuad->add_attribute("textureCoords", 1, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
             screenQuad->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
             camera = new ic::Camera3D();
             camera->position = { -3.0f, 1.5f, 0.0f };
-            controller = new ic::FreeRoamCameraController3D(camera, &inputHandler);
+            controller = new ic::FreeRoamCameraController3D(camera, &ic::InputHandler::get());
             controller->flying = true;
             time = 0.0f;
             

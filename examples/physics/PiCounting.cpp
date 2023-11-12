@@ -52,10 +52,10 @@ class PiCounting : public ic::Application {
             floorMesh = ic::GeometryGenerator::get().generate_rectangle_mesh(200.0f, 0.3f, 200.0f, 0.3f);
             floorMesh->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
 
-            movingMesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(8, 0.2f);
+            movingMesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(32, 0.2f);
             movingMesh->set_material(ic::MeshMaterial2D(ic::Colors::yellow, 1.0f));
             
-            rigidMesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(8, 0.2f);
+            rigidMesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(32, 0.2f);
             rigidMesh->set_material(ic::MeshMaterial2D(ic::Colors::cyan, 1.0f));
             
 
@@ -84,7 +84,7 @@ class PiCounting : public ic::Application {
             moving->collider = new ic::Physics::CircleCollider(0.2f);
             moving->dynamic = true;
             moving->set_mass(100.0f);
-            moving->set_position(5.0f, -0.3f + 0.2f);
+            moving->set_position(5.0f, -0.3f);
             moving->apply_velocity(-1.0f, 0.0f);
         
             level->add_object(moving);
@@ -112,13 +112,14 @@ class PiCounting : public ic::Application {
 
             ic::KeyboardController *keys = new ic::KeyboardController();
             keys->add_key_up_action([this]() { spectatingMoving = !spectatingMoving; }, KEY_Q);
-            inputHandler.add_input(keys, "Keys");
+            ic::InputHandler::get().add_input(keys, "Keys");
 
             return true;
         }
 
         void window_size_changed(int w, int h) override {
-            
+            camera->width = uiCamera->width = w;
+            camera->height = uiCamera->height = h;
         }
 
         bool handle_event(ic::Event event, float dt) override { 
@@ -158,7 +159,9 @@ class PiCounting : public ic::Application {
 
             renderer.draw_string(textBatch, atlas, " = 3.14159265...", 0.55f, 0.65f);
             renderer.draw_string(textBatch, atlas, "Collisions: " + std::to_string(collisions), 0.4f, 0.85f);
-
+            renderer.draw_string(textBatch, atlas, "Use the Q key to", -1.5f, 0.85f, 0.8f, 0.8f);
+            renderer.draw_string(textBatch, atlas, "switch between the two objects.", -1.5f, 0.75f, 0.8f, 0.8f);
+            
             textBatch->render();
 
 

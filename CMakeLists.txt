@@ -5,7 +5,6 @@ project(engine VERSION 0.4.0 LANGUAGES C CXX)
 
 add_subdirectory("third-party/glad")
 add_subdirectory("third-party/soloud")
-add_subdirectory("third-party/testing")
 
 if (WIN32)
     set(SDL2_DIR ${CMAKE_SOURCE_DIR}/third-party/SDL2)
@@ -61,11 +60,11 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${SDL2_INCLUDES}
 target_link_libraries(icosahedron-main PUBLIC freetype)
 target_include_directories(icosahedron-main PRIVATE ${FREETYPE2_INCLUDES})
 
-target_link_libraries(icosahedron-main PUBLIC Icosahedron Physics UI testing)
+target_link_libraries(icosahedron-main PUBLIC Icosahedron Physics UI)
 
 
 ##### Examples #####
-add_executable(icosahedron-examples "examples/3D/Bloom.cpp")
+add_executable(icosahedron-examples "examples/2D/Mesh2D.cpp")
 
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(OpenGL)
@@ -76,7 +75,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR} ${SDL2_INCLUDES} ${FREETYPE2_INC
 target_link_libraries(icosahedron-examples PUBLIC freetype)
 target_include_directories(icosahedron-examples PRIVATE ${FREETYPE2_INCLUDES})
 
-target_link_libraries(icosahedron-examples PUBLIC Icosahedron Physics UI testing)
+target_link_libraries(icosahedron-examples PUBLIC Icosahedron Physics UI)
 
 set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 include(CTest)

@@ -207,7 +207,7 @@ class TextureArrays : public ic::Application {
 
             camera = new ic::Camera3D();
             camera->position = { -3.0f, 1.5f, 0.0f };
-            controller = new ic::FreeRoamCameraController3D(camera, &inputHandler);
+            controller = new ic::FreeRoamCameraController3D(camera, &ic::InputHandler::get());
             controller->flying = true;
             time = 0.0f;
             

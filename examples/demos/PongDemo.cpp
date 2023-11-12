@@ -24,8 +24,7 @@ class PongDemo : public ic::Application {
     public:
         bool init() override {
             displayName = "Pong Demo";
-            //scaling = ic::WindowScaling::fullscreen;
-
+            
             return true;
         }
         
@@ -66,8 +65,8 @@ class PongDemo : public ic::Application {
             cont2->add_action([cont2]() {cont2->direction.y() = -1;}, KEY_DOWN);
             
 
-            inputHandler.add_input(cont1, "paddle1");
-            inputHandler.add_input(cont2, "paddle2");
+            ic::InputHandler::get().add_input(cont1, "paddle1");
+            ic::InputHandler::get().add_input(cont2, "paddle2");
 
             return true;
         }
@@ -126,8 +125,8 @@ class PongDemo : public ic::Application {
 
 
             float speed = 1.0f;
-            auto *controller1 = inputHandler.find_keyboard("paddle1");
-            auto *controller2 = inputHandler.find_keyboard("paddle2");
+            auto *controller1 = ic::InputHandler::get().find_keyboard("paddle1");
+            auto *controller2 = ic::InputHandler::get().find_keyboard("paddle2");
             
             ic::Vec2i dir1 = controller1->get_direction();
             ic::Vec2i dir2 = controller2->get_direction();

@@ -188,6 +188,19 @@ namespace ic {
 
             return result;
         }
+
+        /** @brief Rotates this vector by an angle beginning
+         *  on the positive X semiaxis, going counter-clockwise, in radians. */
+        ic::Vector<T, 2> rotate(float radians) {
+            float sine = sin(radians), cosine = cos(radians);
+
+            ic::Vector<T, 2> result;
+            result.x() = cosine * x() - sine * y();
+            result.y() = sine * x() + cosine * y();
+
+            return result;
+        }
+
         Vec clamp(Vec lower, Vec upper) {
             Vec result;
 

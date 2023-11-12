@@ -76,15 +76,15 @@ class Electrostatics : public ic::Application {
 
             ic::MouseController *controller = new ic::MouseController();
             controller->add_mouse_scroll_up_action([this]() { 
-                float p = inputHandler.find_mouse("mouse")->get_wheel_direction() * 0.1f;
+                float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.1f;
                 camera->scale = std::max(0.1f, std::min(camera->scale + p, 4.0f));
             });
             controller->add_mouse_scroll_down_action([this]() { 
-                float p = inputHandler.find_mouse("mouse")->get_wheel_direction() * 0.1f;
+                float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.1f;
                 camera->scale = std::max(0.1f, std::min(camera->scale + p, 4.0f));
             });
 
-            inputHandler.add_input(controller, "mouse");
+            ic::InputHandler::get().add_input(controller, "mouse");
 
 
             ic::KeyboardController *keyboard = (new ic::KeyboardController())->with_WASD();
@@ -95,7 +95,7 @@ class Electrostatics : public ic::Application {
 
             // Neutrons
             keyboard->add_key_up_action([this]() {
-                ic::Vec2i p = inputHandler.find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
                 ic::Vec2f levelPos = camera->unproject(pos);
@@ -105,7 +105,7 @@ class Electrostatics : public ic::Application {
 
             // Protons
             keyboard->add_key_up_action([this]() {
-                ic::Vec2i p = inputHandler.find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
                 ic::Vec2f levelPos = camera->unproject(pos);
@@ -115,7 +115,7 @@ class Electrostatics : public ic::Application {
 
             // Electrons
             keyboard->add_key_up_action([this]() {
-                ic::Vec2i p = inputHandler.find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
                 ic::Vec2f levelPos = camera->unproject(pos);
@@ -123,14 +123,15 @@ class Electrostatics : public ic::Application {
                 add_object(levelPos.x(), levelPos.y(), 0.0f, 0.0f, -1.0f, 1.0f); 
             }, KEY_E);
 
-            inputHandler.add_input(keyboard, "keyboard");
+            ic::InputHandler::get().add_input(keyboard, "keyboard");
 
             
             return true;
         }
 
         void window_size_changed(int w, int h) override {
-            
+            uiCamera->width = camera->width = w;
+            uiCamera->height = camera->height = h;
         }
 
         bool handle_event(ic::Event event, float dt) override { 
@@ -142,7 +143,7 @@ class Electrostatics : public ic::Application {
                 vectorFieldRefreshTime += dt;
             }
 
-            auto *controller = inputHandler.find_keyboard("keyboard");
+            auto *controller = ic::InputHandler::get().find_keyboard("keyboard");
             ic::Vec2i dir = controller->get_direction();
 
             float speed = 1.0f;
@@ -248,7 +249,7 @@ class Electrostatics : public ic::Application {
                         c = (c * 5.0f).clamp({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f });
                         c = c * 255.0f;
 
-                        ic::Color color = ic::Color(c);
+                        ic::Color color = ic::Color((uint8_t) c.x(), (uint8_t) c.y(), (uint8_t) c.z());
 
                         renderer.draw_line(vectorFieldBatch, x, y, x + v.x(), y + v.y(), color);
                         renderer.draw_line(vectorFieldBatch, x + v.x(), y + v.y(), x + v.x() * 0.9f - perpendicular.x(), y + v.y() * 0.9f - perpendicular.y(), color);

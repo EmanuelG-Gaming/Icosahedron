@@ -150,6 +150,11 @@ class TiledDemo : public ic::Application {
             return true;
         }
 
+        void window_size_changed(int w, int h) override {
+            uiCamera->width = camera->width = w;
+            uiCamera->height = camera->height = h;
+        }
+
         bool handle_event(ic::Event event, float dt) override {
             return true;
         }
@@ -206,7 +211,7 @@ class TiledDemo : public ic::Application {
 
             // Dynamics
             float speed = 3.0f;
-            auto *controller = inputHandler.find_keyboard("WASD");
+            auto *controller = ic::InputHandler::get().find_keyboard("WASD");
             ic::Vec2i dir = controller->direction;
 
             shape->r.position.x() += dir.x() * speed * dt;
@@ -278,8 +283,8 @@ class TiledDemo : public ic::Application {
             uiCamera->use(textShader);
 
             atlas->use();
-            renderer.draw_string(textBatch, atlas, "T key - toggle potential collisions", -1.0f, 0.9f, 0.8f, 0.8f);
-            renderer.draw_string(textBatch, atlas, std::to_string(collected) + "/" + std::to_string(initialSize) + " polygons remaining", -1.0f, 0.75f, 0.8f, 0.8f);
+            renderer.draw_string(textBatch, atlas, "T key - toggle potential collisions", -1.5f, 0.9f, 0.8f, 0.8f);
+            renderer.draw_string(textBatch, atlas, std::to_string(collected) + "/" + std::to_string(initialSize) + " polygons remaining", -1.5f, 0.75f, 0.8f, 0.8f);
 
             if (completedLevel) {
                 float t = completeTimer / COMPLETE_POPUP_ANIMATION_DURATION;

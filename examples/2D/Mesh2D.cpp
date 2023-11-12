@@ -1,11 +1,10 @@
 #include <Icosahedron/Core.h>
 
-/* Polygon example. Demonstrates the use of per-vertex colors, separate texturing (no atlas), matrix transformations, and materials, all in the same shader program. */
+/* Polygon example. Demonstrates the use of per-vertex colors, texturing, matrix transformations, and materials, all in the same shader program. */
 class Mesh2D : public ic::Application {
-    ic::Mesh2D *mesh1;
-    ic::Mesh2D *mesh2;
+    ic::Mesh2D *mesh1, *mesh2;
 
-    ic::Texture *texture, *whiteTexture;
+    ic::Texture *texture;
     ic::Camera2D *camera;
 
     ic::Shader *shader;
@@ -23,32 +22,39 @@ class Mesh2D : public ic::Application {
             // Mesh 1
             mesh1 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(7, 0.3f);
 
-            // Note that this can also be more verbosely expressed as
+            // Note that this can also be more verbosely expressed as:
+            //auto vertices = ic::GeometryGenerator::get().generate_regular_polygon(7, 0.3f);
             //mesh1 = new ic::Mesh2D();
-            //mesh1->add_attribute("position", 0, 2, positions);
-            //mesh1->add_attribute("textureCoords", 2, 2, textureCoords);
-            //mesh1->set_index_buffer(indices);
+            //mesh1->add_attribute("position", 0, 2, vertices);
+            //mesh1->add_attribute("textureCoords", 2, 2, ic::GeometryGenerator::get().generate_UV_polygon(vertices));
+            //mesh1->set_index_buffer(ic::EarClippingTriangulation::get().triangulate(vertices));
 
-            mesh1->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
+            // Add a material that doesn't add any tint to the texture at all
+            mesh1->set_material(ic::MeshMaterial2D(ic::Colors::white, 0.0f));
             
             
             // Mesh 2
             mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(3, 0.3f);
             mesh2->add_attribute("color", 1, 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue });
 
+            // Add a material that slightly brightens the colours shown by the vertex attributes 
             mesh2->set_material(ic::MeshMaterial2D(ic::Colors::white, 0.2f));
             mesh2->set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
             
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
-            
-            texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
-            whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
 
+            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
+            
             camera = new ic::Camera2D();
 
             time = 0.0f;
 
             return true;
+        }
+
+        void window_size_changed(int w, int h) override {
+            camera->width = w;
+            camera->height = h;
         }
 
         bool handle_event(ic::Event event, float dt) override { 
@@ -74,9 +80,13 @@ class Mesh2D : public ic::Application {
             shader->use();
             camera->use(shader);
 
+
+            // Draws a textured mesh
             texture->use();
             mesh1->draw(shader);
-            whiteTexture->use();
+            texture->unuse();
+
+            // Draws an untextured mesh with vertex colours
             mesh2->draw(shader);
 
             return true; 
@@ -86,8 +96,7 @@ class Mesh2D : public ic::Application {
             shader->clear();
             
             texture->dispose();
-            whiteTexture->dispose();
-
+            
             mesh1->dispose();
             mesh2->dispose();
         }

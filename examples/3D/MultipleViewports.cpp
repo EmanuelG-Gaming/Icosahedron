@@ -157,7 +157,7 @@ class MultipleViewports : public ic::Application {
             secondaryCamera->position = { 3.0f, 5.0f, 3.0f };
             secondaryCamera->lookingAt = { 0.0f, 0.0f, 0.0f };
 
-            controller = new ic::FreeRoamCameraController3D(camera, &inputHandler);
+            controller = new ic::FreeRoamCameraController3D(camera, &ic::InputHandler::get());
             controller->flying = true;
             time = 0.0f;
             

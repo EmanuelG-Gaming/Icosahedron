@@ -23,8 +23,14 @@ namespace ic {
             /** @brief Overrides the mesh's current model-level transformation matrix. */
             void set_transformation(const ic::Mat4x4 &to);
 
+            /** @brief Incrementally multiplies this mesh's model matrix with another matrix. */
+            void combine_transformation(ic::Mat4x4 &with);
+
             /** @brief Overrides the mesh normals' current model-level transformation matrix. */
             void set_normal_transformation(const ic::Mat4x4 &to);
+
+            void combine_normal_transformation(ic::Mat4x4 &with);
+
 
             void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<float> &content);
             void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<int> &content);

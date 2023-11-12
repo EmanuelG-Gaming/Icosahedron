@@ -26,8 +26,8 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::circle_circle(Circl
 ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::rectangle_circle(RectangleCollider *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) {
     float width = colliderA->width;
     float height = colliderA->height;
-
-    ic::Vec2f pointing = transformA->position - transformB->position;
+ 
+    ic::Vec2f pointing = (transformA->position - transformB->position).rotate(-transformA->angle);
     if ((transformB->position.x() >= transformA->position.x() - width && transformB->position.x() <= transformA->position.x() + width) &&
         (transformB->position.y() >= transformA->position.y() - height && transformB->position.y() <= transformA->position.y() + height)) {
         // If the circle's center is inside the rectangle
@@ -35,7 +35,8 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::rectangle_circle(Re
     }
 
     ic::Vec2f clamped = pointing.clamp(ic::Vec2f({ -width, -height }), ic::Vec2f({ width, height }));
-    ic::Vec2f closest = clamped + transformB->position;
+
+    ic::Vec2f closest = clamped.rotate(transformA->angle) + transformB->position;
 
     float distance2 = closest.dst2(transformA->position);
     bool intersecting = distance2 <= (colliderB->radius * colliderB->radius);

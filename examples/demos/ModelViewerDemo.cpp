@@ -128,22 +128,20 @@ class ModelViewerDemo : public ic::Application {
 
             camera = new ic::Camera3D(perspective);
             camera->position = { -3.0f, 1.5f, 0.0f };
-            controller = new ic::OrbitalCameraController3D(camera, &inputHandler);
-            //controller = new ic::FreeRoamCameraController3D(camera, &inputHandler);
-            //controller->flying = true;
-
+            controller = new ic::OrbitalCameraController3D(camera, &ic::InputHandler::get());
+            
             // Inputs
             auto scaling = new ic::KeyboardController();
             scaling->add_action([this](){ scale -= 5 * delta; }, KEY_UP);
             scaling->add_action([this](){ scale += 5 * delta; }, KEY_DOWN);
 
-            inputHandler.add_input(scaling, "orbitScaling");
+            ic::InputHandler::get().add_input(scaling, "orbitScaling");
 
             auto toggle = new ic::KeyboardController();
             toggle->add_key_up_action([this](){ perspective = !perspective; }, KEY_Q);
             toggle->add_key_up_action([this](){ rotating = !rotating; }, KEY_R);
             
-            inputHandler.add_input(toggle, "toggle");
+            ic::InputHandler::get().add_input(toggle, "toggle");
 
             return true;
         }

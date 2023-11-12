@@ -136,18 +136,20 @@ namespace ic {
                 in vec3 vColor;
                 in vec2 vTCoords;
                 
-                uniform Material material = Material(0.0, vec3(1.0, 1.0, 1.0));
+                uniform Material material = Material(1.0, vec3(1.0, 1.0, 1.0));
                 uniform sampler2D sampleTexture;
 
                 out vec4 outColor;
 
                 void main() {
-                    vec4 color = texture(sampleTexture, vTCoords);
-                    if (color.a <= 0.1) discard;
-                    if (color.rgb == vec3(0.0, 0.0, 0.0)) color = vec4(1.0, 1.0, 1.0, 1.0);
+                    vec4 textureColor = texture(sampleTexture, vTCoords);
+                    if (textureColor.a <= 0.1) discard;
                     
-                    vec4 c = mix(vec4(vColor, 1.0), vec4(material.baseColor, 1.0), material.colorBlending) * color;
+                    vec4 first = vec4(vColor, 1.0) * textureColor;
+                    if (first.rgb == vec3(0.0, 0.0, 0.0)) first = textureColor;
+                    if (first.rgb == vec3(0.0, 0.0, 0.0)) first = vec4(vColor, 1.0);
                     
+                    vec4 c = mix(first, vec4(material.baseColor, 1.0), material.colorBlending);
                     outColor = c;
                 }
             );

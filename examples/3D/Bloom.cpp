@@ -278,7 +278,7 @@ class Bloom : public ic::Application {
             // First pass - scene
             sceneFramebuffer->use();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            
+
             shader->use();
             shader->set_uniform_vec3f("viewPosition", camera->position);
             camera->upload_to_shader(shader);
@@ -300,7 +300,7 @@ class Bloom : public ic::Application {
 
             // Second pass - blurring via the two ping pong framebuffers
             bool horizontal = true, firstIteration = true;
-            int amount = 5;
+            int amount = 10;
 
             blurShader->use();
             for (int i = 0; i < amount; i++) {

@@ -64,9 +64,10 @@ class BasicPhysics : public ic::Application {
         }
 
         bool update(float dt) override {
+            level->update(dt);
+            
             mesh1->set_transformation(ic::Mat4x4().set_translation<2>(rigidBody1->transform->position));
             mesh2->set_transformation(ic::Mat4x4().set_translation<2>(rigidBody2->transform->position));
-            
 
             clear_color(ic::Colors::blue);
 
@@ -83,7 +84,6 @@ class BasicPhysics : public ic::Application {
             shader->clear();
             mesh1->dispose();
             mesh2->dispose();
-            level->dispose();
         }
 };
 

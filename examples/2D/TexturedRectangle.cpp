@@ -24,7 +24,7 @@ class TexturedRectangle : public ic::Application {
 
             camera = new ic::Camera2D();
         
-            inputHandler.add_input((new ic::KeyboardController())->with_WASD(), "WASD");
+            ic::InputHandler::get().add_input((new ic::KeyboardController())->with_WASD(), "WASD");
             shapePosition = { 0.0f, 0.0f };
 
             return true;
@@ -35,7 +35,7 @@ class TexturedRectangle : public ic::Application {
         }
     
         bool update(float dt) override {
-            auto *controller = inputHandler.find_keyboard("WASD");
+            auto *controller = ic::InputHandler::get().find_keyboard("WASD");
             ic::Vec2i dir = controller->get_direction();
 
             float speed = 1.0f;

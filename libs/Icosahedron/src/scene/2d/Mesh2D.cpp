@@ -16,6 +16,10 @@ void ic::Mesh2D::set_transformation(const ic::Mat4x4 &to) {
     this->model = to;
 }
 
+void ic::Mesh2D::combine_transformation(ic::Mat4x4 &with) {
+    this->model = this->model * with;
+}
+
 void ic::Mesh2D::add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<float> &content) {
     if (this->vao == nullptr) {
         throw std::runtime_error("Couldn't add vertex attribute. The VAO was not initialized.");
