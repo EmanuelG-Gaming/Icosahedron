@@ -279,8 +279,13 @@ void ic::Application::close() {
 void ic::Application::set_current_working_directory() {
     std::string dir = std::string(SDL_GetBasePath());
     std::replace(dir.begin(), dir.end(), '\\', '/');
-    dir.erase(dir.find("/build"));
-    
+
+    // Don't erase the build directory if there's no build directory, obviously
+    std::size_t findResult = dir.find("/build");
+    if (findResult != std::string::npos) {
+        dir.erase(findResult);
+    }
+
     std::cout << dir << "\n";
     
     std::filesystem::current_path(dir);

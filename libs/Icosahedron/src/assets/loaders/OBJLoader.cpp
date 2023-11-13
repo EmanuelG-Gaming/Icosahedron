@@ -39,8 +39,6 @@ ic::Mesh3D *ic::OBJLoader::get_mesh(const std::string &objectFileName) {
         else if (!key.compare("vn")) normalSize++;
         else if (!key.compare("f")) faceSize++;
     }
-    std::cout << faceSize;
-
     objRead.close();
     
     std::vector<ic::Vec3f> posReference(posSize);
