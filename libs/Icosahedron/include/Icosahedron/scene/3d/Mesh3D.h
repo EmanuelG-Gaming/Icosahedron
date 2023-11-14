@@ -32,11 +32,11 @@ namespace ic {
             void combine_normal_transformation(ic::Mat4x4 &with);
 
 
-            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<float> &content);
-            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<int> &content);
-            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<ic::Color> &content);
-            void add_attribute(const std::string &location, int attributeIndex, const std::vector<ic::Vec2f> &content);
-            void add_attribute(const std::string &location, int attributeIndex, const std::vector<ic::Vec3f> &content);
+            void add_attribute(int attributeIndex, int dimensions, const std::vector<float> &content);
+            void add_attribute(int attributeIndex, int dimensions, const std::vector<int> &content);
+            void add_attribute(int attributeIndex, int dimensions, const std::vector<ic::Color> &content);
+            void add_attribute(int attributeIndex, const std::vector<ic::Vec2f> &content);
+            void add_attribute(int attributeIndex, const std::vector<ic::Vec3f> &content);
 
             void set_index_buffer(const std::vector<unsigned int> &content);
             

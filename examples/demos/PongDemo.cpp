@@ -1,4 +1,9 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/math/geom/Rectangle.h>
+#include <Icosahedron/scene/2d/Camera2D.h>
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <Icosahedron/graphics/Colors.h>
+
 
 struct RectangleShape {
     ic::Rectangle r;

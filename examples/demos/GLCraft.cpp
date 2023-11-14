@@ -1,4 +1,19 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/util/Noise.h>
+
+#include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/graphics/gl/Shader.h>
+#include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/gl/TextureArray.h>
+#include <Icosahedron/graphics/Colors.h>
+
+#include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
+#include <Icosahedron/scene/3d/Camera3D.h>
+#include <Icosahedron/scene/3d/Mesh3D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <Icosahedron/assets/loaders/TextureLoader.h>
+
 
 std::string chunkVertexShader = IC_ADD_GLSL_DEFINITION(
     layout (location = 0) in vec3 position;
@@ -298,10 +313,10 @@ struct Chunk {
 
             std::cout << data.positions.size() << "\n";
 
-            mesh->add_attribute("position", 0, 3, data.positions);
-            mesh->add_attribute("texture indices", 2, 1, data.textureIndices);
-            mesh->add_attribute("texture coord index", 3, 1, data.textureCoordIndices);
-            mesh->add_attribute("normals", 4, 3, data.normals);
+            mesh->add_attribute(0, 3, data.positions);
+            mesh->add_attribute(2, 1, data.textureIndices);
+            mesh->add_attribute(3, 1, data.textureCoordIndices);
+            mesh->add_attribute(4, 3, data.normals);
             mesh->set_index_buffer(data.indices);
         }
 

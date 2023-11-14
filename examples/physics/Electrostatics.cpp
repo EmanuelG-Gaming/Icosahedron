@@ -1,7 +1,20 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/util/GeometryGenerator.h>
+
+#include <Icosahedron/graphics/gl/Shader.h>
+#include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/graphics/Colors.h>
+#include <Icosahedron/graphics/gl/Texture.h>
+
+#include <Icosahedron/scene/2d/Mesh2D.h>
+#include <Icosahedron/scene/2d/Camera2D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <Icosahedron/assets/loaders/TextureLoader.h>
 
 #include <Physics/2d/levels/PhysicsLevel2D.h>
 #include <Physics/2d/objects/RigidObject2D.h>
+
 
 struct PointCharge : public ic::Physics::RigidObject2D {
     public:

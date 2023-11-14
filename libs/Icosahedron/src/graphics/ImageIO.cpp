@@ -1,7 +1,7 @@
 #include <Icosahedron/graphics/ImageIO.h>
 
-ic::Image ic::ImageIO::read_png(ic::File file) {
-    SDL_Surface *surface = IMG_Load(file.get_path().c_str());
+ic::Image ic::ImageIO::read_png(const std::string &fileName) {
+    SDL_Surface *surface = IMG_Load(fileName.c_str());
     if (surface == NULL) {
         throw std::runtime_error("IMG_Load Error: " + std::string(IMG_GetError()) + "\n");
     }
@@ -38,8 +38,8 @@ ic::Image ic::ImageIO::read_png(ic::File file) {
     return result;
 }
 
-ic::Image ic::ImageIO::read_bmp(ic::File file) {
-    SDL_Surface *surface = SDL_LoadBMP(file.get_path().c_str());
+ic::Image ic::ImageIO::read_bmp(const std::string &fileName) {
+    SDL_Surface *surface = SDL_LoadBMP(fileName.c_str());
     if (surface == NULL) {
         throw std::runtime_error("IMG_Load Error: " + std::string(IMG_GetError()) + "\n");
     }
@@ -76,8 +76,8 @@ ic::Image ic::ImageIO::read_bmp(ic::File file) {
     return result;
 }
 
-ic::Image ic::ImageIO::read_ppm(ic::File file) {
-    std::ifstream read(file.get_path());
+ic::Image ic::ImageIO::read_ppm(const std::string &fileName) {
+    std::ifstream read(fileName);
 
     if (!read.is_open() || read.fail()) {
         printf("Couldn't open the .ppm file, returning a default image instead.\n");
@@ -121,30 +121,30 @@ ic::Image ic::ImageIO::read_ppm(ic::File file) {
 
 
 
-void ic::ImageIO::write_png(ic::File file, ic::Image &image) {
+void ic::ImageIO::write_png(const std::string &fileName, ic::Image &image) {
     SDL_Surface *surface = this->to_surface(image);
     if (surface == NULL) {
         return;
     }
-    if (IMG_SavePNG(surface, file.get_path().c_str()) == -1) {
+    if (IMG_SavePNG(surface, fileName.c_str()) == -1) {
         printf("PNG image couldn't be saved!\n");
     }
     SDL_FreeSurface(surface);
 }
 
-void ic::ImageIO::write_bmp(ic::File file, ic::Image &image) {
+void ic::ImageIO::write_bmp(const std::string &fileName, ic::Image &image) {
     SDL_Surface *surface = this->to_surface(image);
     if (surface == NULL) {
         return;
     }
-    if (SDL_SaveBMP(surface, file.get_path().c_str()) == -1) {
+    if (SDL_SaveBMP(surface, fileName.c_str()) == -1) {
         printf("Bitmap image couldn't be saved!\n");
     }
     SDL_FreeSurface(surface);
 }
 
-void ic::ImageIO::write_ppm(ic::File file, ic::Image &image) {
-    std::ofstream output(file.get_path());
+void ic::ImageIO::write_ppm(const std::string &fileName, ic::Image &image) {
+    std::ofstream output(fileName);
     float width = image.get_width();
     float height = image.get_height();
 

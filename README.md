@@ -20,7 +20,7 @@ For some, this can be pretty straightforward, but here it is:
 
 (Assuming you've got a C++ compiler, and a computer with OpenGL >= 3.0 support)
 
-If you've managed to build this project successfully, you may see a `build` folder being created, with something like `engine.exe` or `icosahedron-examples.exe`. You can run either `.\build\engine` or `.build\icosahedron-examples` on the terminal, and these will start your application.
+If you've managed to build this project successfully, you may see a `build` folder being created, with something like `icosahedron-main.exe` or `icosahedron-examples.exe`. You can run either `.\build\icosahedron-main` or `.build\icosahedron-examples` on the terminal, and these will start your application.
 
 # Documentation
 See [https://github.com/EmanuelG-Gaming/Icosahedron/wiki](https://github.com/EmanuelG-Gaming/Icosahedron/wiki).

@@ -1,4 +1,16 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/util/GeometryGenerator.h>
+
+#include <Icosahedron/graphics/gl/Shader.h>
+#include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/graphics/Colors.h>
+#include <Icosahedron/graphics/gl/Texture.h>
+
+#include <Icosahedron/scene/2d/Mesh2D.h>
+#include <Icosahedron/scene/2d/Camera2D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <Icosahedron/assets/loaders/TextureLoader.h>
 
 #include <Physics/2d/levels/PhysicsLevel2D.h>
 #include <Physics/2d/objects/RigidObject2D.h>
@@ -47,11 +59,8 @@ class PiCounting : public ic::Application {
             uiCamera = new ic::Camera2D();
 
             wallMesh = ic::GeometryGenerator::get().generate_rectangle_mesh(0.3f, 0.5f, 1.0f, 2.0f);
-            wallMesh->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
-            
             floorMesh = ic::GeometryGenerator::get().generate_rectangle_mesh(200.0f, 0.3f, 200.0f, 0.3f);
-            floorMesh->set_material(ic::MeshMaterial2D(ic::Colors::white, 1.0f));
-
+            
             movingMesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(32, 0.2f);
             movingMesh->set_material(ic::MeshMaterial2D(ic::Colors::yellow, 1.0f));
             

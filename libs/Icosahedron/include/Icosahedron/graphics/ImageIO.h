@@ -9,7 +9,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include <Icosahedron/files/File.h>
 #include <Icosahedron/graphics/Image.h>
 
 
@@ -21,13 +20,13 @@ namespace ic {
                 return ins;
             }
 
-            ic::Image read_png(ic::File file);
-            ic::Image read_bmp(ic::File file);
-            ic::Image read_ppm(ic::File file);
+            ic::Image read_png(const std::string &fileName);
+            ic::Image read_bmp(const std::string &fileName);
+            ic::Image read_ppm(const std::string &fileName);
         
-            void write_png(ic::File file, ic::Image &image);
-            void write_bmp(ic::File file, ic::Image &image);
-            void write_ppm(ic::File file, ic::Image &image);
+            void write_png(const std::string &fileName, ic::Image &image);
+            void write_bmp(const std::string &fileName, ic::Image &image);
+            void write_ppm(const std::string &fileName, ic::Image &image);
 
             SDL_Surface *to_surface(ic::Image &image);
 

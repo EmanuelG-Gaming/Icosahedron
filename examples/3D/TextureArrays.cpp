@@ -1,4 +1,21 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/util/GeometryGenerator.h>
+
+#include <Icosahedron/math/geom/Quaternion.h>
+
+#include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/graphics/gl/Shader.h>
+#include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/gl/TextureArray.h>
+#include <Icosahedron/graphics/Colors.h>
+
+#include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
+#include <Icosahedron/scene/3d/Camera3D.h>
+#include <Icosahedron/scene/3d/Mesh3D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <Icosahedron/assets/loaders/TextureLoader.h>
+
 
 
 std::string singleTextureFragment = IC_ADD_GLSL_DEFINITION(

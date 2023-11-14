@@ -8,7 +8,6 @@
 #include FT_FREETYPE_H
 
 #include <Icosahedron/graphics/TextAtlas.h>
-#include <Icosahedron/files/File.h>
 
 
 namespace ic {
@@ -27,7 +26,7 @@ namespace ic {
             void add_atlas(const std::string &name, const std::string &relativeFile, int height);
 
             TextAtlas *find_atlas(const std::string &name);
-              
+            
             void dispose();
               
      private:

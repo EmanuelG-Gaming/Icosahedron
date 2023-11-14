@@ -1,4 +1,22 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/util/GeometryGenerator.h>
+
+#include <Icosahedron/math/geom/Quaternion.h>
+
+#include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/graphics/gl/Shader.h>
+#include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/gl/Framebuffer.h>
+#include <Icosahedron/graphics/Colors.h>
+
+#include <Icosahedron/scene/3d/controllers/OrbitalCameraController3D.h>
+#include <Icosahedron/scene/3d/Camera3D.h>
+#include <Icosahedron/scene/3d/Mesh3D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <Icosahedron/assets/loaders/TextureLoader.h>
+#include <Icosahedron/assets/loaders/OBJLoader.h>
+
 
 std::string depthShaderVert = IC_ADD_GLSL_DEFINITION(
     layout (location = 0) in vec3 position;
@@ -222,7 +240,7 @@ class SceneWithShadows : public ic::Application {
             shadowHeight = 1024;
             shadowMap = new ic::Framebuffer(ic::TEXTURE_ATTACH_DEPTH, ic::TEXTURE_DEPTH, shadowWidth, shadowHeight);
 
-            mesh = ic::OBJLoader::get().get_mesh(ic::File("resources/models/monkey.obj").get_path());
+            mesh = ic::OBJLoader::get().get_mesh("resources/models/monkey.obj");
             
             floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 25.0f, 0.1f, 25.0f);
             floorMesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));

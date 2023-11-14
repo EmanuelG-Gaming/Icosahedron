@@ -1,4 +1,18 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/util/GeometryGenerator.h>
+
+#include <Icosahedron/math/geom/Rectangle.h>
+#include <Icosahedron/math/geom/Polygon.h>
+#include <Icosahedron/math/EarClippingTriangulation.h>
+#include <Icosahedron/math/Interpolation.h>
+
+#include <Icosahedron/scene/2d/Camera2D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+
+#include <Icosahedron/graphics/Colors.h>
+
+
 
 const std::size_t MAP_WIDTH = 16;
 const std::size_t MAP_HEIGHT = 16;

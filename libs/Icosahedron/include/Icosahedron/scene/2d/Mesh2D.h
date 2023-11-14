@@ -13,12 +13,13 @@
 #include <Icosahedron/graphics/gl/VertexArray.h>
 #include <Icosahedron/graphics/Color.h>
 
+
 namespace ic {
     struct MeshMaterial2D {
         float colorBlending;
         ic::Vec3f baseColor;
 
-        MeshMaterial2D() : baseColor({1.0f, 1.0f, 1.0f}), colorBlending(1.0f) {}
+        MeshMaterial2D() : baseColor({1.0f, 1.0f, 1.0f}), colorBlending(0.0f) {}
         MeshMaterial2D(ic::Color color, float colorBlending = 1.0f) : baseColor({ color.r / 255.0f, color.g / 255.0f, color.b / 255.0f }), colorBlending(colorBlending) {}
     };
 
@@ -36,9 +37,9 @@ namespace ic {
 
             void set_material(ic::MeshMaterial2D newMaterial);
 
-            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<float> &content);
-            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<int> &content);
-            void add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<ic::Color> &content);
+            void add_attribute(int attributeIndex, int dimensions, const std::vector<float> &content);
+            void add_attribute(int attributeIndex, int dimensions, const std::vector<int> &content);
+            void add_attribute(int attributeIndex, int dimensions, const std::vector<ic::Color> &content);
             void set_index_buffer(const std::vector<unsigned int> &content);
             
             void unuse_attribute_definitions();

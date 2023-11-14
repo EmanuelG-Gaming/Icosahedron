@@ -1,4 +1,6 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+
+#include <Icosahedron/graphics/Colors.h>
 
 #include <UI/Core.h>
 #include <UI/Label.h>

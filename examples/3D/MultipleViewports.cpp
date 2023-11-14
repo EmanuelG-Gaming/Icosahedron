@@ -1,4 +1,22 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/util/GeometryGenerator.h>
+
+#include <Icosahedron/math/geom/Quaternion.h>
+
+#include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/graphics/gl/Shader.h>
+#include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/gl/Framebuffer.h>
+#include <Icosahedron/graphics/Colors.h>
+
+#include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
+#include <Icosahedron/scene/3d/Camera3D.h>
+#include <Icosahedron/scene/3d/Mesh3D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <Icosahedron/assets/loaders/TextureLoader.h>
+#include <Icosahedron/assets/loaders/OBJLoader.h>
+
 
 std::string screenVertex = IC_ADD_GLSL_DEFINITION(
     layout (location = 0) in vec3 position;
@@ -145,9 +163,9 @@ class MultipleViewports : public ic::Application {
             secondCameraMesh = ic::OBJLoader::get().get_mesh("resources/models/icosahedron.obj");
 
             screenQuad = new ic::Mesh3D();
-            screenQuad->add_attribute("position", 0, 3, std::vector<float>({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f }));
-            screenQuad->add_attribute("textureCoords", 2, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
-            screenQuad->add_attribute("normal", 3, 3, std::vector<float>({ 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f }));
+            screenQuad->add_attribute(0, 3, std::vector<float>({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f }));
+            screenQuad->add_attribute(2, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            screenQuad->add_attribute(3, 3, std::vector<float>({ 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f }));
             screenQuad->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
             camera = new ic::Camera3D();

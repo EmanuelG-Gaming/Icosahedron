@@ -7,7 +7,7 @@ Skybox::Skybox(const std::vector<std::string> &fileNames) {
     this->textureCube = ic::CubemapLoader::get().load_png(fileNames);
     this->mesh = new ic::Mesh3D();
 
-    this->mesh->add_attribute("position", 0, 3, ic::GeometryGenerator::get().generate_cube(1.0f));
+    this->mesh->add_attribute(0, 3, ic::GeometryGenerator::get().generate_cube(1.0f));
     this->mesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
 }
 

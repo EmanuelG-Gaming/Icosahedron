@@ -1,4 +1,17 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+
+#include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/graphics/gl/Framebuffer.h>
+#include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/Colors.h>
+
+#include <Icosahedron/scene/2d/Mesh2D.h>
+#include <Icosahedron/scene/2d/Camera2D.h>
+
+#include <Icosahedron/util/GeometryGenerator.h>
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <Icosahedron/assets/loaders/TextureLoader.h>
+
 
 std::string screenVertex = IC_ADD_GLSL_DEFINITION(
     layout (location = 0) in vec2 position;
@@ -63,7 +76,7 @@ class Framebuffer : public ic::Application {
                 float y = (rand() % 100 / 100.0f - 0.5f) * 3.0f;
                 
                 ic::Mesh2D *mesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(3, 0.3f);
-                mesh->add_attribute("color", 1, 3, { ic::Colors::black, ic::Colors::black, ic::Colors::white });
+                mesh->add_attribute(1, 3, { ic::Colors::black, ic::Colors::black, ic::Colors::white });
     
                 mesh->set_material(ic::MeshMaterial2D(ic::Colors::white, 0.0f));
                 mesh->set_transformation(ic::Mat4x4().set_translation<2>({ x, y }));

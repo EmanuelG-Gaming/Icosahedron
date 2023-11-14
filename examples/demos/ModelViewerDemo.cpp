@@ -1,4 +1,20 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+
+#include <Icosahedron/math/geom/Quaternion.h>
+
+#include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/graphics/gl/Shader.h>
+#include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/Colors.h>
+
+#include <Icosahedron/scene/3d/controllers/OrbitalCameraController3D.h>
+#include <Icosahedron/scene/3d/Camera3D.h>
+#include <Icosahedron/scene/3d/Mesh3D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <Icosahedron/assets/loaders/TextureLoader.h>
+#include <Icosahedron/assets/loaders/OBJLoader.h>
+
 
 std::string fragment = IC_ADD_GLSL_DEFINITION(
     precision mediump float;
@@ -33,7 +49,6 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
         float shininess;
     };
 
-    uniform sampler2D sampleTexture;
     uniform Material material;
     uniform vec3 viewPosition;
 
@@ -53,9 +68,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 
         // Diffuse reflection
         float diffuseIntensity = clamp(dotProduct, 0.0, 1.0) * attenuation;
-        vec4 diffuseColor = texture(sampleTexture, vTCoords);
-        if (diffuseColor.a <= 0.1) diffuseColor = vec4(0.0, 0.0, 0.0, 0.0);
-        else diffuseColor *= vec4(light.diffuse * (material.diffuse * diffuseIntensity), 1.0);
+        vec4 diffuseColor = vec4(light.diffuse * (material.diffuse * diffuseIntensity), 1.0);
 
         // Specular reflection
         // Blinn-Phong reflection
@@ -87,9 +100,7 @@ class ModelViewerDemo : public ic::Application {
     ic::Shader *shader;
     ic::Camera3D *camera;
     ic::Mesh3D *mesh;
-    ic::Texture *whiteTexture;
     ic::OrbitalCameraController3D *controller;
-    //ic::FreeRoamCameraController3D *controller;
 
     ic::OBJMaterialInfo material;
 
@@ -102,7 +113,6 @@ class ModelViewerDemo : public ic::Application {
     public:
         bool init() override {
             displayName = "Model Viewer Demo";
-            //scaling = ic::WindowScaling::fullscreen;
             hideCursor = true;
 
             return true;
@@ -113,7 +123,6 @@ class ModelViewerDemo : public ic::Application {
             states.enable_face_culling(ic::FRONT, ic::CCW);
             
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
-            whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
             
             mesh = ic::OBJLoader::get().get_mesh("resources/models/boat.obj");
             mesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
@@ -165,7 +174,6 @@ class ModelViewerDemo : public ic::Application {
             
             clear_color(ic::Colors::blue);
             shader->use();
-            whiteTexture->use();
             camera->upload_to_shader(shader);
 
             shader->set_uniform_vec3f("viewPosition", camera->position);
@@ -198,8 +206,7 @@ class ModelViewerDemo : public ic::Application {
 
         void dispose() override {
             shader->clear();
-            mesh->dispose();
-            whiteTexture->dispose();
+            mesh->dispose();;
         }
 };
 

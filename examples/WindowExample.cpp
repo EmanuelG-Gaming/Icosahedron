@@ -1,4 +1,6 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/graphics/Colors.h>
+
 
 /** @brief Shows an empty blue window. */
 class WindowExample : public ic::Application {

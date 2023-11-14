@@ -8,7 +8,7 @@
 
 namespace ic {
     /** @brief An OpenGL wrapper for a texture.
-     * A texture is bound using the use() function, in order to be applied to geometry. */
+     * A texture is bound via the use() function, in order to be applied to geometry. */
     class Texture {
         public:
             Texture(ic::GLTextureTypes type);

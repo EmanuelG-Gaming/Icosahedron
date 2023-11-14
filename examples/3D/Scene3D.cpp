@@ -1,4 +1,15 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/util/GeometryGenerator.h>
+
+#include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/graphics/gl/Shader.h>
+#include <Icosahedron/graphics/Colors.h>
+
+#include <Icosahedron/scene/3d/Camera3D.h>
+#include <Icosahedron/scene/3d/Mesh3D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+
 
 std::string fragment = IC_ADD_GLSL_DEFINITION(
     precision mediump float;
@@ -100,8 +111,8 @@ class Scene3D : public ic::Application {
             
             // A plane acting as a floor
             floorMesh = new ic::Mesh3D();
-            floorMesh->add_attribute("position", 0, 3, positions);
-            floorMesh->add_attribute("normal", 3, 3, normals);
+            floorMesh->add_attribute(0, 3, positions);
+            floorMesh->add_attribute(3, 3, normals);
             floorMesh->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
 

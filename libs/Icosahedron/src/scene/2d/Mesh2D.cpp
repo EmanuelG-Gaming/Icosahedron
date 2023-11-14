@@ -20,13 +20,13 @@ void ic::Mesh2D::combine_transformation(ic::Mat4x4 &with) {
     this->model = this->model * with;
 }
 
-void ic::Mesh2D::add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<float> &content) {
+void ic::Mesh2D::add_attribute(int attributeIndex, int dimensions, const std::vector<float> &content) {
     if (this->vao == nullptr) {
         throw std::runtime_error("Couldn't add vertex attribute. The VAO was not initialized.");
     }
     this->vao->add_vertex_buffer(attributeIndex, dimensions, content);
 }
-void ic::Mesh2D::add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<int> &content) {
+void ic::Mesh2D::add_attribute(int attributeIndex, int dimensions, const std::vector<int> &content) {
     if (this->vao == nullptr) {
         throw std::runtime_error("Couldn't add vertex attribute. The VAO was not initialized.");
     }
@@ -34,7 +34,7 @@ void ic::Mesh2D::add_attribute(const std::string &location, int attributeIndex, 
 }
 
 
-void ic::Mesh2D::add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<ic::Color> &content) {
+void ic::Mesh2D::add_attribute(int attributeIndex, int dimensions, const std::vector<ic::Color> &content) {
     std::vector<float> colorValues;
     for (int i = 0; i < content.size(); i++) {
         ic::Color color = content[i];
@@ -43,7 +43,7 @@ void ic::Mesh2D::add_attribute(const std::string &location, int attributeIndex, 
         colorValues.push_back(color.g / 255.0f);
         colorValues.push_back(color.b / 255.0f);
     }
-    add_attribute(location, attributeIndex, dimensions, colorValues);
+    add_attribute(attributeIndex, dimensions, colorValues);
 }
 
 

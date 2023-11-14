@@ -25,19 +25,19 @@ void ic::Mesh3D::combine_normal_transformation(ic::Mat4x4 &with) {
 }
 
 
-void ic::Mesh3D::add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<float> &content) {
+void ic::Mesh3D::add_attribute(int attributeIndex, int dimensions, const std::vector<float> &content) {
     if (this->vao == nullptr) {
         throw std::runtime_error("Couldn't add vertex attribute. The VAO was not initialized.");
     }
     this->vao->add_vertex_buffer(attributeIndex, dimensions, content);
 }
-void ic::Mesh3D::add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<int> &content) {
+void ic::Mesh3D::add_attribute(int attributeIndex, int dimensions, const std::vector<int> &content) {
     if (this->vao == nullptr) {
         throw std::runtime_error("Couldn't add vertex attribute. The VAO was not initialized.");
     }
     this->vao->add_vertex_buffer(attributeIndex, dimensions, content);
 }
-void ic::Mesh3D::add_attribute(const std::string &location, int attributeIndex, int dimensions, const std::vector<ic::Color> &content) {
+void ic::Mesh3D::add_attribute(int attributeIndex, int dimensions, const std::vector<ic::Color> &content) {
     std::vector<float> colorValues;
     for (int i = 0; i < content.size(); i++) {
         ic::Color color = content[i];
@@ -46,13 +46,13 @@ void ic::Mesh3D::add_attribute(const std::string &location, int attributeIndex, 
         colorValues.push_back(color.g / 255.0f);
         colorValues.push_back(color.b / 255.0f);
     }
-    add_attribute(location, attributeIndex, dimensions, colorValues);
+    add_attribute(attributeIndex, dimensions, colorValues);
 }
 
 
 
 
-void ic::Mesh3D::add_attribute(const std::string &location, int attributeIndex, const std::vector<ic::Vec2f> &content) {
+void ic::Mesh3D::add_attribute(int attributeIndex, const std::vector<ic::Vec2f> &content) {
     std::vector<float> values;
     for (int i = 0; i < content.size(); i++) {
         ic::Vec2f vector = content[i];
@@ -60,9 +60,9 @@ void ic::Mesh3D::add_attribute(const std::string &location, int attributeIndex, 
         values.push_back(vector.x());
         values.push_back(vector.y());
     }
-    add_attribute(location, attributeIndex, 2, values);
+    add_attribute(attributeIndex, 2, values);
 }
-void ic::Mesh3D::add_attribute(const std::string &location, int attributeIndex, const std::vector<ic::Vec3f> &content) {
+void ic::Mesh3D::add_attribute(int attributeIndex, const std::vector<ic::Vec3f> &content) {
     std::vector<float> values;
     for (int i = 0; i < content.size(); i++) {
         ic::Vec3f vector = content[i];
@@ -71,7 +71,7 @@ void ic::Mesh3D::add_attribute(const std::string &location, int attributeIndex, 
         values.push_back(vector.y());
         values.push_back(vector.z());
     }
-    add_attribute(location, attributeIndex, 3, values);
+    add_attribute(attributeIndex, 3, values);
 }
     
 

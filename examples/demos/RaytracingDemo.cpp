@@ -1,4 +1,17 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/util/GeometryGenerator.h>
+
+#include <Icosahedron/graphics/gl/Framebuffer.h>
+#include <Icosahedron/graphics/gl/Shader.h>
+#include <Icosahedron/graphics/gl/Shaders.h>
+#include <Icosahedron/graphics/Colors.h>
+
+#include <Icosahedron/scene/2d/Mesh2D.h>
+#include <Icosahedron/scene/3d/Camera3D.h>
+#include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+
 
 const std::size_t RAYTRACING_WIDTH = 640;
 const std::size_t RAYTRACING_HEIGHT = 480;

@@ -26,8 +26,6 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Quaternion.h
 
 
-    ${LIBRARY_HEADERS_DIRECTORY}/files/File.h
-
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Image.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/ImageIO.h
@@ -82,14 +80,11 @@ set(LIBRARY_HEADERS
     
     ${LIBRARY_HEADERS_DIRECTORY}/Global.h
     ${LIBRARY_HEADERS_DIRECTORY}/Application.h
-    ${LIBRARY_HEADERS_DIRECTORY}/Core.h
 )
 
 set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
-    ${LIBRARY_SOURCE_DIRECTORY}/files/File.cpp
-
-    ${LIBRARY_SOURCE_DIRECTORY}/graphics/Image.cpp
+${LIBRARY_SOURCE_DIRECTORY}/graphics/Image.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/ImageIO.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/Images.cpp
 

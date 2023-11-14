@@ -1,4 +1,16 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/util/GeometryGenerator.h>
+
+#include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/gl/Shader.h>
+#include <Icosahedron/graphics/Colors.h>
+
+#include <Icosahedron/scene/2d/Mesh2D.h>
+#include <Icosahedron/scene/2d/Camera2D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <Icosahedron/assets/loaders/TextureLoader.h>
+
 
 /* Polygon example. Demonstrates the use of per-vertex colors, texturing, matrix transformations, and materials, all in the same shader program. */
 class Mesh2D : public ic::Application {
@@ -22,20 +34,19 @@ class Mesh2D : public ic::Application {
             // Mesh 1
             mesh1 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(7, 0.3f);
 
+
             // Note that this can also be more verbosely expressed as:
+
             //auto vertices = ic::GeometryGenerator::get().generate_regular_polygon(7, 0.3f);
             //mesh1 = new ic::Mesh2D();
-            //mesh1->add_attribute("position", 0, 2, vertices);
-            //mesh1->add_attribute("textureCoords", 2, 2, ic::GeometryGenerator::get().generate_UV_polygon(vertices));
+            //mesh1->add_attribute(0, 2, vertices);
+            //mesh1->add_attribute(2, 2, ic::GeometryGenerator::get().generate_UV_polygon(vertices));
             //mesh1->set_index_buffer(ic::EarClippingTriangulation::get().triangulate(vertices));
+            
 
-            // Add a material that doesn't add any tint to the texture at all
-            mesh1->set_material(ic::MeshMaterial2D(ic::Colors::white, 0.0f));
-            
-            
             // Mesh 2
             mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(3, 0.3f);
-            mesh2->add_attribute("color", 1, 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue });
+            mesh2->add_attribute(1, 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue }); // Add a "color" attribute to mesh2
 
             // Add a material that slightly brightens the colours shown by the vertex attributes 
             mesh2->set_material(ic::MeshMaterial2D(ic::Colors::white, 0.2f));

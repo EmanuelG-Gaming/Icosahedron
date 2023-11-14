@@ -1,4 +1,16 @@
-#include <Icosahedron/Core.h>
+#include <Icosahedron/Application.h>
+#include <Icosahedron/util/GeometryGenerator.h>
+
+#include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/gl/Shader.h>
+#include <Icosahedron/graphics/Colors.h>
+
+#include <Icosahedron/scene/2d/Camera2D.h>
+#include <Icosahedron/scene/2d/Mesh2D.h>
+
+#include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <Icosahedron/assets/loaders/TextureLoader.h>
+
 
 /* Displays a textured rectangle that can be moved around using the WASD keys or the arrow keys. */
 class TexturedRectangle : public ic::Application {
@@ -18,7 +30,7 @@ class TexturedRectangle : public ic::Application {
         
         bool load() override {
             shape = ic::GeometryGenerator::get().generate_rectangle_mesh(0.2f, 0.2f);
-
+            
             texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
 
