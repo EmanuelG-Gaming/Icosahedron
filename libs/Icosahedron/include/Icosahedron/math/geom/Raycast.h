@@ -2,6 +2,7 @@
 #define IC_RAYCAST_H
 
 #include <Icosahedron/math/geom/Vectors.h>
+#include <Icosahedron/math/Mathf.h>
 
 
 namespace ic {
@@ -30,6 +31,16 @@ namespace ic {
 
                 bool intersects = (t >= 0.0f && t <= 1.0f) && (u >= 0.0f && u <= 1.0f);
                 return intersects; 
+            }
+
+            ic::Vec2f get_closest_point(ic::Vec2f &point, ic::Vec2f sidePointA, ic::Vec2f sidePointB) {
+                ic::Vec2f gradientLine = sidePointB - sidePointA;
+                ic::Vec2f gradientPoint = point - sidePointA;
+
+                float t = gradientLine.dot(gradientPoint) / gradientLine.len2();
+                t = ic::Mathf::get().clamp(t, 0.0f, 1.0f);
+
+                return sidePointA + gradientLine * t;
             }
 
         private:

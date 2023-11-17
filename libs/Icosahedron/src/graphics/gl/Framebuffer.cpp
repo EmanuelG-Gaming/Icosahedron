@@ -195,3 +195,12 @@ void ic::Framebuffer::initialize_texture(const ic::GLTextureColorChannels &inter
 void ic::Framebuffer::set_texture_content(const ic::GLTextureAttachments &attachment) {
     glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, this->data.textureType, this->textureIndices[this->lastTextureIndex], 0);
 }
+
+
+int ic::Framebuffer::get_width() {
+    return this->data.width;
+}
+
+int ic::Framebuffer::get_height() {
+    return this->data.height;
+}

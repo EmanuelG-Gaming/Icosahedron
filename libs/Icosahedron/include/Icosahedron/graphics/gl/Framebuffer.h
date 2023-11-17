@@ -48,6 +48,8 @@ namespace ic {
             void use_texture(int index = 0, int indexInTheFragmentShader = 0);
             
             void resize(int w, int h);
+            int get_width();
+            int get_height();
             
             void add_render_target(const ic::GLTextureAttachments &attachment, const ic::GLTextureColorChannels &internalFormat, const ic::GLTextureColorChannels &outputFormat, bool hasDepthBuffer = true);
             void add_render_target(const ic::GLTextureAttachments &attachment, const ic::GLTextureColorChannels &format, bool hasDepthBuffer = true);

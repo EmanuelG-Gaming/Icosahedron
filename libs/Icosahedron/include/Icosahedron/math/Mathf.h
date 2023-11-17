@@ -49,8 +49,8 @@ namespace ic {
             }
 
 
-            float clamp(float x, float min, float max) {
-                return std::max(min, std::min(x, max));
+            float clamp(float &x, float min, float max) {
+                return std::max(min, std::min(max, x));
             }
 
             /* @brief Linear interpolation. */

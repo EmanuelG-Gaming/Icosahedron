@@ -1,4 +1,5 @@
 #include <Physics/2d/CollisionUtils2D.h>
+#include <Icosahedron/math/geom/Raycast.h>
 
 ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::circle_circle(CircleCollider *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) {
     float distance2 = transformA->position.dst2(transformB->position);
@@ -54,6 +55,65 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::rectangle_circle(Re
 }
 
 
+ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::polygon_circle(PolygonCollider *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) {
+    // Transforms global coordinates into model-space coordinates
+    ic::Vec2f positionToModel = (transformB->position - transformA->position);//.rotate(-transformA->angle);
+
+    // Broad-phase checking
+    ic::Rectangle tmp = { positionToModel, { colliderB->radius, colliderB->radius } };
+    if (!colliderA->bounding.overlaps(tmp)) {
+        return ic::Physics::ManifoldPoints2D();
+    }
+
+    int rayIntersections = 0;
+    float closestDistance2 = 10000.0f;
+    ic::Vec2f closestPoint;
+
+    for (int i = 0; i < colliderA->modelVertices.size(); i++) {
+        int next = i + 1;
+        if (next == colliderA->modelVertices.size()) next = 0;
+
+        ic::Vec2f sidePointA = colliderA->modelVertices[i] + transformA->position;
+        ic::Vec2f sidePointB = colliderA->modelVertices[next] + transformA->position;
+
+        
+        bool collides = ic::Raycast::get().line_segments_collide(100000.0f, transformB->position.y(), transformB->position.x(), transformB->position.y(),
+                                                                sidePointA.x(), sidePointA.y(), sidePointB.x(), sidePointB.y());
+        
+        // Add 1 if the horizontal ray intersects the polygon side, 0 otherwise
+        rayIntersections += (int) collides;
+    }
+
+    // Get closest point
+    for (int i = 0; i < colliderA->modelVertices.size(); i++) {
+        int next = i + 1;
+        if (next == colliderA->modelVertices.size()) next = 0;
+
+        ic::Vec2f sidePointA = colliderA->modelVertices[i] + transformA->position;
+        ic::Vec2f sidePointB = colliderA->modelVertices[next] + transformA->position;
+
+        ic::Vec2f closest = ic::Raycast::get().get_closest_point(transformB->position, sidePointA, sidePointB);
+        float distanceCompare = closest.dst2(transformB->position);
+    
+        if (distanceCompare < closestDistance2) {
+            closestPoint = closest;
+            closestDistance2 = distanceCompare;
+        }
+    }
+
+    if ((closestDistance2 > colliderB->radius * colliderB->radius)) return ic::Physics::ManifoldPoints2D();
+
+    ic::Vec2f normal = (closestPoint - transformB->position) * colliderB->radius;
+    float length = normal.len();
+    normal = normal.nor();
+
+    //ic::Vec2f AtoB = transformB->position + normal * colliderB->radius;
+    //ic::Vec2f BtoA = closestPoint;
+    ic::Vec2f AtoB = { 0.0f, 0.0f };
+    ic::Vec2f BtoA = { 0.0f, 0.0f };
+    
+    return ic::Physics::ManifoldPoints2D(AtoB, BtoA, normal, length);
+}
 
 //ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::spMass2D_circle(SpringMassCollider2D *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) {
 //

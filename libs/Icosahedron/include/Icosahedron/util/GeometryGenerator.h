@@ -83,6 +83,22 @@ namespace ic {
     
                 return result;
             }
+
+
+            ic::Mesh3D *generate_cone_mesh(ic::Vec3f height, float baseRadius, int baseSides, bool hasCap = true) {
+                ic::Mesh3D *result = new ic::Mesh3D();
+                //result->add_attribute(0, 3, generate_UV_sphere(radius, latitudeLines, longitudeLines));
+                //result->add_attribute(2, 2, generate_UV_sphere_UVs(latitudeLines, longitudeLines));
+                //result->add_attribute(3, 3, generate_UV_sphere_normals(latitudeLines, longitudeLines));
+                //result->set_index_buffer(generate_UV_sphere_indices(latitudeLines, longitudeLines));
+
+                result->add_attribute(0, 3, generate_cone(height, baseRadius, baseSides));
+                result->set_index_buffer(generate_cone_indices(baseSides, hasCap));
+
+                return result;
+            }
+
+
     
     
     
@@ -391,6 +407,52 @@ namespace ic {
                     }
                 }
     
+                return result;
+            }
+
+            std::vector<float> generate_cone(ic::Vec3f &height, float baseRadius, int baseSides) {
+                std::vector<float> result;
+
+                result.push_back(height.x());
+                result.push_back(height.y());
+                result.push_back(height.z());
+
+                float angle = 0.01f;
+                for (int i = 0; i < baseSides; i++) {
+                    angle += (2 * ic::Mathf::get().pi / baseSides);
+                    
+                    ic::Vec3f forward = { ic::Mathf::get().cosf(angle), 0.0f, ic::Mathf::get().sinf(angle) };
+                    ic::Vec3f baseVertex = height.crs(forward).nor();
+
+                    baseVertex = baseVertex * baseRadius;
+
+                    result.push_back(baseVertex.x());
+                    result.push_back(baseVertex.y());
+                    result.push_back(baseVertex.z());
+                }
+
+                return result;
+            }
+
+            std::vector<unsigned int> generate_cone_indices(int baseSides, bool hasCap = true) {
+                std::vector<unsigned int> result;
+
+                // Side geometry
+                for (int i = 1; i < baseSides - 1; i++) {
+                    result.push_back(0);
+                    result.push_back(i);
+                    result.push_back(i + 1);
+                }
+
+                // Triangulate vertices at the base
+                if (hasCap) {
+                    for (int i = 1; i < baseSides; i++) {
+                        result.push_back(i);
+                        result.push_back(i + 1);
+                        result.push_back(i + 2);
+                    }
+                }
+
                 return result;
             }
 

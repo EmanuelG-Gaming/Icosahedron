@@ -1,4 +1,5 @@
 #include <Icosahedron/scene/3d/Skybox.h>
+#include <stdexcept>
 
 using namespace ic;
 
@@ -10,6 +11,17 @@ Skybox::Skybox(const std::vector<std::string> &fileNames) {
     this->mesh->add_attribute(0, 3, ic::GeometryGenerator::get().generate_cube(1.0f));
     this->mesh->set_index_buffer(ic::GeometryGenerator::get().generate_parallelipiped_indices());
 }
+
+Skybox::Skybox(ic::Mesh3D *mesh, const std::vector<std::string> &fileNames) {
+    if (mesh == nullptr || mesh == NULL) {
+        throw std::invalid_argument("Skybox mesh can't be null!");
+    }
+
+    this->textureCube = ic::CubemapLoader::get().load_png(fileNames);
+    this->mesh = mesh;
+}
+
+
 
 void ic::Skybox::draw(ic::Shader *shader, ic::GLPrimitives primitive) {
     glCullFace(GL_BACK);

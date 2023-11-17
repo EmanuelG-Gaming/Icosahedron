@@ -159,6 +159,7 @@ class MultipleViewports : public ic::Application {
             
 
             mesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.5f, 14, 14);
+            
             mainCameraMesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
             secondCameraMesh = ic::OBJLoader::get().get_mesh("resources/models/icosahedron.obj");
 
