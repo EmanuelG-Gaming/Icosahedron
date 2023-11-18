@@ -1,6 +1,13 @@
 #include <Icosahedron/graphics/TextAtlas.h>
+#include <Icosahedron/Global.h>
+
+#include <iostream>
 
 using namespace ic;
+
+
+TextAtlas::TextAtlas() {
+}
 
 TextAtlas::TextAtlas(FT_Face font) {
     this->font = font;
@@ -10,6 +17,12 @@ TextAtlas::TextAtlas(FT_Face font) {
 }
 
 void TextAtlas::load() {
+    if (!IC_IS_OPENGL_CONTEXT_PRESENT) {
+        std::cerr << "Couldn't load text atlas. OpenGL context is not present!" << "\n";
+        return;
+    }
+    
+
     this->add_empty_texture();
               
     int x = 0;

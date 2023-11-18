@@ -11,6 +11,7 @@
 namespace ic {
     class TextureArray {
         public:
+            TextureArray();
             TextureArray(int textureWidth, int textureHeight, unsigned int numberOfTextures);
             TextureArray(int textureSize, unsigned int numberOfTextures);
 

@@ -5,5 +5,6 @@
 
 extern int IC_WINDOW_WIDTH;
 extern int IC_WINDOW_HEIGHT;
+extern bool IC_IS_OPENGL_CONTEXT_PRESENT;
 
 #endif

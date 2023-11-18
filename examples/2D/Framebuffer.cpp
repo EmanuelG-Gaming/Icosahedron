@@ -49,24 +49,23 @@ const std::size_t MESH_COUNT = 128;
 
 /** Uses a framebuffer with a lower resolution to achieve a "pixelation" effect. */
 class Framebuffer : public ic::Application {
-    ic::Mesh2D *screenQuad;
-    ic::Mesh2D* meshes[MESH_COUNT];
+    ic::Mesh2D screenQuad;
+    ic::Mesh2D meshes[MESH_COUNT];
 
-    ic::Framebuffer *postProcessing;
+    ic::Framebuffer postProcessing;
 
-    ic::Texture *texture;
-    ic::Camera2D *camera;
+    ic::Texture texture;
+    ic::Camera2D camera;
 
     std::size_t PIXEL_DENOMINATOR;
 
-    ic::Shader *shader, *screenShader;
+    ic::Shader shader, screenShader;
     float time;
 
     public:
         bool init() override {
             displayName = "Framebuffers";
-            scaling = ic::WindowScaling::resizeable;
-
+            
             return true;
         }
         
@@ -75,11 +74,11 @@ class Framebuffer : public ic::Application {
                 float x = (rand() % 100 / 100.0f - 0.5f) * 3.0f;
                 float y = (rand() % 100 / 100.0f - 0.5f) * 3.0f;
                 
-                ic::Mesh2D *mesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(3, 0.3f);
-                mesh->add_attribute(1, 3, { ic::Colors::black, ic::Colors::black, ic::Colors::white });
+                ic::Mesh2D mesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(3, 0.3f);
+                mesh.add_attribute(1, 3, { ic::Colors::black, ic::Colors::black, ic::Colors::white });
     
-                mesh->set_material(ic::MeshMaterial2D(ic::Colors::white, 0.0f));
-                mesh->set_transformation(ic::Mat4x4().set_translation<2>({ x, y }));
+                mesh.set_material(ic::MeshMaterial2D(ic::Colors::white, 0.0f));
+                mesh.set_transformation(ic::Mat4x4().set_translation<2>({ x, y }));
 
                 meshes[i] = mesh;
             }
@@ -91,9 +90,9 @@ class Framebuffer : public ic::Application {
             texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
             
             PIXEL_DENOMINATOR = 2;
-            postProcessing = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH / PIXEL_DENOMINATOR, IC_WINDOW_HEIGHT / PIXEL_DENOMINATOR);
+            postProcessing = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH / PIXEL_DENOMINATOR, IC_WINDOW_HEIGHT / PIXEL_DENOMINATOR);
 
-            camera = new ic::Camera2D();
+            camera = ic::Camera2D();
 
 
             ic::MouseController *controller = new ic::MouseController();
@@ -120,10 +119,8 @@ class Framebuffer : public ic::Application {
         }
 
         void window_size_changed(int w, int h) override {
-            camera->width = w;
-            camera->height = h;
-
-            postProcessing->resize(w / PIXEL_DENOMINATOR, h / PIXEL_DENOMINATOR);
+            camera.resize(w, h);
+            postProcessing.resize(w / PIXEL_DENOMINATOR, h / PIXEL_DENOMINATOR);
         }
 
         bool handle_event(ic::Event event, float dt) override { 
@@ -137,49 +134,50 @@ class Framebuffer : public ic::Application {
             ic::Vec2i dir = controller->get_direction();
 
             float speed = 1.5f;
-            camera->position.x() += dir.x() * speed * dt;
-            camera->position.y() += dir.y() * speed * dt;
+            camera.position.x() += dir.x() * speed * dt;
+            camera.position.y() += dir.y() * speed * dt;
             
-            postProcessing->use();
+            postProcessing.use();
             clear_color(ic::Colors::blue);
             
             states.set_viewport(IC_WINDOW_WIDTH / PIXEL_DENOMINATOR, IC_WINDOW_HEIGHT / PIXEL_DENOMINATOR);
 
-            shader->use();
-            camera->use(shader);
+            shader.use();
+            camera.use(shader);
 
             
-            texture->use();
+            texture.use();
             for (int i = 0; i < MESH_COUNT; i++) {
-                meshes[i]->draw(shader);
+                meshes[i].draw(shader);
             }
-            texture->unuse();
+            texture.unuse();
 
-            postProcessing->unuse();
+            postProcessing.unuse();
 
 
             // Rendering to the screen quad
             clear_color(ic::Colors::cyan);
             states.set_viewport(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
 
-            screenShader->use();
-            postProcessing->use_texture();
+            screenShader.use();
+            postProcessing.use_texture();
 
-            screenQuad->draw(screenShader);
+            screenQuad.draw(screenShader);
 
             return true; 
         }
 
         void dispose() {
-            shader->clear();
-            screenShader->clear();
+            shader.clear();
+            screenShader.clear();
 
-            texture->dispose();
+            texture.dispose();
+            postProcessing.dispose();
             
             for (int i = 0; i < MESH_COUNT; i++) {
-                meshes[i]->dispose();
+                meshes[i].dispose();
             }
-            screenQuad->dispose();
+            screenQuad.dispose();
         }
 };
 

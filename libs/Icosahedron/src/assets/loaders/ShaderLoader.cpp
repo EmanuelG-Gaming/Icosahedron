@@ -1,12 +1,12 @@
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 
 
-ic::Shader *ic::ShaderLoader::load(const std::string &vertexCode, const std::string &fragmentCode) {
-    ic::Shader *result = new ic::Shader(vertexCode, fragmentCode);
+ic::Shader ic::ShaderLoader::load(const std::string &vertexCode, const std::string &fragmentCode) {
+    ic::Shader result(vertexCode, fragmentCode);
     return result;
 }
 
-ic::Shader *ic::ShaderLoader::load_file(const std::string &vertexFileName, const std::string &fragmentFileName) {
+ic::Shader ic::ShaderLoader::load_file(const std::string &vertexFileName, const std::string &fragmentFileName) {
     std::ifstream vert;
     std::ifstream frag;
 
@@ -32,7 +32,7 @@ ic::Shader *ic::ShaderLoader::load_file(const std::string &vertexFileName, const
         printf("Couldn't open the shader file: %s\n", except.what());
     }
 
-    ic::Shader *result = new ic::Shader(vertexContent, fragmentContent);
+    ic::Shader result(vertexContent, fragmentContent);
     
     return result;
 }

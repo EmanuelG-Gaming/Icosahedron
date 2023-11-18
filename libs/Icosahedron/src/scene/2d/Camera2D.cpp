@@ -15,7 +15,7 @@ Camera2D::Camera2D(float scale) : Camera2D() {
     this->scale = scale;
 }
 
-void Camera2D::use(ic::Shader *shader) {
+void Camera2D::use(ic::Shader &shader) {
     ic::Mat4x4 translation, scaling;
     ic::Vec3f pos = { position.x(), position.y(), 0.0f };
     float aspect = this->width / (float) this->height;
@@ -26,11 +26,11 @@ void Camera2D::use(ic::Shader *shader) {
 
     projection = this->aspectRatioCorrection * scaling * translation;
 
-    shader->set_uniform_mat4("projection", projection);
+    shader.set_uniform_mat4("projection", projection);
 }
 
-void Camera2D::unuse(ic::Shader *shader) {
-    shader->set_uniform_mat4("projection", ic::Mat4x4());
+void Camera2D::unuse(ic::Shader &shader) {
+    shader.set_uniform_mat4("projection", ic::Mat4x4());
 }
 
 ic::Vec2f Camera2D::project(ic::Vec2f &worldPosition) {
@@ -41,6 +41,7 @@ ic::Vec2f Camera2D::project(ic::Vec2f &worldPosition) {
 
     return result;
 }
+
 ic::Vec2f Camera2D::unproject(ic::Vec2f &screenPosition) {
     ic::Vec2f result;
 
@@ -59,4 +60,11 @@ ic::Vec2f Camera2D::unproject(ic::Vec2f &screenPosition) {
     result.y() = (pos.y() / this->scale) + position.y();
 
     return result;
+}
+
+
+
+void ic::Camera2D::resize(int width, int height) {
+    this->width = width;
+    this->height = height;
 }

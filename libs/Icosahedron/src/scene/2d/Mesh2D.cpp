@@ -1,11 +1,21 @@
 #include <Icosahedron/scene/2d/Mesh2D.h>
+#include <Icosahedron/Global.h>
 
 #include <stdexcept>
+
 
 using namespace ic;
 
 Mesh2D::Mesh2D() {
-    this->vao = new ic::VertexArray();
+    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+        this->vao = new ic::VertexArray();
+    }
+}
+
+Mesh2D::Mesh2D(ic::VertexArray *vao) {
+    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+        this->vao = vao;
+    }
 }
 
 void ic::Mesh2D::set_material(ic::MeshMaterial2D newMaterial) {
@@ -61,13 +71,13 @@ void ic::Mesh2D::unuse_attribute_definitions() {
     this->vao->unuse_attribute_definitions();
 }
 
-void ic::Mesh2D::draw(ic::Shader *shader, ic::GLPrimitives primitive) {
+void ic::Mesh2D::draw(ic::Shader &shader, ic::GLPrimitives primitive) {
     if (this->vao == nullptr) return;
 
     auto drawable = this->vao->get_drawable();
 
     this->upload_material(shader, this->material);
-    shader->set_uniform_mat4("model", this->model);
+    shader.set_uniform_mat4("model", this->model);
     drawable.use_and_draw(primitive);
 }
 
@@ -75,7 +85,7 @@ void ic::Mesh2D::dispose() {
     this->vao->dispose();
 }
 
-void ic::Mesh2D::upload_material(ic::Shader *shader, const ic::MeshMaterial2D &mat) {
-    shader->set_uniform_float("material.colorBlending", mat.colorBlending);
-    shader->set_uniform_vec3f("material.baseColor", mat.baseColor);
+void ic::Mesh2D::upload_material(ic::Shader &shader, const ic::MeshMaterial2D &mat) {
+    shader.set_uniform_float("material.colorBlending", mat.colorBlending);
+    shader.set_uniform_vec3f("material.baseColor", mat.baseColor);
 }

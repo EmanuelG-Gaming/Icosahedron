@@ -1,8 +1,9 @@
 #include <Icosahedron/assets/loaders/OBJLoader.h>
 
-ic::Mesh3D *ic::OBJLoader::get_mesh(const std::string &objectFileName) {
+
+ic::Mesh3D ic::OBJLoader::get_mesh(const std::string &objectFileName) {
     std::ifstream objRead(objectFileName);
-    ic::Mesh3D *mesh = new ic::Mesh3D();
+    ic::Mesh3D mesh;
 
     int posSize = 0, 
         tCoordSize = 0, 
@@ -132,13 +133,13 @@ ic::Mesh3D *ic::OBJLoader::get_mesh(const std::string &objectFileName) {
         normals[i] = normalReference[indexReference[referenceAmount++] - 1];
     }
 
-    mesh->add_attribute(0, vertices);
-    mesh->add_attribute(2, textureCoords);
-    mesh->add_attribute(3, normals);
+    mesh.add_attribute(0, vertices);
+    mesh.add_attribute(2, textureCoords);
+    mesh.add_attribute(3, normals);
 
-    mesh->set_index_buffer(indices);
+    mesh.set_index_buffer(indices);
 
-    mesh->unuse_attribute_definitions();
+    mesh.unuse_attribute_definitions();
 
     return mesh;
 }

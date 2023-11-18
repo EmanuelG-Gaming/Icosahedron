@@ -200,13 +200,13 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 
 /** A scene that shows a rotating monkey head on a floor. */
 class SceneWithShadows : public ic::Application {
-    ic::Shader *shader, *depthShader;
-    ic::Framebuffer *shadowMap;
+    ic::Shader shader, depthShader;
+    ic::Framebuffer shadowMap;
 
-    ic::Camera3D *camera;
-    ic::Mesh3D *mesh, *floorMesh;
-    ic::Texture *floorTexture, *whiteTexture;
-    ic::OrbitalCameraController3D *controller;
+    ic::Camera3D camera;
+    ic::Mesh3D mesh, floorMesh;
+    ic::Texture floorTexture, whiteTexture;
+    ic::OrbitalCameraController3D controller;
 
     float time;
     int shadowWidth, shadowHeight;
@@ -214,7 +214,6 @@ class SceneWithShadows : public ic::Application {
     public:
         bool init() override {
             displayName = "Scene Example";
-            scaling = ic::WindowScaling::fullscreen;
             hideCursor = true;
 
             return true;
@@ -224,9 +223,9 @@ class SceneWithShadows : public ic::Application {
             states.enable_depth_testing(ic::LESS);
             
             shader = ic::ShaderLoader::get().load(vert, fragment);
-            shader->use();
-            shader->set_uniform_int("sampleTexture", 0);
-            shader->set_uniform_int("shadowMap", 1);
+            shader.use();
+            shader.set_uniform_int("sampleTexture", 0);
+            shader.set_uniform_int("shadowMap", 1);
 
             depthShader = ic::ShaderLoader::get().load(depthShaderVert, depthShaderFrag);
 
@@ -238,18 +237,18 @@ class SceneWithShadows : public ic::Application {
 
             shadowWidth = 1024;
             shadowHeight = 1024;
-            shadowMap = new ic::Framebuffer(ic::TEXTURE_ATTACH_DEPTH, ic::TEXTURE_DEPTH, shadowWidth, shadowHeight);
+            shadowMap = ic::Framebuffer(ic::TEXTURE_ATTACH_DEPTH, ic::TEXTURE_DEPTH, shadowWidth, shadowHeight);
 
             mesh = ic::OBJLoader::get().get_mesh("resources/models/monkey.obj");
             
             floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 25.0f, 0.1f, 25.0f);
-            floorMesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
+            floorMesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
 
-            camera = new ic::Camera3D();
-            camera->position = { -3.0f, 1.5f, 0.0f };
+            camera = ic::Camera3D();
+            camera.position = { -3.0f, 1.5f, 0.0f };
 
-            controller = new ic::OrbitalCameraController3D(camera, &ic::InputHandler::get());
-            controller->center = { 0.0f, 0.5f, 0.0f };
+            controller = ic::OrbitalCameraController3D(&camera);
+            controller.center = { 0.0f, 0.5f, 0.0f };
 
             time = 0.0f;
             
@@ -263,9 +262,9 @@ class SceneWithShadows : public ic::Application {
         bool update(float dt) override {
             time += dt;
             
-            controller->act(dt);
-            camera->resize(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
-            camera->update();
+            controller.act(dt);
+            camera.resize(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            camera.update();
 
             // Light projection
             ic::Mat4x4 lightProj = ic::Mat4x4().set_orthographic(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 30.0f);
@@ -275,30 +274,33 @@ class SceneWithShadows : public ic::Application {
             // First pass - render to the depth map
             states.set_viewport(shadowWidth, shadowHeight);
             states.disable_face_culling();
-            shadowMap->use();
+
+            shadowMap.use();
             clear_color(ic::Colors::black);
-            depthShader->use();
-            depthShader->set_uniform_mat4("lightSpaceMatrix", lightSpaceMatrix);
+
+            depthShader.use();
+            depthShader.set_uniform_mat4("lightSpaceMatrix", lightSpaceMatrix);
             render_scene(depthShader);
-            shadowMap->unuse();
+            shadowMap.unuse();
             
             // Second pass - render scene using shadow map
             states.set_viewport(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
             states.enable_face_culling(ic::BACK, ic::CW);
+
             clear_color(ic::Colors::blue);
 
-            shader->use();
-            camera->upload_to_shader(shader);
-            shader->set_uniform_mat4("lightSpaceMatrix", lightSpaceMatrix);
-            shader->set_uniform_vec3f("viewPosition", camera->position);
+            shader.use();
+            camera.upload_to_shader(shader);
+            shader.set_uniform_mat4("lightSpaceMatrix", lightSpaceMatrix);
+            shader.set_uniform_vec3f("viewPosition", camera.position);
 
-            shadowMap->use_texture(1);
+            shadowMap.use_texture(1);
             render_scene(shader);
 
             return true; 
         }
 
-        void render_scene(ic::Shader *passShader) {
+        void render_scene(ic::Shader &passShader) {
             // Mesh
             //for (int i = 0; i < 5; i++) for (int j = 0; j < 5; j++) for (int k = 0; k < 5; k++) {
             //    float x = i * 1.5f;
@@ -309,37 +311,37 @@ class SceneWithShadows : public ic::Application {
             //    ic::Mat4x4 rotation = quat.to_rotation_matrix();
             //    ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({x, y, z});
             //
-            //    mesh->set_transformation(translation * rotation);
-            //    mesh->set_normal_transformation(rotation);
-            //    whiteTexture->use();
-            //    mesh->draw(passShader);
+            //    mesh.set_transformation(translation * rotation);
+            //    mesh.set_normal_transformation(rotation);
+            //    whiteTexture.use();
+            //    mesh.draw(passShader);
             //}
 
             ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
             
-            mesh->set_transformation(translation * rotation);
-            mesh->set_normal_transformation(rotation);
-            whiteTexture->use();
-            mesh->draw(passShader);
+            mesh.set_transformation(translation * rotation);
+            mesh.set_normal_transformation(rotation);
+            whiteTexture.use();
+            mesh.draw(passShader);
 
             // Floor
-            floorTexture->use();
-            floorMesh->draw(passShader);
+            floorTexture.use();
+            floorMesh.draw(passShader);
         }
 
         void dispose() override {
-            shader->clear();
-            depthShader->clear();
+            shader.clear();
+            depthShader.clear();
 
-            mesh->dispose();
-            floorMesh->dispose();
+            mesh.dispose();
+            floorMesh.dispose();
 
-            floorTexture->dispose();
-            whiteTexture->dispose();
+            floorTexture.dispose();
+            whiteTexture.dispose();
 
-            shadowMap->dispose();
+            shadowMap.dispose();
         }
 };
 

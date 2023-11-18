@@ -1,15 +1,28 @@
 #include <Icosahedron/graphics/gl/Batch.h>
+#include <Icosahedron/Global.h>
 
 using namespace ic;
+
+
+Batch::Batch() {
+    this->vertexCapacity = 128;
+    this->verticesUsed = 0;
+    this->vbo = this->vao = 0;
+
+    this->renderType = ic::INVALID_PRIMITIVE;
+}
 
 Batch::Batch(int capacity, GLPrimitives renderType) {
     this->vertexCapacity = capacity;
     this->verticesUsed = 0;
     this->vbo = this->vao = 0;
-    
+
     this->renderType = renderType;
-    
-    setup();
+
+
+    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+        setup();
+    }
 }
 
 void Batch::setup() {

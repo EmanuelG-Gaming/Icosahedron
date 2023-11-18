@@ -25,7 +25,7 @@ namespace ic {
              *  @note By default, FreeType would choose an absolute directory, rather than a relative one. */
             void add_atlas(const std::string &name, const std::string &relativeFile, int height);
 
-            TextAtlas *find_atlas(const std::string &name);
+            TextAtlas &find_atlas(const std::string &name);
             
             void dispose();
               
@@ -39,7 +39,7 @@ namespace ic {
      private:
         FT_Library library;
         FT_Error errorHandler;
-        std::map<std::string, TextAtlas*> atlases;
+        std::map<std::string, TextAtlas> atlases;
     };
 }
 #endif

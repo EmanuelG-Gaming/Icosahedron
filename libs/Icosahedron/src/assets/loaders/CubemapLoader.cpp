@@ -1,9 +1,10 @@
 #include <icosahedron/assets/loaders/CubemapLoader.h>
 
-ic::Texture *ic::CubemapLoader::load_png(const std::vector<std::string> &filePaths) {
-    ic::Texture *result = new ic::Texture(ic::TCUBE);
+ic::Texture ic::CubemapLoader::load_png(const std::vector<std::string> &filePaths) {
+    ic::Texture result(ic::TCUBE);
+
     if (filePaths.size() != 6) {
-        printf("Couldn't load cubemap faces with amount other than 6.\n");
+        printf("Couldn't load the cubemap that has more or less faces than 6.\n");
         return result;
     }
 
@@ -30,8 +31,9 @@ ic::Texture *ic::CubemapLoader::load_png(const std::vector<std::string> &filePat
     
     return result;
 }
-ic::Texture *ic::CubemapLoader::load_bmp(const std::vector<std::string> &filePaths) {
-    ic::Texture *result = new ic::Texture(ic::TCUBE);
+ic::Texture ic::CubemapLoader::load_bmp(const std::vector<std::string> &filePaths) {
+    ic::Texture result(ic::TCUBE);
+
     if (filePaths.size() != 6) {
         printf("Couldn't load cubemap faces with amount other than 6.\n");
         return result;

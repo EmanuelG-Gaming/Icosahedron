@@ -18,12 +18,14 @@ namespace ic {
             bool flying;
             float speed, lookSensitivity;
 
-            FreeRoamCameraController3D(ic::Camera3D *camera, ic::InputHandler *handler);
+            FreeRoamCameraController3D();
+            FreeRoamCameraController3D(ic::Camera3D *camera);
 
             void act(float dt);
 
         protected:
             ic::Camera3D *camera;
+
             ic::KeyboardController *keyboard;
             ic::MouseController *mouse;
     };

@@ -150,21 +150,21 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 /* An example that shows how "post-processing" can be achieved.
  * In this case, the effect is an approximation of a gaussian blur filter. */
 class PostProcessing : public ic::Application {
-    ic::Shader *shader, *screenShader;
-    ic::Framebuffer *framebuffer;
+    ic::Shader shader, screenShader;
+    ic::Framebuffer framebuffer;
     
-    ic::Camera3D *camera;
-    ic::Mesh2D *screenQuad;
-    ic::Mesh3D *mesh, *floorMesh;
+    ic::Camera3D camera;
+    ic::Mesh2D screenQuad;
+    ic::Mesh3D mesh, floorMesh;
 
-    ic::Texture *floorTexture, *whiteTexture;
-    ic::FreeRoamCameraController3D *controller;
+    ic::Texture floorTexture, whiteTexture;
+    ic::FreeRoamCameraController3D controller;
 
     float time;
+
     public:
         bool init() override {
             displayName = "Post-processing Example";
-            scaling = ic::WindowScaling::fullscreen;
             hideCursor = true;
 
             return true;
@@ -180,20 +180,21 @@ class PostProcessing : public ic::Application {
             floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
             whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
             
-            framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            framebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
 
             mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
             floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
             
-            screenQuad = new ic::Mesh2D();
-            screenQuad->add_attribute(0, 2, ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
-            screenQuad->add_attribute(1, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
-            screenQuad->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+            screenQuad = ic::Mesh2D();
+            screenQuad.add_attribute(0, 2, ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
+            screenQuad.add_attribute(1, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            screenQuad.set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
-            camera = new ic::Camera3D();
-            camera->position = { -3.0f, 1.5f, 0.0f };
-            controller = new ic::FreeRoamCameraController3D(camera, &ic::InputHandler::get());
-            controller->flying = true;
+            camera = ic::Camera3D();
+            camera.position = { -3.0f, 1.5f, 0.0f };
+            controller = ic::FreeRoamCameraController3D(&camera);
+            controller.flying = true;
+
             time = 0.0f;
             
             return true;
@@ -204,58 +205,58 @@ class PostProcessing : public ic::Application {
         }
 
         void window_size_changed(int w, int h) override {
-            camera->resize(w, h);
-            framebuffer->resize(w, h);
+            camera.resize(w, h);
+            framebuffer.resize(w, h);
         }
 
         bool update(float dt) override {
             time += dt;
 
-            controller->act(dt);
-            camera->update();
+            controller.act(dt);
+            camera.update();
             
             // First pass - scene drawing
-            framebuffer->use();
+            framebuffer.use();
             clear_color(ic::Colors::blue);
             
-            shader->use();
-            shader->set_uniform_vec3f("viewPosition", camera->position);
-            camera->upload_to_shader(shader);
+            shader.use();
+            shader.set_uniform_vec3f("viewPosition", camera.position);
+            camera.upload_to_shader(shader);
             
 
             ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
-            mesh->set_transformation(translation * rotation);
-            mesh->set_normal_transformation(rotation);
+            mesh.set_transformation(translation * rotation);
+            mesh.set_normal_transformation(rotation);
             
 
-            whiteTexture->use();
-            mesh->draw(shader);
+            whiteTexture.use();
+            mesh.draw(shader);
 
-            floorTexture->use();
-            floorMesh->draw(shader);
+            floorTexture.use();
+            floorMesh.draw(shader);
 
-            framebuffer->unuse();
+            framebuffer.unuse();
 
 
             // Second pass - drawing via framebuffer
             clear_color(ic::Colors::cyan);
             
-            screenShader->use();
-            framebuffer->use_texture();
-            screenQuad->draw(screenShader);
+            screenShader.use();
+            framebuffer.use_texture();
+            screenQuad.draw(screenShader);
 
             return true; 
         }
 
         void dispose() override {
-            shader->clear();
-            mesh->dispose();
-            floorMesh->dispose();
-            floorTexture->dispose();
-            whiteTexture->dispose();
-            framebuffer->dispose();
+            shader.clear();
+            mesh.dispose();
+            floorMesh.dispose();
+            floorTexture.dispose();
+            whiteTexture.dispose();
+            framebuffer.dispose();
         }
 };
 

@@ -16,11 +16,11 @@ struct RectangleShape {
 
 /* A recreation of pong. The left paddle uses WS keys and the right one uses up-down keys. */
 class PongDemo : public ic::Application {
-    ic::Batch *batch, *textBatch;
-    ic::TextureAtlas *texture;
-    ic::TextAtlas *atlas;
-    ic::Shader *shader, *textShader;
-    ic::Camera2D *camera;
+    ic::Batch batch, textBatch;
+    ic::TextureAtlas texture;
+    ic::TextAtlas atlas;
+    ic::Shader shader, textShader;
+    ic::Camera2D camera;
 
     RectangleShape *paddle1, *paddle2, *ball;
     ic::Vec2f vel;
@@ -41,15 +41,15 @@ class PongDemo : public ic::Application {
             ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
             atlas = ic::FreeType::get().find_atlas("score");
 
-            texture = new ic::TextureAtlas();
-            texture->add_entries({ "paddle1", "resources/textures/white.png",
+            texture = ic::TextureAtlas(2048, 2048);
+            texture.add_entries({ "paddle1", "resources/textures/white.png",
                                    "paddle2", "resources/textures/white.png",
                                    "ball", "resources/textures/ball.png" });
 
-            batch = new ic::Batch(1000, ic::TRIANGLES);
-            textBatch = new ic::Batch(1000, ic::TRIANGLES);
+            batch = ic::Batch(1000, ic::TRIANGLES);
+            textBatch = ic::Batch(1000, ic::TRIANGLES);
             
-            camera = new ic::Camera2D();
+            camera = ic::Camera2D();
 
             paddle1 = new RectangleShape({ -0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle1");
             paddle2 = new RectangleShape({ 0.7f, 0.0f }, { 0.05f, 0.2f }, "paddle2");
@@ -146,40 +146,40 @@ class PongDemo : public ic::Application {
             // Rendering
             clear_color(ic::Colors::black);
 
-            shader->use();
-            camera->use(shader);
-            texture->use();
+            shader.use();
+            camera.use(shader);
+            texture.use();
 
-            renderer.draw_rectangle(batch, texture->get_entry(paddle1->atlasEntryName),
+            renderer.draw_rectangle(batch, texture.get_entry(paddle1->atlasEntryName),
                 paddle1->r.position.x(), paddle1->r.position.y(), 
                 paddle1->r.size.x(),     paddle1->r.size.y(), 
                 ic::Colors::white);
-            renderer.draw_rectangle(batch, texture->get_entry(paddle2->atlasEntryName),
+            renderer.draw_rectangle(batch, texture.get_entry(paddle2->atlasEntryName),
                 paddle2->r.position.x(), paddle2->r.position.y(), 
                 paddle2->r.size.x(),     paddle2->r.size.y(), 
                 ic::Colors::white);
-            renderer.draw_rectangle(batch, texture->get_entry(ball->atlasEntryName),
+            renderer.draw_rectangle(batch, texture.get_entry(ball->atlasEntryName),
                 ball->r.position.x(), ball->r.position.y(), 
                 ball->r.size.x(),     ball->r.size.y(), 
                 ic::Colors::white);
 
-            batch->render();
+            batch.render();
 
             // Text rendering
-            textShader->use();
-            camera->use(textShader);
-            atlas->use();
+            textShader.use();
+            camera.use(textShader);
+            atlas.use();
             renderer.draw_string_centered(textBatch, atlas, std::to_string(points1) + " | " + std::to_string(points2), 0.0f, 0.7f);
-            textBatch->render();
+            textBatch.render();
 
             return true; 
         }
 
         void dispose() override {
-            batch->dispose();
-            textBatch->dispose();
-            texture->dispose();
-            shader->clear();
+            batch.dispose();
+            textBatch.dispose();
+            texture.dispose();
+            shader.clear();
         }
 
         void restart(RectangleShape *winner) {

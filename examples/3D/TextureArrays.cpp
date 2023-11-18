@@ -179,21 +179,20 @@ std::string textureArrayFragment = IC_ADD_GLSL_DEFINITION(
  *  making them an alternative to texture atlases.
 */
 class TextureArrays : public ic::Application {
-    ic::Shader *singleTextureShader, *textureArrayShader;
+    ic::Shader singleTextureShader, textureArrayShader;
     
-    ic::Camera3D *camera;
-    ic::Mesh3D *mesh, *floorMesh;
+    ic::Camera3D camera;
+    ic::Mesh3D mesh, floorMesh;
 
-    ic::Texture *floorTexture, *whiteTexture;
-    ic::TextureArray *textureArray;
+    ic::Texture floorTexture, whiteTexture;
+    ic::TextureArray textureArray;
 
-    ic::FreeRoamCameraController3D *controller;
+    ic::FreeRoamCameraController3D controller;
 
     float time;
     public:
         bool init() override {
             displayName = "Texture Array Example";
-            scaling = ic::WindowScaling::fullscreen;
             hideCursor = true;
 
             return true;
@@ -209,23 +208,25 @@ class TextureArrays : public ic::Application {
             floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
             whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
             
-            textureArray = new ic::TextureArray(64, 6);
-            textureArray->add_texture("resources/textures/stone.png");
-            textureArray->add_texture("resources/textures/stone-bricks.png");
-            textureArray->add_texture("resources/textures/grass.png");
-            textureArray->add_texture("resources/textures/dirt.png");
-            textureArray->add_texture("resources/textures/wood.png");
-            textureArray->add_texture("resources/textures/tile.png");
+            textureArray = ic::TextureArray(64, 6);
+            textureArray.add_texture("resources/textures/stone.png");
+            textureArray.add_texture("resources/textures/stone-bricks.png");
+            textureArray.add_texture("resources/textures/grass.png");
+            textureArray.add_texture("resources/textures/dirt.png");
+            textureArray.add_texture("resources/textures/wood.png");
+            textureArray.add_texture("resources/textures/tile.png");
 
             mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
 
             floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 25.0f, 0.1f, 25.0f);
-            floorMesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
+            floorMesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
 
             camera = new ic::Camera3D();
-            camera->position = { -3.0f, 1.5f, 0.0f };
-            controller = new ic::FreeRoamCameraController3D(camera, &ic::InputHandler::get());
-            controller->flying = true;
+            camera.position = { -3.0f, 1.5f, 0.0f };
+
+            controller = ic::FreeRoamCameraController3D(&camera);
+            controller.flying = true;
+
             time = 0.0f;
             
             return true;
@@ -235,54 +236,48 @@ class TextureArrays : public ic::Application {
             return true;
         }
 
-        void window_size_changed(int w, int h) override {
-            camera->resize(w, h);
-        }
-
         bool update(float dt) override {
             time += dt;
 
-            controller->act(dt);
-            camera->update();
+            controller.act(dt);
+            camera.update();
             
             clear_color(ic::Colors::blue);
             
-            singleTextureShader->use();
-            singleTextureShader->set_uniform_vec3f("viewPosition", camera->position);
-            camera->upload_to_shader(singleTextureShader);
+            singleTextureShader.use();
+            singleTextureShader.set_uniform_vec3f("viewPosition", camera.position);
+            camera.upload_to_shader(singleTextureShader);
             
 
             ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
-            mesh->set_transformation(translation * rotation);
-            mesh->set_normal_transformation(rotation);
+            mesh.set_transformation(translation * rotation);
+            mesh.set_normal_transformation(rotation);
             
 
-            whiteTexture->use();
-            mesh->draw(singleTextureShader);
+            whiteTexture.use();
+            mesh.draw(singleTextureShader);
 
-            floorTexture->use();
-            floorMesh->draw(singleTextureShader);
+            floorTexture.use();
+            floorMesh.draw(singleTextureShader);
 
 
             // Texture array rendering
-            textureArrayShader->use();
-            textureArray->use();
+            textureArrayShader.use();
+            textureArray.use();
 
-            textureArrayShader->set_uniform_vec3f("viewPosition", camera->position);
-            camera->upload_to_shader(textureArrayShader);
+            textureArrayShader.set_uniform_vec3f("viewPosition", camera.position);
+            camera.upload_to_shader(textureArrayShader);
 
             for (int i = 0; i < 6; i++) {
                 ic::Quaternion q = ic::Quaternion().from_euler(0.0f, time, 0.0f);
                 ic::Mat4x4 translation2 = ic::Mat4x4().set_translation<3>({5.0f, 0.6f, i * 2.0f - 3.0f});
-                mesh->set_transformation(translation2);
-                mesh->set_normal_transformation(ic::Mat4x4());
+                mesh.set_transformation(translation2);
+                mesh.set_normal_transformation(ic::Mat4x4());
 
-                textureArrayShader->set_uniform_int("textureIndex", i);
-
-
-                mesh->draw(textureArrayShader);
+                textureArrayShader.set_uniform_int("textureIndex", i);
+                mesh.draw(textureArrayShader);
             }
             
     
@@ -290,15 +285,15 @@ class TextureArrays : public ic::Application {
         }
 
         void dispose() override {
-            singleTextureShader->clear();
-            textureArrayShader->clear();
+            singleTextureShader.clear();
+            textureArrayShader.clear();
 
-            mesh->dispose();
-            floorMesh->dispose();
-            floorTexture->dispose();
-            whiteTexture->dispose();
+            mesh.dispose();
+            floorMesh.dispose();
+            floorTexture.dispose();
+            whiteTexture.dispose();
 
-            textureArray->dispose();
+            textureArray.dispose();
         }
 };
 

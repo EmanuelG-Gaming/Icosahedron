@@ -356,14 +356,14 @@ std::string screenFragment = IC_ADD_GLSL_DEFINITION(
 );
 
 class RaymarchingDemo : public ic::Application {
-    ic::Shader *screenShader, *rayShader;
-    ic::Framebuffer *framebuffer;
+    ic::Shader screenShader, rayShader;
+    ic::Framebuffer framebuffer;
     
-    ic::Mesh2D *screenQuad;
-    ic::Camera3D *camera;
+    ic::Mesh2D screenQuad;
+    ic::Camera3D camera;
     float time;
 
-    ic::FreeRoamCameraController3D *controller;
+    ic::FreeRoamCameraController3D controller;
 
     public:
         bool init() override {
@@ -378,26 +378,26 @@ class RaymarchingDemo : public ic::Application {
             screenShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, screenFragment);
             
             // Initialize these values directly
-            rayShader->use();
-            rayShader->set_uniform_vec3f("spheres[0].center", { -1.0f, 0.2f, 0.2f });
-            rayShader->set_uniform_color("spheres[0].diffuse", ic::Colors::red);
-            rayShader->set_uniform_float("spheres[0].radius", 0.5f);
+            rayShader.use();
+            rayShader.set_uniform_vec3f("spheres[0].center", { -1.0f, 0.2f, 0.2f });
+            rayShader.set_uniform_color("spheres[0].diffuse", ic::Colors::red);
+            rayShader.set_uniform_float("spheres[0].radius", 0.5f);
 
-            rayShader->set_uniform_vec3f("spheres[1].center", { 0.9f, -0.8f, 1.5f });
-            rayShader->set_uniform_color("spheres[1].diffuse", ic::Colors::green);
-            rayShader->set_uniform_float("spheres[1].radius", 0.35f);
+            rayShader.set_uniform_vec3f("spheres[1].center", { 0.9f, -0.8f, 1.5f });
+            rayShader.set_uniform_color("spheres[1].diffuse", ic::Colors::green);
+            rayShader.set_uniform_float("spheres[1].radius", 0.35f);
 
-            rayShader->set_uniform_vec3f("spheres[2].center", { -0.4f, -0.8f, 1.5f });
-            rayShader->set_uniform_color("spheres[2].diffuse", ic::Colors::cyan);
-            rayShader->set_uniform_float("spheres[2].radius", 0.5f);
+            rayShader.set_uniform_vec3f("spheres[2].center", { -0.4f, -0.8f, 1.5f });
+            rayShader.set_uniform_color("spheres[2].diffuse", ic::Colors::cyan);
+            rayShader.set_uniform_float("spheres[2].radius", 0.5f);
 
-            framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, RAYMARCHING_WIDTH, RAYMARCHING_HEIGHT);
+            framebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, RAYMARCHING_WIDTH, RAYMARCHING_HEIGHT);
 
             screenQuad = ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f);
             
-            camera = new ic::Camera3D();
-            controller = new ic::FreeRoamCameraController3D(camera, &ic::InputHandler::get());
-            controller->flying = true;
+            camera = ic::Camera3D();
+            controller = ic::FreeRoamCameraController3D(&camera);
+            controller.flying = true;
 
             time = 0.0f;
 
@@ -405,7 +405,7 @@ class RaymarchingDemo : public ic::Application {
         }
 
         void window_size_changed(int w, int h) override {
-            framebuffer->resize(w, h);
+            framebuffer.resize(w, h);
         }
 
         bool handle_event(ic::Event event, float dt) override { 
@@ -416,37 +416,37 @@ class RaymarchingDemo : public ic::Application {
         bool update(float dt) override {
             time += dt;
             
-            controller->act(dt);
-            camera->update();
+            controller.act(dt);
+            camera.update();
 
 
             // Rendering
             clear_color(ic::Colors::blue);
             
-            framebuffer->use();
-            rayShader->use();
-            camera->upload_to_shader(rayShader);
-            rayShader->set_uniform_vec3f("sun.direction", { 0.2f, cos(time * 0.05f), sin(time * 0.05f) });
-            rayShader->set_uniform_vec3f("cameraPosition", camera->position);
-            rayShader->set_uniform_vec3f("spheres[0].center", { -1.0f + cos(time), 0.2f + sin(time), 0.2f + sin(time) * cos(time) });
+            framebuffer.use();
+            rayShader.use();
+            camera.upload_to_shader(rayShader);
+            rayShader.set_uniform_vec3f("sun.direction", { 0.2f, cos(time * 0.05f), sin(time * 0.05f) });
+            rayShader.set_uniform_vec3f("cameraPosition", camera.position);
+            rayShader.set_uniform_vec3f("spheres[0].center", { -1.0f + cos(time), 0.2f + sin(time), 0.2f + sin(time) * cos(time) });
             
-            screenQuad->draw(rayShader);
-            framebuffer->unuse();
+            screenQuad.draw(rayShader);
+            framebuffer.unuse();
 
 
-            screenShader->use();
-            framebuffer->use_texture();
-            screenQuad->draw(screenShader);
+            screenShader.use();
+            framebuffer.use_texture();
+            screenQuad.draw(screenShader);
 
             return true; 
         }
 
         void dispose() override {
-            screenShader->clear();
-            rayShader->clear();
+            screenShader.clear();
+            rayShader.clear();
 
-            framebuffer->dispose();
-            screenQuad->dispose();
+            framebuffer.dispose();
+            screenQuad.dispose();
         }
 };
 

@@ -26,8 +26,8 @@ namespace ic {
             }
 
 
-            ic::Texture *load_png(const std::vector<std::string> &filePaths);
-            ic::Texture *load_bmp(const std::vector<std::string> &filePaths);
+            ic::Texture load_png(const std::vector<std::string> &filePaths);
+            ic::Texture load_bmp(const std::vector<std::string> &filePaths);
 
         private:
             GLenum map_to_texture_format(uint32_t format);

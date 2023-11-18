@@ -2,7 +2,16 @@
 
 using namespace ic;
 
-OrbitalCameraController3D::OrbitalCameraController3D(ic::Camera3D *camera, ic::InputHandler *handler) {
+
+OrbitalCameraController3D::OrbitalCameraController3D() {
+    this->rotation = { 0.0f, 0.0f };
+    this->center = { 0.0f, 0.0f, 0.0f };
+
+    this->lookSensitivity = 1.0f;
+    this->radius = 2.0f;
+}
+
+OrbitalCameraController3D::OrbitalCameraController3D(ic::Camera3D *camera) {
     this->camera = camera;
     this->rotation = { 0.0f, 0.0f };
     this->center = { 0.0f, 0.0f, 0.0f };
@@ -12,8 +21,9 @@ OrbitalCameraController3D::OrbitalCameraController3D(ic::Camera3D *camera, ic::I
     
     this->mouse = new ic::MouseController();
     
-    handler->add_input(this->mouse, "orbital3DMouse");
+    ic::InputHandler::get().add_input(this->mouse, "orbital3DMouse");
 }
+
 
 void ic::OrbitalCameraController3D::act(float dt) {
     ic::Vec2i motion = this->mouse->get_relative_motion();

@@ -29,7 +29,7 @@ namespace ic {
                 return ins;
             }
 
-            ic::Mesh3D *get_mesh(const std::string &objectFileName);
+            ic::Mesh3D get_mesh(const std::string &objectFileName);
 
             std::map<std::string, ic::OBJMaterialInfo> get_materials(const std::string &materialFileName);
 

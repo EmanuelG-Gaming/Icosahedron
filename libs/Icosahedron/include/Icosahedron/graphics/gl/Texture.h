@@ -11,7 +11,7 @@ namespace ic {
      * A texture is bound via the use() function, in order to be applied to geometry. */
     class Texture {
         public:
-            Texture(ic::GLTextureTypes type);
+            Texture(ic::GLTextureTypes type = ic::GLTextureTypes::INVALID_TEXTURE);
 
             void use(int index = 0);
             void unuse();

@@ -16,8 +16,8 @@ namespace ic { namespace UI {
     class Global {
         public:
             ic::Renderer renderer;
-            ic::Batch *fillBatch, *fillTextBatch;
-            ic::TextAtlas *defaultAtlas;
+            ic::Batch fillBatch, fillTextBatch;
+            ic::TextAtlas defaultAtlas;
             ic::Vec2f mouseCursorPosition;
 
             static Global& get() {

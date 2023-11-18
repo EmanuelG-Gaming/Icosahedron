@@ -2,7 +2,16 @@
 
 using namespace ic;
 
-FreeRoamCameraController3D::FreeRoamCameraController3D(ic::Camera3D *camera, ic::InputHandler *handler) {
+
+FreeRoamCameraController3D::FreeRoamCameraController3D() {
+    this->rotation = { 0, 0 };
+
+    this->flying = false;
+    this->speed = 3.0f;
+    this->lookSensitivity = 1.0f;
+}
+
+FreeRoamCameraController3D::FreeRoamCameraController3D(ic::Camera3D *camera) {
     this->camera = camera;
     this->rotation = { 0, 0 };
 
@@ -14,9 +23,10 @@ FreeRoamCameraController3D::FreeRoamCameraController3D(ic::Camera3D *camera, ic:
     this->keyboard = new ic::KeyboardController();
     this->mouse = new ic::MouseController();
     
-    handler->add_input(this->keyboard, "freeRoam3DKeyboard");
-    handler->add_input(this->mouse, "freeRoam3DMouse");
+    ic::InputHandler::get().add_input(this->keyboard, "freeRoam3DKeyboard");
+    ic::InputHandler::get().add_input(this->mouse, "freeRoam3DMouse");
 }
+
 
 void ic::FreeRoamCameraController3D::act(float dt) {
     ic::Vec3f offset = {
@@ -80,7 +90,6 @@ void ic::FreeRoamCameraController3D::act(float dt) {
       
     if (rotation.y() > (89.0f / 180.0f * M_PI)) rotation.y() = (89.0f / 180.0f * M_PI);
     if (rotation.y() < -(89.0f / 180.0f * M_PI)) rotation.y() = -(89.0f / 180.0f * M_PI);
-    
     
     
     camera->position = velocity * speed * dt + camera->position;

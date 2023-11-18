@@ -175,7 +175,6 @@ std::string chunkFragmentShader = IC_ADD_GLSL_DEFINITION(
         vec4 color3 = compute_lighting(d);
 
         outColor = color1 + color2 + color3;
-        //outColor = vec4((vNormal + 1.0) / 2.0, 1.0);
     }
 );
 
@@ -255,13 +254,13 @@ struct ChunkMeshData {
 
 struct Chunk {
     public:
-        ic::Mesh3D *mesh;
+        ic::Mesh3D mesh;
         std::array<block_t, CHUNK_VOLUME> blocks;
         int meshIndexCount;
 
         Chunk() {
             memset(&blocks, 0, sizeof(blocks));
-            mesh = new ic::Mesh3D();
+            mesh = ic::Mesh3D();
             meshIndexCount = 0;
         }
 
@@ -311,13 +310,11 @@ struct Chunk {
                 }
             }
 
-            std::cout << data.positions.size() << "\n";
-
-            mesh->add_attribute(0, 3, data.positions);
-            mesh->add_attribute(2, 1, data.textureIndices);
-            mesh->add_attribute(3, 1, data.textureCoordIndices);
-            mesh->add_attribute(4, 3, data.normals);
-            mesh->set_index_buffer(data.indices);
+            mesh.add_attribute(0, 3, data.positions);
+            mesh.add_attribute(2, 1, data.textureIndices);
+            mesh.add_attribute(3, 1, data.textureCoordIndices);
+            mesh.add_attribute(4, 3, data.normals);
+            mesh.set_index_buffer(data.indices);
         }
 
 
@@ -368,24 +365,24 @@ struct Chunk {
         }
 
 
-        void draw(ic::Shader *shader) {
-            mesh->draw(shader);
+        void draw(ic::Shader &shader) {
+            mesh.draw(shader);
         }
 
         void dispose() {
-            mesh->dispose();
+            mesh.dispose();
         }
 };
 
 
 
 class GLCraft : public ic::Application {
-    ic::Shader *chunkShader;
-    ic::TextureArray *textureArray;
+    ic::Shader chunkShader;
+    ic::TextureArray textureArray;
 
-    ic::Camera3D *camera;
-    ic::FreeRoamCameraController3D *controller;
-    Chunk *chunk;
+    ic::Camera3D camera;
+    ic::FreeRoamCameraController3D controller;
+    Chunk chunk;
 
     float time;
 
@@ -405,29 +402,30 @@ class GLCraft : public ic::Application {
             
             
             chunkShader = ic::ShaderLoader::get().load(chunkVertexShader, chunkFragmentShader);
-            textureArray = new ic::TextureArray(64, 4);
-            textureArray->add_texture("resources/textures/dirt.png");
-            textureArray->add_texture("resources/textures/grass.png");
+            textureArray = ic::TextureArray(64, 4);
+            textureArray.add_texture("resources/textures/dirt.png");
+            textureArray.add_texture("resources/textures/grass.png");
 
-            camera = new ic::Camera3D();
-            camera->position = { -3.0f, 1.5f, 0.0f };
-            controller = new ic::FreeRoamCameraController3D(camera, &ic::InputHandler::get());
-            controller->flying = true;
-            controller->speed = 10.0f;
+            camera = ic::Camera3D();
+            camera.position = { -3.0f, 1.5f, 0.0f };
+
+            controller = ic::FreeRoamCameraController3D(&camera);
+            controller.flying = true;
+            controller.speed = 10.0f;
 
 
-            chunk = new Chunk();
+            chunk = Chunk();
             for (int x = 0; x < CHUNK_WIDTH; x++) {
                 for (int z = 0; z < CHUNK_DEPTH; z++) {
                     float height = ic::Noise::get().perlin_2D(x / 10.0f, z / 10.0f, true) * 8.0f;
                     
                     for (int y = 0; y <= height; y++) {
-                        chunk->blocks[chunk->get_index(x, y, z)] = 1;
+                        chunk.blocks[chunk.get_index(x, y, z)] = 1;
                     }
                 }
             }
 
-            chunk->form_mesh();
+            chunk.form_mesh();
 
             
             return true;
@@ -444,26 +442,26 @@ class GLCraft : public ic::Application {
         bool update(float dt) override {
             time += dt;
 
-            controller->act(dt);
-            camera->update();
+            controller.act(dt);
+            camera.update();
             
             // Rendering
             clear_color(ic::Colors::blue);
-            chunkShader->use();
-            chunkShader->set_uniform_vec3f("viewPosition", camera->position);
-            camera->upload_to_shader(chunkShader);
+            chunkShader.use();
+            chunkShader.set_uniform_vec3f("viewPosition", camera.position);
+            camera.upload_to_shader(chunkShader);
 
-            textureArray->use();
-            chunk->draw(chunkShader);
+            textureArray.use();
+            chunk.draw(chunkShader);
 
            
             return true; 
         }
 
         void dispose() override {
-            textureArray->dispose();
-            chunkShader->clear();
-            chunk->dispose();
+            textureArray.dispose();
+            chunkShader.clear();
+            chunk.dispose();
         }
 };
 

@@ -185,16 +185,16 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 
 
 class Bloom : public ic::Application {
-    ic::Shader *shader, *blurShader, *screenShader;
-    ic::Framebuffer *sceneFramebuffer;
-    ic::Framebuffer *pingpong1, *pingpong2;
+    ic::Shader shader, blurShader, screenShader;
+    ic::Framebuffer sceneFramebuffer;
+    ic::Framebuffer pingpong1, pingpong2;
 
-    ic::Camera3D *camera;
-    ic::Mesh2D *screenQuad;
-    ic::Mesh3D *mesh, *floorMesh;
+    ic::Camera3D camera;
+    ic::Mesh2D screenQuad;
+    ic::Mesh3D mesh, floorMesh;
 
-    ic::Texture *floorTexture, *whiteTexture;
-    ic::FreeRoamCameraController3D *controller;
+    ic::Texture floorTexture, whiteTexture;
+    ic::FreeRoamCameraController3D controller;
     
     float time;
     float exposure;
@@ -202,7 +202,6 @@ class Bloom : public ic::Application {
     public:
         bool init() override {
             displayName = "Bloom example";
-            scaling = ic::WindowScaling::resizeable;
             hideCursor = true;
 
             return true;
@@ -217,15 +216,15 @@ class Bloom : public ic::Application {
             screenShader = ic::ShaderLoader::get().load(screenVertex, screenFragment);
             
             // Shader configuration
-            shader->use();
-            shader->set_uniform_int("sampleTexture", 0);
+            shader.use();
+            shader.set_uniform_int("sampleTexture", 0);
 
-            blurShader->use();
-            blurShader->set_uniform_int("image", 0);
+            blurShader.use();
+            blurShader.set_uniform_int("image", 0);
 
-            screenShader->use();
-            screenShader->set_uniform_int("screenTexture", 0);
-            screenShader->set_uniform_int("bloomTexture", 1);
+            screenShader.use();
+            screenShader.set_uniform_int("screenTexture", 0);
+            screenShader.set_uniform_int("bloomTexture", 1);
 
 
             ic::TextureParameters params;
@@ -234,25 +233,25 @@ class Bloom : public ic::Application {
             floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png", params, true);
             whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png", params, true);
             
-            sceneFramebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
-            sceneFramebuffer->add_render_target(ic::TEXTURE_ATTACH_COLOR_1, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA);
+            sceneFramebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            sceneFramebuffer.add_render_target(ic::TEXTURE_ATTACH_COLOR_1, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA);
 
-            pingpong1 = pingpong2 = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT, false);
+            pingpong1 = pingpong2 = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT, false);
 
 
             mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
             floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
             
-            screenQuad = new ic::Mesh2D();
-            screenQuad->add_attribute(0, 2, ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
-            screenQuad->add_attribute(1, 2, ic::GeometryGenerator::get().generate_UV_rectangle(1.0f, 1.0f));
-            screenQuad->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+            screenQuad = ic::Mesh2D();
+            screenQuad.add_attribute(0, 2, ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
+            screenQuad.add_attribute(1, 2, ic::GeometryGenerator::get().generate_UV_rectangle(1.0f, 1.0f));
+            screenQuad.set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
             
-            camera = new ic::Camera3D();
-            camera->position = { -3.0f, 1.5f, 0.0f };
-            controller = new ic::FreeRoamCameraController3D(camera, &ic::InputHandler::get());
-            controller->flying = true;
+            camera = ic::Camera3D();
+            camera.position = { -3.0f, 1.5f, 0.0f };
+            controller = ic::FreeRoamCameraController3D(&camera);
+            controller.flying = true;
 
 
             ic::MouseController *mouse = new ic::MouseController();
@@ -277,93 +276,94 @@ class Bloom : public ic::Application {
         }
 
         void window_size_changed(int w, int h) override {
-            camera->resize(w, h);
+            camera.resize(w, h);
 
-            sceneFramebuffer->resize(w, h);
-            pingpong1->resize(w, h);
-            pingpong2->resize(w, h);
+            sceneFramebuffer.resize(w, h);
+            pingpong1.resize(w, h);
+            pingpong2.resize(w, h);
         }
 
         bool update(float dt) override {
             time += dt;
 
-            controller->act(dt);
-            camera->update();
+            controller.act(dt);
+            camera.update();
             
             clear_color(ic::Colors::blue);
             
             // First pass - scene
-            sceneFramebuffer->use();
+            sceneFramebuffer.use();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            shader->use();
-            shader->set_uniform_vec3f("viewPosition", camera->position);
-            camera->upload_to_shader(shader);
+            shader.use();
+            shader.set_uniform_vec3f("viewPosition", camera.position);
+            camera.upload_to_shader(shader);
             
 
             ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
-            mesh->set_transformation(translation * rotation);
-            mesh->set_normal_transformation(rotation);
+            mesh.set_transformation(translation * rotation);
+            mesh.set_normal_transformation(rotation);
 
-            whiteTexture->use();
-            mesh->draw(shader);
+            whiteTexture.use();
+            mesh.draw(shader);
             
-            floorTexture->use();
-            floorMesh->draw(shader);
+            floorTexture.use();
+            floorMesh.draw(shader);
 
-            sceneFramebuffer->unuse();
+            sceneFramebuffer.unuse();
+
 
             // Second pass - blurring via the two ping pong framebuffers
             bool horizontal = true, firstIteration = true;
             int amount = 10;
 
-            blurShader->use();
+            blurShader.use();
             for (int i = 0; i < amount; i++) {
-                ic::Framebuffer *pingpong = horizontal ? pingpong1 : pingpong2;
+                ic::Framebuffer &pingpong = horizontal ? pingpong1 : pingpong2;
 
-                pingpong->use();
-                blurShader->set_uniform_bool("horizontal", horizontal);
+                pingpong.use();
+                blurShader.set_uniform_bool("horizontal", horizontal);
             
                 if (firstIteration) {
-                    sceneFramebuffer->use_texture(0, 1);
+                    sceneFramebuffer.use_texture(0, 1);
                 } else {
-                    ic::Framebuffer *pingpongOpposite = horizontal ? pingpong2 : pingpong1;
-                    pingpongOpposite->use_texture(0, 0);
+                    ic::Framebuffer &pingpongOpposite = horizontal ? pingpong2 : pingpong1;
+                    pingpongOpposite.use_texture(0, 0);
                 }
-                screenQuad->draw(blurShader);
+                screenQuad.draw(blurShader);
             
                 horizontal = !horizontal;
                 if (firstIteration) {
                     firstIteration = false;
                 }
             }
-            pingpong1->unuse();
-            pingpong2->unuse();
-            sceneFramebuffer->unuse();
+            pingpong1.unuse();
+            pingpong2.unuse();
+            sceneFramebuffer.unuse();
             
             // Third pass - Add the blurred texture to the model screen
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            screenShader->use();
-            screenShader->set_uniform_float("exposure", exposure);
+            screenShader.use();
+            screenShader.set_uniform_float("exposure", exposure);
 
-            sceneFramebuffer->use_texture(0, 0);
-            (horizontal ? pingpong2 : pingpong1)->use_texture(1, 0);
+            sceneFramebuffer.use_texture(0, 0);
+            (horizontal ? pingpong2 : pingpong1).use_texture(1, 0);
 
-            screenQuad->draw(screenShader);
+            screenQuad.draw(screenShader);
 
             return true; 
         }
 
         void dispose() override {
-            shader->clear();
-            mesh->dispose();
-            floorMesh->dispose();
-            floorTexture->dispose();
-            whiteTexture->dispose();
-            sceneFramebuffer->dispose();
+            shader.clear();
+            mesh.dispose();
+            floorMesh.dispose();
+            floorTexture.dispose();
+            whiteTexture.dispose();
+            sceneFramebuffer.dispose();
         }
 };
 

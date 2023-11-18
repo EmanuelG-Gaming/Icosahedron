@@ -123,24 +123,26 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
     }
 );
 
+
 /** Renders the same scene to two different viewports (the first one is the player's view). */
 class MultipleViewports : public ic::Application {
-    ic::Shader *shader, *screenShader;
-    ic::Framebuffer *framebuffer;
+    ic::Shader shader, screenShader;
+    ic::Framebuffer framebuffer;
     
-    ic::Camera3D *camera, *secondaryCamera;
-    ic::Mesh3D *screenQuad;
-    ic::Mesh3D *mesh;
-    ic::Mesh3D *mainCameraMesh, *secondCameraMesh;
+    ic::Camera3D camera, secondaryCamera;
+    ic::Mesh3D screenQuad;
+    ic::Mesh3D mesh;
+    ic::Mesh3D mainCameraMesh, secondCameraMesh;
 
-    ic::Texture *meshTexture, *mainCameraTexture;
-    ic::FreeRoamCameraController3D *controller;
+    ic::Texture meshTexture, mainCameraTexture;
+    ic::FreeRoamCameraController3D controller;
 
     float time;
+
+    
     public:
         bool init() override {
             displayName = "Multiple Viewports Example";
-            scaling = ic::WindowScaling::fullscreen;
             hideCursor = true;
 
             return true;
@@ -155,7 +157,7 @@ class MultipleViewports : public ic::Application {
             meshTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
             mainCameraTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
             
-            framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            framebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
             
 
             mesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.5f, 14, 14);
@@ -163,21 +165,21 @@ class MultipleViewports : public ic::Application {
             mainCameraMesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
             secondCameraMesh = ic::OBJLoader::get().get_mesh("resources/models/icosahedron.obj");
 
-            screenQuad = new ic::Mesh3D();
-            screenQuad->add_attribute(0, 3, std::vector<float>({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f }));
-            screenQuad->add_attribute(2, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
-            screenQuad->add_attribute(3, 3, std::vector<float>({ 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f }));
-            screenQuad->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+            screenQuad = ic::Mesh3D();
+            screenQuad.add_attribute(0, 3, std::vector<float>({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f }));
+            screenQuad.add_attribute(2, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            screenQuad.add_attribute(3, 3, std::vector<float>({ 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f }));
+            screenQuad.set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
-            camera = new ic::Camera3D();
-            camera->position = { -3.0f, 1.5f, 0.0f };
+            camera = ic::Camera3D();
+            camera.position = { -3.0f, 1.5f, 0.0f };
             
-            secondaryCamera = new ic::Camera3D();
-            secondaryCamera->position = { 3.0f, 5.0f, 3.0f };
-            secondaryCamera->lookingAt = { 0.0f, 0.0f, 0.0f };
+            secondaryCamera = ic::Camera3D();
+            secondaryCamera.position = { 3.0f, 5.0f, 3.0f };
+            secondaryCamera.lookingAt = { 0.0f, 0.0f, 0.0f };
 
-            controller = new ic::FreeRoamCameraController3D(camera, &ic::InputHandler::get());
-            controller->flying = true;
+            controller = ic::FreeRoamCameraController3D(&camera);
+            controller.flying = true;
             time = 0.0f;
             
             return true;
@@ -188,83 +190,83 @@ class MultipleViewports : public ic::Application {
         }
 
         void window_size_changed(int w, int h) override {
-            camera->resize(w, h);
-            secondaryCamera->resize(w, h);
-            framebuffer->resize(w, h);
+            camera.resize(w, h);
+            secondaryCamera.resize(w, h);
+            framebuffer.resize(w, h);
         }
 
         bool update(float dt) override {
             time += dt;
 
-            controller->act(dt);
-            camera->update();
-            secondaryCamera->update();
+            controller.act(dt);
+            camera.update();
+            secondaryCamera.update();
 
             // First pass - scene drawing
-            framebuffer->use();
+            framebuffer.use();
             
             clear_color(ic::Colors::blue);
             
             render_scene(secondaryCamera);
 
-            framebuffer->unuse();
+            framebuffer.unuse();
 
 
             clear_color(ic::Colors::blue);
             
             // Second pass - drawing via framebuffer
             states.disable_face_culling();
-            screenShader->use();
-            screenShader->set_uniform_vec3f("viewPosition", camera->position);
-            camera->upload_to_shader(screenShader);
+            screenShader.use();
+            screenShader.set_uniform_vec3f("viewPosition", camera.position);
+            camera.upload_to_shader(screenShader);
 
             ic::Mat4x4 translation2 = ic::Mat4x4().set_translation<3>({ -1.0f, 0.0f, 2.5f });
             ic::Mat4x4 scaling = ic::Mat4x4().set_scaling<3>({ 1.0f * (IC_WINDOW_WIDTH / (float) IC_WINDOW_HEIGHT), 1.0f, 1.0f });
-            screenQuad->set_transformation(translation2 * scaling);
+            screenQuad.set_transformation(translation2 * scaling);
 
-            framebuffer->use_texture();
-            screenQuad->draw(screenShader);
+            framebuffer.use_texture();
+            screenQuad.draw(screenShader);
 
             render_scene(camera);
 
             return true;
         }
 
-        void render_scene(ic::Camera3D *cam) {
+        void render_scene(ic::Camera3D &cam) {
             states.enable_face_culling(ic::FRONT, ic::CCW);
             
-            shader->use();
-            shader->set_uniform_vec3f("viewPosition", cam->position);
-            cam->upload_to_shader(shader);
+            shader.use();
+            shader.set_uniform_vec3f("viewPosition", cam.position);
+            cam.upload_to_shader(shader);
             
             ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
-            mesh->set_transformation(translation * rotation);
-            mesh->set_normal_transformation(rotation);
+            mesh.set_transformation(translation * rotation);
+            mesh.set_normal_transformation(rotation);
             
 
-            meshTexture->use();
-            mesh->draw(shader);
+            meshTexture.use();
+            mesh.draw(shader);
 
 
 
-            ic::Mat4x4 translation2 = ic::Mat4x4().set_translation<3>(camera->position);
-            mainCameraMesh->set_transformation(translation2);
+            ic::Mat4x4 translation2 = ic::Mat4x4().set_translation<3>(camera.position);
+            mainCameraMesh.set_transformation(translation2);
             
-            ic::Mat4x4 translation3 = ic::Mat4x4().set_translation<3>(secondaryCamera->position);
-            secondCameraMesh->set_transformation(translation3);
+            ic::Mat4x4 translation3 = ic::Mat4x4().set_translation<3>(secondaryCamera.position);
+            secondCameraMesh.set_transformation(translation3);
 
-            mainCameraTexture->use();
-            mainCameraMesh->draw(shader);
-            secondCameraMesh->draw(shader);
+            mainCameraTexture.use();
+            mainCameraMesh.draw(shader);
+            secondCameraMesh.draw(shader);
         }
 
         void dispose() override {
-            shader->clear();
-            mesh->dispose();
-            meshTexture->dispose();
-            framebuffer->dispose();
+            shader.clear();
+            mesh.dispose();
+            meshTexture.dispose();
+            framebuffer.dispose();
         }
 };
 

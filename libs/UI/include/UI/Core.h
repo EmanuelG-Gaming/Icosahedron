@@ -13,7 +13,7 @@ namespace ic { namespace UI {
     class Core {
         public:
             Table *mainTable;
-            ic::TextureAtlas *atlas;
+            ic::TextureAtlas atlas;
             
             static Core& get() {
                 static Core ins;
@@ -33,8 +33,8 @@ namespace ic { namespace UI {
             void operator = (Core const&) = delete;
 
         private:
-            ic::Camera2D *uiCamera;
-            ic::Shader *uiTextShader, *uiShader;
+            ic::Camera2D uiCamera;
+            ic::Shader uiTextShader, uiShader;
 
             ic::MouseController *mouse;
     };

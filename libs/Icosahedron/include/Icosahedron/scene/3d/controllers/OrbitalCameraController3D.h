@@ -17,7 +17,8 @@ namespace ic {
             float radius;
             float lookSensitivity;
 
-            OrbitalCameraController3D(ic::Camera3D *camera, ic::InputHandler *handler);
+            OrbitalCameraController3D();
+            OrbitalCameraController3D(ic::Camera3D *camera);
 
             void act(float dt);
 

@@ -43,7 +43,7 @@ namespace ic {
             Camera3D(bool perspective);
 
             void update();
-            void upload_to_shader(ic::Shader *shader, const std::string &viewUniform = "view", const std::string &projectionUniform = "projection");
+            void upload_to_shader(ic::Shader &shader, const std::string &viewUniform = "view", const std::string &projectionUniform = "projection");
 
             ic::Mat4x4 &get_view();
             ic::Mat4x4 &get_projection();

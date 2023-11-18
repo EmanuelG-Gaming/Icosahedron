@@ -74,15 +74,14 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 /** A basic scene with a cube on a floor and a directional light. */
 class Scene3D : public ic::Application {
     ic::Color meshColor, floorColor;
-    ic::Shader *shader;
+    ic::Shader shader;
 
-    ic::Camera3D *camera;
-    ic::Mesh3D *mesh, *floorMesh;
+    ic::Camera3D camera;
+    ic::Mesh3D mesh, floorMesh;
 
     public:
         bool init() override {
             displayName = "Scene 3D example";
-            scaling = ic::WindowScaling::fullscreen;
             
             return true;
         }
@@ -110,15 +109,15 @@ class Scene3D : public ic::Application {
             mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
             
             // A plane acting as a floor
-            floorMesh = new ic::Mesh3D();
-            floorMesh->add_attribute(0, 3, positions);
-            floorMesh->add_attribute(3, 3, normals);
-            floorMesh->set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+            floorMesh = ic::Mesh3D();
+            floorMesh.add_attribute(0, 3, positions);
+            floorMesh.add_attribute(3, 3, normals);
+            floorMesh.set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
 
-            camera = new ic::Camera3D();
-            camera->position = { -8.0f, 4.0f, 4.0f };
-            camera->lookingAt = { 0.0f, 0.5f, 0.0f };
+            camera = ic::Camera3D();
+            camera.position = { -8.0f, 4.0f, 4.0f };
+            camera.lookingAt = { 0.0f, 0.5f, 0.0f };
 
             meshColor = ic::Color().hexadecimal_to_RGB("BD5A4C");
             floorColor = ic::Color().hexadecimal_to_RGB("268B07");
@@ -130,38 +129,33 @@ class Scene3D : public ic::Application {
             return true;
         }
 
-        void window_size_changed(int w, int h) override {
-            camera->resize(w, h);
-        }
-
         bool update(float dt) override {
-            camera->update();
+            camera.update();
             
-
             clear_color(ic::Colors::blue);
             
-            shader->use();
-            shader->set_uniform_vec3f("viewPosition", camera->position);
-            camera->upload_to_shader(shader);
+            shader.use();
+            shader.set_uniform_vec3f("viewPosition", camera.position);
+            camera.upload_to_shader(shader);
 
             states.enable_face_culling(ic::FRONT, ic::CCW);
-            mesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.5f, 0.0f}));
-            shader->set_uniform_color("diffuseColor", meshColor);
-            mesh->draw(shader);
+            mesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.5f, 0.0f}));
+            shader.set_uniform_color("diffuseColor", meshColor);
+            mesh.draw(shader);
 
             // The calculated plane's normals might face away from the camera, 
             // so this function prevents the face from getting "culled" away from view
             states.disable_face_culling();
-            shader->set_uniform_color("diffuseColor", floorColor);
-            floorMesh->draw(shader);
+            shader.set_uniform_color("diffuseColor", floorColor);
+            floorMesh.draw(shader);
 
             return true; 
         }
 
         void dispose() override {
-            shader->clear();
-            mesh->dispose();
-            floorMesh->dispose();
+            shader.clear();
+            mesh.dispose();
+            floorMesh.dispose();
         }
 };
 

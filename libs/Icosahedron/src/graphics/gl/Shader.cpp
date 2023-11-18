@@ -2,6 +2,9 @@
 
 using namespace ic;
 
+Shader::Shader() {
+
+}
 
 Shader::Shader(std::string vertexContent, std::string fragmentContent) {
     this->load(vertexContent, fragmentContent);

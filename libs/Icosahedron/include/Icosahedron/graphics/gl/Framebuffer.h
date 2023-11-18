@@ -26,6 +26,8 @@ namespace ic {
     /** @brief Wraps an OpenGL framebuffer. It can use up to 4 rendering targets, a.k.a. fragment shader output color locations. */
     class Framebuffer {
         public:
+            Framebuffer();
+            
             /** @brief Initializes a framebuffer with an RGBA color target, and depth testing. */
             Framebuffer(int width, int height);
 

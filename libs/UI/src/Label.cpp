@@ -59,7 +59,7 @@ std::string &ic::UI::Label::get_text() {
 
 
 
-ic::Vec2f ic::UI::Label::compute_size(ic::TextAtlas *font) {
+ic::Vec2f ic::UI::Label::compute_size(ic::TextAtlas &font) {
     float sclX = 1.0f * 0.002f;
     float sclY = 1.0f * 0.002f;
         
@@ -67,7 +67,7 @@ ic::Vec2f ic::UI::Label::compute_size(ic::TextAtlas *font) {
     float h = 0.0f;
     std::string::const_iterator iterator;
     for (iterator = text.begin(); iterator != text.end(); iterator++) {
-        CharacterInfo ch = font->get_characters().at(*iterator);
+        CharacterInfo ch = font.get_characters().at(*iterator);
                 
         w += ch.advX;
                 

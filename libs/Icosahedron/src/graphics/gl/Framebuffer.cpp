@@ -1,20 +1,29 @@
 #include <Icosahedron/graphics/gl/Framebuffer.h>
+#include <Icosahedron/Global.h>
 
 using namespace ic;
+
+
+Framebuffer::Framebuffer() {
+    this->data.width = 8;
+    this->data.height = 8;
+    this->data.textureType = ic::INVALID_TEXTURE;
+}
 
 Framebuffer::Framebuffer(int width, int height) {
     this->data.width = width;
     this->data.height = height;
-
     this->data.textureType = ic::T2D;
     
-    glGenFramebuffers(1, &this->fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
-
-    glGenTextures(4, this->textureIndices);
-    glGenRenderbuffers(4, this->renderBuffers);
-        
-    this->add_render_target(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, true);
+    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+        glGenFramebuffers(1, &this->fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
+    
+        glGenTextures(4, this->textureIndices);
+        glGenRenderbuffers(4, this->renderBuffers);
+            
+        this->add_render_target(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, true);
+    }
 }
 
 Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColorChannels channel, int width, int height, bool hasDepthBuffer) {
@@ -22,13 +31,15 @@ Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColor
     this->data.height = height;
     this->data.textureType = ic::T2D;
 
-    glGenFramebuffers(1, &this->fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
-
-    glGenTextures(4, this->textureIndices);
-    glGenRenderbuffers(4, this->renderBuffers);
-        
-    this->add_render_target(attachment, channel, hasDepthBuffer);
+    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+        glGenFramebuffers(1, &this->fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
+    
+        glGenTextures(4, this->textureIndices);
+        glGenRenderbuffers(4, this->renderBuffers);
+            
+        this->add_render_target(attachment, channel, hasDepthBuffer);
+    }
 }
 
 Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColorChannels internalFormat, ic::GLTextureColorChannels outputFormat, int width, int height, bool hasDepthBuffer) {
@@ -36,13 +47,15 @@ Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColor
     this->data.height = height;
     this->data.textureType = ic::T2D;
 
-    glGenFramebuffers(1, &this->fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
+    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+        glGenFramebuffers(1, &this->fbo);
+        glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
 
-    glGenTextures(4, this->textureIndices);
-    glGenRenderbuffers(4, this->renderBuffers);
+        glGenTextures(4, this->textureIndices);
+        glGenRenderbuffers(4, this->renderBuffers);
 
-    this->add_render_target(attachment, internalFormat, outputFormat, hasDepthBuffer);
+        this->add_render_target(attachment, internalFormat, outputFormat, hasDepthBuffer);
+    }
 }
 
 

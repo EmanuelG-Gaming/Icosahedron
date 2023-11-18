@@ -16,11 +16,11 @@
 
 /** @brief Icosahedron's physics engine. */
 class BasicPhysics : public ic::Application {
-    ic::Mesh2D *mesh1, *mesh2;
-    ic::Camera2D *camera;
-    ic::Shader *shader;
+    ic::Mesh2D mesh1, mesh2;
+    ic::Camera2D camera;
+    ic::Shader shader;
     ic::Physics::RigidObject2D *rigidBody1, *rigidBody2;
-    ic::Physics::PhysicsLevel2D *level;
+    ic::Physics::PhysicsLevel2D level;
 
     public:
         bool init() override {
@@ -31,19 +31,19 @@ class BasicPhysics : public ic::Application {
         
         bool load() override {
             mesh1 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(5, 0.3f);
-            mesh1->set_material(ic::MeshMaterial2D(ic::Colors::yellow, 1.0f));
+            mesh1.set_material(ic::MeshMaterial2D(ic::Colors::yellow, 1.0f));
 
             mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(30, 0.5f);
-            mesh2->set_material(ic::MeshMaterial2D(ic::Colors::green, 1.0f));
+            mesh2.set_material(ic::MeshMaterial2D(ic::Colors::green, 1.0f));
 
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
             
-            camera = new ic::Camera2D();
-            camera->scale = 0.5f;
+            camera = ic::Camera2D();
+            camera.scale = 0.5f;
 
-            level = new ic::Physics::PhysicsLevel2D();
-            level->set_gravity(0.0f, -9.81f);
-            level->simulationSteps = 10;
+            level = ic::Physics::PhysicsLevel2D();
+            level.set_gravity(0.0f, -9.81f);
+            level.simulationSteps = 10;
 
             rigidBody1 = new ic::Physics::RigidObject2D();
             rigidBody1->collider = new ic::Physics::CircleCollider(0.3f);
@@ -51,7 +51,7 @@ class BasicPhysics : public ic::Application {
             rigidBody1->set_position(-0.5f, 1.0f);
             rigidBody1->apply_velocity(0.8f, 1.0f);
 
-            level->add_object(rigidBody1);
+            level.add_object(rigidBody1);
 
 
             rigidBody2 = new ic::Physics::RigidObject2D();
@@ -59,14 +59,10 @@ class BasicPhysics : public ic::Application {
             rigidBody2->dynamic = false;
             rigidBody2->set_position(0.0f, -0.5f);
             
-            level->add_object(rigidBody2);
+            level.add_object(rigidBody2);
 
 
             return true;
-        }
-
-        void window_size_changed(int w, int h) override {
-            
         }
 
         bool handle_event(ic::Event event, float dt) override { 
@@ -74,26 +70,26 @@ class BasicPhysics : public ic::Application {
         }
 
         bool update(float dt) override {
-            level->update(dt);
+            level.update(dt);
             
-            mesh1->set_transformation(ic::Mat4x4().set_translation<2>(rigidBody1->transform->position));
-            mesh2->set_transformation(ic::Mat4x4().set_translation<2>(rigidBody2->transform->position));
+            mesh1.set_transformation(ic::Mat4x4().set_translation<2>(rigidBody1->transform->position));
+            mesh2.set_transformation(ic::Mat4x4().set_translation<2>(rigidBody2->transform->position));
 
             clear_color(ic::Colors::blue);
 
-            shader->use();
-            camera->use(shader);
+            shader.use();
+            camera.use(shader);
             
-            mesh1->draw(shader);
-            mesh2->draw(shader);
+            mesh1.draw(shader);
+            mesh2.draw(shader);
 
             return true; 
         }
 
         void dispose() override {
-            shader->clear();
-            mesh1->dispose();
-            mesh2->dispose();
+            shader.clear();
+            mesh1.dispose();
+            mesh2.dispose();
         }
 };
 

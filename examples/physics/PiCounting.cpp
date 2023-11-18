@@ -17,15 +17,15 @@
 
 
 class PiCounting : public ic::Application {
-    ic::Batch *textBatch;
-    ic::TextAtlas *atlas;
-    ic::Texture *floorTexture, *wallTexture;
-    ic::Texture *piTexture;
+    ic::Batch textBatch;
+    ic::TextAtlas atlas;
+    ic::Texture floorTexture, wallTexture;
+    ic::Texture piTexture;
 
-    ic::Mesh2D *wallMesh, *floorMesh, *movingMesh, *rigidMesh, *piMesh;
-    ic::Camera2D *camera, *uiCamera;
-    ic::Shader *shader, *textShader;
-    ic::Physics::PhysicsLevel2D *level;
+    ic::Mesh2D wallMesh, floorMesh, movingMesh, rigidMesh, piMesh;
+    ic::Camera2D camera, uiCamera;
+    ic::Shader shader, textShader;
+    ic::Physics::PhysicsLevel2D level;
     ic::Physics::RigidObject2D *floor, *wall, *moving, *rigidBody;
 
     int collisions;
@@ -34,8 +34,7 @@ class PiCounting : public ic::Application {
     public:
         bool init() override {
             displayName = "Basic physics example";
-            scaling = ic::WindowScaling::fullscreen;
-
+            
             return true;
         }
         
@@ -43,41 +42,41 @@ class PiCounting : public ic::Application {
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
             textShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
             
-            textBatch = new ic::Batch(10000, ic::TRIANGLES);
+            textBatch = ic::Batch(10000, ic::TRIANGLES);
             ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
             atlas = ic::FreeType::get().find_atlas("score");
             
             piTexture = ic::TextureLoader::get().load_png("resources/textures/pi.png");
             piMesh = ic::GeometryGenerator::get().generate_rectangle_mesh(0.08f, 0.08f);
-            piMesh->set_transformation(ic::Mat4x4().set_translation<2>({ 0.5f, 0.7f }));
+            piMesh.set_transformation(ic::Mat4x4().set_translation<2>({ 0.5f, 0.7f }));
 
             floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
             wallTexture = ic::TextureLoader::get().load_png("resources/textures/stone-bricks.png");
 
-            camera = new ic::Camera2D();
-            camera->scale = 0.5f;
-            uiCamera = new ic::Camera2D();
+            camera = ic::Camera2D();
+            camera.scale = 0.5f;
+            uiCamera = ic::Camera2D();
 
             wallMesh = ic::GeometryGenerator::get().generate_rectangle_mesh(0.3f, 0.5f, 1.0f, 2.0f);
             floorMesh = ic::GeometryGenerator::get().generate_rectangle_mesh(200.0f, 0.3f, 200.0f, 0.3f);
             
             movingMesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(32, 0.2f);
-            movingMesh->set_material(ic::MeshMaterial2D(ic::Colors::yellow, 1.0f));
+            movingMesh.set_material(ic::MeshMaterial2D(ic::Colors::yellow, 1.0f));
             
             rigidMesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(32, 0.2f);
-            rigidMesh->set_material(ic::MeshMaterial2D(ic::Colors::cyan, 1.0f));
+            rigidMesh.set_material(ic::MeshMaterial2D(ic::Colors::cyan, 1.0f));
             
 
-            level = new ic::Physics::PhysicsLevel2D();
-            level->set_gravity(0.0f, -9.81f);
-            level->set_fixed_time_length(60);
-            level->simulationSteps = 1000;
+            level = ic::Physics::PhysicsLevel2D();
+            level.set_gravity(0.0f, -9.81f);
+            level.set_fixed_time_length(60);
+            level.simulationSteps = 1000;
 
             wall = new ic::Physics::RigidObject2D();
             wall->collider = new ic::Physics::RectangleCollider(0.3f, 0.5f);
             wall->dynamic = false;
             wall->set_position(0.3f, 0.0f);
-            level->add_object(wall);
+            level.add_object(wall);
             
 
             
@@ -85,7 +84,7 @@ class PiCounting : public ic::Application {
             floor->collider = new ic::Physics::RectangleCollider(200.0f, 0.3f);
             floor->dynamic = false;
             floor->set_position(200.0f, -0.8f);
-            level->add_object(floor);
+            level.add_object(floor);
             
 
             
@@ -96,7 +95,7 @@ class PiCounting : public ic::Application {
             moving->set_position(5.0f, -0.3f);
             moving->apply_velocity(-1.0f, 0.0f);
         
-            level->add_object(moving);
+            level.add_object(moving);
             
 
             
@@ -113,7 +112,7 @@ class PiCounting : public ic::Application {
                 }
             });
     
-            level->add_object(rigidBody);
+            level.add_object(rigidBody);
             
 
             collisions = 0;
@@ -126,69 +125,65 @@ class PiCounting : public ic::Application {
             return true;
         }
 
-        void window_size_changed(int w, int h) override {
-            camera->width = uiCamera->width = w;
-            camera->height = uiCamera->height = h;
-        }
 
         bool handle_event(ic::Event event, float dt) override { 
             return true;
         }
 
         bool update(float dt) override {
-            level->update(dt);
+            level.update(dt);
 
-            wallMesh->set_transformation(ic::Mat4x4().set_translation<2>(wall->transform->position));
-            floorMesh->set_transformation(ic::Mat4x4().set_translation<2>(floor->transform->position));
-            rigidMesh->set_transformation(ic::Mat4x4().set_translation<2>(rigidBody->transform->position));
-            movingMesh->set_transformation(ic::Mat4x4().set_translation<2>(moving->transform->position));
+            wallMesh.set_transformation(ic::Mat4x4().set_translation<2>(wall->transform->position));
+            floorMesh.set_transformation(ic::Mat4x4().set_translation<2>(floor->transform->position));
+            rigidMesh.set_transformation(ic::Mat4x4().set_translation<2>(rigidBody->transform->position));
+            movingMesh.set_transformation(ic::Mat4x4().set_translation<2>(moving->transform->position));
             
-            camera->position = spectatingMoving ? moving->transform->position : rigidBody->transform->position;
+            camera.position = spectatingMoving ? moving->transform->position : rigidBody->transform->position;
 
             clear_color(ic::Colors::blue);
 
-            shader->use();
-            camera->use(shader);
+            shader.use();
+            camera.use(shader);
             
-            wallTexture->use();
-            wallMesh->draw(shader);
-            wallTexture->unuse();
+            wallTexture.use();
+            wallMesh.draw(shader);
+            wallTexture.unuse();
 
-            floorTexture->use();
-            floorMesh->draw(shader);
-            floorTexture->unuse();
+            floorTexture.use();
+            floorMesh.draw(shader);
+            floorTexture.unuse();
 
-            rigidMesh->draw(shader);
-            movingMesh->draw(shader);      
+            rigidMesh.draw(shader);
+            movingMesh.draw(shader);      
 
 
-            textShader->use();
-            uiCamera->use(textShader);
-            atlas->use();
+            textShader.use();
+            uiCamera.use(textShader);
+            atlas.use();
 
             renderer.draw_string(textBatch, atlas, " = 3.14159265...", 0.55f, 0.65f);
             renderer.draw_string(textBatch, atlas, "Collisions: " + std::to_string(collisions), 0.4f, 0.85f);
-            renderer.draw_string(textBatch, atlas, "Use the Q key to", -1.5f, 0.85f, 0.8f, 0.8f);
-            renderer.draw_string(textBatch, atlas, "switch between the two objects.", -1.5f, 0.75f, 0.8f, 0.8f);
+            renderer.draw_string(textBatch, atlas, "Use the Q key to", -1.2f, 0.85f, 0.8f, 0.8f);
+            renderer.draw_string(textBatch, atlas, "switch between the two objects.", -1.2f, 0.75f, 0.8f, 0.8f);
             
-            textBatch->render();
+            textBatch.render();
 
 
-            shader->use();
-            uiCamera->use(shader);
-            piTexture->use();
+            shader.use();
+            uiCamera.use(shader);
+            piTexture.use();
 
-            piMesh->draw(shader);
+            piMesh.draw(shader);
 
-            piTexture->unuse();
+            piTexture.unuse();
 
 
             return true; 
         }
 
         void dispose() override {
-            shader->clear();
-            textShader->clear();
+            shader.clear();
+            textShader.clear();
         }
 };
 

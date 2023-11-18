@@ -78,7 +78,7 @@ struct PolygonShape {
         indices = ic::EarClippingTriangulation::get().triangulate(vertCoords);
     }
 
-    void draw(ic::Renderer &renderer, ic::Batch *batch, ic::Color color) {
+    void draw(ic::Renderer &renderer, ic::Batch &batch, ic::Color color) {
         auto components = poly.get_transformed_vertices();
         renderer.draw_vertices(batch, components, indices, ic::Colors::lightGray);
     }
@@ -101,15 +101,15 @@ struct Drop {
 
 /* A tiled game. Collision detection is via AABBs (ic::Rectangles). */
 class TiledDemo : public ic::Application {
-    ic::Batch *batch, *textBatch;
-    ic::TextureAtlas *texture;
-    ic::Shader *shader, *textShader;
-    ic::TextAtlas *atlas;
+    ic::Batch batch, textBatch;
+    ic::TextureAtlas texture;
+    ic::Shader shader, textShader;
+    ic::TextAtlas atlas;
 
     RectangleShape *shape;
     std::vector<Drop*> drops;
     
-    ic::Camera2D *camera, *uiCamera;
+    ic::Camera2D camera, uiCamera;
 
     bool collisionDebug;
     int collected;
@@ -121,8 +121,7 @@ class TiledDemo : public ic::Application {
     public:
         bool init() override {
             displayName = "Tiled Demo";
-            scaling = ic::WindowScaling::fullscreen;
-
+            
             return true;
         }
         
@@ -130,13 +129,13 @@ class TiledDemo : public ic::Application {
             shader = ic::ShaderLoader::get().load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
             textShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
 
-            camera = new ic::Camera2D(0.3f);
-            uiCamera = new ic::Camera2D();
+            camera = ic::Camera2D(0.3f);
+            uiCamera = ic::Camera2D();
 
-            batch = new ic::Batch(10000, ic::TRIANGLES);
-            textBatch = new ic::Batch(1000, ic::TRIANGLES);
-            texture = new ic::TextureAtlas();
-            texture->add_entries({ "white", "resources/textures/white.png",
+            batch = ic::Batch(10000, ic::TRIANGLES);
+            textBatch = ic::Batch(1000, ic::TRIANGLES);
+            texture = ic::TextureAtlas(256, 256);
+            texture.add_entries({ "white", "resources/textures/white.png",
                                    "ball", "resources/textures/ball.png",
                                    "player", "resources/textures/white.png",
                                    "wood", "resources/textures/wood.png",
@@ -164,15 +163,11 @@ class TiledDemo : public ic::Application {
             return true;
         }
 
-        void window_size_changed(int w, int h) override {
-            uiCamera->width = camera->width = w;
-            uiCamera->height = camera->height = h;
-        }
-
         bool handle_event(ic::Event event, float dt) override {
             return true;
         }
-    
+
+
         bool update(float dt) override {
             // Collision detection
             std::vector<ic::Rectangle> possibleCollisions;
@@ -233,7 +228,7 @@ class TiledDemo : public ic::Application {
 
             shape->r.position.clamp({ -0.5f + shape->r.size.x(), -0.5f + shape->r.size.y() }, { MAP_WIDTH - shape->r.size.x() - 0.5f, MAP_HEIGHT - shape->r.size.y() - 0.5f });
 
-            camera->position = shape->r.position;
+            camera.position = shape->r.position;
             for (auto &drop : drops) {
                 drop->shape->poly.rotate(dt);
             }
@@ -241,10 +236,10 @@ class TiledDemo : public ic::Application {
             // Rendering
             clear_color(ic::Colors::blue);
 
-            shader->use();
-            camera->use(shader);
+            shader.use();
+            camera.use(shader);
 
-            texture->use();
+            texture.use();
 
             for (int i = 0; i < MAP_AREA; i++) {
                 int index = tiles[i];
@@ -260,7 +255,7 @@ class TiledDemo : public ic::Application {
                 int x = i % MAP_WIDTH;
                 int y = i / MAP_HEIGHT;
 
-                renderer.draw_rectangle(batch, texture->get_entry(entryName), x, y, 0.5f, 0.5f);
+                renderer.draw_rectangle(batch, texture.get_entry(entryName), x, y, 0.5f, 0.5f);
             }
 
             if (collisionDebug) {
@@ -276,12 +271,12 @@ class TiledDemo : public ic::Application {
                         std::string sprite = "ball";
                         if (obstructing[cy * MAP_WIDTH + cx]) sprite = "white";
 
-                        renderer.draw_rectangle(batch, texture->get_entry(sprite), cx, cy, 0.4f, 0.4f);
+                        renderer.draw_rectangle(batch, texture.get_entry(sprite), cx, cy, 0.4f, 0.4f);
                     }
                 }
             }
 
-            renderer.draw_rectangle(batch, texture->get_entry(shape->atlasEntryName),
+            renderer.draw_rectangle(batch, texture.get_entry(shape->atlasEntryName),
                 shape->r.position.x(), shape->r.position.y(), 
                 shape->r.size.x(),     shape->r.size.y(), 
                 ic::Colors::green);
@@ -290,15 +285,15 @@ class TiledDemo : public ic::Application {
                 drop->shape->draw(renderer, batch, ic::Colors::lightGray);
             }
 
-            batch->render();
+            batch.render();
 
             // Text rendering
-            textShader->use();
-            uiCamera->use(textShader);
+            textShader.use();
+            uiCamera.use(textShader);
 
-            atlas->use();
-            renderer.draw_string(textBatch, atlas, "T key - toggle potential collisions", -1.5f, 0.9f, 0.8f, 0.8f);
-            renderer.draw_string(textBatch, atlas, std::to_string(collected) + "/" + std::to_string(initialSize) + " polygons remaining", -1.5f, 0.75f, 0.8f, 0.8f);
+            atlas.use();
+            renderer.draw_string(textBatch, atlas, "T key - toggle potential collisions", -1.2f, 0.9f, 0.8f, 0.8f);
+            renderer.draw_string(textBatch, atlas, std::to_string(collected) + "/" + std::to_string(initialSize) + " polygons remaining", -1.2f, 0.75f, 0.8f, 0.8f);
 
             if (completedLevel) {
                 float t = completeTimer / COMPLETE_POPUP_ANIMATION_DURATION;
@@ -310,17 +305,17 @@ class TiledDemo : public ic::Application {
 
                 renderer.draw_string_centered(textBatch, atlas, "Level finished!", position.x(), position.y(), scale, scale);
             }
-            textBatch->render();
+            textBatch.render();
 
             return true; 
         }
 
         void dispose() override {
-            batch->dispose();
-            textBatch->dispose();
-            texture->dispose();
-            shader->clear();
-            textShader->clear();
+            batch.dispose();
+            textBatch.dispose();
+            texture.dispose();
+            shader.clear();
+            textShader.clear();
         }
 
         void collect(Drop *drop) {

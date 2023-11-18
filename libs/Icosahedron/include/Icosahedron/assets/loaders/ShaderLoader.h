@@ -17,9 +17,9 @@ namespace ic {
             }
 
             /** @brief Loads a shader from raw code. This does not load from a file. */
-            ic::Shader *load(const std::string &vertexCode, const std::string &fragmentCode);
+            ic::Shader load(const std::string &vertexCode, const std::string &fragmentCode);
 
-            ic::Shader *load_file(const std::string &vertexFileName, const std::string &fragmentFileName);
+            ic::Shader load_file(const std::string &vertexFileName, const std::string &fragmentFileName);
 
         private:
             ShaderLoader() {}

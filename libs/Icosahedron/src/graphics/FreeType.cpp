@@ -20,20 +20,20 @@ void FreeType::add_atlas(const std::string &name, const std::string &relativeFil
     }
               
     FT_Set_Pixel_Sizes(font, 0, height);
-    TextAtlas *atlas = new TextAtlas(font);
-    atlas->load();
+    TextAtlas atlas(font);
+    atlas.load();
               
     atlases[name] = atlas;
 }
 
-TextAtlas *FreeType::find_atlas(const std::string &name) {
+TextAtlas &FreeType::find_atlas(const std::string &name) {
     return atlases[name];
 }
               
 void FreeType::dispose() {
     for (auto &atlas : atlases) {
-        TextAtlas *second = atlas.second;
-        second->dispose();
+        TextAtlas &second = atlas.second;
+        second.dispose();
     }
     FT_Done_FreeType(library);
 }

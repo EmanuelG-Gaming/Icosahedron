@@ -14,7 +14,7 @@ namespace ic {
         }
 
         Circle(float x, float y, float radius) : x(x), y(y), radius(radius) {}
-        Circle(ic::Vec2f &position, float radius) : x(position.x()), y(position.y()), radius(radius) {}
+        Circle(ic::Vec2f position, float radius) : x(position.x()), y(position.y()), radius(radius) {}
 
         bool contains(Vec2f &point) {
             float dx = point.x() - x;

@@ -234,11 +234,11 @@ std::string screenFragment = IC_ADD_GLSL_DEFINITION(
 
 /* A very simple ray tracer. */
 class RaytracingDemo : public ic::Application {
-    ic::Shader *screenShader, *rayShader;
-    ic::Framebuffer *framebuffer;
+    ic::Shader screenShader, rayShader;
+    ic::Framebuffer framebuffer;
     
-    ic::Mesh2D *screenQuad;
-    ic::Camera3D *camera;
+    ic::Mesh2D screenQuad;
+    ic::Camera3D camera;
     float time;
 
     public:
@@ -253,69 +253,65 @@ class RaytracingDemo : public ic::Application {
             screenShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, screenFragment);
             
             // Initialize these values directly
-            rayShader->use();
-            rayShader->set_uniform_vec3f("spheres[0].center", { 0.0f, 0.2f, 1.5f });
-            rayShader->set_uniform_color("spheres[0].diffuse", ic::Colors::red);
-            rayShader->set_uniform_float("spheres[0].radius", 0.05f);
+            rayShader.use();
+            rayShader.set_uniform_vec3f("spheres[0].center", { 0.0f, 0.2f, 1.5f });
+            rayShader.set_uniform_color("spheres[0].diffuse", ic::Colors::red);
+            rayShader.set_uniform_float("spheres[0].radius", 0.05f);
 
-            rayShader->set_uniform_vec3f("spheres[1].center", { 0.5f, 0.0f, 1.5f });
-            rayShader->set_uniform_color("spheres[1].diffuse", ic::Colors::green);
-            rayShader->set_uniform_float("spheres[1].radius", 0.35f);
+            rayShader.set_uniform_vec3f("spheres[1].center", { 0.5f, 0.0f, 1.5f });
+            rayShader.set_uniform_color("spheres[1].diffuse", ic::Colors::green);
+            rayShader.set_uniform_float("spheres[1].radius", 0.35f);
 
-            rayShader->set_uniform_vec3f("spheres[2].center", { -0.4f, -0.1f, 1.5f });
-            rayShader->set_uniform_color("spheres[2].diffuse", ic::Colors::cyan);
-            rayShader->set_uniform_float("spheres[2].radius", 0.5f);
+            rayShader.set_uniform_vec3f("spheres[2].center", { -0.4f, -0.1f, 1.5f });
+            rayShader.set_uniform_color("spheres[2].diffuse", ic::Colors::cyan);
+            rayShader.set_uniform_float("spheres[2].radius", 0.5f);
 
-            framebuffer = new ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, RAYTRACING_WIDTH, RAYTRACING_HEIGHT);
+            framebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, RAYTRACING_WIDTH, RAYTRACING_HEIGHT);
 
             screenQuad = ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f);
             
-            camera = new ic::Camera3D();
+            camera = ic::Camera3D();
 
             time = 0.0f;
 
             return true;
         }
 
-        void window_size_changed(int w, int h) override {
-            
-        }
 
         bool handle_event(ic::Event event, float dt) override { 
-            
             return true;
         }
 
         bool update(float dt) override {
             time += dt;
-            camera->update();
+            camera.update();
 
             clear_color(ic::Colors::blue);
             
             // First pass - getting raytraced information
-            framebuffer->use();
-            rayShader->use();
-            rayShader->set_uniform_vec3f("lightPosition", { 0.5f, 0.1f, 0.0f });
-            camera->upload_to_shader(rayShader);
-            rayShader->set_uniform_vec3f("spheres[0].center", { ic::Mathf::get().sinf(time * 0.5f) * 0.3f, 0.0f, 0.5f });
+            framebuffer.use();
+            rayShader.use();
+            rayShader.set_uniform_vec3f("lightPosition", { 0.5f, 0.1f, 0.0f });
+            camera.upload_to_shader(rayShader);
+            rayShader.set_uniform_vec3f("spheres[0].center", { ic::Mathf::get().sinf(time * 0.5f) * 0.3f, 0.0f, 0.5f });
             
-            screenQuad->draw(rayShader);
-            framebuffer->unuse();
+            screenQuad.draw(rayShader);
+            framebuffer.unuse();
 
             // Second pass - drawing the screen-covering quadrilateral
-            screenShader->use();
-            framebuffer->use_texture();
-            screenQuad->draw(screenShader);
+            screenShader.use();
+            framebuffer.use_texture();
+            screenQuad.draw(screenShader);
 
             return true; 
         }
 
         void dispose() override {
-            screenShader->clear();
-            rayShader->clear();
+            screenShader.clear();
+            rayShader.clear();
 
-            framebuffer->dispose();
-            screenQuad->dispose();
+            framebuffer.dispose();
+            screenQuad.dispose();
         }
 };
 

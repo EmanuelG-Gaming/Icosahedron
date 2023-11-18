@@ -33,8 +33,8 @@ struct PositionComp {
 };
 
 struct SpriteComp {
-    ic::Mesh2D *mesh;
-    ic::Texture *texture;
+    ic::Mesh2D mesh;
+    ic::Texture texture;
 };
 
 struct MovementComp {};
@@ -59,16 +59,16 @@ struct SpriteSystem {
                 ic::Mat4x4 translation = ic::Mat4x4().set_translation<2>(registry.positions[i].position);
                 ic::Mat4x4 scaling = ic::Mat4x4().set_scaling<2>(registry.positions[i].scaling);
 
-                registry.sprites[i].mesh->set_transformation(translation * scaling);
+                registry.sprites[i].mesh.set_transformation(translation * scaling);
             }
         }
     }
 
-    void draw(ComponentRegistry &registry, ic::Shader *shader) {
+    void draw(ComponentRegistry &registry, ic::Shader &shader) {
         for (int i = 1; i <= lastEntityIndex; i++) {
             if (registry.has_component<SpriteComp>(i, registry.sprites)) {
-                registry.sprites[i].texture->use();
-                registry.sprites[i].mesh->draw(shader);
+                registry.sprites[i].texture.use();
+                registry.sprites[i].mesh.draw(shader);
             }
         }
     }
@@ -104,8 +104,8 @@ class EntityComponentSystem : public ic::Application {
     SpriteSystem spriteSystem;
     MovementSystem movementSystem;
 
-    ic::Shader *spriteShader;
-    ic::Camera2D *camera;
+    ic::Shader spriteShader;
+    ic::Camera2D camera;
 
     public:
         bool init() override {
@@ -115,11 +115,11 @@ class EntityComponentSystem : public ic::Application {
         }
         
         bool load() override {
+            camera = ic::Camera2D();
             spriteShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
-            camera = new ic::Camera2D();
             movementSystem.load();
 
-            // A floor that has a texture
+            // A floor that has a wood texture
             {
                 entity_t entity = add_entity();
                 registry.sprites[entity] = SpriteComp {
@@ -149,6 +149,7 @@ class EntityComponentSystem : public ic::Application {
                     ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f),
                     ic::TextureLoader::get().load_png("resources/textures/white.png"),
                 };
+                registry.sprites[entity].mesh.set_material(ic::MeshMaterial2D(ic::Colors::green, 1.0f));
     
                 registry.positions[entity] = PositionComp {
                     { -0.8f, 0.5f },
@@ -176,15 +177,15 @@ class EntityComponentSystem : public ic::Application {
 
             clear_color(ic::Colors::blue);
 
-            spriteShader->use();
-            camera->use(spriteShader);
+            spriteShader.use();
+            camera.use(spriteShader);
             spriteSystem.draw(registry, spriteShader);
 
             return true; 
         }
 
         void dispose() override {
-            
+            spriteShader.clear();
         }
 };
 

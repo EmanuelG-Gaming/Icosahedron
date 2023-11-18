@@ -15,6 +15,7 @@
 namespace ic {
     class Shader {
         public:
+            Shader();
             Shader(std::string vertexContent, std::string fragmentContent);
 
             void use();

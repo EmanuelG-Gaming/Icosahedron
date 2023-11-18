@@ -13,6 +13,7 @@
 
 int IC_WINDOW_WIDTH = 0;
 int IC_WINDOW_HEIGHT = 0;
+bool IC_IS_OPENGL_CONTEXT_PRESENT = false;
 
 void ic::Application::clear_color() {
     this->clear_color(0.0f, 0.0f, 0.0f);
@@ -196,6 +197,7 @@ void ic::Application::prepare_window() {
 	SDL_GLContext cont = SDL_GL_CreateContext(win);
     this->window = win;
     this->context = cont;
+    IC_IS_OPENGL_CONTEXT_PRESENT = true;
 }
 
 void ic::Application::pre_load() {
@@ -262,7 +264,7 @@ bool ic::Application::poll_events(ic::Event &e) {
 }
 
 void ic::Application::close() {
-    std::cout << displayName << " exited." << "\n";
+    std::cout << displayName << " exited." << "\n\n";
 
 	this->dispose();
 

@@ -40,9 +40,9 @@ void ic::Camera3D::update() {
     this->combined = this->aspectRatioCorrection * this->projectionMatrix * this->viewMatrix;
 }
 
-void ic::Camera3D::upload_to_shader(ic::Shader *shader, const std::string &viewUniform, const std::string &projectionUniform) {
-    shader->set_uniform_mat4(viewUniform, this->viewMatrix);
-    shader->set_uniform_mat4(projectionUniform, this->projectionMatrix);
+void ic::Camera3D::upload_to_shader(ic::Shader &shader, const std::string &viewUniform, const std::string &projectionUniform) {
+    shader.set_uniform_mat4(viewUniform, this->viewMatrix);
+    shader.set_uniform_mat4(projectionUniform, this->projectionMatrix);
 }
 
 

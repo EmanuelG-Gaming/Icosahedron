@@ -23,8 +23,10 @@ namespace ic {
             Camera2D(float scale);
 
             /* Calculates and sends the camera's projection matrix to a shader program. */
-            void use(ic::Shader *shader);
-            void unuse(ic::Shader *shader);
+            void use(ic::Shader &shader);
+            void unuse(ic::Shader &shader);
+
+            void resize(int width, int height);
 
             /* Projects world coordinates to screen coordinates. */
             ic::Vec2f project(ic::Vec2f &worldPosition);

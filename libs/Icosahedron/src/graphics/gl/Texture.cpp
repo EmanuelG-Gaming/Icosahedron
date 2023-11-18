@@ -6,7 +6,9 @@ using namespace ic;
 Texture::Texture(ic::GLTextureTypes type) {
     this->type = type;
 
-    this->setup(this->type);
+    if (this->type != ic::GLTextureTypes::INVALID_TEXTURE) {
+        this->setup(this->type);
+    }
 }
 
 void ic::Texture::use(int index) {

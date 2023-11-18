@@ -97,10 +97,10 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
  *  the R key to make the viewed object rotate.
 */
 class ModelViewerDemo : public ic::Application {
-    ic::Shader *shader;
-    ic::Camera3D *camera;
-    ic::Mesh3D *mesh;
-    ic::OrbitalCameraController3D *controller;
+    ic::Shader shader;
+    ic::Camera3D camera;
+    ic::Mesh3D mesh;
+    ic::OrbitalCameraController3D controller;
 
     ic::OBJMaterialInfo material;
 
@@ -125,7 +125,7 @@ class ModelViewerDemo : public ic::Application {
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
             
             mesh = ic::OBJLoader::get().get_mesh("resources/models/boat.obj");
-            mesh->set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
+            mesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
 
             material = ic::OBJLoader::get().get_materials("resources/models/icosahedron.mtl")["Material.001"];
 
@@ -135,9 +135,9 @@ class ModelViewerDemo : public ic::Application {
             delta = 0.0f;
             time = 0.0f;
 
-            camera = new ic::Camera3D(perspective);
-            camera->position = { -3.0f, 1.5f, 0.0f };
-            controller = new ic::OrbitalCameraController3D(camera, &ic::InputHandler::get());
+            camera = ic::Camera3D(perspective);
+            camera.position = { -3.0f, 1.5f, 0.0f };
+            controller = ic::OrbitalCameraController3D(&camera);
             
             // Inputs
             auto scaling = new ic::KeyboardController();
@@ -164,23 +164,23 @@ class ModelViewerDemo : public ic::Application {
             if (rotating) time += delta;
             if (scale < 0.2f) scale = 0.2f;
 
-            camera->settings.perspective = perspective;
-            controller->radius = scale;
+            camera.settings.perspective = perspective;
+            controller.radius = scale;
 
             float div = perspective ? 1.0f : (1 / scale) * 800.0f;
-            controller->act(dt);
-            camera->resize(IC_WINDOW_WIDTH / div, IC_WINDOW_HEIGHT / div);
-            camera->update();
+            controller.act(dt);
+            camera.resize(IC_WINDOW_WIDTH / div, IC_WINDOW_HEIGHT / div);
+            camera.update();
             
             clear_color(ic::Colors::blue);
-            shader->use();
-            camera->upload_to_shader(shader);
+            shader.use();
+            camera.upload_to_shader(shader);
 
-            shader->set_uniform_vec3f("viewPosition", camera->position);
-            shader->set_uniform_vec3f("material.ambient", material.ambient);
-            shader->set_uniform_vec3f("material.diffuse", material.diffuse);
-            shader->set_uniform_vec3f("material.specular", material.specular);
-            shader->set_uniform_float("material.shininess", material.shininess);
+            shader.set_uniform_vec3f("viewPosition", camera.position);
+            shader.set_uniform_vec3f("material.ambient", material.ambient);
+            shader.set_uniform_vec3f("material.diffuse", material.diffuse);
+            shader.set_uniform_vec3f("material.specular", material.specular);
+            shader.set_uniform_float("material.shininess", material.shininess);
             
             
             //for (int i = 0; i < 5; i++) for (int j = 0; j < 5; j++) {
@@ -188,25 +188,25 @@ class ModelViewerDemo : public ic::Application {
             //    ic::Mat4x4 rotation = quat.to_rotation_matrix();
             //    ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({i * 2.0f, 0.0f, j * 2.0f});
             //    
-            //    mesh->set_transformation(translation * rotation);
-            //    mesh->set_normal_transformation(rotation);
-            //    mesh->draw(shader);
+            //    mesh.set_transformation(translation * rotation);
+            //    mesh.set_normal_transformation(rotation);
+            //    mesh.draw(shader);
             //}
             
 
             ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
                
-            mesh->set_transformation(rotation);
-            mesh->set_normal_transformation(rotation);
-            mesh->draw(shader);
+            mesh.set_transformation(rotation);
+            mesh.set_normal_transformation(rotation);
+            mesh.draw(shader);
 
             return true; 
         }
 
         void dispose() override {
-            shader->clear();
-            mesh->dispose();;
+            shader.clear();
+            mesh.dispose();
         }
 };
 

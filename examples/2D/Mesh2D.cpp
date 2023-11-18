@@ -14,19 +14,18 @@
 
 /* Polygon example. Demonstrates the use of per-vertex colors, texturing, matrix transformations, and materials, all in the same shader program. */
 class Mesh2D : public ic::Application {
-    ic::Mesh2D *mesh1, *mesh2;
+    ic::Mesh2D mesh1, mesh2;
 
-    ic::Texture *texture;
-    ic::Camera2D *camera;
+    ic::Texture texture;
+    ic::Camera2D camera;
 
-    ic::Shader *shader;
+    ic::Shader shader;
     float time;
 
     public:
         bool init() override {
             displayName = "Mesh2D Example";
-            scaling = ic::WindowScaling::fullscreen;
-
+            
             return true;
         }
         
@@ -38,25 +37,25 @@ class Mesh2D : public ic::Application {
             // Note that this can also be more verbosely expressed as:
 
             //auto vertices = ic::GeometryGenerator::get().generate_regular_polygon(7, 0.3f);
-            //mesh1 = new ic::Mesh2D();
-            //mesh1->add_attribute(0, 2, vertices);
-            //mesh1->add_attribute(2, 2, ic::GeometryGenerator::get().generate_UV_polygon(vertices));
-            //mesh1->set_index_buffer(ic::EarClippingTriangulation::get().triangulate(vertices));
+            //mesh1 = ic::Mesh2D();
+            //mesh1.add_attribute(0, 2, vertices);
+            //mesh1.add_attribute(2, 2, ic::GeometryGenerator::get().generate_UV_polygon(vertices));
+            //mesh1.set_index_buffer(ic::EarClippingTriangulation::get().triangulate(vertices));
             
 
             // Mesh 2
             mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(3, 0.3f);
-            mesh2->add_attribute(1, 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue }); // Add a "color" attribute to mesh2
+            mesh2.add_attribute(1, 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue }); // Add a "color" attribute to mesh2
 
             // Add a material that slightly brightens the colours shown by the vertex attributes 
-            mesh2->set_material(ic::MeshMaterial2D(ic::Colors::white, 0.2f));
-            mesh2->set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
+            mesh2.set_material(ic::MeshMaterial2D(ic::Colors::white, 0.2f));
+            mesh2.set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
             
 
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
             texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
             
-            camera = new ic::Camera2D();
+            camera = ic::Camera2D();
 
             time = 0.0f;
 
@@ -64,8 +63,8 @@ class Mesh2D : public ic::Application {
         }
 
         void window_size_changed(int w, int h) override {
-            camera->width = w;
-            camera->height = h;
+            camera.width = w;
+            camera.height = h;
         }
 
         bool handle_event(ic::Event event, float dt) override { 
@@ -86,30 +85,30 @@ class Mesh2D : public ic::Application {
             // translation * rotation * scaling is not the same as scaling * rotation * translation,
             // even though the latter seems to be a logical approach (i.e. you scale, then rotate, then translate)
             combined = translation * rotation * scaling;
-            mesh1->set_transformation(combined);
+            mesh1.set_transformation(combined);
             
-            shader->use();
-            camera->use(shader);
+            shader.use();
+            camera.use(shader);
 
 
             // Draws a textured mesh
-            texture->use();
-            mesh1->draw(shader);
-            texture->unuse();
+            texture.use();
+            mesh1.draw(shader);
+            texture.unuse();
 
             // Draws an untextured mesh with vertex colours
-            mesh2->draw(shader);
+            mesh2.draw(shader);
 
             return true; 
         }
 
         void dispose() {
-            shader->clear();
+            shader.clear();
             
-            texture->dispose();
+            texture.dispose();
             
-            mesh1->dispose();
-            mesh2->dispose();
+            mesh1.dispose();
+            mesh2.dispose();
         }
 };
 

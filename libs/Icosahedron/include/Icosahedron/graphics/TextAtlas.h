@@ -23,6 +23,7 @@ namespace ic {
     /** @brief A text atlas stores ASCII bitmap glyphs in a horizontal order. */
     class TextAtlas {
         public:
+            TextAtlas();
             TextAtlas(FT_Face font);
 
             void load();
@@ -44,7 +45,7 @@ namespace ic {
             GLuint textureIndex;
          
             int atlasWidth, atlasHeight;
-            std::array<CharacterInfo, 128> characters;
+            std::array<CharacterInfo, 128> characters; // Currently the stores ASCII character range
     };
 }
 #endif

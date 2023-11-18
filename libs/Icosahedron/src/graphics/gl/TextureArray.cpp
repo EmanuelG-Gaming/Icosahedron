@@ -1,13 +1,23 @@
 #include <Icosahedron/graphics/gl/TextureArray.h>
+#include <Icosahedron/Global.h>
 
 using namespace ic;
+
+
+TextureArray::TextureArray() {
+    this->textureWidth = 8;
+    this->textureHeight = 8;
+    this->numberOfTextures = 1;
+}
 
 TextureArray::TextureArray(int textureWidth, int textureHeight, unsigned int numberOfTextures) {
     this->textureWidth = textureWidth;
     this->textureHeight = textureHeight;
     this->numberOfTextures = numberOfTextures;
 
-    this->setup(this->textureWidth, this->textureHeight, this->numberOfTextures);
+    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+        this->setup(this->textureWidth, this->textureHeight, this->numberOfTextures);
+    }
 }
 
 TextureArray::TextureArray(int textureSize, unsigned int numberOfTextures) : TextureArray(textureSize, textureSize, numberOfTextures) {

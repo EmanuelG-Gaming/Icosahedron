@@ -39,6 +39,7 @@ namespace ic {
     
     class Batch {
         public:
+            Batch();
             Batch(int capacity, ic::GLPrimitives renderType);
 
             void add(const std::vector<ic::BatchVertex> &vertices);

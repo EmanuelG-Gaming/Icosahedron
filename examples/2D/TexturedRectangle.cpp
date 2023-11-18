@@ -14,11 +14,11 @@
 
 /* Displays a textured rectangle that can be moved around using the WASD keys or the arrow keys. */
 class TexturedRectangle : public ic::Application {
-    ic::Texture *texture;
-    ic::Shader *shader;
-    ic::Camera2D *camera;
+    ic::Texture texture;
+    ic::Shader shader;
+    ic::Camera2D camera;
 
-    ic::Mesh2D *shape;
+    ic::Mesh2D shape;
     ic::Vec2f shapePosition;
     
     public:
@@ -34,7 +34,7 @@ class TexturedRectangle : public ic::Application {
             texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
 
-            camera = new ic::Camera2D();
+            camera = ic::Camera2D();
         
             ic::InputHandler::get().add_input((new ic::KeyboardController())->with_WASD(), "WASD");
             shapePosition = { 0.0f, 0.0f };
@@ -54,25 +54,25 @@ class TexturedRectangle : public ic::Application {
             shapePosition.x() += dir.x() * speed * dt;
             shapePosition.y() += dir.y() * speed * dt;
             
-            shape->set_transformation(ic::Mat4x4().set_translation(shapePosition));
+            shape.set_transformation(ic::Mat4x4().set_translation(shapePosition));
             
 
             clear_color(ic::Colors::blue);
             
-            shader->use();
-            camera->use(shader);
+            shader.use();
+            camera.use(shader);
 
-            texture->use();
-            shape->draw(shader);
+            texture.use();
+            shape.draw(shader);
             
             return true; 
         }
 
         void dispose() override {
-            texture->dispose();
-            shader->clear();
+            texture.dispose();
+            shader.clear();
             
-            shape->dispose();
+            shape.dispose();
         }
 };
 

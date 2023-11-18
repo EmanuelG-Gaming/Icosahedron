@@ -14,7 +14,7 @@
 namespace ic { namespace UI {
     class LabelStyle {
         public:
-            ic::TextAtlas *font;
+            ic::TextAtlas font;
             ic::Color fontColor;
             ic::UI::Drawable *background;
             
@@ -56,10 +56,11 @@ namespace ic { namespace UI {
             std::string &get_text();
 
         protected:
-            std::string text;
-
+            ic::Vec2f compute_size(ic::TextAtlas &font);
+        
+        
         protected:
-            ic::Vec2f compute_size(ic::TextAtlas *font);
+            std::string text;
     };
 }}
 

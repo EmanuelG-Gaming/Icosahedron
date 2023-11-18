@@ -38,16 +38,16 @@ namespace ic {
 
 
             /**  @param gammaCorrection Whether or not the texture has sRGB pixels. */
-            ic::Texture *load_png(const std::string &filePath, ic::TextureParameters parameters = ic::TextureParameters(), bool gammaCorrection = false);
+            ic::Texture load_png(const std::string &filePath, ic::TextureParameters parameters = ic::TextureParameters(), bool gammaCorrection = false);
             
             /**  @param gammaCorrection Whether or not the texture has sRGB pixels. */
-            ic::Texture *load_bmp(const std::string &filePath, ic::TextureParameters parameters = ic::TextureParameters(), bool gammaCorrection = false);
+            ic::Texture load_bmp(const std::string &filePath, ic::TextureParameters parameters = ic::TextureParameters(), bool gammaCorrection = false);
 
 
             /** @brief Loads a texture based on an RGB image. 
              *  @note The source image won't get disposed automatically, yet the underlying SDL_Surface will be. 
              *  @param gammaCorrection Whether or not the texture has sRGB pixels. */
-            ic::Texture *load(ic::Image &image, ic::TextureParameters parameters = ic::TextureParameters(), bool gammaCorrection = false);
+            ic::Texture load(ic::Image &image, ic::TextureParameters parameters = ic::TextureParameters(), bool gammaCorrection = false);
 
             /** @brief Converts a 32-bit encoding into a format that can be used by OpenGL.
              *  @param gammaCorrection Whether or not the format is in the non-linear sRGB space.
@@ -55,7 +55,7 @@ namespace ic {
             GLenum map_to_texture_format(uint32_t format, bool gammaCorrection = false);
 
         private:
-            ic::Texture *load_texture(int width, int height, GLenum format, const void *data, const ic::TextureParameters &parameters);
+            ic::Texture load_texture(int width, int height, GLenum format, const void *data, const ic::TextureParameters &parameters);
 
         private:
             TextureLoader() {}

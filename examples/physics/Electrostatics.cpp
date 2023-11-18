@@ -34,13 +34,13 @@ const std::size_t fieldWidth = 50, fieldHeight = 50;
 
 /** @brief Simulates point charges, electric fields. */
 class Electrostatics : public ic::Application {
-    ic::Batch *batch, *vectorFieldBatch, *textBatch, *worldTextBatch;
-    ic::TextAtlas *atlas;
-    ic::Texture *circleTexture;
+    ic::Batch batch, vectorFieldBatch, textBatch, worldTextBatch;
+    ic::TextAtlas atlas;
+    ic::Texture circleTexture;
 
-    ic::Camera2D *camera, *uiCamera;
-    ic::Shader *shader, *vectorFieldShader, *textShader;
-    ic::Physics::PhysicsLevel2D *level;
+    ic::Camera2D camera, uiCamera;
+    ic::Shader shader, vectorFieldShader, textShader;
+    ic::Physics::PhysicsLevel2D level;
 
     std::vector<PointCharge*> pointCharges;
 
@@ -53,8 +53,7 @@ class Electrostatics : public ic::Application {
     public:
         bool init() override {
             displayName = "Electrostatics";
-            scaling = ic::WindowScaling::resizeable;
-
+            
             return true;
         }
         
@@ -63,25 +62,25 @@ class Electrostatics : public ic::Application {
             vectorFieldShader = ic::ShaderLoader::get().load(shaders.basicShaderVertex2D, shaders.basicShaderFrag2D);
             textShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
             
-            batch = new ic::Batch(10000, ic::TRIANGLES);
-            vectorFieldBatch = new ic::Batch(100000, ic::LINES);
-            textBatch = new ic::Batch(10000, ic::TRIANGLES);
-            worldTextBatch = new ic::Batch(10000, ic::TRIANGLES);
+            batch = ic::Batch(10000, ic::TRIANGLES);
+            vectorFieldBatch = ic::Batch(100000, ic::LINES);
+            textBatch = ic::Batch(10000, ic::TRIANGLES);
+            worldTextBatch = ic::Batch(10000, ic::TRIANGLES);
 
             ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
             atlas = ic::FreeType::get().find_atlas("score");
             
             circleTexture = ic::TextureLoader::get().load_png("resources/textures/ball.png");
             
-            camera = new ic::Camera2D();
-            camera->scale = 0.5f;
-            uiCamera = new ic::Camera2D();
+            camera = ic::Camera2D();
+            camera.scale = 0.5f;
+            uiCamera = ic::Camera2D();
 
 
 
-            level = new ic::Physics::PhysicsLevel2D();
-            level->set_gravity(0.0f, 0.0f);
-            level->set_fixed_time_length(20);
+            level = ic::Physics::PhysicsLevel2D();
+            level.set_gravity(0.0f, 0.0f);
+            level.set_fixed_time_length(20);
 
             kineticEnergy = 0.0f;
             hasVectorField = false;
@@ -90,11 +89,11 @@ class Electrostatics : public ic::Application {
             ic::MouseController *controller = new ic::MouseController();
             controller->add_mouse_scroll_up_action([this]() { 
                 float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.1f;
-                camera->scale = std::max(0.1f, std::min(camera->scale + p, 4.0f));
+                camera.scale = std::max(0.1f, std::min(camera.scale + p, 4.0f));
             });
             controller->add_mouse_scroll_down_action([this]() { 
                 float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.1f;
-                camera->scale = std::max(0.1f, std::min(camera->scale + p, 4.0f));
+                camera.scale = std::max(0.1f, std::min(camera.scale + p, 4.0f));
             });
 
             ic::InputHandler::get().add_input(controller, "mouse");
@@ -111,7 +110,7 @@ class Electrostatics : public ic::Application {
                 ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
-                ic::Vec2f levelPos = camera->unproject(pos);
+                ic::Vec2f levelPos = camera.unproject(pos);
 
                 add_object(levelPos.x(), levelPos.y(), 0.0f, 0.0f, 0.0f, 1.836f * 1.008f); 
             }, KEY_N);
@@ -121,7 +120,7 @@ class Electrostatics : public ic::Application {
                 ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
-                ic::Vec2f levelPos = camera->unproject(pos);
+                ic::Vec2f levelPos = camera.unproject(pos);
 
                 add_object(levelPos.x(), levelPos.y(), 0.0f, 0.0f, 1.0f, 1.836f); 
             }, KEY_P);
@@ -131,7 +130,7 @@ class Electrostatics : public ic::Application {
                 ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
-                ic::Vec2f levelPos = camera->unproject(pos);
+                ic::Vec2f levelPos = camera.unproject(pos);
 
                 add_object(levelPos.x(), levelPos.y(), 0.0f, 0.0f, -1.0f, 1.0f); 
             }, KEY_E);
@@ -142,10 +141,6 @@ class Electrostatics : public ic::Application {
             return true;
         }
 
-        void window_size_changed(int w, int h) override {
-            uiCamera->width = camera->width = w;
-            uiCamera->height = camera->height = h;
-        }
 
         bool handle_event(ic::Event event, float dt) override { 
             return true;
@@ -160,11 +155,11 @@ class Electrostatics : public ic::Application {
             ic::Vec2i dir = controller->get_direction();
 
             float speed = 1.0f;
-            camera->position.x() += dir.x() * speed * dt;
-            camera->position.y() += dir.y() * speed * dt;
+            camera.position.x() += dir.x() * speed * dt;
+            camera.position.y() += dir.y() * speed * dt;
 
             // Don't reset forces late
-            level->reset_forces();
+            level.reset_forces();
 
             // Electrostatic dynamics
             for (auto &objectA : pointCharges) {
@@ -226,11 +221,11 @@ class Electrostatics : public ic::Application {
                 }
             }
 
-            level->update(dt);
+            level.update(dt);
 
             kineticEnergy = 0.0f;
 
-            for (auto &object : level->get_objects()) {
+            for (auto &object : level.get_objects()) {
                 ic::Physics::RigidObject2D *body = dynamic_cast<ic::Physics::RigidObject2D*>(object);
                 if (body == nullptr) continue;
 
@@ -238,13 +233,13 @@ class Electrostatics : public ic::Application {
                 kineticEnergy += (body->mass * body->velocity.len2()) / 2.0f;
             }
 
-            int size = level->get_objects().size();
+            int size = level.get_objects().size();
 
             clear_color(ic::Colors::blue);
 
             // Vector fields
-            vectorFieldShader->use();
-            camera->use(vectorFieldShader);
+            vectorFieldShader.use();
+            camera.use(vectorFieldShader);
 
             if (hasVectorField) {
                 for (int j = 0; j < fieldHeight; j++) {
@@ -269,12 +264,12 @@ class Electrostatics : public ic::Application {
                         renderer.draw_line(vectorFieldBatch, x + v.x(), y + v.y(), x + v.x() * 0.9f + perpendicular.x(), y + v.y() * 0.9f + perpendicular.y(), color);
                     }
                 }
-                vectorFieldBatch->render();
+                vectorFieldBatch.render();
             }
 
-            shader->use();
-            camera->use(shader);
-            circleTexture->use();
+            shader.use();
+            camera.use(shader);
+            circleTexture.use();
 
             for (auto &object : pointCharges) {
                 ic::Vec2f pos = object->transform->position;
@@ -291,24 +286,24 @@ class Electrostatics : public ic::Application {
                 }
             }
 
-            batch->render();
-            circleTexture->unuse();
+            batch.render();
+            circleTexture.unuse();
 
 
             // Text rendering
-            textShader->use();
-            atlas->use();
+            textShader.use();
+            atlas.use();
 
-            camera->use(textShader);
-            worldTextBatch->render();
+            camera.use(textShader);
+            worldTextBatch.render();
 
-            uiCamera->use(textShader);
+            uiCamera.use(textShader);
 
             renderer.draw_string(textBatch, atlas, "Object count: " + std::to_string(size), -1.2f, 0.9f);
             renderer.draw_string(textBatch, atlas, "Total kinetic energy: " + std::to_string(kineticEnergy) + " J", -1.2f, 0.8f);
             renderer.draw_string(textBatch, atlas, "Press T to toggle electrostatic vector field,", -1.2f, 0.7f, 0.8f, 0.8f);
             renderer.draw_string(textBatch, atlas, "and N, P, E for adding neutrons, protons, and electrons.", -1.2f, 0.6f, 0.8f, 0.8f);
-            textBatch->render();
+            textBatch.render();
 
 
             return true; 
@@ -322,19 +317,19 @@ class Electrostatics : public ic::Application {
             charge->set_position(x, y);
             charge->apply_velocity(velX, velY);
 
-            level->add_object(charge);
+            level.add_object(charge);
             pointCharges.push_back(charge);
         }
 
         void dispose() override {
-            shader->clear();
-            textShader->clear();
+            shader.clear();
+            textShader.clear();
 
-            batch->dispose();
-            vectorFieldBatch->dispose();
+            batch.dispose();
+            vectorFieldBatch.dispose();
 
-            textBatch->dispose();
-            worldTextBatch->dispose();
+            textBatch.dispose();
+            worldTextBatch.dispose();
         }
 };
 

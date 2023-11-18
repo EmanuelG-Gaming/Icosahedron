@@ -37,16 +37,16 @@ namespace ic {
              *  @note f5 - front face
              *  @note f6 - back face
             */
-            Skybox(ic::Mesh3D *mesh, const std::vector<std::string> &fileNames);
+            Skybox(const ic::Mesh3D &mesh, const std::vector<std::string> &fileNames);
 
-            void draw(ic::Shader *shader, ic::GLPrimitives primitive = ic::TRIANGLES);
+            void draw(ic::Shader &shader, ic::GLPrimitives primitive = ic::TRIANGLES);
             void dispose();
 
             void use_texture(int index = 0);
 
         private:
-            ic::Texture *textureCube;
-            ic::Mesh3D *mesh;
+            ic::Texture textureCube;
+            ic::Mesh3D mesh;
     };
 }
 #endif

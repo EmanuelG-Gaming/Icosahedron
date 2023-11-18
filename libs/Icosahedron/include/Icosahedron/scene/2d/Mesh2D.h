@@ -28,6 +28,10 @@ namespace ic {
             /** @brief Constructs a new, but empty mesh. */
             Mesh2D();
             
+            /** @brief Constructs a new mesh, depending on a vertex array. */
+            Mesh2D(ic::VertexArray *vao);
+
+
             /** @brief Overrides the mesh's current model-level transformation matrix. */
             void set_transformation(const ic::Mat4x4 &to);
 
@@ -44,11 +48,11 @@ namespace ic {
             
             void unuse_attribute_definitions();
 
-            void draw(ic::Shader *shader, ic::GLPrimitives primitive = ic::TRIANGLES);
+            void draw(ic::Shader &shader, ic::GLPrimitives primitive = ic::TRIANGLES);
             void dispose();
 
         protected:
-            void upload_material(ic::Shader *shader, const ic::MeshMaterial2D &mat);
+            void upload_material(ic::Shader &shader, const ic::MeshMaterial2D &mat);
 
         private:
             std::vector<unsigned int> indices;

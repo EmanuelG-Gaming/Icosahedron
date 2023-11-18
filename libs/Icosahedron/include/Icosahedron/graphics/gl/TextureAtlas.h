@@ -31,7 +31,14 @@ namespace ic {
 
                 this->initialize();
             }
-            TextureAtlas() : TextureAtlas(2048, 2048) {}
+            TextureAtlas() {
+                this->lastX = 0;
+                this->lastY = 0;
+                this->lastRowHeight = 0;
+
+                this->atlasWidth = 8;
+                this->atlasHeight = 8;
+            }
 
 
             void use() {

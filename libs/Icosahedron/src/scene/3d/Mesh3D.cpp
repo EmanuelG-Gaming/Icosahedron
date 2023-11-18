@@ -1,12 +1,22 @@
 #include <Icosahedron/scene/3d/Mesh3D.h>
+#include <Icosahedron/Global.h>
 
 #include <stdexcept>
 
 using namespace ic;
 
 Mesh3D::Mesh3D() {
-    this->vao = new ic::VertexArray();
+    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+        this->vao = new ic::VertexArray();
+    }
 }
+
+Mesh3D::Mesh3D(ic::VertexArray *vao) {
+    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+        this->vao = vao;
+    }
+}
+
 
 void ic::Mesh3D::set_transformation(const ic::Mat4x4 &to) {
     this->model = to;
@@ -87,13 +97,13 @@ void ic::Mesh3D::unuse_attribute_definitions() {
     this->vao->unuse_attribute_definitions();
 }
 
-void ic::Mesh3D::draw(ic::Shader *shader, ic::GLPrimitives primitive) {
+void ic::Mesh3D::draw(ic::Shader &shader, ic::GLPrimitives primitive) {
     if (this->vao == nullptr) return;
 
     auto drawable = this->vao->get_drawable();
 
-    shader->set_uniform_mat4("model", this->model);
-    shader->set_uniform_mat4("normalModel", this->normalModel);
+    shader.set_uniform_mat4("model", this->model);
+    shader.set_uniform_mat4("normalModel", this->normalModel);
     drawable.use_and_draw(primitive);
 }
 
