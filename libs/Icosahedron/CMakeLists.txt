@@ -84,7 +84,7 @@ set(LIBRARY_HEADERS
 
 set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
-${LIBRARY_SOURCE_DIRECTORY}/graphics/Image.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/Image.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/ImageIO.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/Images.cpp
 
