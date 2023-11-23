@@ -64,7 +64,7 @@ target_link_libraries(icosahedron-main PUBLIC Icosahedron Physics UI)
 
 
 ##### Examples #####
-add_executable(icosahedron-examples "examples/demos/SoundVisualizer.cpp")
+add_executable(icosahedron-examples "examples/ECS/EntityComponentSystem.cpp")
 
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(OpenGL)

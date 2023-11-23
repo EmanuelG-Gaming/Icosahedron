@@ -10,65 +10,54 @@
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/assets/loaders/TextureLoader.h>
 
-#include <unordered_map>
+#include <Icosahedron/entity/Entity.h>
+#include <Icosahedron/entity/Entities.h>
 
 
 
-using entity_t = std::size_t;
-entity_t lastEntityIndex = 0;
-
-std::size_t add_entity() {
-    static entity_t entities = 0;
-
-    entities++;
-    lastEntityIndex = entities;
-
-    return entities;
-}
-
-
-struct PositionComp {
+struct PositionComp : public ic::Component {
     ic::Vec2f position;
     ic::Vec2f scaling;
+
+    PositionComp(float x, float y, float width, float height) : position({ x, y }), scaling({ width, height }) {}
 };
 
-struct SpriteComp {
+struct SpriteComp : public ic::Component {
     ic::Mesh2D mesh;
     ic::Texture texture;
+
+    SpriteComp(ic::Mesh2D mesh, ic::Texture texture) : mesh(mesh), texture(texture) {} 
 };
 
-struct MovementComp {};
+struct MovementComp : public ic::Component {};
 
-
-struct ComponentRegistry {
-    std::unordered_map<entity_t, PositionComp> positions;
-    std::unordered_map<entity_t, SpriteComp> sprites;
-    std::unordered_map<entity_t, MovementComp> movements;
-
-    template <typename T>
-    bool has_component(const entity_t &entity, const std::unordered_map<entity_t, T> &components) {
-        return (components.find(entity) != components.end());
-    }
-};
 
 struct SpriteSystem {
-    void update(ComponentRegistry &registry, float dt) {
-        for (int i = 1; i <= lastEntityIndex; i++) {
-            if (registry.has_component<SpriteComp>(i, registry.sprites) && registry.has_component<PositionComp>(i, registry.positions)) {
-                // Matrices
-                ic::Mat4x4 translation = ic::Mat4x4().set_translation<2>(registry.positions[i].position);
-                ic::Mat4x4 scaling = ic::Mat4x4().set_scaling<2>(registry.positions[i].scaling);
+    void update(ic::Entities &registry, float dt) {
+        for (int i = 0; i < ic::lastEntityIndex; i++) {
+            ic::Entity *entity = registry.get_entity(i);
 
-                registry.sprites[i].mesh.set_transformation(translation * scaling);
+            if (entity->has<SpriteComp>() && entity->has<PositionComp>()) {
+                auto &transform = entity->get<PositionComp>();
+
+                // Matrices
+                ic::Mat4x4 translation = ic::Mat4x4().set_translation<2>(transform.position);
+                ic::Mat4x4 scaling = ic::Mat4x4().set_scaling<2>(transform.scaling);
+
+                entity->get<SpriteComp>().mesh.set_transformation(translation * scaling);
             }
         }
     }
 
-    void draw(ComponentRegistry &registry, ic::Shader &shader) {
-        for (int i = 1; i <= lastEntityIndex; i++) {
-            if (registry.has_component<SpriteComp>(i, registry.sprites)) {
-                registry.sprites[i].texture.use();
-                registry.sprites[i].mesh.draw(shader);
+    void draw(ic::Entities &registry, ic::Shader &shader) {
+        for (int i = 0; i < ic::lastEntityIndex; i++) {
+            ic::Entity *entity = registry.get_entity(i);
+
+            if (entity->has<SpriteComp>()) {
+                auto &sprite = entity->get<SpriteComp>();
+
+                sprite.texture.use();
+                sprite.mesh.draw(shader);
             }
         }
     }
@@ -82,25 +71,28 @@ struct MovementSystem {
         ic::InputHandler::get().add_input(keyboard, "WASD");
     }
 
-    void update(ComponentRegistry &registry, float dt) {
+    void update(ic::Entities &registry, float dt) {
         auto *controller = ic::InputHandler::get().find_keyboard("WASD");
         ic::Vec2i dir = controller->get_direction();
         float speed = 1.0f;
         
-        for (int i = 1; i <= lastEntityIndex; i++) {
-            if (registry.has_component<PositionComp>(i, registry.positions) && registry.has_component<MovementComp>(i, registry.movements)) {
+        for (int i = 0; i < ic::lastEntityIndex; i++) {
+            ic::Entity *entity = registry.get_entity(i);
+
+            if (entity->has<PositionComp>() && entity->has<MovementComp>()) {
+                auto &transform = entity->get<PositionComp>();
+
                 // Currently move all entities with MovementComp in the direction of the controller
-                registry.positions[i].position.x() += dir.x() * speed * dt;
-                registry.positions[i].position.y() += dir.y() * speed * dt;
+                transform.position.x() += dir.x() * speed * dt;
+                transform.position.y() += dir.y() * speed * dt;
             }
         }
     }
 };
 
 
-
 class EntityComponentSystem : public ic::Application {
-    ComponentRegistry registry;
+    ic::Entities registry;
     SpriteSystem spriteSystem;
     MovementSystem movementSystem;
 
@@ -121,44 +113,40 @@ class EntityComponentSystem : public ic::Application {
 
             // A floor that has a wood texture
             {
-                entity_t entity = add_entity();
-                registry.sprites[entity] = SpriteComp {
+                ic::Entity *entity = registry.add_entity();
+                entity->add<SpriteComp>(
                     ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f, 3.0f, 3.0f),
-                    ic::TextureLoader::get().load_png("resources/textures/wood.png"),
-                };
+                    ic::TextureLoader::get().load_png("resources/textures/wood.png")
+                );
             }
 
             // Stone floor
             {
-                entity_t entity = add_entity();
-                registry.sprites[entity] = SpriteComp {
+                ic::Entity *entity = registry.add_entity();
+                entity->add<SpriteComp>(
                     ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f, 0.4f, 0.6f),
-                    ic::TextureLoader::get().load_png("resources/textures/stone-bricks.png"),
-                };
-    
-                registry.positions[entity] = PositionComp {
-                    { 0.5f, 0.5f },
-                    { 0.3f, 0.2f },
-                };
+                    ic::TextureLoader::get().load_png("resources/textures/stone-bricks.png")
+                );
+                entity->add<PositionComp>(
+                    0.5f, 0.5f,
+                    0.3f, 0.2f
+                );
             }
 
             // The player
             {
-                entity_t entity = add_entity();
-                registry.sprites[entity] = SpriteComp {
+                ic::Entity *entity = registry.add_entity();
+                entity->add<SpriteComp>(
                     ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f),
-                    ic::TextureLoader::get().load_png("resources/textures/white.png"),
-                };
-                registry.sprites[entity].mesh.set_material(ic::MeshMaterial2D(ic::Colors::green, 1.0f));
-    
-                registry.positions[entity] = PositionComp {
-                    { -0.8f, 0.5f },
-                    { 0.2f, 0.2f },
-                };
-    
-                registry.movements[entity] = MovementComp {};
-            }
+                    ic::TextureLoader::get().load_png("resources/textures/white.png")
+                ).mesh.set_material(ic::MeshMaterial2D(ic::Colors::green, 1.0f));
 
+                entity->add<PositionComp>(
+                    -0.8f, 0.5f,
+                    0.2f, 0.2f
+                );
+                entity->add<MovementComp>();
+            }
 
             return true;
         }

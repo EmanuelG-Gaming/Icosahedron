@@ -7,6 +7,11 @@ set(LIBRARY_HEADERS_DIRECTORY include/${LIBRARY_NAME})
 set(LIBRARY_HEADERS 
     ${LIBRARY_HEADERS_DIRECTORY}/Global.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/entity/ECS.h
+    ${LIBRARY_HEADERS_DIRECTORY}/entity/Component.h
+    ${LIBRARY_HEADERS_DIRECTORY}/entity/Entity.h
+    ${LIBRARY_HEADERS_DIRECTORY}/entity/Entities.h
+    
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Vector.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Vectors.h
