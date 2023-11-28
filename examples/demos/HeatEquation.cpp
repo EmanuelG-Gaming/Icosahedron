@@ -16,6 +16,7 @@ const std::size_t TILE_AREA = TILE_WIDTH * TILE_HEIGHT;
 
 // How fast heat spreads at a given moment
 const float HEAT_COEFFICIENT = 25.0f;
+const float COOLING = (1.0f - 0.002f);
 
 const int SOLVER_TIME_STEPS = 5;
 const float SOLVER_COOLDOWN = 0.05f;
@@ -45,8 +46,7 @@ class HeatEquation : public ic::Application {
             batch = ic::Batch(1000000, ic::TRIANGLES);
             
             camera = ic::Camera2D();
-
-
+            
 
             ic::InputHandler::get().add_input((new ic::KeyboardController())->with_WASD(), "WASD");
 
@@ -60,7 +60,7 @@ class HeatEquation : public ic::Application {
                 camera.scale = std::max(0.01f, std::min(camera.scale + p, 4.0f));
             });
 
-            controller->add_mouse_up_action([this]() { 
+            controller->add_mouse_hold_action([this]() { 
                 ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
@@ -109,6 +109,12 @@ class HeatEquation : public ic::Application {
                             heatValues[j * TILE_WIDTH + i] += (gradient.x() + gradient.y()) * HEAT_COEFFICIENT * timeStep;
                         }
                     }
+
+                    for (int i = 0; i < TILE_WIDTH; i++) {
+                        for (int j = 0; j < TILE_HEIGHT; j++) {
+                            heatValues[j * TILE_WIDTH + i] *= COOLING;
+                        }
+                    }
                 }
 
                 time = 0.0f;
@@ -142,14 +148,12 @@ class HeatEquation : public ic::Application {
             }
 
 
-
             clear_color(ic::Colors::blue);
 
             shader.use();
             camera.use(shader);
-
             batch.render();
-        
+
             return true; 
         }
 

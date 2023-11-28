@@ -20,7 +20,7 @@ class TexturedRectangle : public ic::Application {
 
     ic::Mesh2D shape;
     ic::Vec2f shapePosition;
-    
+
     public:
         bool init() override {
             displayName = "Textured Rectangle Example";
@@ -31,7 +31,7 @@ class TexturedRectangle : public ic::Application {
         bool load() override {
             shape = ic::GeometryGenerator::get().generate_rectangle_mesh(0.2f, 0.2f);
             
-            texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
+            texture = ic::TextureLoader::get().load_png("resources/textures/transformations.png");
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
 
             camera = ic::Camera2D();

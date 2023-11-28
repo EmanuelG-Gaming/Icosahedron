@@ -19,6 +19,7 @@ struct PositionComp : public ic::Component {
     ic::Vec2f position;
     ic::Vec2f scaling;
 
+    PositionComp() {}
     PositionComp(float x, float y, float width, float height) : position({ x, y }), scaling({ width, height }) {}
 };
 
@@ -26,10 +27,16 @@ struct SpriteComp : public ic::Component {
     ic::Mesh2D mesh;
     ic::Texture texture;
 
+    SpriteComp() {}
     SpriteComp(ic::Mesh2D mesh, ic::Texture texture) : mesh(mesh), texture(texture) {} 
 };
 
-struct MovementComp : public ic::Component {};
+struct MovementComp : public ic::Component {
+    float speed = 1.0f;
+
+    MovementComp() {}
+    MovementComp(float speed) : speed(speed) {}
+};
 
 
 struct SpriteSystem {
@@ -65,26 +72,26 @@ struct SpriteSystem {
 
 struct MovementSystem {
     ic::KeyboardController *keyboard;
-
+        
     void load() {
         keyboard = (new ic::KeyboardController())->with_WASD();
+
         ic::InputHandler::get().add_input(keyboard, "WASD");
     }
 
     void update(ic::Entities &registry, float dt) {
-        auto *controller = ic::InputHandler::get().find_keyboard("WASD");
-        ic::Vec2i dir = controller->get_direction();
-        float speed = 1.0f;
+        ic::Vec2i dir = keyboard->get_direction();
         
         for (int i = 0; i < ic::lastEntityIndex; i++) {
             ic::Entity *entity = registry.get_entity(i);
 
             if (entity->has<PositionComp>() && entity->has<MovementComp>()) {
                 auto &transform = entity->get<PositionComp>();
+                float deltaSpeed = entity->get<MovementComp>().speed * dt;
 
                 // Currently move all entities with MovementComp in the direction of the controller
-                transform.position.x() += dir.x() * speed * dt;
-                transform.position.y() += dir.y() * speed * dt;
+                transform.position.x() += dir.x() * deltaSpeed;
+                transform.position.y() += dir.y() * deltaSpeed;
             }
         }
     }
@@ -145,7 +152,7 @@ class EntityComponentSystem : public ic::Application {
                     -0.8f, 0.5f,
                     0.2f, 0.2f
                 );
-                entity->add<MovementComp>();
+                entity->add<MovementComp>(1.5f);
             }
 
             return true;

@@ -53,6 +53,23 @@ void Batch::setup() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+/*
+void Batch::add_attribute(int attributeIndex, int dimensions) {
+    glBindVertexArray(this->vao);
+
+    GLuint vertexBuffer;
+    glGenBuffers(1, &vertexBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+    glBufferData(GL_ARRAY_BUFFER, this->vertexCapacity * dimensions * sizeof(GLfloat), nullptr, GL_STREAM_DRAW); 
+
+
+    glVertexAttribPointer(attributeIndex, dimensions, GL_FLOAT, GL_FALSE, 0, (void*)(0));
+    glEnableVertexAttribArray(attributeIndex);
+
+    this->bufferObjects.push_back(vertexBuffer);
+    this->attributeDimensions.push_back(dimensions);
+}
+*/
 
 void Batch::add(const std::vector<BatchVertex> &vertices) {
     int extra = this->get_extra_vertices();

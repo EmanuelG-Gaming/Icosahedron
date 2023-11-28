@@ -31,6 +31,11 @@ namespace ic {
             ic::Entity *get_entity(int index) {
                 return entities[index];
             }
+
+            /** @return The global index of the first element of the entity list. */
+            std::size_t get_starting_index() {
+                return startEntityIndex;
+            }
             
         private:
             std::vector<ic::Entity*> entities;

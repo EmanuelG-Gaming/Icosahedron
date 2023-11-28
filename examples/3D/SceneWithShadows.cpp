@@ -239,7 +239,7 @@ class SceneWithShadows : public ic::Application {
             shadowHeight = 1024;
             shadowMap = ic::Framebuffer(ic::TEXTURE_ATTACH_DEPTH, ic::TEXTURE_DEPTH, shadowWidth, shadowHeight);
 
-            mesh = ic::OBJLoader::get().get_mesh("resources/models/monkey.obj");
+            mesh = ic::OBJLoader::get().load_multiple("resources/models/vector.obj", "o")[1];
             
             floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 25.0f, 0.1f, 25.0f);
             floorMesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));

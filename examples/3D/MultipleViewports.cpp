@@ -163,7 +163,7 @@ class MultipleViewports : public ic::Application {
             mesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.5f, 14, 14);
             
             mainCameraMesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
-            secondCameraMesh = ic::OBJLoader::get().get_mesh("resources/models/icosahedron.obj");
+            secondCameraMesh = ic::OBJLoader::get().load("resources/models/icosahedron.obj");
 
             screenQuad = ic::Mesh3D();
             screenQuad.add_attribute(0, 3, std::vector<float>({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f }));

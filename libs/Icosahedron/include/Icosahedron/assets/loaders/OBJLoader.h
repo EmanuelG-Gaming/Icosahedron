@@ -21,6 +21,31 @@ namespace ic {
         float shininess = 0.0f;
     };
 
+
+    struct OBJSizes {
+        int posSize;
+        int tCoordSize;
+        int normalSize;
+        int faceSize;
+    };
+
+    struct OBJAttributeReferences {
+        std::vector<ic::Vec3f> posReference;
+        std::vector<ic::Vec2f> tCoordReference;
+        std::vector<ic::Vec3f> normalReference;
+    
+        std::vector<std::string> points;
+    };
+
+    struct OBJGeometricData {
+        std::vector<ic::Vec3f> vertices;
+        std::vector<ic::Vec2f> textureCoords;
+        std::vector<ic::Vec3f> normals;
+
+        std::vector<unsigned int> indices;
+    };
+
+
     /** @brief Loads .obj model files. Can optionally load material content. */
     class OBJLoader {
         public:
@@ -29,9 +54,15 @@ namespace ic {
                 return ins;
             }
 
-            ic::Mesh3D get_mesh(const std::string &objectFileName);
+            ic::Mesh3D load(const std::string &objectFileName);
+            std::vector<ic::Mesh3D> load_multiple(const std::string &objectFileName, const std::string &separator = "o");
 
             std::map<std::string, ic::OBJMaterialInfo> get_materials(const std::string &materialFileName);
+        
+        private:
+            std::vector<ic::OBJSizes> calculate_size(std::ifstream &objRead, const std::string &separator);
+            std::vector<ic::OBJAttributeReferences> get_attribute_references(std::ifstream &objRead, const std::vector<ic::OBJSizes> &sizes, const std::string &separator);
+            std::vector<ic::OBJGeometricData> get_geometric_data(const std::vector<ic::OBJAttributeReferences> &references);
 
         private:
             OBJLoader() {}

@@ -42,7 +42,6 @@ class Mesh2D : public ic::Application {
             //mesh1.add_attribute(2, 2, ic::GeometryGenerator::get().generate_UV_polygon(vertices));
             //mesh1.set_index_buffer(ic::EarClippingTriangulation::get().triangulate(vertices));
             
-
             // Mesh 2
             mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(3, 0.3f);
             mesh2.add_attribute(1, 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue }); // Add a "color" attribute to mesh2

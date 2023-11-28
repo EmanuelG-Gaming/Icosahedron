@@ -42,7 +42,9 @@ namespace ic {
             Batch();
             Batch(int capacity, ic::GLPrimitives renderType);
 
-            void add(const std::vector<ic::BatchVertex> &vertices);
+            void add(const std::vector<BatchVertex> &vertices);
+            
+            //void add_attribute(int attributeIndex, int dimensions);
             
             void render();
             void dispose();
@@ -53,6 +55,9 @@ namespace ic {
             void setup();
 
         protected:
+            std::vector<GLuint> bufferObjects;
+            std::vector<int> attributeDimensions;
+
             int vertexCapacity;
             int verticesUsed;
             BatchVertex lastUsed;

@@ -124,7 +124,7 @@ class ModelViewerDemo : public ic::Application {
             
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
             
-            mesh = ic::OBJLoader::get().get_mesh("resources/models/boat.obj");
+            mesh = ic::OBJLoader::get().load("resources/models/boat.obj");
             mesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
 
             material = ic::OBJLoader::get().get_materials("resources/models/icosahedron.mtl")["Material.001"];

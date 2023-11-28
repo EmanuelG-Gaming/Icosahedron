@@ -176,6 +176,22 @@ namespace ic {
             return set_rotation_z(radians);
         }
 
+        /** @brief Sets this matrix's columns as vectors. */
+        template <std::size_t p>
+        Mat set_vectors(std::initializer_list<ic::Vector<T, p>> from) {
+            int j = 0;
+
+            for (auto element : from) {
+                for (int i = 0; i < p; i++) {
+                    value(i, j) = element[i];
+                }
+
+                j++;
+            }
+
+            return *this;
+        }
+
         /* Matrix-matrix multiplication. */
         Mat operator*(Mat &other) {
             Mat result;

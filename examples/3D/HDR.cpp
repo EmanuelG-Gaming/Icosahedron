@@ -94,7 +94,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
         0.01, 0.02, 0.1
     );
 
-    uniform sampler2D sampleTexture;
+    
     uniform vec3 viewPosition;
     out vec4 outColor;
 
