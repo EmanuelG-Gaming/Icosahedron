@@ -1,4 +1,8 @@
 #include <Icosahedron/graphics/Image.h>
+#include <Icosahedron/graphics/ImageIO.h>
+
+#include <Icosahedron/math/geom/Vectors.h>
+#include <Icosahedron/math/Mathf.h>
 
 using namespace ic;
 
@@ -104,7 +108,109 @@ void ic::Image::line_triangle(int x0, int y0, int x1, int y1, int x2, int y2, co
     this->draw_line(x1, y1, x2, y2, with);
     this->draw_line(x2, y2, x0, y0, with);
 }
+
+void ic::Image::fill_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with) {
+    int ry0 = y0, ry1 = y1, ry2 = y2;
+    int rx0 = x0, rx1 = x1, rx2 = x2;
+
+    // Do vertex y sorting
+    if (ry1 < ry0) { 
+        std::swap(ry0, ry1); 
+        std::swap(rx0, rx1); 
+    }
+    if (ry2 < ry0) { 
+        std::swap(ry0, ry2); 
+        std::swap(rx0, rx2);
+    }
+    if (ry2 < ry1) { 
+        std::swap(ry1, ry2); 
+        std::swap(rx1, rx2);
+    }
+
+
+    if (ry1 == ry2) {
+        this->fill_bottom_triangle(rx0, ry0, rx1, ry1, rx2, ry2, with);
+    } else if (ry0 == ry1) {
+        this->fill_top_triangle(rx0, ry0, rx1, ry1, rx2, ry2, with);
+    } else {
+        ic::Vec2i v = { rx0 + (int) (((float) (ry1 - ry0) / (float)(ry2 - ry0)) * (rx2 - rx0)), ry1 };
+
+        this->fill_bottom_triangle(rx0, ry0, rx1, ry1, v.x(), v.y(), with);
+        this->fill_top_triangle(rx1, ry1, v.x(), v.y(), rx2, ry2, with);
+    }
+}
+
+
+void ic::Image::fill_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with) {
+    float inverseSlope1 = (x1 - x0) / (float) (y1 - y0);
+    float inverseSlope2 = (x2 - x0) / (float) (y2 - y0);
+
+    float currentX1 = x0, currentX2 = x0;
+    
+    for (int scanY = y0; scanY <= y1; scanY++) {
+        float cx1 = currentX1;
+        float cx2 = currentX2;
+        if (cx2 < cx1) std::swap(cx1, cx2);
+        
+        // Draw horizontal line
+        for (int i = (int) cx1 + 1.0f; i <= (int) cx2; i++) {
+            this->set_pixel(i, scanY, with);
+        }
        
+        currentX1 += inverseSlope1;
+        currentX2 += inverseSlope2;
+    }
+}
+
+void ic::Image::fill_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with) {
+    float inverseSlope1 = (x2 - x0) / (float) (y2 - y0);
+    float inverseSlope2 = (x2 - x1) / (float) (y2 - y1);
+
+    float currentX1 = x2, currentX2 = x2;
+    
+    for (int scanY = y2; scanY > y0; scanY--) {
+        float cx1 = currentX1;
+        float cx2 = currentX2;
+        if (cx2 < cx1) std::swap(cx1, cx2);
+        
+        // Draw horizontal line
+        for (int i = (int) cx1 + 1.0f; i <= (int) cx2; i++) {
+            this->set_pixel(i, scanY, with);
+        }
+
+        currentX1 -= inverseSlope1;
+        currentX2 -= inverseSlope2;
+    }
+}
+
+void ic::Image::blit(const image_t *data, int topLeftX, int topLeftY, int w, int h) {
+    // Obtain clipped bounds with the main image
+    int clippedTopLeftX = ic::Mathf::get().clamp(topLeftX, 0, this->width);
+    int clippedTopLeftY = ic::Mathf::get().clamp(topLeftY, 0, this->height);
+
+    int clippedBottomRightX = ic::Mathf::get().clamp(topLeftX + w, 0, this->width);
+    int clippedBottomRightY = ic::Mathf::get().clamp(topLeftY + h, 0, this->height);
+
+    for (int j = clippedTopLeftY - topLeftY; j < clippedBottomRightY - (topLeftY + h) + h; j++) {
+        for (int i = clippedTopLeftX - topLeftX; i < clippedBottomRightX - (topLeftX + w) + w; i++) {
+            this->set_pixel_unsafe(i + topLeftX, j + topLeftY, data[j * w + i]);
+        }
+    }
+}
+
+void ic::Image::blit(const ic::Image &image, int topLeftX, int topLeftY) {
+    this->blit(image.pixels, topLeftX, topLeftY, image.width, image.height);
+}
+
+void ic::Image::blit_png(const std::string &fileName, int topLeftX, int topLeftY) {
+    this->blit(ic::ImageIO::get().read_png(fileName), topLeftX, topLeftY);
+}
+
+void ic::Image::blit(const std::string &fileName, int topLeftX, int topLeftY) {
+    this->blit_png(fileName, topLeftX, topLeftY);
+}
+
+
 void ic::Image::each(const std::function<void(int, int)> &call) {
     for (int y = 0; y < this->get_height(); y++) {
         for (int x = 0; x < this->get_width(); x++) {

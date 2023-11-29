@@ -49,7 +49,11 @@ namespace ic {
             }
 
 
-            float clamp(float &x, float min, float max) {
+            float clamp(float x, float min, float max) {
+                return std::max(min, std::min(max, x));
+            }
+
+            int clamp(int x, int min, int max) {
                 return std::max(min, std::min(max, x));
             }
 

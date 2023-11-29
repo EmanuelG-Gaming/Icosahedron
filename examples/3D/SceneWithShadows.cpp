@@ -9,6 +9,9 @@
 #include <Icosahedron/graphics/gl/Framebuffer.h>
 #include <Icosahedron/graphics/Colors.h>
 
+#include <Icosahedron/graphics/Image.h>
+#include <Icosahedron/graphics/ImageIO.h>
+
 #include <Icosahedron/scene/3d/controllers/OrbitalCameraController3D.h>
 #include <Icosahedron/scene/3d/Camera3D.h>
 #include <Icosahedron/scene/3d/Mesh3D.h>
@@ -251,7 +254,7 @@ class SceneWithShadows : public ic::Application {
             controller.center = { 0.0f, 0.5f, 0.0f };
 
             time = 0.0f;
-            
+
             return true;
         }
 

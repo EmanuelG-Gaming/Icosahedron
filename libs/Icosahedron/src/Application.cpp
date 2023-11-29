@@ -57,6 +57,7 @@ void ic::Application::set_window_image(ic::Image image) {
     SDL_FreeSurface(surface);
     image.dispose();
 }
+
 void ic::Application::set_window_size(int w, int h) {
     if (this->window == NULL) {
         printf("Couldn't change the window's size. Window needs to be loaded first!\n");
@@ -73,7 +74,42 @@ void ic::Application::set_window_size(int w, int h) {
     window_size_changed(this->width, this->height);
 }
 
+void ic::Application::set_window_scaling(ic::WindowScaling to) {
+    if (this->window == NULL) {
+        printf("Couldn't change the window's scaling. It needs to be loaded first!\n");
+        return;
+    }
 
+    if (to == WindowScaling::invalid) {
+        return;
+    }
+
+    uint32_t flags = 0;
+    switch (to) {
+        case ic::WindowScaling::fullscreen:
+            flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+            break;
+        
+        case ic::WindowScaling::fullscreenClamped:
+            flags = SDL_WINDOW_FULLSCREEN;
+            break;
+        
+        default:
+            break;
+    }
+
+    SDL_SetWindowFullscreen(this->window, flags);
+    SDL_SetWindowResizable(this->window, (to == ic::WindowScaling::resizeable) ? SDL_TRUE : SDL_FALSE);
+
+    this->scaling = to;
+}
+
+void ic::Application::set_window_vsync(int interval) {
+    if (SDL_GL_SetSwapInterval(interval) != 0) {
+		std::cerr << "SDL_GL_SetSwapInterval Error: " << SDL_GetError();
+		return;
+	}
+}
 
 
 
@@ -138,9 +174,6 @@ void ic::Application::start() {
         Uint32 current = SDL_GetTicks();
         this->delta = (current - lastUpdate) / 1000.0f;
         lastUpdate = current;
-
-        // Slightly delay the application loop, so that the computer will not explode
-        //SDL_Delay(floor(17.0f - this->delta));
 	}
 
     this->close();

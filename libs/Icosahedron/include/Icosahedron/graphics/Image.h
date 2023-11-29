@@ -49,6 +49,16 @@ namespace ic {
             /** @brief Bresenham's line algorithm. */
             void draw_line(int x0, int y0, int x1, int y1, const image_t &with);
             void line_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with);
+            void fill_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with);
+
+            void blit(const image_t *data, int topLeftX, int topLeftY, int w, int h);
+            void blit(const ic::Image &image, int topLeftX, int topLeftY);
+
+            void blit_png(const std::string &fileName, int topLeftX, int topLeftY);
+
+            /** @brief Same as blit_png(). */
+            void blit(const std::string &fileName, int topLeftX, int topLeftY);
+
 
             /** @brief Iterates over each pixel of the image. */
             void each(const std::function<void(int, int)> &call);
@@ -59,6 +69,10 @@ namespace ic {
             int get_height();
 
             void *data();
+        
+        protected:
+            void fill_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with);
+            void fill_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with);
 
         private:
             int width, height;

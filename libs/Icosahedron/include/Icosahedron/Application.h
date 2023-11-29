@@ -30,6 +30,7 @@ namespace ic {
         fixed = 0,
         resizeable = SDL_WINDOW_RESIZABLE,
         fullscreen = SDL_WINDOW_FULLSCREEN_DESKTOP,
+        fullscreenClamped = SDL_WINDOW_FULLSCREEN
     };
 
     class Application {
@@ -55,12 +56,25 @@ namespace ic {
             /** @note This would dispose the image. */
             void set_window_image(ic::Image image);
             void set_window_size(int w, int h);
+            void set_window_scaling(ic::WindowScaling to);
+
+            /** @brief Sets the swap interval for the window's OpenGL context.
+             *  By default, the application already uses normal vsync.
+             *  @param interval 0 for updating the screen immediately,
+             *                  1 for updates syncronized with the screen's refresh rate,
+             *                  -1 for adaptive vsync
+             *          
+            */
+            void set_window_vsync(int interval);
 
             void clear_color(float r, float g, float b);
             void clear_color(const ic::Color &color);
             void clear_color();
 
+            /** @brief Takes an image of a rectangular portion of the viewport. */
             ic::Image take_screenshot(int x, int y, int width, int height);
+
+            /** @brief Takes an image of the whole viewport. */
             ic::Image take_screenshot();
             
             int screen_width();
