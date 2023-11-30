@@ -13,15 +13,15 @@ namespace ic { namespace UI {
     class Core {
         public:
             Table *mainTable;
-            ic::TextureAtlas atlas;
-            
+            ic::TextureAtlas *atlas;
+
             static Core& get() {
                 static Core ins;
                 return ins;
             }
 
             void load();
-            void render();
+            void update_and_render(float dt);
             void dispose();
         
         private:

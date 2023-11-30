@@ -6,4 +6,6 @@ void ic::UI::Global::load() {
     
     ic::FreeType::get().add_atlas("default", "resources/fonts/Roboto-Regular.ttf", 48);
     this->defaultAtlas = ic::FreeType::get().find_atlas("default");
+
+    this->atlas = ic::TextureAtlas(2048, 2048);
 }

@@ -6,14 +6,16 @@ void Renderer::draw_rectangle(ic::Batch &batch, float x, float y, float width, f
     float x1 = x - width, y1 = y - height;
     float x2 = x + width, y2 = y + height;
     
+    ic::Color c = ic::Color(color).interpolate(tintColor, tinting);
+
     std::vector<BatchVertex> vertices = {
-        BatchVertex(x1, y1, 0.0f, 0.0f, color),
-        BatchVertex(x2, y2, 1.0f, 1.0f, color),
-        BatchVertex(x2, y1, 1.0f, 0.0f, color),
+        BatchVertex(x1, y1, 0.0f, 0.0f, c),
+        BatchVertex(x2, y2, 1.0f, 1.0f, c),
+        BatchVertex(x2, y1, 1.0f, 0.0f, c),
                    
-        BatchVertex(x1, y1, 0.0f, 0.0f, color),
-        BatchVertex(x2, y2, 1.0f, 1.0f, color),
-        BatchVertex(x1, y2, 0.0f, 1.0f, color)
+        BatchVertex(x1, y1, 0.0f, 0.0f, c),
+        BatchVertex(x2, y2, 1.0f, 1.0f, c),
+        BatchVertex(x1, y2, 0.0f, 1.0f, c)
     };
 
     batch.add(vertices);
@@ -23,23 +25,28 @@ void Renderer::draw_rectangle(ic::Batch &batch, AtlasEntry entry, float x, float
     float x1 = x - width, y1 = y - height;
     float x2 = x + width, y2 = y + height;
     
+
+    ic::Color c = ic::Color(color).interpolate(tintColor, tinting);
+
     std::vector<BatchVertex> vertices = {
-        BatchVertex(x1, y1, entry.u, entry.v2, color),
-        BatchVertex(x2, y2, entry.u2, entry.v, color),
-        BatchVertex(x2, y1, entry.u2, entry.v2, color),
+        BatchVertex(x1, y1, entry.u, entry.v2, c),
+        BatchVertex(x2, y2, entry.u2, entry.v, c),
+        BatchVertex(x2, y1, entry.u2, entry.v2, c),
                    
-        BatchVertex(x1, y1, entry.u, entry.v2, color),
-        BatchVertex(x2, y2, entry.u2, entry.v, color),
-        BatchVertex(x1, y2, entry.u, entry.v, color)
+        BatchVertex(x1, y1, entry.u, entry.v2, c),
+        BatchVertex(x2, y2, entry.u2, entry.v, c),
+        BatchVertex(x1, y2, entry.u, entry.v, c)
     };
 
     batch.add(vertices);
 }
 
 void Renderer::draw_line(ic::Batch &batch, float x1, float y1, float x2, float y2, const ic::Color &color) {
+    ic::Color c = ic::Color(color).interpolate(tintColor, tinting);
+
     std::vector<BatchVertex> vertices = {
-        BatchVertex(x1, y1, 0.0f, 0.0f, color),
-        BatchVertex(x2, y2, 0.0f, 0.0f, color)
+        BatchVertex(x1, y1, 0.0f, 0.0f, c),
+        BatchVertex(x2, y2, 0.0f, 0.0f, c)
     };
 
     batch.add(vertices);
@@ -47,9 +54,11 @@ void Renderer::draw_line(ic::Batch &batch, float x1, float y1, float x2, float y
 void Renderer::draw_vertices(ic::Batch &batch, std::vector<ic::Vec2f> vertices, const ic::Color &color) {
     std::vector<BatchVertex> v;
 
+    ic::Color c = ic::Color(color).interpolate(tintColor, tinting);
+
     for (int index = 0; index < vertices.size(); index++) {
         ic::Vec2f vertex = vertices[index];
-        v.push_back(BatchVertex(vertex.x(), vertex.y(), 0.0f, 0.0f, color));
+        v.push_back(BatchVertex(vertex.x(), vertex.y(), 0.0f, 0.0f, c));
     }
 
     batch.add(v);
@@ -57,9 +66,11 @@ void Renderer::draw_vertices(ic::Batch &batch, std::vector<ic::Vec2f> vertices, 
 void Renderer::draw_vertices(ic::Batch &batch, std::vector<ic::Vec2f> vertices, std::vector<unsigned int> indices, const ic::Color &color) {
     std::vector<BatchVertex> v;
 
+    ic::Color c = ic::Color(color).interpolate(tintColor, tinting);
+
     for (auto &index : indices) {
         ic::Vec2f vertex = vertices.at(index);
-        v.push_back(BatchVertex(vertex.x(), vertex.y(), 0.0f, 0.0f, color));
+        v.push_back(BatchVertex(vertex.x(), vertex.y(), 0.0f, 0.0f, c));
     }
 
     batch.add(v);
@@ -216,6 +227,7 @@ void Renderer::draw_string_itself(ic::Batch &batch, ic::TextAtlas &textAtlas, co
     batch.add(vertices);
 }
         
-void Renderer::tint(float amount) {
+void Renderer::tint(const ic::Color &to, float amount) {
+    tintColor = to;
     tinting = amount;
 }

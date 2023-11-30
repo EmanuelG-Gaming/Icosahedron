@@ -61,18 +61,32 @@ void ic::Image::set_pixel(int x, int y, const image_t &with) {
 void ic::Image::fill_circle(int x, int y, int radius, const image_t &with) {
     int radiusSquared = radius * radius;
 
-    for (int j = -radius; j <= radius; j++) {
+    // Obtain clipped bounds with the main image,
+    int clippedTopLeftX = ic::Mathf::get().clamp(x - radius, 0, this->width);
+    int clippedTopLeftY = ic::Mathf::get().clamp(y - radius, 0, this->height);
+
+    int clippedBottomRightX = ic::Mathf::get().clamp(x + radius, 0, this->width);
+    int clippedBottomRightY = ic::Mathf::get().clamp(y + radius, 0, this->height);
+
+    ic::Vec2i clipTopLeft = { clippedTopLeftX - x, clippedTopLeftY - y };
+    ic::Vec2i clipBottomRight = { clippedBottomRightX - (x + radius) + radius, clippedBottomRightY - (y + radius) + radius };
+
+
+    for (int j = clipTopLeft.y(); j < clipBottomRight.y(); j++) {
         int py = y + j;
 
-        for (int i = -radius; i <= radius; i++) {
+        for (int i = clipTopLeft.x(); i < clipBottomRight.x(); i++) {
             int px = x + i;
 
             if (i*i + j*j <= radiusSquared) {
-                this->set_pixel(px, py, with);
+                this->set_pixel_unsafe(px, py, with);
             }
         }
     }
 }
+
+
+///// Lines /////
 
 void ic::Image::draw_line(int x0, int y0, int x1, int y1, const image_t &with) {
     int dx = abs(x1 - x0);
@@ -102,6 +116,9 @@ void ic::Image::draw_line(int x0, int y0, int x1, int y1, const image_t &with) {
         }
     }
 }
+
+
+///// Triangles /////
 
 void ic::Image::line_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with) {
     this->draw_line(x0, y0, x1, y1, with);
@@ -153,7 +170,7 @@ void ic::Image::fill_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int
         if (cx2 < cx1) std::swap(cx1, cx2);
         
         // Draw horizontal line
-        for (int i = (int) cx1 + 1.0f; i <= (int) cx2; i++) {
+        for (int i = (int) cx1; i <= (int) cx2; i++) {
             this->set_pixel(i, scanY, with);
         }
        
@@ -174,7 +191,7 @@ void ic::Image::fill_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2
         if (cx2 < cx1) std::swap(cx1, cx2);
         
         // Draw horizontal line
-        for (int i = (int) cx1 + 1.0f; i <= (int) cx2; i++) {
+        for (int i = (int) cx1; i <= (int) cx2; i++) {
             this->set_pixel(i, scanY, with);
         }
 
@@ -183,7 +200,31 @@ void ic::Image::fill_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2
     }
 }
 
-void ic::Image::blit(const image_t *data, int topLeftX, int topLeftY, int w, int h) {
+
+void ic::Image::line_quad(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, const image_t &with) {
+    this->draw_line(x0, y0, x1, y1, with);
+    this->draw_line(x1, y1, x2, y2, with);
+    this->draw_line(x2, y2, x3, y3, with);
+    this->draw_line(x3, y3, x0, y0, with);
+}
+
+void ic::Image::fill_quad(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, const image_t &with) {
+    this->fill_triangle(x0, y0, x1, y1, x2, y2, with);
+    this->fill_triangle(x0, y0, x2, y2, x3, y3, with);
+}
+
+
+///// Rectangles /////
+
+void ic::Image::line_rectangle(int topLeftX, int topLeftY, int w, int h, const image_t &with) {
+    this->draw_line(topLeftX, topLeftY, topLeftX + w, topLeftY, with);
+    this->draw_line(topLeftX, topLeftY + h, topLeftX + w, topLeftY + h, with);
+
+    this->draw_line(topLeftX, topLeftY, topLeftX, topLeftY + h, with);
+    this->draw_line(topLeftX + w, topLeftY, topLeftX + w, topLeftY + h, with);
+}
+
+void ic::Image::fill_rectangle(int topLeftX, int topLeftY, int w, int h, const image_t &with) {
     // Obtain clipped bounds with the main image
     int clippedTopLeftX = ic::Mathf::get().clamp(topLeftX, 0, this->width);
     int clippedTopLeftY = ic::Mathf::get().clamp(topLeftY, 0, this->height);
@@ -191,8 +232,36 @@ void ic::Image::blit(const image_t *data, int topLeftX, int topLeftY, int w, int
     int clippedBottomRightX = ic::Mathf::get().clamp(topLeftX + w, 0, this->width);
     int clippedBottomRightY = ic::Mathf::get().clamp(topLeftY + h, 0, this->height);
 
-    for (int j = clippedTopLeftY - topLeftY; j < clippedBottomRightY - (topLeftY + h) + h; j++) {
-        for (int i = clippedTopLeftX - topLeftX; i < clippedBottomRightX - (topLeftX + w) + w; i++) {
+    ic::Vec2i clipTopLeft = { clippedTopLeftX - topLeftX, clippedTopLeftY - topLeftY };
+    ic::Vec2i clipBottomRight = { clippedBottomRightX - (topLeftX + w) + w, clippedBottomRightY - (topLeftY + h) + h };
+
+
+    for (int j = clipTopLeft.y(); j < clipBottomRight.y(); j++) {
+        for (int i = clipTopLeft.x(); i < clipBottomRight.x(); i++) {
+            this->set_pixel_unsafe(i + topLeftX, j + topLeftY, with);
+        }
+    }
+}
+
+
+
+///// Textures /////
+
+void ic::Image::blit(const image_t *data, int topLeftX, int topLeftY, int w, int h) {
+    // Obtain clipped bounds with the main image,
+    // so that we're not checking on every single pixel of the blitted image for an intersection
+    int clippedTopLeftX = ic::Mathf::get().clamp(topLeftX, 0, this->width);
+    int clippedTopLeftY = ic::Mathf::get().clamp(topLeftY, 0, this->height);
+
+    int clippedBottomRightX = ic::Mathf::get().clamp(topLeftX + w, 0, this->width);
+    int clippedBottomRightY = ic::Mathf::get().clamp(topLeftY + h, 0, this->height);
+
+    ic::Vec2i clipTopLeft = { clippedTopLeftX - topLeftX, clippedTopLeftY - topLeftY };
+    ic::Vec2i clipBottomRight = { clippedBottomRightX - (topLeftX + w) + w, clippedBottomRightY - (topLeftY + h) + h };
+
+
+    for (int j = clipTopLeft.y(); j < clipBottomRight.y(); j++) {
+        for (int i = clipTopLeft.x(); i < clipBottomRight.x(); i++) {
             this->set_pixel_unsafe(i + topLeftX, j + topLeftY, data[j * w + i]);
         }
     }
@@ -209,6 +278,10 @@ void ic::Image::blit_png(const std::string &fileName, int topLeftX, int topLeftY
 void ic::Image::blit(const std::string &fileName, int topLeftX, int topLeftY) {
     this->blit_png(fileName, topLeftX, topLeftY);
 }
+
+
+
+
 
 
 void ic::Image::each(const std::function<void(int, int)> &call) {

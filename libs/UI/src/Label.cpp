@@ -48,7 +48,6 @@ ic::UI::Label *ic::UI::Label::set_text(const std::string &text) {
     ic::Vec2f size = this->compute_size(this->style.font);
     this->width = size.x();
     this->height = size.y();
-    std::cout << this->width;
 
     return this;
 }

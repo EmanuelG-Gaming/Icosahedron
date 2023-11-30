@@ -80,6 +80,12 @@ void ic::UI::Table::mouse_down() {
     }
 }
 
+void ic::UI::Table::update(float dt) {
+    for (auto &table : this->tables) {
+        table->update(dt);
+    }
+}
+
 
 
 
@@ -113,6 +119,7 @@ ic::UI::Label *ic::UI::Table::label(const std::string &text) {
     ic::UI::Cell *cell = new ic::UI::Cell();
     cell->set_layout(this);
     cell->element = label;
+    
     this->cells.push_back(cell);
 
     return label;
@@ -127,7 +134,39 @@ ic::UI::Button *ic::UI::Table::button() {
 
 ic::UI::Button *ic::UI::Table::button(const std::function<void()> &clicked) {
     ic::UI::Button *b = new ic::UI::Button();
-    b->clickListener = clicked;
+    if (clicked != nullptr) {
+        b->clickListener = clicked;
+    }
+
+    this->tables.push_back(b);
+
+    return b;
+}
+
+ic::UI::Button *ic::UI::Table::image_button(const std::string &atlasEntryName, float width, float height, const std::function<void()> &clicked) {
+    ic::UI::Button *b = new ic::UI::Button();
+    if (clicked != nullptr) {
+        b->clickListener = clicked;
+    }
+    b->image(atlasEntryName, width, height);
+
+    this->tables.push_back(b);
+
+    return b;
+}
+
+ic::UI::Button *ic::UI::Table::image_button(const std::string &atlasEntryName, const std::function<void()> &clicked) {
+    return this->image_button(atlasEntryName, 0.1f, 0.1f, clicked);
+}
+
+
+ic::UI::Button *ic::UI::Table::text_button(const std::string &text, const std::function<void()> &clicked) {
+    ic::UI::Button *b = new ic::UI::Button();
+    if (clicked != nullptr) {
+        b->clickListener = clicked;
+    }
+    b->label(text);
+
     this->tables.push_back(b);
 
     return b;
@@ -135,6 +174,17 @@ ic::UI::Button *ic::UI::Table::button(const std::function<void()> &clicked) {
 
 
 
+ic::UI::ImageElement *ic::UI::Table::image(const std::string &atlasEntryName, float width, float height) {
+    ic::UI::ImageElement *i = new ic::UI::ImageElement(atlasEntryName, width, height);
+    ic::UI::Cell *cell = new ic::UI::Cell();
+
+    cell->set_layout(this);
+    cell->element = i;
+    
+    this->cells.push_back(cell);
+
+    return i;
+}
 
 
 ic::UI::Table *ic::UI::Table::set_background(Drawable *background) {
@@ -145,4 +195,26 @@ ic::UI::Table *ic::UI::Table::set_background(Drawable *background) {
 
 bool ic::UI::Table::has_background() {
     return (this->background != nullptr);
+}
+
+
+
+ic::UI::Table *ic::UI::Table::set_position(float x, float y) {
+    this->position.x() = x;
+    this->position.y() = y;
+
+    for (auto &cell : this->cells) {
+        cell->element->set_position(this->position);
+    }
+
+    for (auto &table : this->tables) {
+        table->set_position(this->position);
+    }
+
+
+    return this;
+}
+
+ic::UI::Table *ic::UI::Table::set_position(ic::Vec2f &pos) {
+    return this->set_position(pos.x(), pos.y());
 }

@@ -20,15 +20,20 @@ class UIBasics : public ic::Application {
             static auto &ui = ic::UI::Core::get();
             ui.load();
 
-            ui.mainTable->label("'Testing'")->set_background(new ic::UI::TextureDrawable(ui.atlas.add_entry("wood", "resources/textures/stone-bricks.png")))->set_position(-0.2f, 0.1f);
+            ui.atlas->add_entry("wood", "resources/textures/wood.png");
+            ui.atlas->add_entry("stone-bricks", "resources/textures/stone-bricks.png");
+            ui.atlas->add_entry("ball", "resources/textures/ball.png");
+            ui.atlas->add_entry("white", "resources/textures/white.png");
+
+            ui.mainTable->label("'Testing'")->set_background(new ic::UI::TextureDrawable("stone-bricks"))->set_position(-0.2f, 0.1f);
 
             ui.mainTable->button([this]() {
                 std::cout << "Testing." << "\n";
             })->set_style(ic::UI::ButtonStyle(
                 nullptr,
-                new ic::UI::TextureDrawable(ui.atlas.add_entry("ball", "resources/textures/ball.png")),
-                new ic::UI::TextureDrawable(ui.atlas.add_entry("white", "resources/textures/white.png"))
-            ))->set_background(new ic::UI::TextureDrawable(ui.atlas.add_entry("wood", "resources/textures/wood.png")));
+                new ic::UI::TextureDrawable("ball"),
+                new ic::UI::TextureDrawable("white")
+            ))->set_background(new ic::UI::TextureDrawable("wood"));
 
             return true;
         }
@@ -44,15 +49,13 @@ class UIBasics : public ic::Application {
         bool update(float dt) override {
             clear_color(ic::Colors::blue);
 
-            static auto &ui = ic::UI::Core::get();
-            ui.render();
+            ic::UI::Core::get().update_and_render(dt);
 
             return true; 
         }
 
         void dispose() override {
-            static auto &ui = ic::UI::Core::get();
-            ui.dispose();
+            ic::UI::Core::get().dispose();
         }
 };
 

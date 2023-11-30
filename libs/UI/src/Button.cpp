@@ -39,11 +39,13 @@ void ic::UI::Button::mouse_down_callback() {
 
 void ic::UI::Button::draw() {
     Drawable *top = this->style.base;
-    if (this->isChecked) {
-        top = this->style.checked;
-    }
-    if (this->isPressed) {
-        top = this->style.pressed;
+    if (this->clickListener != nullptr) {
+        if (this->isChecked) {
+            top = this->style.checked;
+        }
+        if (this->isPressed) {
+            top = this->style.pressed;
+        }
     }
 
 

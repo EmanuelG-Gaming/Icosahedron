@@ -70,8 +70,7 @@ void ic::UI::Core::load() {
     this->uiCamera = ic::Camera2D();
     this->uiShader = ic::ShaderLoader::get().load(vertex, textureFragment);
     this->uiTextShader = ic::ShaderLoader::get().load(vertex, textFragment);
-    this->atlas = ic::TextureAtlas(2048, 2048);
-
+    this->atlas = &ic::UI::Global::get().atlas;
 
     this->mainTable = new ic::UI::Table();
 
@@ -97,14 +96,15 @@ void ic::UI::Core::load() {
     ic::InputHandler::get().add_input(this->mouse, "ui mouse");
 }
 
-void ic::UI::Core::render() {
+void ic::UI::Core::update_and_render(float dt) {
+    this->mainTable->update(dt);
     this->mainTable->draw();
 
     // Textures
     this->uiShader.use();
     this->uiCamera.use(this->uiShader);
 
-    this->atlas.use();
+    ic::UI::Global::get().atlas.use();
     ic::UI::Global::get().fillBatch.render();
 
 

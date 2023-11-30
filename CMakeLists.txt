@@ -64,7 +64,7 @@ target_link_libraries(icosahedron-main PUBLIC Icosahedron Physics UI)
 
 
 ##### Examples #####
-add_executable(icosahedron-examples "examples/3D/SceneWithShadows.cpp")
+add_executable(icosahedron-examples "examples/UI/UIBasics.cpp")
 
 find_package(OpenGL REQUIRED COMPONENTS OpenGL)
 find_package(OpenGL)

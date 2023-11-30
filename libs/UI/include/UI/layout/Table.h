@@ -8,6 +8,7 @@
 #include <UI/layout/Cell.h>
 #include <UI/style/Drawable.h>
 #include <UI/Label.h>
+#include <UI/ImageElement.h>
 
 
 namespace ic { namespace UI {
@@ -15,8 +16,6 @@ namespace ic { namespace UI {
 
     class Table {
         public:
-            ic::Vec2f position;
-
             Table();
             Table(Drawable *background);
 
@@ -29,28 +28,43 @@ namespace ic { namespace UI {
 
             virtual void draw();
             
+
             void mouse_moved();
             void mouse_up();
             void mouse_down();
-
+            void update(float dt);
+            
             /* UI elements */
 
             Cell *add(Element *element);
             Table *add(Table *table);
 
             Table *table(const std::function<void(Table*)> &consumer);
+
             Label *label(const std::string &text);
+            ImageElement *image(const std::string &atlasEntryName, float width = 0.1f, float height = 0.1f);
+
+
             Button *button();
             Button *button(const std::function<void()> &clicked);
+
+            Button *image_button(const std::string &atlasEntryName, const std::function<void()> &clicked = nullptr);
+            Button *image_button(const std::string &atlasEntryName, float width, float height, const std::function<void()> &clicked = nullptr);
+
+            Button *text_button(const std::string &text, const std::function<void()> &clicked= nullptr);
 
 
             Table *set_background(Drawable *drawable);
             bool has_background();
-        
+
+            Table *set_position(float x, float y);
+            Table *set_position(ic::Vec2f &pos);
+
         protected:
             void draw_elements();
 
         protected:
+            ic::Vec2f position;
             Drawable *background;
 
             std::vector<Cell*> cells;

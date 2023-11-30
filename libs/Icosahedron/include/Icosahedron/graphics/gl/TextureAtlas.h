@@ -10,6 +10,9 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include <Icosahedron/graphics/Image.h>
+#include <Icosahedron/assets/loaders/TextureLoader.h>
+
 
 namespace ic {
     struct AtlasEntry {
@@ -53,15 +56,10 @@ namespace ic {
             }
 
 
-            ic::AtlasEntry add_entry(const std::string &location, const std::string &fileName) {
-                SDL_Surface *surface = load_surface(fileName.c_str());
-                if (surface == NULL) {
-                    printf("Couldn't load texture.\n");
-                    return AtlasEntry();
-                }
 
-                int width = surface->w;
-                int height = surface->h;
+            ic::AtlasEntry add_entry(const std::string &location, int w, int h, GLenum format, const void *pixels) {
+                int width = w;
+                int height = h;
 
                 AtlasEntry entry;
                 entry.x = this->lastX;
@@ -96,12 +94,33 @@ namespace ic {
                 entry.u2 = (entry.x + entry.width) / (float) this->atlasWidth;
                 entry.v2 = (entry.y + entry.height) / (float) this->atlasHeight;
 
-                glTexSubImage2D(GL_TEXTURE_2D, 0, entry.x, entry.y, entry.width, entry.height, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+                glTexSubImage2D(GL_TEXTURE_2D, 0, entry.x, entry.y, entry.width, entry.height, format, GL_UNSIGNED_BYTE, pixels);
 
                 entries[location] = entry;
                 
                 return entry;
             }
+
+
+            ic::AtlasEntry add_entry(const std::string &location, ic::Image &image) {
+                return this->add_entry(location, image.get_width(), image.get_height(), GL_RGB, image.data());
+            }
+
+            ic::AtlasEntry add_entry(const std::string &location, const std::string &fileName) {
+                SDL_Surface *surface = load_surface(fileName.c_str());
+                if (surface == NULL) {
+                    printf("Couldn't load texture.\n");
+                    return AtlasEntry();
+                }
+
+                return this->add_entry(
+                    location, surface->w, surface->h, 
+                    ic::TextureLoader::get().map_to_texture_format(surface->format->format), 
+                    surface->pixels
+                );
+            }
+
+
 
             /** @brief Loads multiple images based on the format: { image_alias1, image_file_name1, image_alias2, image_file_name2, ... }*/
             void add_entries(const std::vector<std::string> &from) {

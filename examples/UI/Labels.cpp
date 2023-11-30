@@ -19,13 +19,14 @@ class Labels : public ic::Application {
             static auto &ui = ic::UI::Core::get();
             ui.load();
 
-            ic::AtlasEntry woodEntry = ui.atlas.add_entry("wood", "resources/textures/wood.png");
+            ui.atlas->add_entry("wood", "resources/textures/wood.png");
+
             ui.mainTable->label("Test")->set_font_color(ic::Colors::green);
 
-            ic::UI::Label *label = ui.mainTable->label("Text with wooden background");
-            label->set_font_color(ic::Colors::yellow)
-                 ->set_background(new ic::UI::TextureDrawable(woodEntry))
-                 ->set_position(-0.5f, 0.4f);
+            ui.mainTable->label("Text with wooden background")
+                ->set_font_color(ic::Colors::yellow)
+                ->set_background(new ic::UI::TextureDrawable("wood"))
+                ->set_position(-0.5f, 0.4f);
 
             return true;
         }
@@ -41,15 +42,13 @@ class Labels : public ic::Application {
         bool update(float dt) override {
             clear_color(ic::Colors::blue);
 
-            static auto &ui = ic::UI::Core::get();
-            ui.render();
+            ic::UI::Core::get().update_and_render(dt);
 
             return true; 
         }
 
         void dispose() override {
-            static auto &ui = ic::UI::Core::get();
-            ui.dispose();
+            ic::UI::Core::get().dispose();
         }
 };
 
