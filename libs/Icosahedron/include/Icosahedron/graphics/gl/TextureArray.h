@@ -12,7 +12,6 @@ namespace ic {
     class TextureArray {
         public:
             TextureArray();
-            TextureArray(int textureWidth, int textureHeight, unsigned int numberOfTextures);
             TextureArray(int textureSize, unsigned int numberOfTextures);
 
             void add_texture(const std::string &fileName);
@@ -23,7 +22,7 @@ namespace ic {
             void dispose();
 
         private:
-            void setup(int textureWidth, int textureHeight, unsigned int numberOfTextures);
+            void setup(int textureSize, unsigned int numberOfTextures);
 
         private:
             GLuint textureIndex = 0;
@@ -31,8 +30,7 @@ namespace ic {
 
             GLsizei numberOfTextures = 0;
 
-            GLsizei textureWidth;
-            GLsizei textureHeight;
+            GLsizei textureSize;
     };
 }
 #endif

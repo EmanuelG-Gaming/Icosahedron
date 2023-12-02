@@ -5,22 +5,17 @@ using namespace ic;
 
 
 TextureArray::TextureArray() {
-    this->textureWidth = 8;
-    this->textureHeight = 8;
+    this->textureSize = 8;
     this->numberOfTextures = 1;
 }
 
-TextureArray::TextureArray(int textureWidth, int textureHeight, unsigned int numberOfTextures) {
-    this->textureWidth = textureWidth;
-    this->textureHeight = textureHeight;
+TextureArray::TextureArray(int textureSize, unsigned int numberOfTextures) {
+    this->textureSize = textureSize;
     this->numberOfTextures = numberOfTextures;
 
     if (IC_IS_OPENGL_CONTEXT_PRESENT) {
-        this->setup(this->textureWidth, this->textureHeight, this->numberOfTextures);
+        this->setup(this->textureSize, this->numberOfTextures);
     }
-}
-
-TextureArray::TextureArray(int textureSize, unsigned int numberOfTextures) : TextureArray(textureSize, textureSize, numberOfTextures) {
 }
 
 
@@ -38,7 +33,7 @@ void ic::TextureArray::add_texture(const std::string &fileName) {
 
 
     glBindTexture(GL_TEXTURE_2D_ARRAY, this->textureIndex);
-    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, this->texturesUsed, this->textureWidth, this->textureHeight, 1, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, this->texturesUsed, this->textureSize, this->textureSize, 1, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
     glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -62,11 +57,12 @@ void ic::TextureArray::dispose() {
     glDeleteTextures(1, &this->textureIndex);
 }
 
-void ic::TextureArray::setup(int textureWidth, int textureHeight, unsigned int numberOfTextures) {
+void ic::TextureArray::setup(int textureSize, unsigned int numberOfTextures) {
     glGenTextures(1, &this->textureIndex);
     glBindTexture(GL_TEXTURE_2D_ARRAY, this->textureIndex);
 
-    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, textureWidth, textureHeight, numberOfTextures);
+    //glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, textureSize, textureSize, numberOfTextures); // OpenGL >= 4.0 version
+    glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, textureSize, textureSize, numberOfTextures, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
 
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
