@@ -6,7 +6,7 @@
 #include <glad/glad.h>
 
 #include <Icosahedron/graphics/gl/GL.h>
-#include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/gl/Cubemap.h>
 
 #include <Icosahedron/assets/loaders/CubemapLoader.h>
 #include <Icosahedron/util/GeometryGenerator.h>
@@ -45,7 +45,7 @@ namespace ic {
             void use_texture(int index = 0);
 
         private:
-            ic::Texture textureCube;
+            ic::Cubemap textureCube;
             ic::Mesh3D mesh;
     };
 }

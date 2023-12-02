@@ -6,16 +6,16 @@ void Renderer::draw_rectangle(ic::Batch &batch, float x, float y, float width, f
     float x1 = x - width, y1 = y - height;
     float x2 = x + width, y2 = y + height;
     
-    ic::Color c = ic::Color(color).interpolate(tintColor, tinting);
+    //ic::Color c = ic::Color(color).interpolate(tintColor, tinting);
 
     std::vector<BatchVertex> vertices = {
-        BatchVertex(x1, y1, 0.0f, 0.0f, c),
-        BatchVertex(x2, y2, 1.0f, 1.0f, c),
-        BatchVertex(x2, y1, 1.0f, 0.0f, c),
+        BatchVertex(x1, y1, 0.0f, 0.0f, color),
+        BatchVertex(x2, y2, 1.0f, 1.0f, color),
+        BatchVertex(x2, y1, 1.0f, 0.0f, color),
                    
-        BatchVertex(x1, y1, 0.0f, 0.0f, c),
-        BatchVertex(x2, y2, 1.0f, 1.0f, c),
-        BatchVertex(x1, y2, 0.0f, 1.0f, c)
+        BatchVertex(x1, y1, 0.0f, 0.0f, color),
+        BatchVertex(x2, y2, 1.0f, 1.0f, color),
+        BatchVertex(x1, y2, 0.0f, 1.0f, color)
     };
 
     batch.add(vertices);

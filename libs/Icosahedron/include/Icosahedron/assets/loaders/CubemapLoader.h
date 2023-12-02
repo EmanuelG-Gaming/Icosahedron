@@ -1,12 +1,16 @@
 #ifndef IC_CUBEMAP_LOADER_H
 #define IC_CUBEMAP_LOADER_H
 
+#include <string>
+#include <vector>
+
 #include <glad/glad.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-#include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/gl/Cubemap.h>
+
 
 
 namespace ic {
@@ -26,11 +30,11 @@ namespace ic {
             }
 
 
-            ic::Texture load_png(const std::vector<std::string> &filePaths);
-            ic::Texture load_bmp(const std::vector<std::string> &filePaths);
+            ic::Cubemap load_png(const std::vector<std::string> &filePaths, bool gammaCorrection = false);
+            ic::Cubemap load_bmp(const std::vector<std::string> &filePaths, bool gammaCorrection = false);
 
         private:
-            GLenum map_to_texture_format(uint32_t format);
+            GLenum map_to_texture_format(uint32_t format, bool gammaCorrection = false);
             void load_cubemap_face(const ic::CubemapFaceInformation &data);
 
         private:

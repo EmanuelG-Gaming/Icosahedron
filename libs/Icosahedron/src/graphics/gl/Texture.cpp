@@ -1,37 +1,88 @@
 #include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/math/Mathf.h>
 
 using namespace ic;
 
 
-Texture::Texture(ic::GLTextureTypes type) {
-    this->type = type;
+Texture::Texture() {}
 
-    if (this->type != ic::GLTextureTypes::INVALID_TEXTURE) {
-        this->setup(this->type);
-    }
+ic::Texture &ic::Texture::setup() {
+    glGenTextures(1, &this->textureIndex);
+    glBindTexture(GL_TEXTURE_2D, this->textureIndex);
+
+    return *this;
 }
 
 void ic::Texture::use(int index) {
-    if (this->textureIndex) {
-        glActiveTexture(GL_TEXTURE0 + index);
-        glBindTexture(this->type, this->textureIndex);
+    if (!this->textureIndex) {
+        std::cerr << "Couldn't bind the texture at index " << index << ". It wasn't set up." << "\n";
+        return;
     }
+    
+    glActiveTexture(GL_TEXTURE0 + index);
+    glBindTexture(GL_TEXTURE_2D, this->textureIndex);
 }
 
 void ic::Texture::unuse() {
-    glBindTexture(this->type, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void ic::Texture::dispose() {
-    if (this->textureIndex) glDeleteTextures(1, &this->textureIndex);
+    if (!this->textureIndex) {
+        std::cerr << "Couldn't dispose the texture. It wasn't loaded first." << "\n";
+        return;
+    }
+       
+    glDeleteTextures(1, &this->textureIndex);
 }
 
 
-ic::GLTextureTypes ic::Texture::get_type() {
-    return this->type;
+
+ic::Texture &ic::Texture::set_pixel_content(const void *content, int w, int h, ic::GLTextureColorChannels internalFormat, ic::GLTextureColorChannels format) {
+    if (!this->textureIndex) {
+        std::cerr << "Couldn't change the texture's pixels. It wasn't loaded first." << "\n";
+        return *this;
+    }
+
+    glBindTexture(GL_TEXTURE_2D, this->textureIndex);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, format, GL_UNSIGNED_BYTE, content);
+
+    return *this;
 }
 
-void ic::Texture::setup(const ic::GLTextureTypes &textureType) {
-    glGenTextures(1, &this->textureIndex);
-    glBindTexture(textureType, this->textureIndex);
+
+ic::Texture &ic::Texture::setup_from_array(const void *data, int width, int height, GLenum internalFormat, GLenum format, const ic::TextureParameters &parameters) {
+    this->setup();
+
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+    if (parameters.usesMipmapping && ic::Mathf::get().is_power_of(2, width) && ic::Mathf::get().is_power_of(2, height)) {
+        glGenerateMipmap(GL_TEXTURE_2D);
+        std::cout << "Power-of-two texture found." << "\n";
+    }
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, parameters.wrapU);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, parameters.wrapV);
+    if (!parameters.usesMipmapping) {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, parameters.minFilter);
+    } else {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, parameters.minFilter == ic::TEXTURE_FILTER_NEAREST ? 
+                                                     GL_NEAREST_MIPMAP_NEAREST : GL_LINEAR_MIPMAP_LINEAR);
+    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, parameters.magFilter);
+
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return *this;
+}
+
+
+ic::Vec2i ic::Texture::get_dimensions() {
+    ic::Vec2i result;
+
+    glBindTexture(GL_TEXTURE_2D, this->textureIndex);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &result.x());
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &result.y());
+
+    return result;
 }

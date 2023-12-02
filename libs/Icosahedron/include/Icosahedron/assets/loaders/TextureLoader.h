@@ -15,19 +15,6 @@
 
 
 namespace ic {
-    struct TextureParameters {
-        bool usesMipmapping = false;
-
-        ic::GLTextureFilter minFilter = ic::TEXTURE_FILTER_NEAREST;
-        ic::GLTextureFilter magFilter = ic::TEXTURE_FILTER_NEAREST;
-        
-        ic::GLTextureWrap wrapU = ic::TEXTURE_WRAP_REPEAT;
-        ic::GLTextureWrap wrapV = ic::TEXTURE_WRAP_REPEAT;
-
-        TextureParameters() {
-            
-        }
-    };
 
     class TextureLoader {
         public:
@@ -55,7 +42,7 @@ namespace ic {
             GLenum map_to_texture_format(uint32_t format, bool gammaCorrection = false);
 
         private:
-            ic::Texture load_texture(int width, int height, GLenum format, const void *data, const ic::TextureParameters &parameters);
+            ic::Texture load_texture(const void *data, int width, int height, GLenum internalFormat, GLenum format, const ic::TextureParameters &parameters);
 
         private:
             TextureLoader() {}

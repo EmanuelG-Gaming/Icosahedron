@@ -21,11 +21,10 @@ class UIBasics : public ic::Application {
             ui.load();
 
             ui.atlas->add_entry("wood", "resources/textures/wood.png");
-            ui.atlas->add_entry("stone-bricks", "resources/textures/stone-bricks.png");
             ui.atlas->add_entry("ball", "resources/textures/ball.png");
             ui.atlas->add_entry("white", "resources/textures/white.png");
 
-            ui.mainTable->label("'Testing'")->set_background(new ic::UI::TextureDrawable("stone-bricks"))->set_position(-0.2f, 0.1f);
+            ui.mainTable->label("Press the button below to print 'Testing'.")->set_position(-0.8f, 0.15f);
 
             ui.mainTable->button([this]() {
                 std::cout << "Testing." << "\n";

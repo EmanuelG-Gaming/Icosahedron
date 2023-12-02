@@ -21,6 +21,7 @@ namespace ic {
     */
     class Image {
         public:
+            Image();
             /** @brief Constructs a new, yet empty image. */
             Image(int width, int height);
             /** @brief Constructs a new image from raw pixel data. */

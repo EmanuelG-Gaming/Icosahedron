@@ -9,7 +9,7 @@ void FreeType::load() {
     }
 }
 
-void FreeType::add_atlas(const std::string &name, const std::string &relativeFile, int height) {
+TextAtlas FreeType::add_atlas(const std::string &name, const std::string &relativeFile, int height) {
     FT_Face font;
     errorHandler = FT_New_Face(library, relativeFile.c_str(), 0, &font);
 
@@ -24,6 +24,8 @@ void FreeType::add_atlas(const std::string &name, const std::string &relativeFil
     atlas.load();
               
     atlases[name] = atlas;
+
+    return atlas;
 }
 
 TextAtlas &FreeType::find_atlas(const std::string &name) {

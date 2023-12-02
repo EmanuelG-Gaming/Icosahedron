@@ -4,28 +4,51 @@
 #include <glad/glad.h>
 
 #include <Icosahedron/graphics/gl/GL.h>
+#include <Icosahedron/math/geom/Vectors.h>
 
 
 namespace ic {
-    /** @brief An OpenGL wrapper for a texture.
+    struct TextureParameters {
+        bool usesMipmapping = false;
+
+        ic::GLTextureFilter minFilter = ic::TEXTURE_FILTER_NEAREST;
+        ic::GLTextureFilter magFilter = ic::TEXTURE_FILTER_NEAREST;
+        
+        ic::GLTextureWrap wrapU = ic::TEXTURE_WRAP_REPEAT;
+        ic::GLTextureWrap wrapV = ic::TEXTURE_WRAP_REPEAT;
+
+        TextureParameters() {
+            
+        }
+    };
+
+    /** @brief An OpenGL wrapper for a two-dimensional texture.
      * A texture is bound via the use() function, in order to be applied to geometry. */
     class Texture {
         public:
-            Texture(ic::GLTextureTypes type = ic::GLTextureTypes::INVALID_TEXTURE);
+            Texture();
+
+            ic::Texture &setup();
+            ic::Texture &setup_from_array(const void *data, int width, int height, GLenum internalFormat, GLenum format, const ic::TextureParameters &parameters = ic::TextureParameters());
+
+            ic::Vec2i get_dimensions();
+
+            /** @brief Overrides the content of the image. Useful for dynamically changing the whole texture. 
+             *  @param content Indeterminate data to be sent
+             *  @param w The width of the texture
+             *  @param h The height of the texture
+             *  @param internalFormat The format that OpenGL uses
+             *  @param format The original pixel format of the image
+            */
+            ic::Texture &set_pixel_content(const void *content, int w, int h, ic::GLTextureColorChannels internalFormat = ic::TEXTURE_RGBA, ic::GLTextureColorChannels format = ic::TEXTURE_RGB);
 
             void use(int index = 0);
             void unuse();
 
             void dispose();
-            
-            ic::GLTextureTypes get_type();
-
-        private:
-            void setup(const ic::GLTextureTypes &textureType);
-            
+        
         private:
             GLuint textureIndex = 0;
-            ic::GLTextureTypes type;
     };
 }
 

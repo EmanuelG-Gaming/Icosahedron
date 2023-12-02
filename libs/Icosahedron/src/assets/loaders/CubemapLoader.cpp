@@ -1,7 +1,7 @@
 #include <icosahedron/assets/loaders/CubemapLoader.h>
 
-ic::Texture ic::CubemapLoader::load_png(const std::vector<std::string> &filePaths) {
-    ic::Texture result(ic::TCUBE);
+ic::Cubemap ic::CubemapLoader::load_png(const std::vector<std::string> &filePaths, bool gammaCorrection) {
+    ic::Cubemap result;
 
     if (filePaths.size() != 6) {
         printf("Couldn't load the cubemap that has more or less faces than 6.\n");
@@ -17,7 +17,7 @@ ic::Texture ic::CubemapLoader::load_png(const std::vector<std::string> &filePath
             return result;
         }
     
-        GLenum textureFormat = this->map_to_texture_format(texture->format->format);
+        GLenum textureFormat = this->map_to_texture_format(texture->format->format, gammaCorrection);
         ic::CubemapFaceInformation face = { texture->w, texture->h, i, textureFormat, texture->pixels };
 
         this->load_cubemap_face(face);
@@ -31,8 +31,9 @@ ic::Texture ic::CubemapLoader::load_png(const std::vector<std::string> &filePath
     
     return result;
 }
-ic::Texture ic::CubemapLoader::load_bmp(const std::vector<std::string> &filePaths) {
-    ic::Texture result(ic::TCUBE);
+
+ic::Cubemap ic::CubemapLoader::load_bmp(const std::vector<std::string> &filePaths, bool gammaCorrection) {
+    ic::Cubemap result;
 
     if (filePaths.size() != 6) {
         printf("Couldn't load cubemap faces with amount other than 6.\n");
@@ -48,7 +49,7 @@ ic::Texture ic::CubemapLoader::load_bmp(const std::vector<std::string> &filePath
             return result;
         }
     
-        GLenum textureFormat = this->map_to_texture_format(texture->format->format);
+        GLenum textureFormat = this->map_to_texture_format(texture->format->format, gammaCorrection);
         ic::CubemapFaceInformation face = { texture->w, texture->h, i, textureFormat, texture->pixels };
 
         this->load_cubemap_face(face);
@@ -60,20 +61,20 @@ ic::Texture ic::CubemapLoader::load_bmp(const std::vector<std::string> &filePath
 
 
 
-GLenum ic::CubemapLoader::map_to_texture_format(uint32_t format) {
+GLenum ic::CubemapLoader::map_to_texture_format(uint32_t format, bool gammaCorrection) {
     GLenum result;
 
     switch (format) {
         case SDL_PIXELFORMAT_RGB24:
-            result = GL_RGB;
+            result = gammaCorrection ? GL_SRGB : GL_RGB;
             break;
 
         case SDL_PIXELFORMAT_RGBA32:
-            result = GL_RGBA;
+            result = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
             break;
 
         default:
-            result = GL_RGB;
+            result = gammaCorrection ? GL_SRGB : GL_RGB;
             break;
     }
     

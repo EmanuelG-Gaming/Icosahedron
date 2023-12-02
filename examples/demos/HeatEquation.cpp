@@ -63,11 +63,10 @@ class HeatEquation : public ic::Application {
             controller->add_mouse_hold_action([this]() { 
                 ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
-
                 ic::Vec2f levelPos = camera.unproject(pos);
 
-                int x = (int) levelPos.x();
-                int y = (int) levelPos.y();
+                int x = (int) (levelPos.x() + 0.5f);
+                int y = (int) (levelPos.y() + 0.5f);
 
                 if (x < 0 || y < 0 || x >= TILE_WIDTH || y >= TILE_HEIGHT) return;
 

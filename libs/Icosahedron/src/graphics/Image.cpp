@@ -6,6 +6,13 @@
 
 using namespace ic;
 
+Image::Image() {
+    this->width = 1;
+    this->height = 1;
+    this->pixels = new image_t[width * height];
+
+    this->pixels[0] = { 255, 255, 255 };
+}
 
 Image::Image(int width, int height) {
     this->width = width;
