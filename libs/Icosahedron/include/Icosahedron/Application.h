@@ -67,6 +67,10 @@ namespace ic {
             */
             void set_window_vsync(int interval);
 
+            void set_window_title(const char *title);
+            void set_window_title(const std::string &title);
+
+            
             void clear_color(float r, float g, float b);
             void clear_color(const ic::Color &color);
             void clear_color();

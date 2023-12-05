@@ -23,6 +23,8 @@ namespace ic { namespace Physics {
         ManifoldPoints2D() {}
         ManifoldPoints2D(const ic::Vec2f &AtoB, const ic::Vec2f &BtoA, const ic::Vec2f &normal, float depth) :
             AtoB(AtoB), BtoA(BtoA), normal(normal), depth(depth), collided(true) {}
+        
+        ManifoldPoints2D(const ic::Vec2f &normal, float depth) : normal(normal), depth(depth), collided(true) {}
     };
 }}
 

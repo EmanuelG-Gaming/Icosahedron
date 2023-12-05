@@ -27,12 +27,12 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::circle_circle(Circl
 ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::rectangle_circle(RectangleCollider *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) {
     float width = colliderA->width;
     float height = colliderA->height;
- 
     ic::Vec2f pointing = (transformA->position - transformB->position).rotate(-transformA->angle);
-    if ((transformB->position.x() >= transformA->position.x() - width && transformB->position.x() <= transformA->position.x() + width) &&
-        (transformB->position.y() >= transformA->position.y() - height && transformB->position.y() <= transformA->position.y() + height)) {
+
+    if ((pointing.x() >= -width && pointing.x() <= width) &&
+        (pointing.y() >= -height && pointing.y() <= height)) {
         // If the circle's center is inside the rectangle
-        pointing = pointing * 100000.0f;
+        pointing = pointing * 1000.0f;
     }
 
     ic::Vec2f clamped = pointing.clamp(ic::Vec2f({ -width, -height }), ic::Vec2f({ width, height }));

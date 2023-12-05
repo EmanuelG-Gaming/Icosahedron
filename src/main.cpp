@@ -249,7 +249,7 @@ struct PhysicsComponent : public ic::Component {
         this->rigidBody->mass = mass;
         this->rigidBody->transform->angle = angle;
         this->rigidBody->dynamic = dynamic;
-        this->rigidBody->restitution = 0.8f;
+        this->rigidBody->restitution = 0.5f;
         this->rigidBody->set_position(position);
     }
 };
@@ -262,7 +262,7 @@ struct MeshSystem {
 
     void init() {
         mainCamera = ic::Camera3D();
-        mainCamera.position = { 5.0f, 5.0f, 5.0f };
+        mainCamera.position = { 5.0f, 1.0f, 5.0f };
         
         controller = ic::FreeRoamCameraController3D(&mainCamera);
         controller.flying = true;
@@ -333,8 +333,9 @@ struct PhysicsSystem {
                 rigid->velocity.y() *= -1.0f;
             }
 
-            if (rigid->transform->position.y() > 50.0f) {
-                rigid->transform->position.y() = 50.0f;
+            // Very far Y bound
+            if (rigid->transform->position.y() > 2000.0f) {
+                rigid->transform->position.y() = 2000.0f;
                 rigid->velocity.y() *= -1.0f;
             }
 
@@ -446,16 +447,35 @@ class App : public ic::Application {
                 entity->add<TransformComponent>();
 
                 entity->add<MeshComponent>(
-                    ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.7f + i / 100.0f, 12, 12),
+                    ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.8f, 12, 12),
                     ic::TextureLoader::get().load_png("resources/textures/white.png")
                 );
 
 
                 physics.add_rigid_body(
                     entity->add<PhysicsComponent>(
-                        new ic::Physics::CircleCollider(0.7f + i / 100.0f),
+                        new ic::Physics::CircleCollider(0.8f),
                         ic::Vec2f({ 1.0f, 5.0f + i * 2.0f }),
                         0.0f, 2.0f
+                    ).rigidBody
+                );
+            }
+
+            {
+                ic::Entity *entity = entities.add_entity();
+                entity->add<TransformComponent>();
+
+                entity->add<MeshComponent>(
+                    ic::GeometryGenerator::get().generate_parallelipiped_mesh(10.0f, 0.8f, 5.0f, 20.0f, 1.6f, 10.0f),
+                    ic::TextureLoader::get().load_png("resources/textures/stone.png")
+                );
+
+
+                physics.add_rigid_body(
+                    entity->add<PhysicsComponent>(
+                        new ic::Physics::RectangleCollider(10.0f, 5.0f),
+                        ic::Vec2f({ 1.0f, 6.0f }),
+                        0.5f, 2.0f, false
                     ).rigidBody
                 );
             }

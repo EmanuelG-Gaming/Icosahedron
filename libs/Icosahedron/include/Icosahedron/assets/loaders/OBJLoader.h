@@ -55,14 +55,12 @@ namespace ic {
             }
 
             ic::Mesh3D load(const std::string &objectFileName);
-            std::vector<ic::Mesh3D> load_multiple(const std::string &objectFileName, const std::string &separator = "o");
-
             std::map<std::string, ic::OBJMaterialInfo> get_materials(const std::string &materialFileName);
         
         private:
-            std::vector<ic::OBJSizes> calculate_size(std::ifstream &objRead, const std::string &separator);
-            std::vector<ic::OBJAttributeReferences> get_attribute_references(std::ifstream &objRead, const std::vector<ic::OBJSizes> &sizes, const std::string &separator);
-            std::vector<ic::OBJGeometricData> get_geometric_data(const std::vector<ic::OBJAttributeReferences> &references);
+            ic::OBJSizes calculate_size(std::ifstream &objRead);
+            ic::OBJAttributeReferences get_attribute_references(std::ifstream &objRead, const ic::OBJSizes &sizes);
+            ic::OBJGeometricData get_geometric_data(const ic::OBJAttributeReferences &reference);
 
         private:
             OBJLoader() {}

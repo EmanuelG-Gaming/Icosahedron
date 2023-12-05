@@ -111,6 +111,21 @@ void ic::Application::set_window_vsync(int interval) {
 	}
 }
 
+void ic::Application::set_window_title(const char *title) {
+    if (this->window == NULL) {
+        printf("Couldn't change the window's title. It needs to be loaded first!\n");
+        return;
+    }
+
+    SDL_SetWindowTitle(this->window, title);
+}
+
+void ic::Application::set_window_title(const std::string &title) {
+    this->set_window_title(title.c_str());
+}
+
+
+
 
 
 bool ic::Application::construct(int w, int h) {
