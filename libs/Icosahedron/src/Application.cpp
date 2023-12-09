@@ -198,19 +198,16 @@ void ic::Application::start() {
 
 
 void ic::Application::send_application_information() {
-    SDL_version compiled, linked;
-    SDL_VERSION(&compiled);
-    SDL_GetVersion(&linked);
-
     std::string version = std::string((char*) glGetString(GL_VERSION));
     std::string sub = version.substr(0, 5);
 
-    
-    std::cout << "OpenGL driver compactibility: " << sub << " / " << glGetString(GL_VENDOR) << " / " << glGetString(GL_RENDERER) << "\n";
-    std::cout << "Targeting OpenGL version 3.3" << "\n";
 
-    fprintf(stdout, "Compiled SDL2 version: %u.%u.%u\n", compiled.major, compiled.minor, compiled.patch);
-    fprintf(stdout, "Linked SDL2 version: %u.%u.%u\n", linked.major, linked.minor, linked.patch);
+    GLint size = 0;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &size);
+
+    std::cout << "Graphics library -> OpenGL driver compactibility: " << sub << " / " << glGetString(GL_VENDOR) << " / " << glGetString(GL_RENDERER) << "\n";
+    std::cout << "Graphics library -> Targeting OpenGL version 3.3" << "\n";
+    std::cout << "Graphics library -> Maximum texture size: " << size << "\n";
 }
 
 

@@ -40,7 +40,7 @@ namespace ic {
              *  @param internalFormat The format that OpenGL uses
              *  @param format The original pixel format of the image
             */
-            ic::Texture &set_pixel_content(const void *content, int w, int h, ic::GLTextureColorChannels internalFormat = ic::TEXTURE_RGBA, ic::GLTextureColorChannels format = ic::TEXTURE_RGB);
+            ic::Texture &set_pixel_content(const void *content, GLenum format);
 
             void use(int index = 0);
             void unuse();

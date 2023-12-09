@@ -12,7 +12,7 @@
 #include <Icosahedron/graphics/Image.h>
 #include <Icosahedron/graphics/ImageIO.h>
 
-#include <Icosahedron/scene/3d/controllers/OrbitalCameraController3D.h>
+#include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
 #include <Icosahedron/scene/3d/Camera3D.h>
 #include <Icosahedron/scene/3d/Mesh3D.h>
 
@@ -199,9 +199,6 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 );
 
 
-
-
-/** A scene that shows a rotating monkey head on a floor. */
 class SceneWithShadows : public ic::Application {
     ic::Shader shader, depthShader;
     ic::Framebuffer shadowMap;
@@ -209,11 +206,11 @@ class SceneWithShadows : public ic::Application {
     ic::Camera3D camera;
     ic::Mesh3D mesh, floorMesh;
     ic::Texture floorTexture, whiteTexture;
-    ic::OrbitalCameraController3D controller;
+    ic::FreeRoamCameraController3D controller;
 
     float time;
     int shadowWidth, shadowHeight;
-            
+
     public:
         bool init() override {
             displayName = "Scene Example";
@@ -250,9 +247,9 @@ class SceneWithShadows : public ic::Application {
             camera = ic::Camera3D();
             camera.position = { -3.0f, 1.5f, 0.0f };
 
-            controller = ic::OrbitalCameraController3D(&camera);
-            controller.center = { 0.0f, 0.5f, 0.0f };
-
+            controller = ic::FreeRoamCameraController3D(&camera);
+            controller.flying = true;
+            
             time = 0.0f;
 
             return true;
@@ -269,10 +266,6 @@ class SceneWithShadows : public ic::Application {
             camera.resize(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
             camera.update();
 
-            // Light projection
-            ic::Mat4x4 lightProj = ic::Mat4x4().set_orthographic(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 30.0f);
-            ic::Mat4x4 lightView = ic::Mat4x4().set_look_at({ -2.0f * 2, 3.0f * 2, -3.0f * 2 }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
-            ic::Mat4x4 lightSpaceMatrix = lightProj * lightView;
 
             // First pass - render to the depth map
             states.set_viewport(shadowWidth, shadowHeight);
@@ -282,8 +275,15 @@ class SceneWithShadows : public ic::Application {
             clear_color(ic::Colors::black);
 
             depthShader.use();
+
+            // Render to directional shadow map
+            ic::Mat4x4 lightProj = ic::Mat4x4().set_orthographic(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 30.0f);
+            ic::Mat4x4 lightView = ic::Mat4x4().set_look_at({ -2.0f * 2, 3.0f * 2, -3.0f * 2 }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
+            ic::Mat4x4 lightSpaceMatrix = lightProj * lightView;
+
             depthShader.set_uniform_mat4("lightSpaceMatrix", lightSpaceMatrix);
             render_scene(depthShader);
+
             shadowMap.unuse();
             
             // Second pass - render scene using shadow map
@@ -294,8 +294,8 @@ class SceneWithShadows : public ic::Application {
 
             shader.use();
             camera.upload_to_shader(shader);
-            shader.set_uniform_mat4("lightSpaceMatrix", lightSpaceMatrix);
             shader.set_uniform_vec3f("viewPosition", camera.position);
+            shader.set_uniform_mat4("lightSpaceMatrix", lightSpaceMatrix);
 
             shadowMap.use_texture(1);
             render_scene(shader);
@@ -305,21 +305,6 @@ class SceneWithShadows : public ic::Application {
 
         void render_scene(ic::Shader &passShader) {
             // Mesh
-            //for (int i = 0; i < 5; i++) for (int j = 0; j < 5; j++) for (int k = 0; k < 5; k++) {
-            //    float x = i * 1.5f;
-            //    float y = 0.6f + j * 1.5f;
-            //    float z = k * 1.5f;
-            //
-            //    ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
-            //    ic::Mat4x4 rotation = quat.to_rotation_matrix();
-            //    ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({x, y, z});
-            //
-            //    mesh.set_transformation(translation * rotation);
-            //    mesh.set_normal_transformation(rotation);
-            //    whiteTexture.use();
-            //    mesh.draw(passShader);
-            //}
-
             ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});

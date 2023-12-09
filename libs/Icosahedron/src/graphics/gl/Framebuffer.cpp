@@ -10,10 +10,10 @@ Framebuffer::Framebuffer() {
     this->data.textureType = ic::INVALID_TEXTURE;
 }
 
-Framebuffer::Framebuffer(int width, int height) {
+Framebuffer::Framebuffer(int width, int height, const ic::GLTextureTypes &type) {
     this->data.width = width;
     this->data.height = height;
-    this->data.textureType = ic::T2D;
+    this->data.textureType = type;
     
     if (IC_IS_OPENGL_CONTEXT_PRESENT) {
         glGenFramebuffers(1, &this->fbo);
@@ -22,14 +22,14 @@ Framebuffer::Framebuffer(int width, int height) {
         glGenTextures(4, this->textureIndices);
         glGenRenderbuffers(4, this->renderBuffers);
             
-        this->add_render_target(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, true);
+        this->add_render_target(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, true, this->data.textureType);
     }
 }
 
-Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColorChannels channel, int width, int height, bool hasDepthBuffer) {
+Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColorChannels channel, int width, int height, bool hasDepthBuffer, const ic::GLTextureTypes &type) {
     this->data.width = width;
     this->data.height = height;
-    this->data.textureType = ic::T2D;
+    this->data.textureType = type;
 
     if (IC_IS_OPENGL_CONTEXT_PRESENT) {
         glGenFramebuffers(1, &this->fbo);
@@ -38,14 +38,14 @@ Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColor
         glGenTextures(4, this->textureIndices);
         glGenRenderbuffers(4, this->renderBuffers);
             
-        this->add_render_target(attachment, channel, hasDepthBuffer);
+        this->add_render_target(attachment, channel, hasDepthBuffer, this->data.textureType);
     }
 }
 
-Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColorChannels internalFormat, ic::GLTextureColorChannels outputFormat, int width, int height, bool hasDepthBuffer) {
+Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColorChannels internalFormat, ic::GLTextureColorChannels outputFormat, int width, int height, bool hasDepthBuffer, const ic::GLTextureTypes &type) {
     this->data.width = width;
     this->data.height = height;
-    this->data.textureType = ic::T2D;
+    this->data.textureType = type;
 
     if (IC_IS_OPENGL_CONTEXT_PRESENT) {
         glGenFramebuffers(1, &this->fbo);
@@ -54,7 +54,7 @@ Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColor
         glGenTextures(4, this->textureIndices);
         glGenRenderbuffers(4, this->renderBuffers);
 
-        this->add_render_target(attachment, internalFormat, outputFormat, hasDepthBuffer);
+        this->add_render_target(attachment, internalFormat, outputFormat, hasDepthBuffer, this->data.textureType);
     }
 }
 
@@ -104,7 +104,7 @@ void ic::Framebuffer::resize(int w, int h) {
     for (int i = 0; i < this->data.textureAttachemnts.size(); i++) {
         this->add_render_target_raw(this->data.textureAttachemnts[i],
                                     this->data.internalFormats[i],
-                                    this->data.outputFormats[i], this->data.depthBufferFlags[i]);
+                                    this->data.outputFormats[i], this->data.depthBufferFlags[i], this->data.textureType);
     }
 
     this->unuse();
@@ -112,7 +112,7 @@ void ic::Framebuffer::resize(int w, int h) {
 
 
 
-void ic::Framebuffer::add_render_target_raw(const ic::GLTextureAttachments &attachment, const ic::GLTextureColorChannels &internalFormat, const ic::GLTextureColorChannels &outputFormat, bool hasDepthBuffer) {
+void ic::Framebuffer::add_render_target_raw(const ic::GLTextureAttachments &attachment, const ic::GLTextureColorChannels &internalFormat, const ic::GLTextureColorChannels &outputFormat, bool hasDepthBuffer, const ic::GLTextureTypes &type) {
     if (this->lastTextureIndex >= 4 - 1) {
         printf("The framebufer attachment count exceeded 4!\n");
         return;
@@ -121,7 +121,7 @@ void ic::Framebuffer::add_render_target_raw(const ic::GLTextureAttachments &atta
     glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
 
     glBindTexture(this->data.textureType, this->textureIndices[this->lastTextureIndex]);
-    this->initialize_texture(internalFormat, outputFormat, this->data.width, this->data.height);
+    this->initialize_texture(internalFormat, outputFormat, type, this->data.width, this->data.height);
     this->set_texture_content(attachment);
 
     // Add depth to the scene
@@ -163,27 +163,27 @@ void ic::Framebuffer::add_render_target_raw(const ic::GLTextureAttachments &atta
     this->lastTextureIndex++;
 }
 
-void ic::Framebuffer::add_render_target(const ic::GLTextureAttachments &attachment, const ic::GLTextureColorChannels &internalFormat, const ic::GLTextureColorChannels &outputFormat, bool hasDepthBuffer) {
+void ic::Framebuffer::add_render_target(const ic::GLTextureAttachments &attachment, const ic::GLTextureColorChannels &internalFormat, const ic::GLTextureColorChannels &outputFormat, bool hasDepthBuffer,  const ic::GLTextureTypes &type) {
     this->data.textureAttachemnts.push_back(attachment);
     this->data.internalFormats.push_back(internalFormat);
     this->data.outputFormats.push_back(outputFormat);
     this->data.depthBufferFlags.push_back(hasDepthBuffer);
 
-    this->add_render_target_raw(attachment, internalFormat, outputFormat, hasDepthBuffer);
+    this->add_render_target_raw(attachment, internalFormat, outputFormat, hasDepthBuffer, type);
 }
 
-void ic::Framebuffer::add_render_target(const ic::GLTextureAttachments &attachment, const ic::GLTextureColorChannels &format, bool hasDepthBuffer) {
-    this->add_render_target(attachment, format, format, hasDepthBuffer);
+void ic::Framebuffer::add_render_target(const ic::GLTextureAttachments &attachment, const ic::GLTextureColorChannels &format, bool hasDepthBuffer,  const ic::GLTextureTypes &type) {
+    this->add_render_target(attachment, format, format, hasDepthBuffer, type);
 }
 
 
-void ic::Framebuffer::initialize_texture(const ic::GLTextureColorChannels &internalFormat, const ic::GLTextureColorChannels &outputFormat, int w, int h) {
-    if (this->data.textureType == ic::T2D) {
+void ic::Framebuffer::initialize_texture(const ic::GLTextureColorChannels &internalFormat, const ic::GLTextureColorChannels &outputFormat, const ic::GLTextureTypes &type, int w, int h) {
+    if (type == ic::T2D) {
         glTexImage2D(this->data.textureType, 0, internalFormat, w, h, 0, outputFormat, GL_FLOAT, NULL);
         glTexParameteri(this->data.textureType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(this->data.textureType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     }
-    else if (this->data.textureType == ic::TCUBE) {
+    else if (type == ic::TCUBE) {
         for (int i = 0; i < 6; i++) {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, w, h, 0, outputFormat, GL_FLOAT, NULL);
         }

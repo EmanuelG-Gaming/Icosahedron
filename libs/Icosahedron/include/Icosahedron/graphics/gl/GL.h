@@ -41,6 +41,9 @@ namespace ic {
     enum GLTextureColorChannels {
         INVALID_TEXTURE_COLOR_CHANNEL = -1,
 
+        
+        TEXTURE_RED = GL_RED_INTEGER,
+
         TEXTURE_RGB = GL_RGB,
         TEXTURE_RGB_16F = GL_RGB16F,
         TEXTURE_RGB_32F = GL_RGB32F,

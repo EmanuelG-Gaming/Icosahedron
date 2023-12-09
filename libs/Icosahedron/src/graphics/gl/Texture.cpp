@@ -38,14 +38,16 @@ void ic::Texture::dispose() {
 
 
 
-ic::Texture &ic::Texture::set_pixel_content(const void *content, int w, int h, ic::GLTextureColorChannels internalFormat, ic::GLTextureColorChannels format) {
+ic::Texture &ic::Texture::set_pixel_content(const void *content, GLenum format) {
     if (!this->textureIndex) {
         std::cerr << "Couldn't change the texture's pixels. It wasn't loaded first." << "\n";
         return *this;
     }
 
+    ic::Vec2i size = this->get_dimensions();
+
     glBindTexture(GL_TEXTURE_2D, this->textureIndex);
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, format, GL_UNSIGNED_BYTE, content);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, size.x(), size.y(), format, GL_UNSIGNED_BYTE, content);
 
     return *this;
 }
