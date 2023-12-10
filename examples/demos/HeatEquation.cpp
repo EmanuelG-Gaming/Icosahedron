@@ -5,12 +5,15 @@
 #include <Icosahedron/graphics/gl/Shader.h>
 #include <Icosahedron/graphics/gl/Texture.h>
 
+#include <Icosahedron/math/geom/Rasterization.h>
+
 #include <Icosahedron/scene/2d/Camera2D.h>
 #include <Icosahedron/scene/2d/Mesh2D.h>
 
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 
 #include <array>
+
 
 std::string fragment = IC_ADD_GLSL_DEFINITION(
     precision mediump float;
@@ -28,13 +31,12 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 
     float towards_c2(float v) {
         // Uses a gaussian distribution
-        float base = (v - 1.0) * 3.0;
+        float base = (v - 1.0) * 2.5;
         return exp(-(base * base));
     }
     vec3 get_color_from_value(float v) {
         vec3 color1 = mix(c1, c2, towards_c2(v));
         vec3 color2 = mix(c2, c3, v);
-
         return mix(color1, color2, v);
     }
     
@@ -46,16 +48,19 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 );
 
 
-const std::size_t TILE_WIDTH = 32, TILE_HEIGHT = 32;
+const std::size_t TILE_WIDTH = 128, TILE_HEIGHT = 128;
 const std::size_t TILE_AREA = TILE_WIDTH * TILE_HEIGHT;
 
-const float HEAT_DIFFUSIVITY = 10.0f, WALL_TEMPERATURE = 30.0f, WALL_FLUX = 25.0f, WALL_DIFFUSIVITY = 100.0f;
+const float HEAT_DIFFUSIVITY = 10.0f, WALL_TEMPERATURE = 28.0f;
 
-const int SOLVER_TIME_STEPS = 20;
-const float SOLVER_COOLDOWN = 0.01f;
+const int SOLVER_TIME_STEPS = 18;
+const float SOLVER_COOLDOWN = 0.05f;
 
-
-/** The heat equation describes temperature transfer between points in space. */
+/** The heat equation describes temperature transfer between points in space. 
+ *  In this case, the application uses the finite difference method, which is essentially
+ *  approximating the surface as a grid of number values, then calculating the derivatives easily 
+ *  at every grid point.
+*/
 class HeatEquation : public ic::Application {
     ic::Shader shader, textShader, wallShader;
     ic::Texture tileTexture;
@@ -73,7 +78,9 @@ class HeatEquation : public ic::Application {
     float time;
     float averageHeat;
     uint8_t *data = new uint8_t[TILE_AREA];
-            
+        
+    ic::Vec2i previousPosition, previousWallPosition;
+
     public:
         bool init() override {
             displayName = "Heat equation";
@@ -89,9 +96,15 @@ class HeatEquation : public ic::Application {
             memset(&walls, 0, sizeof(walls));
             
             walls[0] = 1;
-            for (int i = 0; i < 30; i++) {
-                walls[5 * TILE_WIDTH + i + 5] = 1;
+            
+            for (int i = 0; i < 50; i++) {
+                walls[1 * TILE_WIDTH + i] = 1;
             }
+            //for (int i = 0; i < TILE_AREA; i++) {
+            //    if (rand() % 20 == 1) {
+            //        walls[i] = 1;
+            //    }
+            //}
 
             // Set up a blank texture from an array
             ic::TextureParameters params;
@@ -119,8 +132,6 @@ class HeatEquation : public ic::Application {
             tilesMesh.set_transformation(ic::Mat4x4().set_translation<2>({ TILE_WIDTH / 2.0f, TILE_HEIGHT / 2.0f }));
 
 
-            ic::InputHandler::get().add_input((new ic::KeyboardController())->with_WASD(), "WASD");
-
             ic::MouseController *controller = new ic::MouseController();
             controller->add_mouse_scroll_up_action([this]() { 
                 float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.05f;
@@ -131,6 +142,17 @@ class HeatEquation : public ic::Application {
                 camera.scale = std::max(0.01f, std::min(camera.scale + p, 4.0f));
             });
 
+            controller->add_mouse_down_action([this]() { 
+                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
+                ic::Vec2f levelPos = camera.unproject(pos);
+
+                int x = (int) levelPos.x();
+                int y = (int) (TILE_HEIGHT - levelPos.y());
+
+                previousPosition = { x, y };
+            });
+
             controller->add_mouse_hold_action([this]() { 
                 ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
@@ -139,12 +161,37 @@ class HeatEquation : public ic::Application {
                 int x = (int) levelPos.x();
                 int y = (int) (TILE_HEIGHT - levelPos.y());
 
-                if (x < 0 || y < 0 || x >= TILE_WIDTH || y >= TILE_HEIGHT) return;
+                ic::Rasterization::get().line(x, y, previousPosition.x(), previousPosition.y(), [this](int i, int j) {
+                    if (i < 0 || j < 0 || i >= TILE_WIDTH || j >= TILE_HEIGHT) return;
+                    heatValues[j * TILE_WIDTH + i] += 1000000.0f;
+                });
 
-                heatValues[y * TILE_WIDTH + x] += 1000.0f;
+                previousPosition = { x, y };
             });
 
             ic::InputHandler::get().add_input(controller, "mouse");
+
+
+
+            ic::KeyboardController *keyboard = new ic::KeyboardController();
+            keyboard->add_key_down_action([this]() { 
+                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
+                ic::Vec2f levelPos = camera.unproject(pos);
+
+                int x = (int) levelPos.x();
+                int y = (int) (TILE_HEIGHT - levelPos.y());
+
+                ic::Rasterization::get().line(x, y, previousWallPosition.x(), previousWallPosition.y(), [this](int i, int j) {
+                    if (i < 0 || j < 0 || i >= TILE_WIDTH || j >= TILE_HEIGHT) return;
+                    walls[j * TILE_WIDTH + i] = 1;
+                });
+
+                previousWallPosition = { x, y };
+            }, KEY_T);
+
+            ic::InputHandler::get().add_input(keyboard->with_WASD(), "WASD");
+
 
             time = 0.0f;
             averageHeat = 0.0f;
@@ -176,31 +223,45 @@ class HeatEquation : public ic::Application {
             if (time >= SOLVER_COOLDOWN) {
                 float timeStep = SOLVER_COOLDOWN / (float) SOLVER_TIME_STEPS;
 
-                // Walls
-                for (int j = 0; j < TILE_HEIGHT; j++) {
-                    for (int i = 0; i < TILE_WIDTH; i++) {
-                        int index = j * TILE_WIDTH + i;
-    
-                        if (wall_at_unsafe(i, j)) {
-                            heatValues[index] = WALL_TEMPERATURE;
-                        }
-                    }
-                }
-
                 // Integration
                 for (int j = 0; j < TILE_HEIGHT; j++) {
                     for (int i = 0; i < TILE_WIDTH; i++) {
                         int index = j * TILE_WIDTH + i;
 
                         for (int s = 0; s < SOLVER_TIME_STEPS; s++) {
-                            ic::Vec2f gradient = get_heat_gradient(i, j);
-                            ic::Vec2f doubleGradient = get_heat_double_gradient(i, j);
-                            
                             if (wall_at_unsafe(i, j)) {
-                                heatValues[index] += (gradient.x() + gradient.y()) * -WALL_FLUX / WALL_DIFFUSIVITY * timeStep;
-                            }
+                                heatValues[index] = WALL_TEMPERATURE;
+                            } else {
+                                float doubleGradientX = 0.0f, doubleGradientY = 0.0f;
+                                int checkX = 0, checkY = 0;
 
-                            heatValues[index] += (doubleGradient.x() + doubleGradient.y()) * HEAT_DIFFUSIVITY * timeStep;
+                                if (!wall_at(i + 1, j)) {
+                                    doubleGradientX += get_heat(i + 1, j);
+                                    checkX++;
+                                }
+
+                                if (!wall_at(i - 1, j)) {
+                                    doubleGradientX += get_heat(i - 1, j);
+                                    checkX++;
+                                }
+
+                                if (!wall_at(i, j + 1)) {
+                                    doubleGradientY += get_heat(i, j + 1);
+                                    checkY++;
+                                }
+
+                                if (!wall_at(i, j - 1)) {
+                                    doubleGradientY += get_heat(i, j - 1);
+                                    checkY++;
+                                }
+
+                                float currentHeat = get_heat(i, j);
+                                doubleGradientX -= currentHeat * checkX;
+                                doubleGradientY -= currentHeat * checkY;
+
+
+                                heatValues[index] += (doubleGradientX + doubleGradientY) * HEAT_DIFFUSIVITY * timeStep;
+                            }
                         }
                     }
                 }
@@ -283,21 +344,14 @@ class HeatEquation : public ic::Application {
 
 
         ic::Vec2f get_heat_gradient(int x, int y) {
-            //if (wall_at(x, y)) {
-            //    return { 0.0f, 0.0f };
-            //}
-
             return {
                 (get_heat(x + 1, y) - get_heat(x - 1, y)) * 0.5f,
                 (get_heat(x, y + 1) - get_heat(x, y - 1)) * 0.5f
             };
         }
 
+        // Returns the second gradient that doesn't take into account wall collisions
         ic::Vec2f get_heat_double_gradient(int x, int y) {
-            //if (wall_at(x, y)) {
-            //    return { 0.0f, 0.0f };
-            //}
-
             float doubleHeat = 2.0f * get_heat(x, y);
             return {
                 (get_heat(x + 1, y) + get_heat(x - 1, y) - doubleHeat),

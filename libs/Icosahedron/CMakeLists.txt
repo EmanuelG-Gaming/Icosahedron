@@ -32,6 +32,8 @@ set(LIBRARY_HEADERS
     
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Quaternion.h
 
+    ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Rasterization.h
+
 
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Colors.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Image.h
