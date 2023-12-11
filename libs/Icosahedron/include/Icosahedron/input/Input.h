@@ -94,8 +94,11 @@ namespace ic {
     using Keycode = SDL_Keycode;
 
     struct KeyboardInputAction {
-        KeyboardInputActionTypes type;
-        std::function<void()> callback;
+        std::function<void()> pressed = nullptr;
+        std::function<void()> held = nullptr;
+        std::function<void()> released = nullptr;
+
+        bool keyPressed = false;
     };
 
     struct MouseInputAction {
@@ -105,7 +108,7 @@ namespace ic {
 
     struct Input {
         public:
-            virtual void handle_event(ic::Event event, float dt) {}
+            virtual void handle_event(const ic::Event &event, float dt) {}
             virtual void update(float dt) {}
     };
 }

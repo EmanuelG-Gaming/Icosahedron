@@ -163,7 +163,7 @@ class HeatEquation : public ic::Application {
 
                 ic::Rasterization::get().line(x, y, previousPosition.x(), previousPosition.y(), [this](int i, int j) {
                     if (i < 0 || j < 0 || i >= TILE_WIDTH || j >= TILE_HEIGHT) return;
-                    heatValues[j * TILE_WIDTH + i] += 1000000.0f;
+                    heatValues[j * TILE_WIDTH + i] += 1000.0f;
                 });
 
                 previousPosition = { x, y };
@@ -173,8 +173,21 @@ class HeatEquation : public ic::Application {
 
 
 
-            ic::KeyboardController *keyboard = new ic::KeyboardController();
-            keyboard->add_key_down_action([this]() { 
+            ic::KeyboardController *keyboard = (new ic::KeyboardController())->with_WASD();
+
+            // These have the same location
+            keyboard->add_key_down_action([this]() {
+                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
+                ic::Vec2f levelPos = camera.unproject(pos);
+
+                int x = (int) levelPos.x();
+                int y = (int) (TILE_HEIGHT - levelPos.y());
+
+                previousWallPosition = { x, y };
+            }, KEY_L);
+
+            keyboard->add_action([this]() { 
                 ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
                 ic::Vec2f levelPos = camera.unproject(pos);
@@ -188,9 +201,9 @@ class HeatEquation : public ic::Application {
                 });
 
                 previousWallPosition = { x, y };
-            }, KEY_T);
+            }, KEY_L);
 
-            ic::InputHandler::get().add_input(keyboard->with_WASD(), "WASD");
+            ic::InputHandler::get().add_input(keyboard, "WASD");
 
 
             time = 0.0f;

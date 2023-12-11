@@ -16,7 +16,7 @@ void ic::MouseController::update(float dt) {
     }
 }
 
-void ic::MouseController::handle_event(ic::Event event, float dt) {
+void ic::MouseController::handle_event(const ic::Event &event, float dt) {
     int x = 0, y = 0;
     Uint32 state = SDL_GetMouseState(&x, &y);
 
@@ -35,6 +35,7 @@ void ic::MouseController::handle_event(ic::Event event, float dt) {
     // Events
     if (event.type == SDL_MOUSEBUTTONDOWN) {
         this->mouseHeldDown = true;
+        std::cout << "mouse down" << "\n";
 
         for (auto &action : inputActions) {
             if (action.type != MOUSE_INPUT_DOWN) continue;
@@ -45,7 +46,8 @@ void ic::MouseController::handle_event(ic::Event event, float dt) {
 
     if (event.type == SDL_MOUSEBUTTONUP) {
         this->mouseHeldDown = false;
-
+        std::cout << "mouse up" << "\n";
+        
         for (auto &action : inputActions) {
             if (action.type != MOUSE_INPUT_UP) continue;
 

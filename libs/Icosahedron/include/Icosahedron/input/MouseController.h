@@ -14,7 +14,7 @@ namespace ic {
             MouseController();
 
             void update(float dt) override;
-            void handle_event(ic::Event event, float dt) override;
+            void handle_event(const ic::Event &event, float dt) override;
 
             /** @brief Adds an action that is called when the mouse is moved. */
             void add_mouse_moved_action(const std::function<void()> &callback);

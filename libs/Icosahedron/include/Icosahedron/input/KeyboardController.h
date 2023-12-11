@@ -16,7 +16,7 @@ namespace ic {
             KeyboardController();
 
             void update(float dt) override;
-            void handle_event(ic::Event event, float dt) override;
+            void handle_event(const ic::Event &event, float dt) override;
 
             /** @brief Adds an action that is called rapidly when a key is pressed. */
             void add_action(const std::function<void()> &callback, Uint8 location);
@@ -37,8 +37,6 @@ namespace ic {
             bool key_pressed();
 
         protected:
-            bool keyIsPressed;
-
             Uint8* keyboardState;
             std::map<Uint8, ic::KeyboardInputAction> inputActions;
     };

@@ -8,59 +8,89 @@ KeyboardController::KeyboardController() {
 
 void ic::KeyboardController::update(float dt) {
     direction = { 0, 0 };
-    this->keyIsPressed = false;
 
-    for (auto pair : inputActions) {
-        auto act = pair.second;
-        if (act.type != KB_INPUT_HOLD) continue;
+    for (auto &pair : inputActions) {
+        auto &act = pair.second;
 
-        const Uint8 keyCode = pair.first;
-        if (keyboardState[keyCode]) {
-            this->keyIsPressed = true;
-            act.callback();
+        if (keyboardState[pair.first]) {
+            if (act.held != nullptr) {
+                act.held();
+            }
+
+            std::cout << "key hold detected" << "\n";
         }
     }
 }
 
 
-void ic::KeyboardController::handle_event(ic::Event event, float dt) {
-    ic::Event *e = &event;
-
+void ic::KeyboardController::handle_event(const ic::Event &event, float dt) {
     if (event.type == SDL_KEYDOWN) {
-        for (auto pair : inputActions) {
-            auto act = pair.second;
-            if (act.type != KB_INPUT_DOWN) continue;
+        for (auto &pair : inputActions) {
+            auto &act = pair.second;
 
-            const Uint8 keyCode = pair.first;
-            if (e->key.keysym.scancode == keyCode) {
-                act.callback();
+            if (event.key.keysym.scancode == pair.first && !act.keyPressed) {
+                act.keyPressed = true;
+
+                if (act.pressed != nullptr) {
+                    act.pressed();
+                }
+
+                std::cout << "key press detected" << "\n";
             }
         }
     }
 
     if (event.type == SDL_KEYUP) {
-        for (auto pair : inputActions) {
-            auto act = pair.second;
-            if (act.type != KB_INPUT_UP) continue;
+        for (auto &pair : inputActions) {
+            auto &act = pair.second;
+            
+            if (event.key.keysym.scancode == pair.first) {
+                act.keyPressed = false;
+                
+                if (act.released != nullptr) {
+                    act.released();
+                }
 
-            const Uint8 keyCode = pair.first;
-            if (e->key.keysym.scancode == keyCode) {
-                act.callback();
+                std::cout << "key release detected" << "\n";
             }
         }
     }
 }
 
 void ic::KeyboardController::add_action(const std::function<void()> &callback, Uint8 location) {
-    inputActions[location] = { KB_INPUT_HOLD, callback };
+    if (inputActions.find(location) == inputActions.end()) {
+        ic::KeyboardInputAction action = ic::KeyboardInputAction();
+        action.held = callback;
+
+        inputActions[location] = action;
+        return;
+    }
+
+    inputActions[location].held = callback;
 }
 
 void ic::KeyboardController::add_key_up_action(const std::function<void()> &callback, Uint8 location) {
-    inputActions[location] = { KB_INPUT_UP, callback };
+    if (inputActions.find(location) == inputActions.end()) {
+        ic::KeyboardInputAction action = ic::KeyboardInputAction();
+        action.released = callback;
+
+        inputActions[location] = action;
+        return;
+    }
+
+    inputActions[location].released = callback;
 }
 
 void ic::KeyboardController::add_key_down_action(const std::function<void()> &callback, Uint8 location) {
-    inputActions[location] = { KB_INPUT_DOWN, callback };
+    if (inputActions.find(location) == inputActions.end()) {
+        ic::KeyboardInputAction action = ic::KeyboardInputAction();
+        action.pressed = callback;
+
+        inputActions[location] = action;
+        return;
+    }
+
+    inputActions[location].pressed = callback;
 }
 
 ic::KeyboardController *ic::KeyboardController::with_WASD() {
@@ -91,5 +121,6 @@ Uint8 &ic::KeyboardController::is_key_pressed(KeyboardInput input) {
 }
 
 bool ic::KeyboardController::key_pressed() {
-    return keyIsPressed;
+    //return keyIsPressed;
+    return false;
 }
