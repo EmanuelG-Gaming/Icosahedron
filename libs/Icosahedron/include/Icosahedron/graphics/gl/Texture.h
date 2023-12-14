@@ -35,9 +35,6 @@ namespace ic {
 
             /** @brief Overrides the content of the image. Useful for dynamically changing the whole texture. 
              *  @param content Indeterminate data to be sent
-             *  @param w The width of the texture
-             *  @param h The height of the texture
-             *  @param internalFormat The format that OpenGL uses
              *  @param format The original pixel format of the image
             */
             ic::Texture &set_pixel_content(const void *content, GLenum format);

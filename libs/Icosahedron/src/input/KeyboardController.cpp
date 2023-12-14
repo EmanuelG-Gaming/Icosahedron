@@ -17,7 +17,7 @@ void ic::KeyboardController::update(float dt) {
                 act.held();
             }
 
-            std::cout << "key hold detected" << "\n";
+            //std::cout << "key hold detected" << "\n";
         }
     }
 }
@@ -35,7 +35,7 @@ void ic::KeyboardController::handle_event(const ic::Event &event, float dt) {
                     act.pressed();
                 }
 
-                std::cout << "key press detected" << "\n";
+                //std::cout << "key press detected" << "\n";
             }
         }
     }
@@ -51,7 +51,7 @@ void ic::KeyboardController::handle_event(const ic::Event &event, float dt) {
                     act.released();
                 }
 
-                std::cout << "key release detected" << "\n";
+                //std::cout << "key release detected" << "\n";
             }
         }
     }
