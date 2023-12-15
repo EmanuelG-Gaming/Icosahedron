@@ -50,15 +50,16 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 );
 
 
-const std::size_t TILE_WIDTH = 16, TILE_HEIGHT = 16;
+const std::size_t TILE_WIDTH = 256, TILE_HEIGHT = 256;
 const std::size_t TILE_AREA = TILE_WIDTH * TILE_HEIGHT;
 
 const float HEAT_DIFFUSIVITY = 5.0f, WALL_TEMPERATURE = 28.0f;
 
-const int SOLVER_TIME_STEPS = 18;
-const int SOLVER_DELTA_TIME = 1;
+const int SOLVER_TIME_STEPS = 5;
+const int SOLVER_DELTA_TIME = 50;
 
-const int NUMBER_OF_THREADS = 2;
+const int NUMBER_OF_THREADS = 4;
+
 
 
 /** The heat equation describes temperature transfer between points in space. 
@@ -163,7 +164,7 @@ class HeatEquation : public ic::Application {
 
                 ic::Rasterization::get().line(x, y, previousPosition.x(), previousPosition.y(), [this](int i, int j) {
                     if (i < 0 || j < 0 || i >= TILE_WIDTH || j >= TILE_HEIGHT) return;
-                    heatValues[j * TILE_WIDTH + i] += 10000000.0f;
+                    heatValues[j * TILE_WIDTH + i] += 1000.0f;
                 });
 
                 previousPosition = { x, y };
@@ -233,20 +234,20 @@ class HeatEquation : public ic::Application {
 
 
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+
             for (int i = 0; i < NUMBER_OF_THREADS; i++) {
-                int width = TILE_WIDTH / NUMBER_OF_THREADS;
+                int width = (int)(TILE_WIDTH / (float) NUMBER_OF_THREADS);
                 int height = TILE_HEIGHT;
-                int x = i * (width);
+                int x = i * width;
                 int y = 0;
 
                 threads.push_back(std::thread([&](int topLeftX, int topLeftY, int w, int h) {
                     while (threadsRunning) {
                         std::this_thread::sleep_for(std::chrono::milliseconds(SOLVER_DELTA_TIME));
-                        std::lock_guard<std::mutex> guard(threadMutex);
                         step(topLeftX, topLeftY, w, h);
                     }
                 }, x, y, width, height));
-
             }
 
             
@@ -331,17 +332,15 @@ class HeatEquation : public ic::Application {
         }
 
         void step(int topLeftX, int topLeftY, int width, int height) {
-            std::cout << "Index: " << std::this_thread::get_id() << "\n";
-            
             // Integration
-            float timeStep = 0.01f / (float) SOLVER_TIME_STEPS;
+            float timeStep = (SOLVER_DELTA_TIME * 0.001f) / (float) SOLVER_TIME_STEPS;
 
-            for (int j = topLeftY; j < height; j++) {
-                for (int i = topLeftX; i < width; i++) {
+            for (int j = topLeftY; j < topLeftY + height; j++) {
+                for (int i = topLeftX; i < topLeftX + width; i++) {
                     int index = j * TILE_WIDTH + i;
 
                     for (int s = 0; s < SOLVER_TIME_STEPS; s++) {
-                        if (wall_at(i, j)) {
+                        if (wall_at_unsafe(i, j)) {
                             heatValues[index] = WALL_TEMPERATURE;
                         }
                         else {
