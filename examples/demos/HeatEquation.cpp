@@ -50,15 +50,15 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 );
 
 
-const std::size_t TILE_WIDTH = 256, TILE_HEIGHT = 256;
+const std::size_t TILE_WIDTH = 128, TILE_HEIGHT = 64;
 const std::size_t TILE_AREA = TILE_WIDTH * TILE_HEIGHT;
 
 const float HEAT_DIFFUSIVITY = 5.0f, WALL_TEMPERATURE = 28.0f;
 
 const int SOLVER_TIME_STEPS = 5;
-const int SOLVER_DELTA_TIME = 50;
+const int SOLVER_DELTA_TIME = 80;
 
-const int NUMBER_OF_THREADS = 4;
+const int NUMBER_OF_THREADS = 8;
 
 
 
@@ -72,7 +72,7 @@ class HeatEquation : public ic::Application {
     ic::Texture tileTexture;
     ic::Mesh2D tilesMesh;
 
-    ic::Batch textBatch, wallBatch;
+    ic::Batch textBatch, wallBatch, lineBatch;
     ic::TextAtlas atlas;
 
 
@@ -80,6 +80,8 @@ class HeatEquation : public ic::Application {
 
     std::array<float, TILE_AREA> heatValues;
     std::array<uint8_t, TILE_AREA> walls;
+    std::array<ic::Vec2f, TILE_AREA> heatFlux;
+
 
     std::vector<std::thread> threads;
     std::mutex threadMutex;
@@ -92,6 +94,7 @@ class HeatEquation : public ic::Application {
 
     float deltaTime;
     bool threadsRunning;
+    bool hasVectorField;
 
     public:
         bool init() override {
@@ -121,6 +124,7 @@ class HeatEquation : public ic::Application {
             
             textBatch = ic::Batch(10000, ic::TRIANGLES);
             wallBatch = ic::Batch(100000, ic::TRIANGLES);
+            lineBatch = ic::Batch(100000, ic::LINES);
             ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
             atlas = ic::FreeType::get().find_atlas("score");
 
@@ -224,6 +228,10 @@ class HeatEquation : public ic::Application {
                 previousWallPosition = { x, y };
             }, KEY_M);
 
+            keyboard->add_key_up_action([this]() { 
+                hasVectorField = !hasVectorField;
+            }, KEY_F);
+
             ic::InputHandler::get().add_input(keyboard, "WASD");
 
 
@@ -231,7 +239,7 @@ class HeatEquation : public ic::Application {
             averageHeat = 0.0f;
             deltaTime = 0.0f;
             threadsRunning = true;
-
+            hasVectorField = false;
 
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
@@ -317,14 +325,42 @@ class HeatEquation : public ic::Application {
             }
             wallBatch.render();
 
+            // Arrows
+            if (hasVectorField) {
+                for (int j = 0; j < TILE_HEIGHT; j++) {
+                    for (int i = 0; i < TILE_WIDTH; i++) {
+                        if (wall_at_unsafe(i, j)) continue;
+                        ic::Vec2f v = heatFlux[j * TILE_WIDTH + i];
+                        if (v.len2() < 0.1f) continue;
+
+                        v = v.nor() * 0.5f;
+                        v.y() *= -1.0f;
+
+                        float x = i * 1.0f + 0.5f;
+                        float y = (TILE_HEIGHT - 1) - j * 1.0f + 0.5f;
+
+                        float length = v.len();
+                        ic::Vec2f perpendicular = v.perpendicular(0);
+                        perpendicular = perpendicular.nor() * 0.25f * length;
+
+                        renderer.draw_line(lineBatch, x, y, x + v.x(), y + v.y());
+                        renderer.draw_line(lineBatch, x + v.x(), y + v.y(), x + v.x() * 0.7f - perpendicular.x(), y + v.y() * 0.7f - perpendicular.y());
+                        renderer.draw_line(lineBatch, x + v.x(), y + v.y(), x + v.x() * 0.7f + perpendicular.x(), y + v.y() * 0.7f + perpendicular.y());
+                    }
+                }
+                lineBatch.render();
+            }
+
+
             // Text rendering
             textShader.use();
             atlas.use();
 
             uiCamera.use(textShader);
-            renderer.draw_string(textBatch, atlas, "Average heat: " + std::to_string(averageHeat) + " Celsius", -1.2f, 0.9f);
+            renderer.draw_string(textBatch, atlas, "Average heat: " + std::to_string(averageHeat) + " Celsius", -1.2f, 0.9f, 1.0f, 1.0f, { 200, 200, 200 });
             renderer.draw_string(textBatch, atlas, "Use the mouse buttons to add heat,", -1.2f, 0.8f, 0.7f, 0.7f);
             renderer.draw_string(textBatch, atlas, "and the L/M keys to place/remove walls.", -1.2f, 0.72f, 0.7f, 0.7f);
+            renderer.draw_string(textBatch, atlas, "Press F to enable the heat flux vector field.", -1.2f, 0.6f, 0.7f, 0.7f);
             textBatch.render();
 
 
@@ -370,10 +406,20 @@ class HeatEquation : public ic::Application {
 
                             heatValues[index] += (doubleGradientX + doubleGradientY) * HEAT_DIFFUSIVITY * timeStep;
                         }
+                    }
 
-                        if (!threadsRunning) {
-                            return;
-                        }
+
+                    // Heat flux
+                    ic::Vec2f gradient;
+                    gradient.x() += get_heat(i + 1, j);
+                    gradient.x() -= get_heat(i - 1, j);
+                    gradient.y() += get_heat(i, j + 1);
+                    gradient.y() -= get_heat(i, j - 1);
+
+                    heatFlux[index] = gradient * -0.5f;
+
+                    if (!threadsRunning) {
+                        return;
                     }
                 }
             }
