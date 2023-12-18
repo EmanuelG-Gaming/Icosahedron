@@ -115,6 +115,37 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::polygon_circle(Poly
     return ic::Physics::ManifoldPoints2D(AtoB, BtoA, normal, length);
 }
 
+ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::rectangle_rectangle(RectangleCollider *colliderA, Transform2D *transformA, RectangleCollider *colliderB, Transform2D *transformB) {
+    float x1 = transformA->position.x() - colliderA->width, y1 = transformA->position.y() - colliderA->height;
+    float x2 = transformA->position.x() + colliderA->width, y2 = transformA->position.y() + colliderA->height;
+    
+    float x3 = transformB->position.x() - colliderB->width, y3 = transformB->position.y() - colliderB->height;
+    float x4 = transformB->position.x() + colliderB->width, y4 = transformB->position.y() + colliderB->height;
+
+    bool overlaps = (x2 >= x3 && x1 <= x4) &&
+                   (y2 >= y3 && y1 <= y4);
+
+    if (!overlaps) return ic::Physics::ManifoldPoints2D();
+
+    ic::Vec2f overlap;
+    overlap.x() = x2 > x4 ? x4 - x1 : x2 - x3;
+    overlap.y() = y2 > y4 ? y4 - y1 : y2 - y3;
+
+    ic::Vec2f normal;
+    if (overlap.x() < overlap.y()) {
+        int sign = (transformA->position.x() >= transformB->position.x()) ? 1 : -1;
+        normal.x() = sign * overlap.x();
+    } else {
+        int sign = (transformA->position.y() >= transformB->position.y()) ? 1 : -1;
+        normal.y() = sign * overlap.y();
+    }
+
+    float length = normal.len();
+    normal = normal.nor();
+
+    return ic::Physics::ManifoldPoints2D(normal, length);
+}
+
 //ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::spMass2D_circle(SpringMassCollider2D *colliderA, Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) {
 //
 //}

@@ -442,7 +442,7 @@ class App : public ic::Application {
             }
 
 
-            for (int i = 0; i < 150; i++) {
+            for (int i = 0; i < 100; i++) {
                 ic::Entity *entity = entities.add_entity();
                 entity->add<TransformComponent>();
 

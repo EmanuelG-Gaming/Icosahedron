@@ -55,6 +55,7 @@ class PhysicsDebug : public ic::Application {
 
 
             level = ic::Physics::PhysicsLevel2D();
+            level.simulationSteps = 10;
             level.set_gravity(0.0f, 0.0f);
             
             rigidBody2 = new ic::Physics::RigidObject2D();
@@ -68,7 +69,7 @@ class PhysicsDebug : public ic::Application {
             kineticEnergy = 0.0f;
 
             ic::KeyboardController *keys = new ic::KeyboardController();
-            keys->add_action([this]() { add_object(-3.0f, 0.0f, 5.0f, 0.01f ); }, KEY_P);
+            keys->add_key_up_action([this]() { add_object(-3.0f, 0.0f, 5.0f, 0.01f ); }, KEY_P);
             ic::InputHandler::get().add_input(keys, "Keys");
 
             return true;
@@ -126,13 +127,12 @@ class PhysicsDebug : public ic::Application {
 
         void add_object(float x, float y, float velX, float velY) {
             float radius = rand() % 50 / 200.0f + 0.01f;
-            int sides = rand() % 5 + 3;
-
-            ic::Mesh2D mesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(sides, radius);
+            
+            ic::Mesh2D mesh = ic::GeometryGenerator::get().generate_rectangle_mesh(radius, radius);
             mesh.set_material(ic::MeshMaterial2D(ic::Colors::lightGray, 1.0f));
 
             ic::Physics::RigidObject2D *rigidBody = new ic::Physics::RigidObject2D();
-            rigidBody->collider = new ic::Physics::CircleCollider(radius);
+            rigidBody->collider = new ic::Physics::RectangleCollider(radius, radius);
             rigidBody->dynamic = true;
             rigidBody->set_mass(radius * 5.0f);
             rigidBody->set_position(x, y);

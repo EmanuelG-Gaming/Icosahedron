@@ -20,5 +20,12 @@ namespace ic {
     using Vec2b = ic::Vector<uint8_t, 2>;
     using Vec3b = ic::Vector<uint8_t, 3>;
     using Vec4b = ic::Vector<uint8_t, 4>;
+
+    // Same as ic::Vec2f
+    using Vec2 = Vec2f;
+    // Same as ic::Vec3f
+    using Vec3 = Vec3f;
+    // Same as ic::Vec4f
+    using Vec4 = Vec4f;
 }
 #endif

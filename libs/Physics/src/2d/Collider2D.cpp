@@ -49,7 +49,7 @@ ic::Physics::ManifoldPoints2D ic::Physics::RectangleCollider::test(Transform2D *
 }
 
 ic::Physics::ManifoldPoints2D ic::Physics::RectangleCollider::test(Transform2D *transformA, RectangleCollider *colliderB, Transform2D *transformB) {
-    return ic::Physics::ManifoldPoints2D();
+    return ic::Physics::CollisionUtils2D::get().rectangle_rectangle(this, transformA, colliderB, transformB);
 }
 
 ic::Physics::ManifoldPoints2D ic::Physics::RectangleCollider::test(Transform2D *transformA, PolygonCollider *colliderB, Transform2D *transformB) {

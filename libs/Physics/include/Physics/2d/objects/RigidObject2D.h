@@ -24,12 +24,12 @@ namespace ic { namespace Physics {
             RigidObject2D();
 
             
-            void apply_velocity(float x, float y);
-            void apply_velocity(ic::Vec2f &vel);
+            ic::Physics::RigidObject2D *apply_velocity(float x, float y);
+            ic::Physics::RigidObject2D *apply_velocity(ic::Vec2f &vel);
 
-            void set_mass(float to);
-
-            void set_section_area(const std::function<float(ic::Vec2f)> &crossSectionalArea);
+            ic::Physics::RigidObject2D *set_mass(float to);
+            
+            ic::Physics::RigidObject2D *set_section_area(const std::function<float(ic::Vec2f)> &crossSectionalArea);
     };
 }}
 #endif

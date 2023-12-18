@@ -30,16 +30,60 @@ namespace ic {
             }
         }
 
-        Vector(ic::Color color) {
-            memset(&values, 0, sizeof(values));
-            if (size() != 3) {
-                throw std::runtime_error("This vector doesn't have three dimensions.\n");
+        Vector(T x) {
+            if (size() < 1) {
+                throw std::runtime_error("This vector doesn't have any dimensions.\n");
             }
+            memset(&values, 0, sizeof(values));
+
+            values[0] = x;
+        }
+
+        Vector(T x, T y) {
+            if (size() < 2) {
+                throw std::runtime_error("This vector doesn't have at least two dimensions.\n");
+            }
+            memset(&values, 0, sizeof(values));
+
+            values[0] = x;
+            values[1] = y;
+        }
+
+        Vector(T x, T y, T z) {
+            if (size() < 3) {
+                throw std::runtime_error("This vector doesn't have at least three dimensions.\n");
+            }
+            memset(&values, 0, sizeof(values));
+
+            values[0] = x;
+            values[1] = y;
+            values[2] = z;
+        }
+
+        Vector(T x, T y, T z, T w) {
+            if (size() < 4) {
+                throw std::runtime_error("This vector doesn't have at least four dimensions.\n");
+            }
+            memset(&values, 0, sizeof(values));
+
+            values[0] = x;
+            values[1] = y;
+            values[2] = z;
+            values[3] = w;
+        }
+
+
+        Vector(ic::Color color) {
+            if (size() < 3) {
+                throw std::runtime_error("This vector doesn't have at least three dimensions.\n");
+            }
+            memset(&values, 0, sizeof(values));
 
             values[0] = color.r;
             values[1] = color.g;
             values[2] = color.b;
         }
+
 
         Vec operator+(Vec other) {
             Vec result;
@@ -101,6 +145,64 @@ namespace ic {
             }
             return result;
         }
+
+        
+        // Incremental operators
+
+        Vec& operator+=(const Vec& other) {
+            for (int i = 0; i < dimensions; i++) {
+                values[i] = values[i] + other.values[i];
+            }
+            return *this;
+        }
+
+        Vec& operator-=(const Vec& other) {
+            for (int i = 0; i < dimensions; i++) {
+                values[i] = values[i] - other[i];
+            }
+            return *this;
+        }
+    
+        Vec& operator*=(const Vec& other) {
+            for (int i = 0; i < dimensions; i++) {
+                values[i] = values[i] * other[i];
+            }
+            return *this;
+        }
+
+        Vec& operator/=(const Vec& other) {
+            for (int i = 0; i < dimensions; i++) {
+                values[i] = values[i] / other[i];
+            }
+            return *this;
+        }
+        
+        Vec& operator+=(T scalar) {
+            for (int i = 0; i < dimensions; i++) {
+                values[i] = values[i] + scalar;
+            }
+            return *this;
+        }
+        Vec& operator-=(T scalar) {
+            for (int i = 0; i < dimensions; i++) {
+                values[i] = values[i] - scalar;
+            }
+            return *this;
+        }
+        Vec& operator*=(T scalar) {
+            for (int i = 0; i < dimensions; i++) {
+                values[i] = values[i] * scalar;
+            }
+            return *this;
+        }
+        Vec& operator/=(T scalar) {
+            for (int i = 0; i < dimensions; i++) {
+                values[i] = values[i] / scalar;
+            }
+            return *this;
+        }
+
+
         
         float dot(Vec &other) {
             float result = 0.0f;
@@ -232,7 +334,18 @@ namespace ic {
 
             return stream;
         }
-        
+
+        template <typename T2>
+        ic::Vector<T2, dimensions> as() {
+            ic::Vector<T2, dimensions> result;
+
+            for (int i = 0; i < dimensions; i++) {
+                result.values[i] = (T2) values[i];
+            }
+
+            return result;
+        }
+
         T& x() {
             static_assert(dimensions >= 1, "X is only avaiable for dimensions >= 1.");
             return values[0];

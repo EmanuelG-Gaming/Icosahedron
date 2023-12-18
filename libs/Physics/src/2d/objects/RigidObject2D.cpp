@@ -17,20 +17,26 @@ RigidObject2D::RigidObject2D() : Object2D() {
 }
 
 
-void ic::Physics::RigidObject2D::apply_velocity(float x, float y) {
+ic::Physics::RigidObject2D *ic::Physics::RigidObject2D::apply_velocity(float x, float y) {
     this->velocity.x() += x;
     this->velocity.y() += y;
+
+    return this;
 }
-void ic::Physics::RigidObject2D::apply_velocity(ic::Vec2f &vel) {
-    this->apply_velocity(vel.x(), vel.y());
+ic::Physics::RigidObject2D *ic::Physics::RigidObject2D::apply_velocity(ic::Vec2f &vel) {
+    return this->apply_velocity(vel.x(), vel.y());
 }
 
 
-void ic::Physics::RigidObject2D::set_mass(float to) {
+ic::Physics::RigidObject2D *ic::Physics::RigidObject2D::set_mass(float to) {
     this->mass = to;
+
+    return this;
 }
 
 
-void ic::Physics::RigidObject2D::set_section_area(const std::function<float(ic::Vec2f)> &crossSectionalArea) {
+ic::Physics::RigidObject2D *ic::Physics::RigidObject2D::set_section_area(const std::function<float(ic::Vec2f)> &crossSectionalArea) {
     this->crossSectionalArea = crossSectionalArea;
+
+    return this;
 }
