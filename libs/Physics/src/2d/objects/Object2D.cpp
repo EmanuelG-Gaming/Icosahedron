@@ -9,6 +9,7 @@ Object2D::Object2D() {
     
     this->dynamic = true;
     this->isTrigger = false;
+    this->collides = false;
 }
 
 void ic::Physics::Object2D::collision(const std::function<void(ic::Physics::Manifold2D, float)> &to) {

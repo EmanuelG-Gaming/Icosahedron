@@ -44,7 +44,9 @@ void ic::Physics::PhysicsLevel2D::update_with_sub_steps(float timeTook) {
         for (auto &object : objects) {
             ic::Physics::RigidObject2D *body = dynamic_cast<ic::Physics::RigidObject2D*>(object);
             ic::Physics::SpringMassSystem2D *system = dynamic_cast<ic::Physics::SpringMassSystem2D*>(object);
-    
+
+            object->collides = false;
+
             if (body != nullptr) {
                 body->force = { 0.0f, 0.0f };
                 body->torque = 0.0f;
@@ -126,7 +128,10 @@ void ic::Physics::PhysicsLevel2D::send_collision_callbacks(const std::vector<ic:
     for (auto &manifold : collisions) {
         auto &callback1 = manifold.object1->onCollision;
         auto &callback2 = manifold.object2->onCollision;
-        
+
+        manifold.object1->collides = true;
+        manifold.object2->collides = true;
+
         if (callback1) callback1(manifold, timeTook);
         if (callback2) callback2(manifold, timeTook);
     }

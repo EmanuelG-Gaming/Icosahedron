@@ -18,6 +18,7 @@ namespace ic { namespace Physics {
 
         bool dynamic;
         bool isTrigger;
+        bool collides;
         
         Object2D();
         virtual ~Object2D() {}
