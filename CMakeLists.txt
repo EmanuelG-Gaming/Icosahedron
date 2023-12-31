@@ -1,7 +1,56 @@
 cmake_minimum_required(VERSION 3.0.0)
 
 project(engine VERSION 0.4.0 LANGUAGES C CXX)
+set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 
+# Inspired by https://github.com/Gaetz/SDL-OpenGL/blob/master/CMakeLists.txt
+include(CTest)
+enable_testing()
+
+
+### Libraries and includes
+add_subdirectory("third-party/glad")
+add_subdirectory("third-party/soloud")
+
+
+if (WIN32)
+    set(SDL2_DIR ${CMAKE_SOURCE_DIR}/third-party/SDL2)
+    set(SDL2_IMAGE_DIR ${CMAKE_SOURCE_DIR}/third-party/SDL2_image)
+    
+    set(FREETYPE2_DIR ${CMAKE_SOURCE_DIR}/third-party/freetype2)
+endif (WIN32)
+
+
+find_package(OpenGL REQUIRED COMPONENTS OpenGL)
+find_package(OpenGL)
+
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
+
+
+
+# Icosahedron + extensions
+add_subdirectory(libs/Icosahedron)
+add_subdirectory(libs/Physics)
+add_subdirectory(libs/UI)
+
+
+
+
+
+##### Main part #####
+add_executable(icosahedron-main "src/main.cpp")
+target_link_libraries(icosahedron-main PUBLIC Icosahedron Physics UI ${SDL2_LIBRARIES} OpenGL::OpenGL)
+
+##### Examples #####
+
+# End of testing
+set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+include(CPack)
+
+
+#[[
 
 add_subdirectory("third-party/glad")
 add_subdirectory("third-party/soloud")
@@ -84,3 +133,5 @@ enable_testing()
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
+
+#]]

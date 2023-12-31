@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="Win32-mingw32-make"
+	BuildStamp="20231230-0433-Experimental"
+	Name="DESKTOP-3BOOKT4"
+	Generator="ctest-3.27.7"
+	CompilerName="C:/msys2/ucrt64/bin/g++.exe"
+	CompilerVersion="13.2.0"
+	OSName="Windows"
+	Hostname="DESKTOP-3BOOKT4"
+	OSRelease=" Professional"
+	OSVersion=" (Build 19045)"
+	OSPlatform="AMD64"
+	Is64Bits="1"
+	VendorString=""
+	VendorID="Unknown Manufacturer"
+	FamilyID="0"
+	ModelID="0"
+	ProcessorCacheSize="0"
+	NumberOfLogicalCPU="8"
+	NumberOfPhysicalCPU="4"
+	TotalVirtualMemory="9269"
+	TotalPhysicalMemory="7413"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="2795"
+	>
+	<Testing>
+		<StartDateTime>Dec 30 06:33 GTB, or[NON-UTF-8-BYTE-0xE3] standard</StartDateTime>
+		<StartTestTime>1703910813</StartTestTime>
+		<TestList/>
+		<EndDateTime>Dec 30 06:33 GTB, or[NON-UTF-8-BYTE-0xE3] standard</EndDateTime>
+		<EndTestTime>1703910813</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>

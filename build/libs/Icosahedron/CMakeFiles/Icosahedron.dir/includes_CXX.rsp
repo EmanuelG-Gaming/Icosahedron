@@ -1,0 +1,1 @@
+-I"C:/Icosahedron/third-party/SDL2/include" -IC:/Icosahedron/libs/Icosahedron -IC:/Icosahedron/libs/Icosahedron/include/Icosahedron -IC:/Icosahedron/libs/Icosahedron/include -I"C:/Icosahedron/third-party/glad/include" -I"C:/Icosahedron/third-party/soloud/include"

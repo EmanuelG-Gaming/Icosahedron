@@ -1,0 +1,2 @@
+C:\msys2\ucrt64\bin\ar.exe qc libUI.a CMakeFiles/UI.dir/src/Global.cpp.obj CMakeFiles/UI.dir/src/Element.cpp.obj CMakeFiles/UI.dir/src/layout/Table.cpp.obj CMakeFiles/UI.dir/src/layout/Cell.cpp.obj CMakeFiles/UI.dir/src/Label.cpp.obj CMakeFiles/UI.dir/src/ImageElement.cpp.obj CMakeFiles/UI.dir/src/Button.cpp.obj CMakeFiles/UI.dir/src/Core.cpp.obj
+C:\msys2\ucrt64\bin\ranlib.exe libUI.a
