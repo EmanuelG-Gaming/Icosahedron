@@ -9,14 +9,15 @@ Right now, Icosahedron has the `Physics` and `UI` extensions.
 # Building the code:
 For some, this can be pretty straightforward, but here it is:
 
-- On VSCode:
-    - Download the C/C++ extension on [their website](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), and CMake tools might come in handy;
-    - Install MingW with CMake;
-    - Clone this repository;
-    - Open Visual Studio Code;
-    - Write some code or use an example;
-    - Build the project;
-    - Run it.
+## Visual studio code (VScode):
+### On Windows:
+- Download the C/C++ extension on [their website](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), and CMake  tools might come in handy;
+- Install MingW with CMake;
+- Clone this repository;
+- Open Visual Studio Code;
+- Write some code or use an example;
+- Build the project;
+- Run it.
 
 (Assuming you've got a C++ compiler, and a computer with OpenGL >= 3.0 support)
 
