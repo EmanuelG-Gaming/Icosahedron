@@ -1,3 +1,0 @@
-C:\msys2\mingw64\bin\cmake.exe -E rm -f CMakeFiles\icosahedron-main.dir/objects.a
-C:\msys2\ucrt64\bin\ar.exe qc CMakeFiles\icosahedron-main.dir/objects.a @CMakeFiles\icosahedron-main.dir\objects1.rsp
-C:\msys2\ucrt64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\icosahedron-main.dir/objects.a -Wl,--no-whole-archive -o icosahedron-main.exe -Wl,--out-implib,libicosahedron-main.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\icosahedron-main.dir\linkLibs.rsp

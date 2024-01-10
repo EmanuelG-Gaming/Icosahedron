@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.0.0...3.13)
 
 set(PROJECT_NAME Icosahedron)
 set(LIBRARY_NAME Icosahedron)
@@ -157,5 +157,5 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
 
 
 target_link_libraries(${LIBRARY_NAME} glad ${SDL2_LIBRARIES} soloud
-freetype
+${FREETYPE_LIBRARIES}
 )
