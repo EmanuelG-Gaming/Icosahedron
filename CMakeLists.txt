@@ -46,15 +46,15 @@ include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} "${FREETYPE_D
 add_subdirectory(libs/Icosahedron)
 add_subdirectory(libs/Physics)
 add_subdirectory(libs/UI)
+add_subdirectory(tools/Debug)
 
 
 ##### Examples #####
-add_executable(icosahedron-examples "examples/demos/SokobanDemo.cpp")
+add_executable(icosahedron-examples "examples/demos/RaymarchingDemo.cpp")
+set_target_properties(icosahedron-examples PROPERTIES WIN32_EXECUTABLE FALSE)
 
-target_link_libraries(icosahedron-examples Icosahedron Physics UI ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
-target_include_directories(icosahedron-examples PRIVATE "${FREETYPE_DIR}/include")
+target_link_libraries(icosahedron-examples Icosahedron Physics UI IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
 
-set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
 include(CTest)
 enable_testing()
 

@@ -1,6 +1,9 @@
 #ifndef IC_APPLICATION_H
 #define IC_APPLICATION_H
 
+// Add the option to not use parameters in the main function, paired with SDL_SetMainReady()
+#define SDL_MAIN_HANDLED
+
 #include <string>
 
 #include <glad/glad.h>

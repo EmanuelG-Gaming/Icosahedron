@@ -11,6 +11,7 @@
 #include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
 
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
+#include <IcosahedronDebug/ConsoleOutput.h>
 
 
 const std::size_t RAYMARCHING_WIDTH = 640;
@@ -44,6 +45,11 @@ std::string rayFragment = IC_ADD_GLSL_DEFINITION(
         vec3 diffuse;
     };
 
+    struct Box {
+        vec3 center;
+        vec3 sizes;
+    };
+
     struct RaymarchResult {
         float distanceTravelled;
         int steps;
@@ -65,14 +71,15 @@ std::string rayFragment = IC_ADD_GLSL_DEFINITION(
     };
 
     uniform DirectionalLight sun = DirectionalLight(vec3(1.0, -1.0, -1.0));
-    uniform PointLight light1 = PointLight(vec3(1.0, 3.0, -1.0));
+    uniform PointLight light1 = PointLight(vec3(4.0, 3.0, -1.0));
     uniform PointLight light2 = PointLight(vec3(-2.0, 3.0, 3.0));
 
     const int MAX_SPHERE_COUNT = 3;
+    const int MAX_BOX_COUNT = 2;
 
     const int RAYMARCH_STEPS = 128;
     const float MAX_RAYMARCH_DISTANCE = 100;
-    const float SURFACE_DISTANCE_THRESHOLD = 0.01;
+    const float SURFACE_DISTANCE_THRESHOLD = 0.001;
 
     const int REFLECTION_ITERATIONS = 3;
 
@@ -84,7 +91,9 @@ std::string rayFragment = IC_ADD_GLSL_DEFINITION(
 
         
     uniform Sphere spheres[MAX_SPHERE_COUNT];
+    uniform Box boxes[MAX_BOX_COUNT];
     uniform mat4 view;
+    
     uniform mat4 projection;
     uniform vec3 cameraPosition;
     
@@ -95,9 +104,21 @@ std::string rayFragment = IC_ADD_GLSL_DEFINITION(
         return length(point - sphere.center) - sphere.radius;
     }
 
+    float get_box_distance(Box box, vec3 point) {
+        vec3 difference = point - box.center;
+
+        float cx = clamp(difference.x, -box.sizes.x, box.sizes.x);
+        float cy = clamp(difference.y, -box.sizes.y, box.sizes.y);
+        float cz = clamp(difference.z, -box.sizes.z, box.sizes.z);
+
+        return length(difference) - length(vec3(cx, cy, cz));
+    }
+
+
     float get_global_distance(vec3 point) {
         float distanceToSphere = 100000.0;
-        
+        float distanceToBox = 100000.0;
+
         for (int i = 0; i < MAX_SPHERE_COUNT; i++) {
             float distance = get_sphere_distance(spheres[i], point);
             if (distance < distanceToSphere) {
@@ -105,8 +126,17 @@ std::string rayFragment = IC_ADD_GLSL_DEFINITION(
             }
         }
 
+        for (int i = 0; i < MAX_BOX_COUNT; i++) {
+            float distance = get_box_distance(boxes[i], point);
+            if (distance < distanceToBox) {
+                distanceToBox = distance;
+            }
+        }
+
+
         float distanceToPlane = point.y + 1.0;
         float result = min(distanceToSphere, distanceToPlane);
+        result = min(result, distanceToBox);
 
         return result;
     }
@@ -391,6 +421,13 @@ class RaymarchingDemo : public ic::Application {
             rayShader.set_uniform_color("spheres[2].diffuse", ic::Colors::cyan);
             rayShader.set_uniform_float("spheres[2].radius", 0.5f);
 
+
+            rayShader.set_uniform_vec3f("boxes[0].center", { 0.9f, 0.3f, 4.0f });
+            rayShader.set_uniform_vec3f("boxes[0].sizes", { 0.2f, 1.0f, 0.7f });
+
+            rayShader.set_uniform_vec3f("boxes[1].center", { 4.0f, 0.1f, 2.0f });
+            rayShader.set_uniform_vec3f("boxes[1].sizes", { 0.2f, 0.2f, 0.2f });
+
             framebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, RAYMARCHING_WIDTH, RAYMARCHING_HEIGHT);
 
             screenQuad = ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f);
@@ -450,8 +487,9 @@ class RaymarchingDemo : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     RaymarchingDemo application;
+    ic::Debug::ConsoleOutput::get().write_file("yes.txt", stdout);
 
     if (application.construct(RAYMARCHING_WIDTH, RAYMARCHING_HEIGHT)) {
         application.start();

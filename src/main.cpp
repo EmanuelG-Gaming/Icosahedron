@@ -42,7 +42,9 @@ class FirstProject : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+// A simpler main function declaration.
+// You can use int argc and char *argv[] as parameters, though.
+int main() {
     FirstProject application;
 
     // Constructs a window that is 640 pixels wide and 480 pixels tall

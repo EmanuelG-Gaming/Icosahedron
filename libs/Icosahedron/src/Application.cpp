@@ -129,6 +129,8 @@ void ic::Application::set_window_title(const std::string &title) {
 
 
 bool ic::Application::construct(int w, int h) {
+    SDL_SetMainReady();
+    
     this->width = w;
     this->height = h;
     this->window = NULL;
