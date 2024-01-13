@@ -50,7 +50,7 @@ add_subdirectory(tools/Debug)
 
 
 ##### Examples #####
-add_executable(icosahedron-examples "examples/demos/RaymarchingDemo.cpp")
+add_executable(icosahedron-examples "examples/demos/Particles2D.cpp")
 set_target_properties(icosahedron-examples PROPERTIES WIN32_EXECUTABLE FALSE)
 
 target_link_libraries(icosahedron-examples Icosahedron Physics UI IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)

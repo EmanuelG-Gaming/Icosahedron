@@ -489,7 +489,6 @@ class RaymarchingDemo : public ic::Application {
 
 int main() {
     RaymarchingDemo application;
-    ic::Debug::ConsoleOutput::get().write_file("yes.txt", stdout);
 
     if (application.construct(RAYMARCHING_WIDTH, RAYMARCHING_HEIGHT)) {
         application.start();
