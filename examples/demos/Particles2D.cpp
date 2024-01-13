@@ -111,6 +111,9 @@ class Particles2D : public ic::Application {
         }
 
         void dispose() override {
+            particleShader.clear();
+            particleBatch.dispose();
+            circleTexture.dispose();
         }
 
 

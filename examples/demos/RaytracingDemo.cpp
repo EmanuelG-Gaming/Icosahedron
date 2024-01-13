@@ -315,7 +315,7 @@ class RaytracingDemo : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     RaytracingDemo application;
 
     if (application.construct(640, 480)) {

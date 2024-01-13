@@ -108,7 +108,7 @@ class SoundVisualizer : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     SoundVisualizer application;
 
     if (application.construct(640, 480)) {

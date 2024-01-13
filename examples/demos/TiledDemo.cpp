@@ -360,7 +360,7 @@ class TiledDemo : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     TiledDemo application;
 
     if (application.construct(640, 480)) {

@@ -197,7 +197,7 @@ class PongDemo : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     PongDemo application;
 
     if (application.construct(640, 480)) {

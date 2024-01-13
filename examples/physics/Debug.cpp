@@ -152,7 +152,7 @@ class PhysicsDebug : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     PhysicsDebug application;
 
     if (application.construct(640, 480)) {

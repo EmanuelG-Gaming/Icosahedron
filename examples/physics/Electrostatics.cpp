@@ -333,7 +333,7 @@ class Electrostatics : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     Electrostatics application;
 
     if (application.construct(640, 480)) {

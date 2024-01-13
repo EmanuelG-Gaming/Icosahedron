@@ -261,7 +261,7 @@ class PostProcessing : public ic::Application {
 };
 
 
-int main(int argc, char *argv[]) {
+int main() {
     PostProcessing application;
 
     if (application.construct(640, 480)) {

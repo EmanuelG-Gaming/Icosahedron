@@ -76,7 +76,7 @@ class TexturedRectangle : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     TexturedRectangle application;
 
     if (application.construct(640, 480)) {

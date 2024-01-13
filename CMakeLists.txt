@@ -48,12 +48,14 @@ add_subdirectory(libs/Physics)
 add_subdirectory(libs/UI)
 add_subdirectory(tools/Debug)
 
+##### Main program #####
+add_executable(main "src/main.cpp")
+target_link_libraries(main Icosahedron Physics UI IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
 
 ##### Examples #####
-add_executable(icosahedron-examples "examples/demos/Particles2D.cpp")
-set_target_properties(icosahedron-examples PROPERTIES WIN32_EXECUTABLE FALSE)
+add_executable(examples "examples/windowing/WindowExample.cpp")
 
-target_link_libraries(icosahedron-examples Icosahedron Physics UI IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
+target_link_libraries(examples Icosahedron Physics UI IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
 
 include(CTest)
 enable_testing()

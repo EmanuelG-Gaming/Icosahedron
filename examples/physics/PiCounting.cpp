@@ -187,7 +187,7 @@ class PiCounting : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     PiCounting application;
 
     if (application.construct(640, 480)) {

@@ -184,7 +184,7 @@ class EntityComponentSystem : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     EntityComponentSystem application;
 
     if (application.construct(640, 480)) {

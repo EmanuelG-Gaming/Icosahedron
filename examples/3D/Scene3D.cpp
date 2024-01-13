@@ -160,7 +160,7 @@ class Scene3D : public ic::Application {
 };
 
 
-int main(int argc, char *argv[]) {
+int main() {
     Scene3D application;
 
     if (application.construct(640, 480)) {

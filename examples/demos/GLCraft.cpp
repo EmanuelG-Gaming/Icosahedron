@@ -465,7 +465,7 @@ class GLCraft : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     GLCraft application;
 
     if (application.construct(640, 480)) {

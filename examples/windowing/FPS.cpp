@@ -93,7 +93,7 @@ class FPS : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     FPS application;
 
     if (application.construct(640, 480)) {

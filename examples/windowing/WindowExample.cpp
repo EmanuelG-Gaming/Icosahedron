@@ -2,7 +2,7 @@
 #include <Icosahedron/graphics/Colors.h>
 
 
-/** @brief Shows an empty blue window. */
+// Shows an empty blue window.
 class WindowExample : public ic::Application {
     public:
         bool init() override {
@@ -42,7 +42,26 @@ class WindowExample : public ic::Application {
         }
 };
 
-int main(int argc, char *argv[]) {
+// Short version:
+/*
+#include <Icosahedron/Application.h>
+#include <Icosahedron/graphics/Colors.h>
+
+class WindowExample : public ic::Application {
+    public:
+        bool init() override {
+            displayName = "Example window";
+            return true;
+        }
+
+        bool update(float dt) override {
+            clear_color(ic::Colors::blue);
+            return true; 
+        }
+};
+*/
+
+int main() {
     WindowExample application;
 
     if (application.construct(640, 480)) {
