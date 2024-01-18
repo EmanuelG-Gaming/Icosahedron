@@ -1,6 +1,8 @@
 #include <Icosahedron/Application.h>
 #include <Icosahedron/util/GeometryGenerator.h>
 
+#include <Icosahedron/math/Interpolation.h>
+
 #include <Icosahedron/graphics/gl/Texture.h>
 #include <Icosahedron/graphics/gl/Shader.h>
 #include <Icosahedron/graphics/Colors.h>
@@ -13,10 +15,11 @@
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/assets/loaders/TextureLoader.h>
 
+//#include <IcosahedronDebug/ConsoleOutput.h>
+
 #include <array>
 
-const std::size_t WIDTH = 10, HEIGHT = 10;
-const std::size_t AREA = WIDTH * HEIGHT;
+const float MOVE_TIME = 0.2f;
 
 const ic::Vec2i cardinalDirections[4] = {
     { 1, 0 },
@@ -24,6 +27,27 @@ const ic::Vec2i cardinalDirections[4] = {
     { -1, 0 },
     { 0, -1 },
 };
+
+struct Level {
+    std::size_t width, height;
+    std::vector<int> tileValues, boxes, overlays;
+
+    Level(std::size_t w, std::size_t h) {
+        width = w;
+        height = h;
+
+        int area = width * height;
+
+        tileValues.reserve(area);
+        boxes.reserve(area);
+        overlays.reserve(area);
+
+        memset(&tileValues, 0, sizeof(tileValues));
+        memset(&overlays, 0, sizeof(overlays));
+        memset(&boxes, 0, sizeof(boxes));
+    }
+};
+
 
 class SokobanDemo : public ic::Application {
     ic::Batch tileBatch;
@@ -35,10 +59,19 @@ class SokobanDemo : public ic::Application {
     ic::Shader shader;
     float time;
 
-    std::array<int, AREA> tileValues, boxes, overlays;
+    ic::Vec2i playerPosition, previousPlayerPosition;
+    ic::Vec2f shownPlayerPosition;
 
-    ic::Vec2i playerPosition;
+    ic::Vec2f shownBoxPosition;
+    ic::Vec2f pushDir;
+
+    bool playerMoving;
     bool mouseHeld;
+    bool isBoxPushed;
+
+    Level *currentLevel;
+    std::vector<Level> levels;
+    int levelIndex;
 
     public:
         bool init() override {
@@ -48,48 +81,59 @@ class SokobanDemo : public ic::Application {
         }
         
         bool load() override {
-            memset(&tileValues, 0, sizeof(tileValues));
-            memset(&overlays, 0, sizeof(overlays));
-            memset(&boxes, 0, sizeof(boxes));
+            // Level setup
+            levelIndex = 0;
+            currentLevel = nullptr;
 
-            tileValues = {
-                2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-                2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-                2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-                2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-                2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-                2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-                2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-                2, 2, 0, 0, 0, 0, 0, 2, 0, 2,
-                2, 2, 1, 1, 1, 1, 1, 2, 0, 2,
-                2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-            };
+            {
+                Level level(10, 10);
 
-            boxes = {
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 1, 0, 1, 1, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
-                0, 0, 1, 1, 1, 1, 1, 1, 0, 0,
-                0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            };
+                level.tileValues = {
+                    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                    2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
+                    2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
+                    2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
+                    2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
+                    2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
+                    2, 0, 0, 0, 0, 0, 0, 0, 0, 2,
+                    2, 2, 0, 0, 0, 0, 0, 2, 0, 2,
+                    2, 2, 1, 1, 1, 1, 1, 2, 0, 2,
+                    2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+                };
+    
+                level.boxes = {
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 1, 0, 1, 1, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+                    0, 0, 1, 1, 1, 1, 1, 1, 0, 0,
+                    0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                };
+    
+                level.overlays = {
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                };
 
-            overlays = {
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            };
+                levels.push_back(level);
+            }
+
+            currentLevel = &levels[0];
+
+
+
 
             tileBatch = ic::Batch(10000, ic::TRIANGLES);
             tileAtlas = ic::TextureAtlas(256, 256);
@@ -110,6 +154,7 @@ class SokobanDemo : public ic::Application {
             time = 0.0f;
 
             playerPosition = { 2, 1 };
+            shownPlayerPosition = playerPosition.as<float>();
 
 
             ic::MouseController *controller = new ic::MouseController();
@@ -191,6 +236,8 @@ class SokobanDemo : public ic::Application {
 
 
             mouseHeld = false;
+            playerMoving = false;
+            isBoxPushed = false;
 
             return true;
         }
@@ -205,10 +252,34 @@ class SokobanDemo : public ic::Application {
         }
     
         bool update(float dt) override {
-            time += dt;
-            
-            camera.position.x() = playerPosition.x();
-            camera.position.y() = playerPosition.y();
+            if (playerMoving) {
+                time += dt;
+
+                float t = time / MOVE_TIME; // t is the normalised percentage between 0 and 1
+                ic::Vec2f floatPos = playerPosition.as<float>();
+                shownPlayerPosition = previousPlayerPosition.as<float>().interpolate(floatPos, ic::Interpolation::get().smoothstep(t));
+                shownBoxPosition = shownPlayerPosition + pushDir;
+
+                if (time >= MOVE_TIME) {
+                    shownPlayerPosition = floatPos;
+                    shownBoxPosition = floatPos + pushDir;
+
+                    time = 0.0f;
+                    playerMoving = false;
+
+                    if (isBoxPushed) {
+                        currentLevel->boxes[(playerPosition.y() + (int) pushDir.y()) * currentLevel->width + (playerPosition.x() + (int) pushDir.x())] = 1;
+                        isBoxPushed = false;
+                    }
+
+                    if (boxes_placed()) {
+                        level_complete();
+                    }
+                }
+            }
+
+            camera.position.x() = shownPlayerPosition.x();
+            camera.position.y() = shownPlayerPosition.y();
 
             // Rendering
             clear_color(ic::Colors::blue);
@@ -219,10 +290,10 @@ class SokobanDemo : public ic::Application {
             tileAtlas.use();
             
             // Draws textured tiles
-            for (int y = 0; y < HEIGHT; y++) {
-                for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < currentLevel->height; y++) {
+                for (int x = 0; x < currentLevel->width; x++) {
                     std::string entryName;
-                    switch (tileValues[y * WIDTH + x]) {
+                    switch (currentLevel->tileValues[y * currentLevel->width + x]) {
                         case 0:
                             entryName = "wood";
                             break;
@@ -238,18 +309,18 @@ class SokobanDemo : public ic::Application {
                 }
             }
 
-            for (int y = 0; y < HEIGHT; y++) {
-                for (int x = 0; x < WIDTH; x++) {
-                    if (overlays[y * WIDTH + x] == 1) {
+            for (int y = 0; y < currentLevel->height; y++) {
+                for (int x = 0; x < currentLevel->width; x++) {
+                    if (currentLevel->overlays[y * currentLevel->width + x] == 1) {
                         // Partitions
                         renderer.draw_rectangle(tileBatch, tileAtlas.get_entry("discontinuous-square"), x, y, 0.5f, 0.5f, ic::Colors::green);
                     }
                 }
             }
 
-            for (int y = 0; y < HEIGHT; y++) {
-                for (int x = 0; x < WIDTH; x++) {
-                    if (boxes[y * WIDTH + x] == 1) {
+            for (int y = 0; y < currentLevel->height; y++) {
+                for (int x = 0; x < currentLevel->width; x++) {
+                    if (currentLevel->boxes[y * currentLevel->width + x] == 1) {
                         // Boxes
                         renderer.draw_rectangle(tileBatch, tileAtlas.get_entry("box"), x, y, 0.5f, 0.5f);
                     }
@@ -257,7 +328,11 @@ class SokobanDemo : public ic::Application {
             }
 
             // Player renderer
-            renderer.draw_rectangle(tileBatch, tileAtlas.get_entry("white"), playerPosition.x(), playerPosition.y(), 0.5f, 0.5f, ic::Colors::yellow);
+            renderer.draw_rectangle(tileBatch, tileAtlas.get_entry("white"), shownPlayerPosition.x(), shownPlayerPosition.y(), 0.5f, 0.5f, ic::Colors::yellow);
+            
+            if (isBoxPushed) {
+                renderer.draw_rectangle(tileBatch, tileAtlas.get_entry("box"), shownBoxPosition.x(), shownBoxPosition.y(), 0.5f, 0.5f);
+            }
 
             // Mouse hold indicator
             if (mouseHeld) {
@@ -286,6 +361,11 @@ class SokobanDemo : public ic::Application {
 
 
         bool turn(int newPlayerPositionX, int newPlayerPositionY) {
+            // Do not do a turn when the player is still moving (this fixes the instant movement when the input is spammed)
+            if (playerMoving) {
+                return false;
+            }
+
             if (is_wall_at(newPlayerPositionX, newPlayerPositionY)) {
                 return false;
             }
@@ -312,27 +392,59 @@ class SokobanDemo : public ic::Application {
             int nextPosY = playerPosition.y() + dy;
 
             if (turn(nextPosX, nextPosY)) {
+                shownPlayerPosition.x() = playerPosition.x();
+                shownPlayerPosition.y() = playerPosition.y();
+                previousPlayerPosition.x() = playerPosition.x();
+                previousPlayerPosition.y() = playerPosition.y();
+
+                playerMoving = true;
+
                 playerPosition.x() = nextPosX;
                 playerPosition.y() = nextPosY;
 
                 if (is_box_at(playerPosition.x(), playerPosition.y())) {
-                    boxes[playerPosition.y() * WIDTH + playerPosition.x()] = 0;
-                    boxes[(playerPosition.y() + dy) * WIDTH + (playerPosition.x() + dx)] = 1;
+                    currentLevel->boxes[playerPosition.y() * currentLevel->width + playerPosition.x()] = 0;
+
+                    pushDir = { (float) dx, (float) dy };
+                    isBoxPushed = true;
                 }
             }
         }
 
 
         bool is_wall_at(int x, int y) {
-            return (tileValues[y * WIDTH + x] == 2);
+            return (currentLevel->tileValues[y * currentLevel->width + x] == 2);
         }
 
         bool is_box_at(int x, int y) {
-            return (boxes[y * WIDTH + x]);
+            return (currentLevel->boxes[y * currentLevel->width + x]);
         }
 
         bool point_inside_rectangle(float x, float y, float rx, float ry, float width, float height) {
             return (x >= rx - width && x <= rx + width && y >= ry - height && y <= ry + height);
+        }
+
+        bool boxes_placed() {
+            int placedCount = 0, partitionCount = 0;
+
+            for (int i = 0; i < currentLevel->width * currentLevel->height; i++) {
+                if (currentLevel->overlays[i] == 1) {
+                    partitionCount++;
+                }
+            }
+
+
+            for (int i = 0; i < currentLevel->width * currentLevel->height; i++) {
+                if ((currentLevel->boxes[i] == 1) && (currentLevel->overlays[i] == 1)) {
+                    placedCount++;
+                }
+            }
+
+            return (placedCount == partitionCount);
+        }
+
+        void level_complete() {
+            std::cout << "Level " << (levelIndex + 1) << " complete!" << "\n";
         }
 };
 
@@ -535,6 +647,8 @@ class SokobanDemoMeshes : public ic::Application {
 
 int main() {
     SokobanDemo application;
+
+    //ic::Debug::ConsoleOutput::get().write_file("yet.txt", stdout);
 
     if (application.construct(640, 480)) {
         application.start();
