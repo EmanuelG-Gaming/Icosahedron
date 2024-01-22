@@ -20,6 +20,8 @@
 #include <array>
 
 const float MOVE_TIME = 0.2f;
+const float LEVEL_FINISHED_SCREEN_DURATION = 2.0f;
+const int MAX_LEVEL_COUNT = 5;
 
 const ic::Vec2i cardinalDirections[4] = {
     { 1, 0 },
@@ -31,6 +33,7 @@ const ic::Vec2i cardinalDirections[4] = {
 struct Level {
     std::size_t width, height;
     std::vector<int> tileValues, boxes, overlays;
+    ic::Vec2i startingPlayerPosition;
 
     Level(std::size_t w, std::size_t h) {
         width = w;
@@ -57,7 +60,7 @@ class SokobanDemo : public ic::Application {
     ic::Camera2D camera;
 
     ic::Shader shader;
-    float time;
+    float time, levelFinishTime;
 
     ic::Vec2i playerPosition, previousPlayerPosition;
     ic::Vec2f shownPlayerPosition;
@@ -84,7 +87,9 @@ class SokobanDemo : public ic::Application {
             // Level setup
             levelIndex = 0;
             currentLevel = nullptr;
+            levels.reserve(MAX_LEVEL_COUNT);
 
+            // Level 1
             {
                 Level level(10, 10);
 
@@ -126,7 +131,40 @@ class SokobanDemo : public ic::Application {
                     0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
                 };
+                level.startingPlayerPosition = { 2, 1 };
 
+                levels.push_back(level);
+            }
+
+            // Level 2
+            {
+                Level level(5, 5);
+
+                level.tileValues = {
+                    2, 2, 2, 2, 2,
+                    2, 0, 0, 0, 2,
+                    2, 0, 0, 0, 2,
+                    2, 0, 0, 0, 2,
+                    2, 2, 2, 2, 2,
+                };
+    
+                level.boxes = {
+                    0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0,
+                    0, 0, 0, 1, 0,
+                    0, 1, 0, 0, 0,
+                    0, 0, 0, 0, 0,
+                };
+    
+                level.overlays = {
+                    0, 0, 0, 0, 0,
+                    0, 0, 0, 1, 0,
+                    0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 0,
+                };
+                level.startingPlayerPosition = { 2, 2 };
+                
                 levels.push_back(level);
             }
 
@@ -151,9 +189,9 @@ class SokobanDemo : public ic::Application {
             camera = ic::Camera2D();
             camera.scale = 0.1f;
             
-            time = 0.0f;
+            time = levelFinishTime = 0.0f;
 
-            playerPosition = { 2, 1 };
+            playerPosition = currentLevel->startingPlayerPosition;
             shownPlayerPosition = playerPosition.as<float>();
 
 
@@ -271,11 +309,19 @@ class SokobanDemo : public ic::Application {
                         currentLevel->boxes[(playerPosition.y() + (int) pushDir.y()) * currentLevel->width + (playerPosition.x() + (int) pushDir.x())] = 1;
                         isBoxPushed = false;
                     }
-
-                    if (boxes_placed()) {
-                        level_complete();
-                    }
                 }
+
+                if ((levelFinishTime < 0.001f) && boxes_placed()) {
+                    level_complete();
+                }
+            }
+
+            if (levelFinishTime >= 0.001f) {
+                levelFinishTime += dt;
+            }
+
+            if (levelFinishTime > LEVEL_FINISHED_SCREEN_DURATION) {
+                to_next_level();
             }
 
             camera.position.x() = shownPlayerPosition.x();
@@ -345,6 +391,21 @@ class SokobanDemo : public ic::Application {
 
                     renderer.draw_rectangle(tileBatch, tileAtlas.get_entry("circle"), nextX, nextY, 0.25f, 0.25f);
                 }
+            }
+
+
+            // UI
+
+            if (levelFinishTime >= 0.001f) {
+                float t = levelFinishTime / LEVEL_FINISHED_SCREEN_DURATION;
+
+                ic::Vec2f from = ic::Vec2f(0.0f, 1.0f), to = ic::Vec2f(0.0f, 0.0f);
+                ic::Vec2f position = from.interpolate(to, t);
+
+                //renderer.draw_string_centered(textBatch, atlas, "Level finished!", position.x(), position.y(), scale, scale);
+
+                // This would display the full texture atlas...
+                renderer.draw_rectangle(tileBatch, position.x(), position.y(), 0.5f, 0.5f);
             }
 
 
@@ -444,7 +505,18 @@ class SokobanDemo : public ic::Application {
         }
 
         void level_complete() {
+            levelFinishTime = 0.0015f;
             std::cout << "Level " << (levelIndex + 1) << " complete!" << "\n";
+        }
+
+        void to_next_level() {
+            if (levelIndex < MAX_LEVEL_COUNT) {
+                currentLevel = &levels[levelIndex];
+                playerPosition = currentLevel->startingPlayerPosition;
+
+                levelIndex++;
+                levelFinishTime = 0.0f;
+            }
         }
 };
 
