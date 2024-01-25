@@ -1,6 +1,9 @@
 #include <Icosahedron/Application.h>
 #include <Icosahedron/util/GeometryGenerator.h>
 
+#include <Icosahedron/graphics/FreeType.h>
+#include <Icosahedron/graphics/TextAtlas.h>
+
 #include <Icosahedron/math/Interpolation.h>
 
 #include <Icosahedron/graphics/gl/Texture.h>
@@ -53,13 +56,14 @@ struct Level {
 
 
 class SokobanDemo : public ic::Application {
-    ic::Batch tileBatch;
+    ic::Batch tileBatch, uiBatch;
     ic::TextureAtlas tileAtlas;
+    ic::TextAtlas fontAtlas;
 
     ic::Texture texture;
-    ic::Camera2D camera;
+    ic::Camera2D camera, uiCamera;
 
-    ic::Shader shader;
+    ic::Shader shader, uiShader;
     float time, levelFinishTime;
 
     ic::Vec2i playerPosition, previousPlayerPosition;
@@ -174,6 +178,8 @@ class SokobanDemo : public ic::Application {
 
 
             tileBatch = ic::Batch(10000, ic::TRIANGLES);
+            uiBatch = ic::Batch(10000, ic::TRIANGLES);
+
             tileAtlas = ic::TextureAtlas(256, 256);
             tileAtlas.add_entry("white", "resources/textures/white.png");
             tileAtlas.add_entry("discontinuous-square", "resources/textures/discontinuous-square.png");
@@ -184,9 +190,13 @@ class SokobanDemo : public ic::Application {
             tileAtlas.add_entry("stone", "resources/textures/stone.png");
             tileAtlas.add_entry("stone-bricks", "resources/textures/stone-bricks.png");
             
+            fontAtlas = ic::FreeType::get().add_atlas("text", "resources/fonts/Roboto-Regular.ttf", 48);
+
             shader = ic::ShaderLoader::get().load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
-            
-            camera = ic::Camera2D();
+            uiShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+
+
+            camera = uiCamera = ic::Camera2D();
             camera.scale = 0.1f;
             
             time = levelFinishTime = 0.0f;
@@ -394,22 +404,27 @@ class SokobanDemo : public ic::Application {
             }
 
 
-            // UI
+            tileBatch.render();
+
+
+            // UI Rendering
+            uiShader.use();
+            uiCamera.use(uiShader);
+
+            fontAtlas.use();
 
             if (levelFinishTime >= 0.001f) {
                 float t = levelFinishTime / LEVEL_FINISHED_SCREEN_DURATION;
 
-                ic::Vec2f from = ic::Vec2f(0.0f, 1.0f), to = ic::Vec2f(0.0f, 0.0f);
-                ic::Vec2f position = from.interpolate(to, t);
+                float from = 0.0f, to = 2.0f;
+                float scale = ic::Mathf::get().interpolate(from, to, ic::Interpolation::get().square_root(t));
 
-                //renderer.draw_string_centered(textBatch, atlas, "Level finished!", position.x(), position.y(), scale, scale);
-
-                // This would display the full texture atlas...
-                renderer.draw_rectangle(tileBatch, position.x(), position.y(), 0.5f, 0.5f);
+                // Text shadow
+                renderer.draw_string_centered(uiBatch, fontAtlas, "Level finished!", -0.01f * scale, -0.01f * scale, scale, scale, ic::Colors::black);
+                renderer.draw_string_centered(uiBatch, fontAtlas, "Level finished!", 0.0f, 0.0f, scale, scale);
             }
 
-
-            tileBatch.render();
+            uiBatch.render();
 
             return true; 
         }

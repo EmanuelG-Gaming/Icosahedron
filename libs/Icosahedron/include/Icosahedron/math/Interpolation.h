@@ -31,6 +31,10 @@ namespace ic {
             float quintic(float x) {
                 return x * x * x * x * x;
             }
+            
+            float square_root(float x) {
+                return sqrt(x);
+            }
 
             /** @brief Provides a shaping function for the exponential e^x. 
              *  @note This is an approximation, as it reaches about 0.952 when x = 1. */
