@@ -24,6 +24,8 @@ void Shader::load(const std::string &vertSource, const std::string &fragSource) 
             
     glGetShaderiv(vert, GL_COMPILE_STATUS, &check); 
     if (!check) {
+        std::cout << "Vertex shader error! IN:\n" << vertSource << "\n";
+
         glGetShaderInfoLog(vert, 512, NULL, log);
         printf("%s: %s\n", vertSource, log);
     }
@@ -35,6 +37,8 @@ void Shader::load(const std::string &vertSource, const std::string &fragSource) 
 
     glGetShaderiv(fragm, GL_COMPILE_STATUS, &check); 
     if (!check) {
+        std::cout << "Fragment shader error! In:\n" << fragSource << "\n";
+        
         glGetShaderInfoLog(fragm, 512, NULL, log);
         printf("%s: %s\n", fragSource, log);
     }
