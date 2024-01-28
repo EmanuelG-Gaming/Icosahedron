@@ -210,10 +210,31 @@ void ic::Framebuffer::set_texture_content(const ic::GLTextureAttachments &attach
 }
 
 
+void ic::Framebuffer::blit_to_default(int srcX1, int srcY1, int srcX2, int srcY2, int dstX1, int dstY1, int dstX2, int dstY2, GLbitfield mask, GLenum filter) {
+    this->blit(0, srcX1, srcY1, srcX2, srcY2, dstX1, dstY1, dstX2, dstY2, mask, filter);
+}
+
+void ic::Framebuffer::blit(ic::Framebuffer &to, int srcX1, int srcY1, int srcX2, int srcY2, int dstX1, int dstY1, int dstX2, int dstY2, GLbitfield mask, GLenum filter) {
+    this->blit(to.get_index(), srcX1, srcY1, srcX2, srcY2, dstX1, dstY1, dstX2, dstY2, mask, filter);
+}
+
+void ic::Framebuffer::blit(GLuint fboIndex, int srcX1, int srcY1, int srcX2, int srcY2, int dstX1, int dstY1, int dstX2, int dstY2, GLbitfield mask, GLenum filter) {
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, this->fbo); // Where to read from
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboIndex); // Where to write to
+
+    glBlitFramebuffer(srcX1, srcY1, srcX2, srcY2, dstX1, dstY1, dstX2, dstY2, mask, filter);
+}
+
+
+
 int ic::Framebuffer::get_width() {
     return this->data.width;
 }
 
 int ic::Framebuffer::get_height() {
     return this->data.height;
+}
+
+GLuint ic::Framebuffer::get_index() {
+    return this->fbo;
 }

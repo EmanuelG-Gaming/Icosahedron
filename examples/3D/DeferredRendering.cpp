@@ -122,28 +122,50 @@ std::string laterCompileFragment = IC_ADD_GLSL_DEFINITION(
     }
 );
 
+std::string lightShaderFragment = IC_ADD_GLSL_DEFINITION(
+    precision mediump float;
+    
+    uniform vec3 lightColor;
+
+    out vec4 outColor;
+
+    void main() {
+        outColor = vec4(lightColor, 1.0);
+    }
+);
+
+
+
+
+struct PointLight {
+    ic::Vec3f position;
+    ic::Vec3f diffuse;
+};
+
 // In deferred rendering, the light calculations are done later.
 // First, objects are being rendered on a framebuffer (a.k.a. the g-buffer) that fills in the position and normal of screen pixels,
 // then a shader does the light calculations using those pixels. 
-// This way, lighting can be faster, as the position and normals are encoded in the g buffer once and the shading can be iteratively done for each pixel.
+// This way, lighting can be faster, because it is only computed for locations that are visible to the camera.
 class DeferredRendering : public ic::Application {
-    ic::Shader gShader, laterShader;
+    ic::Shader gShader, laterShader, lightShader;
     ic::Framebuffer gBuffer;
 
     ic::Camera3D camera;
     ic::Mesh2D screenQuad;
-    ic::Mesh3D mesh, floorMesh;
+    ic::Mesh3D mesh, floorMesh, lightMesh;
 
     ic::Texture floorTexture, meshTexture;
     ic::FreeRoamCameraController3D controller;
 
-    float time = 0.0f;
+    std::vector<PointLight> lights;
 
+    float time = 0.0f;
+    
     public:
         bool init() override {
             displayName = "Deferred shading";
             hideCursor = true;
-
+            
             return true;
         }
         
@@ -154,6 +176,7 @@ class DeferredRendering : public ic::Application {
 
             gShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, gShaderFragment);
             laterShader = ic::ShaderLoader::get().load(screenLaterVertex, laterCompileFragment);
+            lightShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, lightShaderFragment);
             
             // Shader configuration
             laterShader.use();
@@ -164,14 +187,25 @@ class DeferredRendering : public ic::Application {
             for (int i = 0; i < 100; i++) {
                 std::string strIndex = std::to_string(i);
 
-                laterShader.set_uniform_vec3f("pointLights[" + strIndex + "].position", { rand() % 40 - 20.0f, 2.0f, rand() % 40 - 20.0f });
+                ic::Vec3f pos = { rand() % 40 - 20.0f, 2.0f, rand() % 40 - 20.0f };
+                ic::Vec3f diffuse = { rand() % 255 / 255.0f + 0.1f, rand() % 255 / 255.0f + 0.1f, rand() % 255 / 255.0f + 0.1f };
+
+
+                laterShader.set_uniform_vec3f("pointLights[" + strIndex + "].position", pos);
                 laterShader.set_uniform_vec3f("pointLights[" + strIndex + "].ambient", { 0.01f, 0.01f, 0.01f });
-                laterShader.set_uniform_vec3f("pointLights[" + strIndex + "].diffuse", { rand() % 255 / 255.0f + 0.1f, rand() % 255 / 255.0f + 0.1f, rand() % 255 / 255.0f + 0.1f });
+                laterShader.set_uniform_vec3f("pointLights[" + strIndex + "].diffuse", diffuse);
                 laterShader.set_uniform_vec3f("pointLights[" + strIndex + "].specular", { 1.0f, 1.0f, 1.0f });
 
                 laterShader.set_uniform_float("pointLights[" + strIndex + "].constant", 1.0f);
                 laterShader.set_uniform_float("pointLights[" + strIndex + "].linear", 0.8f);
                 laterShader.set_uniform_float("pointLights[" + strIndex + "].quadratic", 0.32f);
+
+
+                PointLight light;
+                light.position = pos;
+                light.diffuse = diffuse;
+
+                lights.push_back(light);
             }
 
             // We want three-component position and normals, so RGB colours work for this case
@@ -189,7 +223,7 @@ class DeferredRendering : public ic::Application {
             meshTexture = ic::TextureLoader::get().load_png("resources/textures/sand.png", params);
             
             
-            mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
+            lightMesh = ic::GeometryGenerator::get().generate_cube_mesh(0.25f);
             mesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.5f, 18, 18);
 
             floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
@@ -232,7 +266,7 @@ class DeferredRendering : public ic::Application {
             gShader.use();
             gShader.set_uniform_vec3f("viewPosition", camera.position);
             camera.upload_to_shader(gShader);
-            render_scene(gShader);
+            render_scene_deferred(gShader);
 
             gBuffer.unuse();
 
@@ -245,7 +279,19 @@ class DeferredRendering : public ic::Application {
             gBuffer.use_texture(0, 0);
             gBuffer.use_texture(1, 1);
             gBuffer.use_texture(2, 2);
+
             screenQuad.draw(laterShader);
+
+
+            // Use this to override depth values in the default framebuffer, so that
+            // the lights will not phase through locations where they should be blocked
+            gBuffer.blit_to_default(0, 0, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT, 0, 0, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+
+            // Draws the light indicators
+            lightShader.use();
+            camera.upload_to_shader(lightShader);
+            render_scene_lights(lightShader);
 
 
             return true; 
@@ -255,7 +301,7 @@ class DeferredRendering : public ic::Application {
             
         }
 
-        void render_scene(ic::Shader &shader) {
+        void render_scene_deferred(ic::Shader &shader) {
             floorMesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
 
             meshTexture.use();
@@ -271,6 +317,15 @@ class DeferredRendering : public ic::Application {
 
             floorTexture.use();
             floorMesh.draw(shader);
+        }
+
+        void render_scene_lights(ic::Shader &shader) {
+            for (auto &light : lights) {
+                lightMesh.set_transformation(ic::Mat4x4().set_translation<3>(light.position));
+
+                shader.set_uniform_vec3f("lightColor", light.diffuse);
+                lightMesh.draw(shader);
+            }
         }
 };
 

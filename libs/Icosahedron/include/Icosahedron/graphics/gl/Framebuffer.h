@@ -54,10 +54,33 @@ namespace ic {
             void resize(int w, int h);
             int get_width();
             int get_height();
+
+            /** @return A read-only value for the internal FBO index. */
+            GLuint get_index();
             
+
             void add_render_target(const ic::GLTextureAttachments &attachment, const ic::GLTextureColorChannels &internalFormat, const ic::GLTextureColorChannels &outputFormat, bool hasDepthBuffer = true, const ic::GLTextureTypes &type = ic::T2D);
             void add_render_target(const ic::GLTextureAttachments &attachment, const ic::GLTextureColorChannels &format, bool hasDepthBuffer = true, const ic::GLTextureTypes &type = ic::T2D);
-             
+
+
+            /** @brief Blits this framebuffer over the default, built-in OpenGL framebuffer.
+             *  @param src<pos> Rectangular corner coordinates for the bounds of the source framebuffer (usually this buffer) to copy. 
+             *  @param dst<pos> Rectangular corner coordinates for the bounds of the default framebuffer, from where the data is transferred to.
+             *  @param mask Bitwise OR operators to specify where the result is outputted.
+             *  @param filter The style of interpolation to use (GL_NEAREST or GL_LINEAR).
+            */
+            void blit_to_default(int srcX1, int srcY1, int srcX2, int srcY2, int dstX1, int dstY1, int dstX2, int dstY2, GLbitfield mask, GLenum filter);
+            
+            /** @brief Blits this over a selected framebuffer.
+             *  @param to The framebuffer to copy to.
+             *  @param src<pos> Rectangular corner coordinates for the bounds of the source framebuffer (usually this buffer) to copy. 
+             *  @param dst<pos> Rectangular corner coordinates for the bounds of the default framebuffer, from where the data is transferred to.
+             *  @param mask Bitwise OR operators to specify where the result is outputted.
+             *  @param filter The style of interpolation to use (GL_NEAREST or GL_LINEAR).
+            */
+            void blit(ic::Framebuffer &to, int srcX1, int srcY1, int srcX2, int srcY2, int dstX1, int dstY1, int dstX2, int dstY2, GLbitfield mask, GLenum filter);
+
+            void blit(GLuint fboIndex, int srcX1, int srcY1, int srcX2, int srcY2, int dstX1, int dstY1, int dstX2, int dstY2, GLbitfield mask, GLenum filter);
 
             void dispose();
 
