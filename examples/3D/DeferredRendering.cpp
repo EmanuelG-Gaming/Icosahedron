@@ -18,7 +18,33 @@
 #include <IcosahedronDebug/ConsoleOutput.h>
 
 
-std::string screenVertex = IC_ADD_GLSL_DEFINITION(
+// GShader
+
+std::string gShaderFragment = IC_ADD_GLSL_DEFINITION(
+    precision mediump float;
+    
+    layout (location = 0) out vec3 outPosition;
+    layout (location = 1) out vec3 outNormal;
+    layout (location = 2) out vec3 outAlbedo;
+
+    in vec3 vPosition;
+    in vec3 vNormal;
+    in vec2 vTCoords;
+
+    uniform sampler2D sampleTexture;
+    
+    void main() {
+        outPosition = vPosition;
+        outNormal = normalize(vNormal);
+        outAlbedo = texture(sampleTexture, vTCoords).rgb;
+    }
+);
+
+
+
+// Screen-space shader
+
+std::string screenLaterVertex = IC_ADD_GLSL_DEFINITION(
     layout (location = 0) in vec2 position;
     layout (location = 1) in vec2 tCoords;
 
@@ -33,30 +59,17 @@ std::string screenVertex = IC_ADD_GLSL_DEFINITION(
     }
 );
 
-std::string gShaderFragment = IC_ADD_GLSL_DEFINITION(
-    precision mediump float;
-    
-    layout (location = 0) out vec3 outPosition;
-    layout (location = 1) out vec3 outNormal;
-
-    in vec3 vPosition;
-    in vec3 vNormal;
-    
-    
-    void main() {
-        outPosition = vPosition;
-        outNormal = normalize(vNormal);
-    }
-);
-
 std::string laterCompileFragment = IC_ADD_GLSL_DEFINITION(
     precision mediump float;
 
     
     uniform sampler2D gPosition;
     uniform sampler2D gNormal;
+    uniform sampler2D gAlbedo;
 
     in vec2 vTCoords;
+
+    const int MAX_POINT_LIGHTS = 100;
 
     struct PointLight {
         vec3 position;
@@ -67,65 +80,52 @@ std::string laterCompileFragment = IC_ADD_GLSL_DEFINITION(
         float linear;
         float quadratic;
     };
-    PointLight l = PointLight(
-        vec3(-2.0, 0.0, -3.0), 
-
-        vec3(0.2, 0.2, 0.2), 
-        vec3(0.0, 0.0, 0.95), 
-        vec3(0.8, 0.7, 0.55), 
-        
-        1.0, 0.09, 0.032
-    );
+    uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
 
     uniform vec3 viewPosition;
 
     out vec4 outColor;
     
-    vec3 compute_lighting(PointLight light, in vec3 pos, in vec3 normal) {
-        float distance = length(light.position - pos);
+    vec3 compute_lighting(PointLight light, in vec3 pos, in vec3 normal, in vec3 albedo) {
+        vec3 difference = light.position - pos;
+        float distance = length(difference);
         float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
         
-        vec3 lightDirection = normalize(light.position - pos);
+        vec3 lightDirection = difference / distance;
         vec3 viewDirection = normalize(viewPosition - pos);
         float dotProduct = clamp(dot(lightDirection, normal), 0.0, 1.0);
-        
+
         // Ambient reflection (indirect illumination approximation)
         float ambientIntensity = 0.4 * attenuation;
         vec3 ambientColor = light.ambient * ambientIntensity;
-        
+
         // Diffuse reflection
         float diffuseIntensity = clamp(dotProduct, 0.0, 1.0) * attenuation;
-        vec3 diffuseColor = light.diffuse * diffuseIntensity;
-        
-        // Specular reflection
-        // Blinn-Phong reflection
-        vec3 reflectDirection = normalize(lightDirection + viewDirection);
-        float specularIntensity = pow(max(dot(normal, reflectDirection), 0.0), (0.1 * 128.0) * 4.0) * attenuation;
-        
-        // Basic Phong reflection
-        //vec3 reflectDirection = reflect(-lightDirection, normal); 
-        //float specularIntensity = pow(max(dot(viewDirection, reflectDirection), 0.0), (0.1 * 128.0) * 4.0) * attenuation;
-        
-        vec3 specularColor = light.specular * ambientIntensity;
-        vec3 result = ambientColor + diffuseColor + specularColor;
+        vec3 diffuseColor = albedo * light.diffuse * diffuseIntensity;
+
+        vec3 result = ambientColor + diffuseColor;
         return result;
-        //return vec3(1.0, 1.0, 0.0);
     }
     
     void main() {
         vec3 pos = texture(gPosition, vTCoords).rgb;
         vec3 normal = texture(gNormal, vTCoords).rgb;
+        vec3 albedo = texture(gAlbedo, vTCoords).rgb;
 
-        vec3 lighting = compute_lighting(l, pos, normal);
-        //outColor = vec4(lighting, 1.0);
-        outColor = vec4(normal + pos, 1.0);
+        vec3 lighting = vec3(0.0);
+        for (int i = 0; i < MAX_POINT_LIGHTS; i++) {
+            lighting += compute_lighting(pointLights[i], pos, normal, albedo);
+        }
+
+        outColor = vec4(lighting, 1.0);
     }
 );
 
 // In deferred rendering, the light calculations are done later.
 // First, objects are being rendered on a framebuffer (a.k.a. the g-buffer) that fills in the position and normal of screen pixels,
 // then a shader does the light calculations using those pixels. 
+// This way, lighting can be faster, as the position and normals are encoded in the g buffer once and the shading can be iteratively done for each pixel.
 class DeferredRendering : public ic::Application {
     ic::Shader gShader, laterShader;
     ic::Framebuffer gBuffer;
@@ -134,7 +134,7 @@ class DeferredRendering : public ic::Application {
     ic::Mesh2D screenQuad;
     ic::Mesh3D mesh, floorMesh;
 
-    ic::Texture floorTexture, whiteTexture;
+    ic::Texture floorTexture, meshTexture;
     ic::FreeRoamCameraController3D controller;
 
     float time = 0.0f;
@@ -153,32 +153,49 @@ class DeferredRendering : public ic::Application {
             
 
             gShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, gShaderFragment);
-            laterShader = ic::ShaderLoader::get().load(screenVertex, laterCompileFragment);
+            laterShader = ic::ShaderLoader::get().load(screenLaterVertex, laterCompileFragment);
             
             // Shader configuration
             laterShader.use();
             laterShader.set_uniform_int("gPosition", 0);
             laterShader.set_uniform_int("gNormal", 1);
+            laterShader.set_uniform_int("gAlbedo", 2);
 
+            for (int i = 0; i < 100; i++) {
+                std::string strIndex = std::to_string(i);
 
-            gBuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGB, ic::TEXTURE_RGB, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
-            gBuffer.add_render_target(ic::TEXTURE_ATTACH_COLOR_1, ic::TEXTURE_RGB, ic::TEXTURE_RGB);
+                laterShader.set_uniform_vec3f("pointLights[" + strIndex + "].position", { rand() % 40 - 20.0f, 2.0f, rand() % 40 - 20.0f });
+                laterShader.set_uniform_vec3f("pointLights[" + strIndex + "].ambient", { 0.01f, 0.01f, 0.01f });
+                laterShader.set_uniform_vec3f("pointLights[" + strIndex + "].diffuse", { rand() % 255 / 255.0f + 0.1f, rand() % 255 / 255.0f + 0.1f, rand() % 255 / 255.0f + 0.1f });
+                laterShader.set_uniform_vec3f("pointLights[" + strIndex + "].specular", { 1.0f, 1.0f, 1.0f });
+
+                laterShader.set_uniform_float("pointLights[" + strIndex + "].constant", 1.0f);
+                laterShader.set_uniform_float("pointLights[" + strIndex + "].linear", 0.8f);
+                laterShader.set_uniform_float("pointLights[" + strIndex + "].quadratic", 0.32f);
+            }
+
+            // We want three-component position and normals, so RGB colours work for this case
+            gBuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGB_16F, ic::TEXTURE_RGB, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            gBuffer.add_render_target(ic::TEXTURE_ATTACH_COLOR_1, ic::TEXTURE_RGB_16F, ic::TEXTURE_RGB);
+
+            // Albedo textures
+            gBuffer.add_render_target(ic::TEXTURE_ATTACH_COLOR_2, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA);
 
 
             ic::TextureParameters params;
             params.usesMipmapping = true;
 
-            floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png", params, true);
-            whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png", params, true);
+            floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png", params);
+            meshTexture = ic::TextureLoader::get().load_png("resources/textures/sand.png", params);
             
             
             mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
-            mesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(2.0f, 18, 18);
+            mesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.5f, 18, 18);
 
             floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
             
             screenQuad = ic::Mesh2D();
-            screenQuad.add_attribute(0, 2, ic::GeometryGenerator::get().generate_rectangle(0.95f, 1.0f));
+            screenQuad.add_attribute(0, 2, ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
             screenQuad.add_attribute(1, 2, ic::GeometryGenerator::get().generate_UV_rectangle(1.0f, 1.0f));
             screenQuad.set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
@@ -227,6 +244,7 @@ class DeferredRendering : public ic::Application {
             // Use both rendering targets from the framebuffer
             gBuffer.use_texture(0, 0);
             gBuffer.use_texture(1, 1);
+            gBuffer.use_texture(2, 2);
             screenQuad.draw(laterShader);
 
 
@@ -238,10 +256,20 @@ class DeferredRendering : public ic::Application {
         }
 
         void render_scene(ic::Shader &shader) {
-            mesh.set_transformation(ic::Mat4x4().set_translation<3>({-1.0f + sin(time * 0.5f) * 15.0f, 1.0f + sin(time) * 5.0f, -0.5f + sin(time * 2.0f) * 8.0f}));
             floorMesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
 
-            mesh.draw(shader);
+            meshTexture.use();
+            for (int j = 0; j < 20; j++) {
+                for (int i = 0; i < 20; i++) {
+                    float x = (i - 10.0f) * 2.0f;
+                    float z = (j - 10.0f) * 2.0f;
+
+                    mesh.set_transformation(ic::Mat4x4().set_translation<3>({x, 0.6f, z}));
+                    mesh.draw(shader);
+                }
+            }
+
+            floorTexture.use();
             floorMesh.draw(shader);
         }
 };

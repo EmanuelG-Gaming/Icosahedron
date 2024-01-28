@@ -132,7 +132,7 @@ void ic::Framebuffer::add_render_target_raw(const ic::GLTextureAttachments &atta
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
     }
 
-
+    // Convert to raw data
     std::vector<GLenum> attachmentsRaw;
     for (int i = 0; i < this->data.textureAttachemnts.size(); i++) {
         ic::GLTextureAttachments att = this->data.textureAttachemnts[i];
