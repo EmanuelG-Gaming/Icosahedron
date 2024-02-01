@@ -223,7 +223,7 @@ class DeferredRendering : public ic::Application {
             meshTexture = ic::TextureLoader::get().load_png("resources/textures/sand.png", params);
             
             
-            lightMesh = ic::GeometryGenerator::get().generate_cube_mesh(0.25f);
+            lightMesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.2f, 8, 8);
             mesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.5f, 18, 18);
 
             floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
