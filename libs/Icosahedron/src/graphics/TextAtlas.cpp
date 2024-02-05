@@ -1,4 +1,6 @@
+
 #include <Icosahedron/graphics/TextAtlas.h>
+/*
 #include <Icosahedron/Global.h>
 
 #include <iostream>
@@ -107,3 +109,4 @@ float TextAtlas::get_width() {
 float TextAtlas::get_height() { 
     return atlasHeight; 
 }
+*/

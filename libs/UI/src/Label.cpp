@@ -17,7 +17,7 @@ void ic::UI::Label::draw() {
         this->style.background->draw(this->translation.x() + halfWidth, this->translation.y() + halfHeight, halfWidth, halfHeight);
     }
 
-    ic::UI::Global::get().renderer.draw_string(ic::UI::Global::get().fillTextBatch, this->style.font, this->text, this->translation.x(), this->translation.y(), 1.0f, 1.0f, this->style.fontColor);
+    //ic::UI::Global::get().renderer.draw_string(ic::UI::Global::get().fillTextBatch, this->style.font, this->text, this->translation.x(), this->translation.y(), 1.0f, 1.0f, this->style.fontColor);
 }
 
 
@@ -43,13 +43,13 @@ ic::UI::Label *ic::UI::Label::set_background(ic::UI::Drawable *background) {
 
 
 ic::UI::Label *ic::UI::Label::set_text(const std::string &text) {
-    this->text = text;
-
-    ic::Vec2f size = this->compute_size(this->style.font);
-    this->width = size.x();
-    this->height = size.y();
-
-    return this;
+    //this->text = text;
+//
+    //ic::Vec2f size = this->compute_size(this->style.font);
+    //this->width = size.x();
+    //this->height = size.y();
+//
+    //return this;
 }
 
 std::string &ic::UI::Label::get_text() {
@@ -57,7 +57,7 @@ std::string &ic::UI::Label::get_text() {
 }
 
 
-
+/*
 ic::Vec2f ic::UI::Label::compute_size(ic::TextAtlas &font) {
     float sclX = 1.0f * 0.002f;
     float sclY = 1.0f * 0.002f;
@@ -81,3 +81,4 @@ ic::Vec2f ic::UI::Label::compute_size(ic::TextAtlas &font) {
 
     return result;
 }
+*/

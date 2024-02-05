@@ -9,25 +9,25 @@ enable_testing()
 
 add_subdirectory("third-party/glad")
 add_subdirectory("third-party/soloud")
-add_subdirectory("third-party/freetype-2.13.2")
+#add_subdirectory("third-party/freetype-2.13.2")
 
 
 if (WIN32)
     set(SDL2_DIR ${CMAKE_SOURCE_DIR}/third-party/SDL2)
     set(SDL2_IMAGE_DIR ${CMAKE_SOURCE_DIR}/third-party/SDL2_image)
 
-    set(FREETYPE_DIR ${CMAKE_SOURCE_DIR}/third-party/freetype-2.13.2)
+    #set(FREETYPE_DIR ${CMAKE_SOURCE_DIR}/third-party/freetype-2.13.2)
 endif (WIN32)
 
 
 if (NOT WIN32)
-    string(STRIP ${SDL2_LIBRARIES} SDL2_LIBRARIES)
-    string(STRIP ${SDL2_IMAGE_LIBRARIES} SDL2_IMAGE_LIBRARIES)
+    string(STRIP "${SDL2_LIBRARIES}" SDL2_LIBRARIES)
+    string(STRIP "${SDL2_IMAGE_LIBRARIES}" SDL2_IMAGE_LIBRARIES)
     
-    string(STRIP ${FREETYPE_LIBRARIES} FREETYPE_LIBRARIES)
+    #string(STRIP ${FREETYPE_LIBRARIES} FREETYPE_LIBRARIES)
 endif (NOT WIN32)
 
-set(FREETYPE_INCLUDES ${FREETYPE_DIR}/include)
+#set(FREETYPE_INCLUDES ${FREETYPE_DIR}/include)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
@@ -38,24 +38,26 @@ find_package(OpenGL)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 
-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} "${FREETYPE_DIR}/include")
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS}) #"${FREETYPE_DIR}/include")
 
 
 
 # Libraries and extensions
 add_subdirectory(libs/Icosahedron)
 add_subdirectory(libs/Physics)
-add_subdirectory(libs/UI)
+#add_subdirectory(libs/UI)
 add_subdirectory(tools/Debug)
 
 ##### Main program #####
 add_executable(main "src/main.cpp")
-target_link_libraries(main Icosahedron Physics UI IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
+target_link_libraries(main Icosahedron Physics #UI 
+IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})# freetype)
 
 ##### Examples #####
-add_executable(examples "examples/3D/DeferredRendering.cpp")
+add_executable(examples "examples/2D/Mesh2D.cpp")
 
-target_link_libraries(examples Icosahedron Physics UI IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
+target_link_libraries(examples Icosahedron Physics #UI 
+IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES}) #freetype)
 
 include(CTest)
 enable_testing()

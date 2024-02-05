@@ -264,7 +264,7 @@ void ic::Application::pre_load() {
     
     
     shaders.load_shaders();
-    ic::FreeType::get().load();
+    //ic::FreeType::get().load();
     ic::Audio::get().init();
     ic::Noise::get().init();
 
@@ -318,7 +318,7 @@ void ic::Application::close() {
 
 	this->dispose();
 
-	ic::FreeType::get().dispose();
+	//ic::FreeType::get().dispose();
     ic::Audio::get().dispose();
 
 	SDL_DestroyWindow(window);

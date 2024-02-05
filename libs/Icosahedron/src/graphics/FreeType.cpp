@@ -1,5 +1,6 @@
-#include <Icosahedron/graphics/FreeType.h>
 
+#include <Icosahedron/graphics/FreeType.h>
+/*
 using namespace ic;
 
 void FreeType::load() {
@@ -39,3 +40,4 @@ void FreeType::dispose() {
     }
     FT_Done_FreeType(library);
 }
+*/

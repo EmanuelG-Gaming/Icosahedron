@@ -18,8 +18,15 @@ namespace ic {
         /** @brief The maximum number of layers that a quadtree instance can pass through. */
         int depth;
 
-        /** @brief How many elements can a quadtree instance (node) support? */
+        /** @brief How many elements can a quadtree instance (node) support? 
+         *  @note The maximum number of elements that a whole quadtree can theoretically support is the sum from k=0 to depth of 2^(k * 2)
+         *  multiplied by the capacity of a single node.
+         * 
+        */
         std::size_t nodeCapacity;
+
+        QuadtreeRootData(std::size_t nodeCapacity, int depth) : nodeCapacity(nodeCapacity), depth(depth) {
+        }
     };
 
 

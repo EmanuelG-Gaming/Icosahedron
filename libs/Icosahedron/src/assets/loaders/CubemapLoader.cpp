@@ -1,4 +1,4 @@
-#include <icosahedron/assets/loaders/CubemapLoader.h>
+#include <Icosahedron/assets/loaders/CubemapLoader.h>
 
 ic::Cubemap ic::CubemapLoader::load_png(const std::vector<std::string> &filePaths, bool gammaCorrection) {
     ic::Cubemap result;
