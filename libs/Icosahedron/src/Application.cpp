@@ -264,7 +264,7 @@ void ic::Application::pre_load() {
     
     
     shaders.load_shaders();
-    //ic::FreeType::get().load();
+    ic::FreeType::get().load();
     ic::Audio::get().init();
     ic::Noise::get().init();
 
@@ -316,16 +316,16 @@ bool ic::Application::poll_events(ic::Event &e) {
 void ic::Application::close() {
     std::cout << displayName << " exited." << "\n\n";
 
-	this->dispose();
+    this->dispose();
 
-	//ic::FreeType::get().dispose();
+    ic::FreeType::get().dispose();
     ic::Audio::get().dispose();
 
-	SDL_DestroyWindow(window);
+    SDL_DestroyWindow(window);
     SDL_GL_DeleteContext(context);
 
     IMG_Quit();
-	SDL_Quit();
+    SDL_Quit();
 }
 
 void ic::Application::set_current_working_directory() {

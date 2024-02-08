@@ -1,4 +1,3 @@
-/*
 #ifndef IC_FREETYPE_H
 #define IC_FREETYPE_H
 
@@ -44,4 +43,3 @@ namespace ic {
     };
 }
 #endif
-*/

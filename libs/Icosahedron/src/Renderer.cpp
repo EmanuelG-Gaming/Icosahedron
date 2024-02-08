@@ -161,7 +161,7 @@ void Renderer::draw_vertices(ic::Batch &batch, std::vector<ic::Vec2f> vertices, 
 }
 
 
-/*
+
 void Renderer::draw_string(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float scaleX, float scaleY, const ic::Color &color) {
     float sclX = scaleX * 0.002f;
     float sclY = scaleY * 0.002f;
@@ -226,7 +226,7 @@ void Renderer::draw_string_itself(ic::Batch &batch, ic::TextAtlas &textAtlas, co
               
     batch.add(vertices);
 }
-*/
+
         
 void Renderer::tint(const ic::Color &to, float amount) {
     tintColor = to;

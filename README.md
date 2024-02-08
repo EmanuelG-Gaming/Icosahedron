@@ -1,4 +1,4 @@
-![Icosahedron cover art](resources/icosahedron-cover-art.png)
+[Icosahedron cover art](resources/icosahedron-cover-art.png)
 
 # Icosahedron
 A game engine that uses OpenGL for graphics. It is supposed to be for both 2D and 3D applications.
@@ -33,6 +33,7 @@ To get started, run the following commands to install the dependencies:
 ```
 sudo pacman -S cmake g++
 sudo pacman -S sdl2 sdl2_image
+sudo pacman -S freetype2
 ```
 
 ### For Debian-distributions:
@@ -40,6 +41,7 @@ sudo pacman -S sdl2 sdl2_image
 sudo apt install cmake g++
 sudo apt install libsdl2-dev libsdl2-2.0-0
 sudo apt install libsdl2-image-dev libsdl2-image-2.0-0
+sudo apt install libfreetype6-dev libfreetype6
 ```
 
 If you haven't got OpenGL installed, especially on ( virtual machine? ) Debian, do so by typing this command to install the MESA OGL driver:
