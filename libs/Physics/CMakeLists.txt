@@ -11,7 +11,8 @@ set(LIBRARY_SOURCE_DIRECTORY src)
 project(${PROJECT_NAME})
 
 add_library(${LIBRARY_NAME} STATIC
-    # Headers
+    # -----Headers-----
+    # 2D
     ${LIBRARY_HEADERS_DIRECTORY}/2d/Transform2D.h
     ${LIBRARY_HEADERS_DIRECTORY}/2d/ManifoldPoints2D.h
 
@@ -31,7 +32,29 @@ add_library(${LIBRARY_NAME} STATIC
 
     ${LIBRARY_HEADERS_DIRECTORY}/2d/levels/PhysicsLevel2D.h
 
-    # Sources
+    # 3D
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/Transform3D.h
+    
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/ManifoldPoints3D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/Collider3D.h
+    
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/CollisionUtils3D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/objects/Object3D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/objects/RigidObject3D.h
+    
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/Manifold3D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/Solver3D.h
+    
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/forces/Force3D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/forces/Gravity3D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/forces/WindForce3D.h
+
+    ${LIBRARY_HEADERS_DIRECTORY}/3d/levels/PhysicsLevel3D.h
+
+
+
+    # -----Sources-----
+    # 2D
     ${LIBRARY_SOURCE_DIRECTORY}/2d/Transform2D.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/2d/Collider2D.cpp
@@ -48,6 +71,23 @@ add_library(${LIBRARY_NAME} STATIC
 
 
     ${LIBRARY_SOURCE_DIRECTORY}/2d/levels/PhysicsLevel2D.cpp
+
+    # 3D
+    ${LIBRARY_SOURCE_DIRECTORY}/3d/Transform3D.cpp
+    
+    ${LIBRARY_SOURCE_DIRECTORY}/3d/Collider3D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/3d/CollisionUtils3D.cpp
+    
+    ${LIBRARY_SOURCE_DIRECTORY}/3d/objects/Object3D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/3d/objects/RigidObject3D.cpp
+    
+    ${LIBRARY_SOURCE_DIRECTORY}/3d/Solver3D.cpp
+    
+    ${LIBRARY_SOURCE_DIRECTORY}/3d/forces/Gravity3D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/3d/forces/WindForce3D.cpp
+
+
+    ${LIBRARY_SOURCE_DIRECTORY}/3d/levels/PhysicsLevel3D.cpp
 )
 
 target_include_directories(${LIBRARY_NAME} PRIVATE
