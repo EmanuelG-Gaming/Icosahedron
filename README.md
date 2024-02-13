@@ -15,6 +15,9 @@ For some, this can be pretty straightforward, but here it is:
 (Assuming you've got OpenGL >= 3.0 support on your computer)
 
 ## On Windows
+
+Note: Dependencies are already provided and can be extended through the `third-party` folder.
+
 ### Visual studio code (VScode):
 
 - Download the C/C++ extension on [their website](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), and CMake  tools might come in handy;
@@ -27,7 +30,9 @@ For some, this can be pretty straightforward, but here it is:
 
 ## On Linux:
 
-To get started, run the following commands to install the dependencies:
+Note: Some libraries like SoLoud and GLAD are already ready for linkage, but the other libraries have to be installed through the package manager.
+
+To get started, run the following commands to install the remaining dependencies:
 
 ### For Arch-distributions:
 ```
