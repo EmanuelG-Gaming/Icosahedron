@@ -31,7 +31,7 @@ namespace ic {
             SDL_Surface *to_surface(ic::Image &image);
             ic::Image to_image(SDL_Surface *surface);
 
-            /** @brief Checks every pixel of an image to see if it has an alpha value less than 255. */
+            /** @brief Checks every pixel of an image to see if it has an alpha value greater than 0. */
             bool image_transparent(ic::Image &source);
 
         private:

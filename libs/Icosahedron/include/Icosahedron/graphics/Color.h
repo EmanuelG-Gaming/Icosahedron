@@ -13,7 +13,7 @@ namespace ic {
     struct Color {
         color_t r, g, b, a;
 
-        Color() : r(0), g(0), b(0), a(255) {}
+        Color() : r(0), g(0), b(0), a(0) {}
         Color(color_t r, color_t g, color_t b) : r(r), g(g), b(b), a(255) {}
         Color(color_t r, color_t g, color_t b, color_t a) : r(r), g(g), b(b), a(a) {}
         
@@ -76,7 +76,7 @@ namespace ic {
             r = (hexadecimal >> 16) & 0xFF;
             g = (hexadecimal >> 8) & 0xFF;
             b = (hexadecimal) & 0xFF;
-            a = 255; // Hardcoded value
+            a = 0; // Hardcoded value
 
             return *this;
         }
@@ -89,7 +89,7 @@ namespace ic {
             r = (color_t) tempR;
             g = (color_t) tempG;
             b = (color_t) tempB;
-            a = 255; // Hardcoded value again
+            a = 0; // Hardcoded value again
 
             return *this;
         }

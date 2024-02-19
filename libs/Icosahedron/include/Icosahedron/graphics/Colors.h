@@ -22,7 +22,7 @@ namespace ic {
             lightGray = { 130, 130, 130 },
             
             // Fully transparent color
-            fTransparent = { 0, 0, 0, 0 },
+            fTransparent = { 0, 0, 0, 255 },
             
             // Same as black
             fOpaque;

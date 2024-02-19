@@ -56,7 +56,7 @@ ic::Image ic::ImageIO::read_ppm(const std::string &fileName) {
             // Reading from an RGB pixel
             ic::Color pixel;
             stream >> pixel.r >> pixel.g >> pixel.b;
-            pixel.a = 255;
+            pixel.a = 0;
 
             data[i] = pixel;
             i++;
@@ -187,7 +187,7 @@ bool ic::ImageIO::image_transparent(ic::Image &source) {
     int area = source.get_width() * source.get_height();
 
     for (int i = 0; i < area; i++) {
-        if (source.pixel_at_unsafe(i).a < 255) {
+        if (source.pixel_at_unsafe(i).a > 0x00) {
             return true;
         }
     }
