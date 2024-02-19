@@ -29,10 +29,9 @@ Note: Dependencies are already provided and can be extended through the `third-p
 - Run it.
 
 ## On Linux:
+Note: Some libraries like SoLoud and GLAD are already ready for linkage, but the other libraries have to be installed through the package manager. We will use development (shared) packages for Debian distros.
 
-Note: Some libraries like SoLoud and GLAD are already ready for linkage, but the other libraries have to be installed through the package manager.
-
-To get started, run the following commands to install the remaining dependencies:
+To get started, run the following commands to install the dependencies:
 
 ### For Arch-distributions:
 ```
@@ -44,9 +43,9 @@ sudo pacman -S freetype2
 ### For Debian-distributions:
 ```
 sudo apt install cmake g++
-sudo apt install libsdl2-dev libsdl2-2.0-0
-sudo apt install libsdl2-image-dev libsdl2-image-2.0-0
-sudo apt install libfreetype6-dev libfreetype6
+sudo apt install libsdl2-dev
+sudo apt install libsdl2-image-dev
+sudo apt install libfreetype6-dev
 ```
 
 If you haven't got OpenGL installed, especially on ( virtual machine? ) Debian, do so by typing this command to install the MESA OGL driver:
@@ -55,6 +54,11 @@ If you haven't got OpenGL installed, especially on ( virtual machine? ) Debian, 
 sudo apt install libgl1-mesa-dev
 ```
 
+To check if you have installed the OpenGL driver, along with supported extensions, run this command:
+
+```
+glxinfo | grep OpenGL
+```
 
 
 ### The actual building:

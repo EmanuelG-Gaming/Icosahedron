@@ -1,4 +1,5 @@
 #include <Icosahedron/assets/loaders/TextureLoader.h>
+#include <Icosahedron/graphics/ImageIO.h>
 
 
 ic::Texture ic::TextureLoader::load_png(const std::string &filePath, ic::TextureParameters parameters, bool gammaCorrection) {
@@ -31,7 +32,9 @@ ic::Texture ic::TextureLoader::load_bmp(const std::string &filePath, ic::Texture
 
 
 ic::Texture ic::TextureLoader::load(ic::Image &image, ic::TextureParameters parameters, bool gammaCorrection) {
-    GLenum format = gammaCorrection ? GL_SRGB : GL_RGB;
+    bool transparent = ic::ImageIO::get().image_transparent(image);
+    GLenum format = gammaCorrection ? (transparent ? GL_SRGB_ALPHA : GL_SRGB) : (transparent ? GL_RGBA : GL_RGB);
+    
     return this->load_texture(image.data(), image.get_width(), image.get_height(), format, format, parameters);
 }
 
@@ -48,6 +51,7 @@ GLenum ic::TextureLoader::map_to_texture_format(uint32_t format, bool gammaCorre
             result = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
             break;
 
+        // By default, the format uses uses plain RGB
         default:
             result = gammaCorrection ? GL_SRGB : GL_RGB;
             break;

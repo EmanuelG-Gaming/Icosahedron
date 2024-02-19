@@ -36,8 +36,12 @@ namespace ic {
 
             /** @return The pixel at integer coordinates, WITHOUT boundary checking. */
             image_t pixel_at_unsafe(int x, int y);
+            image_t pixel_at_unsafe(int index);
+
             /** @return The pixel at integer coordinates, with boundary checking. */
             image_t pixel_at(int x, int y);
+            image_t pixel_at(int index);
+            
 
             /** @brief Sets the pixel at the position without boundary checking. */
             void set_pixel_unsafe(int x, int y, const image_t &with);

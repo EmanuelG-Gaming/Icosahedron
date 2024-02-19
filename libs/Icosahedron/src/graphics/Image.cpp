@@ -50,11 +50,20 @@ bool ic::Image::inside(int x, int y) {
 image_t ic::Image::pixel_at_unsafe(int x, int y) {
     return this->pixels[y * width + x];
 }
+image_t ic::Image::pixel_at_unsafe(int index) {
+    return this->pixels[index];
+}
+
 image_t ic::Image::pixel_at(int x, int y) {
     if (!this->inside(x, y)) return { 0, 0, 0 };
-
     return this->pixel_at_unsafe(x, y);
 }
+
+image_t ic::Image::pixel_at(int index) {
+    if (index < 0 || index >= width * height) return { 0, 0, 0 };
+    return this->pixel_at_unsafe(index);
+}
+
 
 void ic::Image::set_pixel_unsafe(int x, int y, const image_t &with) {
     this->pixels[y * width + x] = with;

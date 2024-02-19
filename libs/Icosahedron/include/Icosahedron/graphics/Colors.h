@@ -19,7 +19,13 @@ namespace ic {
             white = { 255, 255, 255 },
 
             gray = { 80, 80, 80 },
-            lightGray = { 130, 130, 130 };
+            lightGray = { 130, 130, 130 },
+            
+            // Fully transparent color
+            fTransparent = { 0, 0, 0, 0 },
+            
+            // Same as black
+            fOpaque;
     };
 }
 

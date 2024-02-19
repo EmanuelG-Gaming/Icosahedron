@@ -29,6 +29,10 @@ namespace ic {
             void write_ppm(const std::string &fileName, ic::Image &image);
 
             SDL_Surface *to_surface(ic::Image &image);
+            ic::Image to_image(SDL_Surface *surface);
+
+            /** @brief Checks every pixel of an image to see if it has an alpha value less than 255. */
+            bool image_transparent(ic::Image &source);
 
         private:
             ImageIO() {}
