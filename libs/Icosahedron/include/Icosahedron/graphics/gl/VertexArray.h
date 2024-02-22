@@ -39,7 +39,7 @@ namespace ic {
 
             void dispose();
 
-            /** @brief Adds a floating-point vertex buffer to this VAO.
+            /** @brief Adds a floating-point vertex buffer to this VAO. If you already have vertex data on the respective location, it will get overriden.
              *  @param attributeIndex The index of the attribute, as in the shader code.
              *  @param dimensions The number of dimensions of the attribute vector.
              *  @param content Attribute content in the following form: { x1, y1, ... n1,

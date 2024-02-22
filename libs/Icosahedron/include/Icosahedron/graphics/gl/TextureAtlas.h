@@ -11,6 +11,7 @@
 #include <SDL_image.h>
 
 #include <Icosahedron/graphics/Image.h>
+#include <Icosahedron/graphics/ImageIO.h>
 #include <Icosahedron/assets/loaders/TextureLoader.h>
 
 
@@ -103,7 +104,7 @@ namespace ic {
 
 
             ic::AtlasEntry add_entry(const std::string &location, ic::Image &image) {
-                return this->add_entry(location, image.get_width(), image.get_height(), GL_RGB, image.data());
+                return this->add_entry(location, image.get_width(), image.get_height(), (ic::ImageIO::get().image_transparent(image) ? GL_RGBA : GL_RGB), image.data());
             }
 
             ic::AtlasEntry add_entry(const std::string &location, const std::string &fileName) {
@@ -134,6 +135,13 @@ namespace ic {
 
             AtlasEntry& get_entry(const std::string &location) {
                 return entries[location];
+            }
+
+            AtlasEntry& get_entry(int index) {
+                auto iterator = this->entries.begin();
+                std::advance(iterator, index);
+
+                return iterator->second;
             }
 
             float get_width() { return atlasWidth; }

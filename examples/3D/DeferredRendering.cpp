@@ -187,7 +187,7 @@ class DeferredRendering : public ic::Application {
             for (int i = 0; i < 100; i++) {
                 std::string strIndex = std::to_string(i);
 
-                ic::Vec3f pos = { rand() % 40 - 20.0f, 2.0f, rand() % 40 - 20.0f };
+                ic::Vec3f pos = { rand() % 40 - 20.0f, rand() % 50 / 10.0f + 2.0f, rand() % 40 - 20.0f };
                 ic::Vec3f diffuse = { rand() % 255 / 255.0f + 0.1f, rand() % 255 / 255.0f + 0.1f, rand() % 255 / 255.0f + 0.1f };
 
 

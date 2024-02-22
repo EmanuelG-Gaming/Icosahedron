@@ -52,7 +52,7 @@ target_link_libraries(main Icosahedron Physics UI
 IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
 
 ##### Examples #####
-add_executable(examples "examples/2D/Transparency.cpp")
+add_executable(examples "examples/3D/DeferredRendering.cpp")
 
 target_link_libraries(examples Icosahedron Physics UI 
 IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)

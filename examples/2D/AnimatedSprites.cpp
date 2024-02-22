@@ -2,6 +2,7 @@
 #include <Icosahedron/util/GeometryGenerator.h>
 
 #include <Icosahedron/graphics/gl/Texture.h>
+#include <Icosahedron/graphics/gl/TextureAtlas.h>
 #include <Icosahedron/graphics/gl/Shader.h>
 #include <Icosahedron/graphics/Colors.h>
 #include <Icosahedron/graphics/Image.h>
@@ -31,12 +32,12 @@ std::string alphaBlendingFragment = IC_ADD_GLSL_DEFINITION(
     }
 );
 
-/* Shows how to achieve alpha transparency by using a loaded .png texture and a procedural image. */
-class Transparency : public ic::Application {
+class AnimatedSprites : public ic::Application {
     ic::Image image;
     ic::Mesh2D mesh1, mesh2;
 
     ic::Texture texture1, texture2;
+    ic::TextureAtlas spritesheet;
     ic::Camera2D camera;
 
     ic::Shader shader;
@@ -44,7 +45,7 @@ class Transparency : public ic::Application {
 
     public:
         bool init() override {
-            displayName = "2D transparency";
+            displayName = "Animated sprites";
             
             return true;
         }
@@ -78,6 +79,12 @@ class Transparency : public ic::Application {
             shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, alphaBlendingFragment);
             texture1 = ic::TextureLoader::get().load_png("resources/textures/discontinuous-square.png");
             texture2 = ic::TextureLoader::get().load(image);
+
+            int images = 3;
+            spritesheet = ic::TextureAtlas(32 * images, 32);
+            for (int i = 1; i <= 3; i++) {
+                spritesheet.add_entry("sprite-animation-frame-" + std::to_string(i), "resources/textures/animation/frame-" + std::to_string(i) + ".png");
+            }
             
             camera = ic::Camera2D();
 
@@ -122,10 +129,15 @@ class Transparency : public ic::Application {
             mesh1.dispose();
             mesh2.dispose();
         }
+
+        void set_texture_dynamic(ic::Mesh2D &mesh, int entryAtIndex) {
+            auto &entry = spritesheet.get_entry(entryAtIndex);
+            
+        }
 };
 
 int main() {
-    Transparency application;
+    AnimatedSprites application;
     
     if (application.construct(640, 480)) {
         application.start();
