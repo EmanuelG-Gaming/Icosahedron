@@ -48,13 +48,13 @@ class UIBasics : public ic::Application {
         bool update(float dt) override {
             clear_color(ic::Colors::blue);
 
-            ic::UI::Core::get().update_and_render(dt);
+            ic::UI::Core::update_and_render(dt);
 
             return true; 
         }
 
         void dispose() override {
-            ic::UI::Core::get().dispose();
+            ic::UI::Core::dispose();
         }
 };
 

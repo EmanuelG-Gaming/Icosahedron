@@ -23,8 +23,8 @@ FreeRoamCameraController3D::FreeRoamCameraController3D(ic::Camera3D *camera) {
     this->keyboard = new ic::KeyboardController();
     this->mouse = new ic::MouseController();
     
-    ic::InputHandler::get().add_input(this->keyboard, "freeRoam3DKeyboard");
-    ic::InputHandler::get().add_input(this->mouse, "freeRoam3DMouse");
+    ic::InputHandler::add_input(this->keyboard, "freeRoam3DKeyboard");
+    ic::InputHandler::add_input(this->mouse, "freeRoam3DMouse");
 }
 
 
@@ -70,13 +70,13 @@ void ic::FreeRoamCameraController3D::act(float dt) {
         }
         if (this->keyboard->is_key_pressed(KEY_A) || this->keyboard->is_key_pressed(KEY_LEFT)) {
             // Strafe left
-            velocity.x() += ic::Mathf::get().cosf(rotation.x() + ic::Mathf::get().pi / 2.0f);
-            velocity.z() += ic::Mathf::get().sinf(rotation.x() + ic::Mathf::get().pi / 2.0f);
+            velocity.x() += ic::Mathf::cosf(rotation.x() + ic::Mathf::pi / 2.0f);
+            velocity.z() += ic::Mathf::sinf(rotation.x() + ic::Mathf::pi / 2.0f);
         }
         if (this->keyboard->is_key_pressed(KEY_D) || this->keyboard->is_key_pressed(KEY_RIGHT)) {
             // Strafe right
-            velocity.x() -= ic::Mathf::get().cosf(rotation.x() + ic::Mathf::get().pi / 2.0f);
-            velocity.z() -= ic::Mathf::get().sinf(rotation.x() + ic::Mathf::get().pi / 2.0f);
+            velocity.x() -= ic::Mathf::cosf(rotation.x() + ic::Mathf::pi / 2.0f);
+            velocity.z() -= ic::Mathf::sinf(rotation.x() + ic::Mathf::pi / 2.0f);
         }
     }
 

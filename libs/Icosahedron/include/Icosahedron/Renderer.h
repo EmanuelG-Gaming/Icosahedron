@@ -32,7 +32,7 @@ namespace ic {
 
 
             void draw_string(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f, const ic::Color &color = { 255, 255, 255 });
-           void draw_string_centered(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f, const ic::Color &color = { 255, 255, 255 });
+            void draw_string_centered(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f, const ic::Color &color = { 255, 255, 255 });
 
             void tint(const ic::Color &to, float amount);
             

@@ -1,39 +1,39 @@
 #include <Icosahedron/audio/Audio.h>
 
 void ic::Audio::init() {
-    if (this->initialized) {
+    if (initialized) {
         std::cerr << "Couldn't initialize the audio handler more than once!" << "\n";
         return;
     }
 
-    this->handler = std::make_unique<SoLoud::Soloud>();
-    this->handler->init(SoLoud::Soloud::CLIP_ROUNDOFF | SoLoud::Soloud::ENABLE_VISUALIZATION);
+    handler = std::make_unique<SoLoud::Soloud>();
+    handler->init(SoLoud::Soloud::CLIP_ROUNDOFF | SoLoud::Soloud::ENABLE_VISUALIZATION);
 
-    this->initialized = true;
+    initialized = true;
 }
 
 void ic::Audio::dispose() {
-    if (this->disposed) {
+    if (disposed) {
         std::cerr << "Couldn't dispose the audio handler more than once!" << "\n";
         return;
     }
 
-    this->handler->deinit();
+    handler->deinit();
 
-    this->disposed = true;
+    disposed = true;
 }
 
 void ic::Audio::play(ic::Music *music) {
-    this->handler->play(music->get_stream());
+    handler->play(music->get_stream());
 }
 void ic::Audio::play(ic::Sound *sound) {
-    this->handler->play(sound->get_stream());
+    handler->play(sound->get_stream());
 }
 
 float *ic::Audio::calculate_FFT() {
-    return this->handler->calcFFT();
+    return handler->calcFFT();
 }
 
 float *ic::Audio::calculate_waveform() {
-    return this->handler->getWave();
+    return handler->getWave();
 }

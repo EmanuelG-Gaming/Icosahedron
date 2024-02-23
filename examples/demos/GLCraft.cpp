@@ -401,7 +401,7 @@ class GLCraft : public ic::Application {
             states.enable_face_culling(ic::FRONT, ic::CCW);
             
             
-            chunkShader = ic::ShaderLoader::get().load(chunkVertexShader, chunkFragmentShader);
+            chunkShader = ic::ShaderLoader::load(chunkVertexShader, chunkFragmentShader);
             textureArray = ic::TextureArray(64, 4);
             textureArray.add_texture("resources/textures/dirt.png");
             textureArray.add_texture("resources/textures/grass.png");
@@ -417,7 +417,7 @@ class GLCraft : public ic::Application {
             chunk = Chunk();
             for (int x = 0; x < CHUNK_WIDTH; x++) {
                 for (int z = 0; z < CHUNK_DEPTH; z++) {
-                    float height = ic::Noise::get().perlin_2D(x / 10.0f, z / 10.0f, true) * 8.0f;
+                    float height = ic::Noise::perlin_2D(x / 10.0f, z / 10.0f, true) * 8.0f;
                     
                     for (int y = 0; y <= height; y++) {
                         chunk.blocks[chunk.get_index(x, y, z)] = 1;

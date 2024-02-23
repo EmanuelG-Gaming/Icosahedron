@@ -51,7 +51,7 @@ void ic::Application::set_window_image(ic::Image image) {
         return;
     }
 
-    SDL_Surface *surface = ic::ImageIO::get().to_surface(image);
+    SDL_Surface *surface = ic::ImageIO::to_surface(image);
     SDL_SetWindowIcon(this->window, surface);
 
     SDL_FreeSurface(surface);
@@ -264,9 +264,9 @@ void ic::Application::pre_load() {
     
     
     shaders.load_shaders();
-    ic::FreeType::get().load();
-    ic::Audio::get().init();
-    ic::Noise::get().init();
+    ic::FreeType::load();
+    ic::Audio::init();
+    ic::Noise::init();
 
     this->send_application_information();
 }
@@ -275,7 +275,7 @@ void ic::Application::pre_load() {
 bool ic::Application::poll_events(ic::Event &e) {
     SDL_PumpEvents();
     while (SDL_PollEvent(&e)) {
-        ic::InputHandler::get().handle(e, delta);
+        ic::InputHandler::handle(e, delta);
 
         if (!this->handle_event(e, delta)) {
             return false;
@@ -308,7 +308,7 @@ bool ic::Application::poll_events(ic::Event &e) {
         }
     }
     
-    ic::InputHandler::get().update(delta);
+    ic::InputHandler::update(delta);
 
     return true;
 }
@@ -318,8 +318,8 @@ void ic::Application::close() {
 
     this->dispose();
 
-    ic::FreeType::get().dispose();
-    ic::Audio::get().dispose();
+    ic::FreeType::dispose();
+    ic::Audio::dispose();
 
     SDL_DestroyWindow(window);
     SDL_GL_DeleteContext(context);

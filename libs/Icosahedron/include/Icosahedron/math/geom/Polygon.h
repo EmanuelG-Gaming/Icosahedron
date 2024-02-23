@@ -77,8 +77,8 @@ namespace ic {
                 bool scales = scaleX != 1 || scaleY != 1;
                 bool rotates = rotation != 0;
 
-                float sine = ic::Mathf::get().sinf(rotation);
-                float cosine = ic::Mathf::get().cosf(rotation);
+                float sine = ic::Mathf::sinf(rotation);
+                float cosine = ic::Mathf::cosf(rotation);
                 for (int i = 0; i < localVertices.size(); i++) {
                     float tx = localVertices[i].x(), ty = localVertices[i].y();
 

@@ -10,26 +10,12 @@ namespace ic { namespace Physics {
         X, Y, Z
     };
     
-    class CollisionUtils3D {
-        public:
-            static CollisionUtils3D& get() {
-                static CollisionUtils3D ins;
-                return ins;
-            }
-            
-            ManifoldPoints3D sphere_sphere(SphereCollider *colliderA, Transform3D *transformA, SphereCollider *colliderB, Transform3D *transformB);
-            ManifoldPoints3D box_sphere(BoxCollider *colliderA, Transform3D *transformA, SphereCollider *colliderB, Transform3D *transformB);
+    namespace CollisionUtils3D {
+        ManifoldPoints3D sphere_sphere(SphereCollider *colliderA, Transform3D *transformA, SphereCollider *colliderB, Transform3D *transformB);
+        ManifoldPoints3D box_sphere(BoxCollider *colliderA, Transform3D *transformA, SphereCollider *colliderB, Transform3D *transformB);
 
-            /** @brief AABB collisions. */
-            ManifoldPoints3D box_box(BoxCollider *colliderA, Transform3D *transformA, BoxCollider *colliderB, Transform3D *transformB);
-            
-        private:
-            CollisionUtils3D() {}
-            ~CollisionUtils3D() {}
-    
-        public:
-            CollisionUtils3D(CollisionUtils3D const&) = delete;
-            void operator = (CollisionUtils3D const&) = delete;
+        /** @brief AABB collisions. */
+        ManifoldPoints3D box_box(BoxCollider *colliderA, Transform3D *transformA, BoxCollider *colliderB, Transform3D *transformB);
     };
 }}
 #endif

@@ -31,19 +31,19 @@ class Mesh2D : public ic::Application {
         
         bool load() override {
             // Mesh 1
-            mesh1 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(7, 0.3f);
+            mesh1 = ic::GeometryGenerator::generate_regular_polygon_mesh(7, 0.3f);
 
 
             // Note that this can also be more verbosely expressed as:
 
-            //auto vertices = ic::GeometryGenerator::get().generate_regular_polygon(7, 0.3f);
+            //auto vertices = ic::GeometryGenerator::generate_regular_polygon(7, 0.3f);
             //mesh1 = ic::Mesh2D();
             //mesh1.add_attribute(0, 2, vertices);
-            //mesh1.add_attribute(2, 2, ic::GeometryGenerator::get().generate_UV_polygon(vertices));
-            //mesh1.set_index_buffer(ic::EarClippingTriangulation::get().triangulate(vertices));
+            //mesh1.add_attribute(2, 2, ic::GeometryGenerator::generate_UV_polygon(vertices));
+            //mesh1.set_index_buffer(ic::EarClippingTriangulation::triangulate(vertices));
             
             // Mesh 2
-            mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(3, 0.3f);
+            mesh2 = ic::GeometryGenerator::generate_regular_polygon_mesh(3, 0.3f);
             mesh2.add_attribute(1, 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue }); // Add a "color" attribute to mesh2
 
             // Add a material that slightly brightens the colours shown by the vertex attributes 
@@ -51,8 +51,8 @@ class Mesh2D : public ic::Application {
             mesh2.set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
             
 
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
-            texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            texture = ic::TextureLoader::load_png("resources/textures/wood.png");
             
             camera = ic::Camera2D();
 
@@ -76,7 +76,7 @@ class Mesh2D : public ic::Application {
             clear_color(ic::Colors::blue);
             
             ic::Mat4x4 combined, scaling, rotation, translation;
-            scaling.set_scaling<2>({ ic::Mathf::get().sinf(time), ic::Mathf::get().cosf(time) });
+            scaling.set_scaling<2>({ ic::Mathf::sinf(time), ic::Mathf::cosf(time) });
             rotation.set_rotation(-time);
             translation.set_translation<2>({ 0.35f, 0.0f });
             

@@ -190,10 +190,10 @@ class SokobanDemo : public ic::Application {
             tileAtlas.add_entry("stone", "resources/textures/stone.png");
             tileAtlas.add_entry("stone-bricks", "resources/textures/stone-bricks.png");
             
-            fontAtlas = ic::FreeType::get().add_atlas("text", "resources/fonts/Roboto-Regular.ttf", 48);
+            fontAtlas = ic::FreeType::add_atlas("text", "resources/fonts/Roboto-Regular.ttf", 48);
 
-            shader = ic::ShaderLoader::get().load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
-            uiShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
+            uiShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
 
 
             camera = uiCamera = ic::Camera2D();
@@ -207,17 +207,17 @@ class SokobanDemo : public ic::Application {
 
             ic::MouseController *controller = new ic::MouseController();
             controller->add_mouse_scroll_up_action([this]() { 
-                float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.1f;
+                float p = ic::InputHandler::find_mouse("mouse")->get_wheel_direction() * 0.1f;
                 camera.scale = std::max(0.1f, std::min(camera.scale + p, 4.0f));
             });
             controller->add_mouse_scroll_down_action([this]() { 
-                float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.1f;
+                float p = ic::InputHandler::find_mouse("mouse")->get_wheel_direction() * 0.1f;
                 camera.scale = std::max(0.1f, std::min(camera.scale + p, 4.0f));
             });
 
 
             controller->add_mouse_down_action([this]() {
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
                 ic::Vec2f levelPos = camera.unproject(pos);
@@ -229,7 +229,7 @@ class SokobanDemo : public ic::Application {
             controller->add_mouse_up_action([this]() {
                 if (!mouseHeld) return;
 
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
                 ic::Vec2f levelPos = camera.unproject(pos);
@@ -249,7 +249,7 @@ class SokobanDemo : public ic::Application {
                 mouseHeld = !mouseHeld;
             });
 
-            ic::InputHandler::get().add_input(controller, "mouse");
+            ic::InputHandler::add_input(controller, "mouse");
 
 
             ic::KeyboardController *keyboard = new ic::KeyboardController();
@@ -279,7 +279,7 @@ class SokobanDemo : public ic::Application {
                 move_by(1, 0);
             }, KEY_RIGHT);
 
-            ic::InputHandler::get().add_input(keyboard, "WASD");
+            ic::InputHandler::add_input(keyboard, "WASD");
 
 
 
@@ -305,7 +305,7 @@ class SokobanDemo : public ic::Application {
 
                 float t = time / MOVE_TIME; // t is the normalised percentage between 0 and 1
                 ic::Vec2f floatPos = playerPosition.as<float>();
-                shownPlayerPosition = previousPlayerPosition.as<float>().interpolate(floatPos, ic::Interpolation::get().smoothstep(t));
+                shownPlayerPosition = previousPlayerPosition.as<float>().interpolate(floatPos, ic::Interpolation::smoothstep(t));
                 shownBoxPosition = shownPlayerPosition + pushDir;
 
                 if (time >= MOVE_TIME) {
@@ -417,7 +417,7 @@ class SokobanDemo : public ic::Application {
                 float t = levelFinishTime / LEVEL_FINISHED_SCREEN_DURATION;
 
                 float from = 0.0f, to = 2.0f;
-                float scale = ic::Mathf::get().interpolate(from, to, ic::Interpolation::get().square_root(t));
+                float scale = ic::Mathf::interpolate(from, to, ic::Interpolation::square_root(t));
 
                 // Text shadow
                 renderer.draw_string_centered(uiBatch, fontAtlas, "Level finished!", -0.01f * scale, -0.01f * scale, scale, scale, ic::Colors::black);
@@ -565,8 +565,8 @@ class SokobanDemoBatched : public ic::Application {
         bool load() override {
             tileBatch = ic::Batch(1000000000, ic::TRIANGLES);
 
-            shader = ic::ShaderLoader::get().load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
-            texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
+            shader = ic::ShaderLoader::load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
+            texture = ic::TextureLoader::load_png("resources/textures/wood.png");
             
             camera = ic::Camera2D();
             camera.scale = 0.5f;
@@ -660,10 +660,10 @@ class SokobanDemoMeshes : public ic::Application {
         }
         
         bool load() override {
-            tileMesh = ic::GeometryGenerator::get().generate_rectangle_mesh(0.5f, 0.5f);
+            tileMesh = ic::GeometryGenerator::generate_rectangle_mesh(0.5f, 0.5f);
 
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
-            texture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            texture = ic::TextureLoader::load_png("resources/textures/wood.png");
             
             camera = ic::Camera2D();
             camera.scale = 0.5f;
@@ -735,7 +735,7 @@ class SokobanDemoMeshes : public ic::Application {
 int main() {
     SokobanDemo application;
 
-    //ic::Debug::ConsoleOutput::get().write_file("yet.txt", stdout);
+    //ic::Debug::ConsoleOutput::write_file("yet.txt", stdout);
 
     if (application.construct(640, 480)) {
         application.start();

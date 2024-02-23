@@ -104,7 +104,7 @@ namespace ic {
 
 
             ic::AtlasEntry add_entry(const std::string &location, ic::Image &image) {
-                return this->add_entry(location, image.get_width(), image.get_height(), (ic::ImageIO::get().image_transparent(image) ? GL_RGBA : GL_RGB), image.data());
+                return this->add_entry(location, image.get_width(), image.get_height(), (ic::ImageIO::image_transparent(image) ? GL_RGBA : GL_RGB), image.data());
             }
 
             ic::AtlasEntry add_entry(const std::string &location, const std::string &fileName) {
@@ -116,7 +116,7 @@ namespace ic {
 
                 return this->add_entry(
                     location, surface->w, surface->h, 
-                    ic::TextureLoader::get().map_to_texture_format(surface->format->format), 
+                    ic::TextureLoader::map_to_texture_format(surface->format->format), 
                     surface->pixels
                 );
             }

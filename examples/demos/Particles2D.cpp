@@ -41,13 +41,13 @@ class Particles2D : public ic::Application {
         bool load() override {
             particleBatch = ic::Batch(100000, ic::TRIANGLES);
             particleShader = ic::Shader(shaders.basicShaderVertex2D, shaders.basicTextureShaderFrag2D);
-            circleTexture = ic::TextureLoader::get().load_png("resources/textures/ball.png");
+            circleTexture = ic::TextureLoader::load_png("resources/textures/ball.png");
 
             camera = ic::Camera2D(0.5f);
 
             ic::MouseController *controller = new ic::MouseController();
             controller->add_mouse_down_action([this]() { 
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
                 ic::Vec2f levelPos = camera.unproject(pos);
@@ -56,7 +56,7 @@ class Particles2D : public ic::Application {
             });
 
             controller->add_mouse_hold_action([this]() { 
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
                 ic::Vec2f levelPos = camera.unproject(pos);
@@ -67,7 +67,7 @@ class Particles2D : public ic::Application {
                 mousePreviousPosition = levelPos;
             });
 
-            ic::InputHandler::get().add_input(controller, "mouse");
+            ic::InputHandler::add_input(controller, "mouse");
 
 
             return true;
@@ -100,7 +100,7 @@ class Particles2D : public ic::Application {
                 ic::Vec2f pos = particle->position;
                 float from = 0.1f, to = 0.0f;
                 float alpha = particle->timeElapsed / PARTICLE_DISSAPEAR_TIME;
-                float interpolated = ic::Mathf::get().interpolate(from, to, sqrt(alpha));
+                float interpolated = ic::Mathf::interpolate(from, to, sqrt(alpha));
 
                 renderer.draw_rectangle(particleBatch, pos.x(), pos.y(), interpolated, interpolated, ic::Colors::yellow);
             }

@@ -57,7 +57,7 @@ ic::Texture &ic::Texture::setup_from_array(const void *data, int width, int heig
     this->setup();
 
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-    if (parameters.usesMipmapping && ic::Mathf::get().is_power_of(2, width) && ic::Mathf::get().is_power_of(2, height)) {
+    if (parameters.usesMipmapping && ic::Mathf::is_power_of(2, width) && ic::Mathf::is_power_of(2, height)) {
         glGenerateMipmap(GL_TEXTURE_2D);
         std::cout << "Power-of-two texture found." << "\n";
     }

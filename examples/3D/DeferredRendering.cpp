@@ -174,9 +174,9 @@ class DeferredRendering : public ic::Application {
             states.enable_face_culling(ic::FRONT, ic::CCW);
             
 
-            gShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, gShaderFragment);
-            laterShader = ic::ShaderLoader::get().load(screenLaterVertex, laterCompileFragment);
-            lightShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, lightShaderFragment);
+            gShader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, gShaderFragment);
+            laterShader = ic::ShaderLoader::load(screenLaterVertex, laterCompileFragment);
+            lightShader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, lightShaderFragment);
             
             // Shader configuration
             laterShader.use();
@@ -219,18 +219,18 @@ class DeferredRendering : public ic::Application {
             ic::TextureParameters params;
             params.usesMipmapping = true;
 
-            floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png", params);
-            meshTexture = ic::TextureLoader::get().load_png("resources/textures/sand.png", params);
+            floorTexture = ic::TextureLoader::load_png("resources/textures/wood.png", params);
+            meshTexture = ic::TextureLoader::load_png("resources/textures/sand.png", params);
             
             
-            lightMesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.2f, 8, 8);
-            mesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.5f, 18, 18);
+            lightMesh = ic::GeometryGenerator::generate_UV_sphere_mesh(0.2f, 8, 8);
+            mesh = ic::GeometryGenerator::generate_UV_sphere_mesh(0.5f, 18, 18);
 
-            floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
+            floorMesh = ic::GeometryGenerator::generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
             
             screenQuad = ic::Mesh2D();
-            screenQuad.add_attribute(0, 2, ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
-            screenQuad.add_attribute(1, 2, ic::GeometryGenerator::get().generate_UV_rectangle(1.0f, 1.0f));
+            screenQuad.add_attribute(0, 2, ic::GeometryGenerator::generate_rectangle(1.0f, 1.0f));
+            screenQuad.add_attribute(1, 2, ic::GeometryGenerator::generate_UV_rectangle(1.0f, 1.0f));
             screenQuad.set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
             
@@ -331,7 +331,7 @@ class DeferredRendering : public ic::Application {
 
 int main() {
     DeferredRendering application;
-    //ic::Debug::ConsoleOutput::get().write_file("yet.txt", stdout);
+    //ic::Debug::ConsoleOutput::write_file("yet.txt", stdout);
 
     if (application.construct(640, 480)) {
         application.start();

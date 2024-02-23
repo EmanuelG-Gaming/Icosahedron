@@ -23,13 +23,13 @@ namespace ic { namespace UI {
             }
 
             TextureDrawable(const std::string &atlasEntryName, const ic::Color &tint = { 255, 255, 255 }) {
-                this->entry = ic::UI::Global::get().atlas.get_entry(atlasEntryName);
+                this->entry = ic::UI::Global::atlas.get_entry(atlasEntryName);
                 this->tint = tint;
             }
             
             void draw(float x, float y, float width, float height) override {
-                //ic::UI::Global::get().renderer.tint(this->tint, 1.0f);
-                ic::UI::Global::get().renderer.draw_rectangle(ic::UI::Global::get().fillBatch, entry, x, y, width, height, this->tint);
+                //ic::UI::Global::renderer.tint(this->tint, 1.0f);
+                ic::UI::Global::renderer.draw_rectangle(ic::UI::Global::fillBatch, entry, x, y, width, height, this->tint);
             }
     };
 }}

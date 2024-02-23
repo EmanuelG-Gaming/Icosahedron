@@ -122,12 +122,12 @@ class ModelViewerDemo : public ic::Application {
             states.enable_depth_testing(ic::LESS);
             states.enable_face_culling(ic::FRONT, ic::CCW);
             
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
             
-            mesh = ic::OBJLoader::get().load("resources/models/boat.obj");
+            mesh = ic::OBJLoader::load("resources/models/boat.obj");
             mesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
 
-            material = ic::OBJLoader::get().get_materials("resources/models/icosahedron.mtl")["Material.001"];
+            material = ic::OBJLoader::get_materials("resources/models/icosahedron.mtl")["Material.001"];
 
             scale = 3.0f;
             perspective = true;
@@ -144,13 +144,13 @@ class ModelViewerDemo : public ic::Application {
             scaling->add_action([this](){ scale -= 5 * delta; }, KEY_UP);
             scaling->add_action([this](){ scale += 5 * delta; }, KEY_DOWN);
 
-            ic::InputHandler::get().add_input(scaling, "orbitScaling");
+            ic::InputHandler::add_input(scaling, "orbitScaling");
 
             auto toggle = new ic::KeyboardController();
             toggle->add_key_up_action([this](){ perspective = !perspective; }, KEY_Q);
             toggle->add_key_up_action([this](){ rotating = !rotating; }, KEY_R);
             
-            ic::InputHandler::get().add_input(toggle, "toggle");
+            ic::InputHandler::add_input(toggle, "toggle");
 
             return true;
         }

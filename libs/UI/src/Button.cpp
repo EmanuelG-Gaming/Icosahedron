@@ -11,7 +11,7 @@ Button::Button() {
 
 void ic::UI::Button::mouse_moved_callback() {
     bool before = this->isChecked;
-    this->isChecked = this->contains(ic::UI::Global::get().mouseCursorPosition);
+    this->isChecked = this->contains(ic::UI::Global::mouseCursorPosition);
 
     if (this->isChecked != before) {
         if (!this->isChecked) {

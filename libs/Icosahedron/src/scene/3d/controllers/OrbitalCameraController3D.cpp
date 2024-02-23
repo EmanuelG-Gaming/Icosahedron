@@ -21,7 +21,7 @@ OrbitalCameraController3D::OrbitalCameraController3D(ic::Camera3D *camera) {
     
     this->mouse = new ic::MouseController();
     
-    ic::InputHandler::get().add_input(this->mouse, "orbital3DMouse");
+    ic::InputHandler::add_input(this->mouse, "orbital3DMouse");
 }
 
 

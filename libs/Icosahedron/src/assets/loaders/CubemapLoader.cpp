@@ -17,10 +17,10 @@ ic::Cubemap ic::CubemapLoader::load_png(const std::vector<std::string> &filePath
             return result;
         }
     
-        GLenum textureFormat = this->map_to_texture_format(texture->format->format, gammaCorrection);
+        GLenum textureFormat = map_to_texture_format(texture->format->format, gammaCorrection);
         ic::CubemapFaceInformation face = { texture->w, texture->h, i, textureFormat, texture->pixels };
 
-        this->load_cubemap_face(face);
+        load_cubemap_face(face);
         SDL_FreeSurface(texture);
     }
 
@@ -49,10 +49,10 @@ ic::Cubemap ic::CubemapLoader::load_bmp(const std::vector<std::string> &filePath
             return result;
         }
     
-        GLenum textureFormat = this->map_to_texture_format(texture->format->format, gammaCorrection);
+        GLenum textureFormat = map_to_texture_format(texture->format->format, gammaCorrection);
         ic::CubemapFaceInformation face = { texture->w, texture->h, i, textureFormat, texture->pixels };
 
-        this->load_cubemap_face(face);
+        load_cubemap_face(face);
         SDL_FreeSurface(texture);
     }
 
@@ -60,8 +60,9 @@ ic::Cubemap ic::CubemapLoader::load_bmp(const std::vector<std::string> &filePath
 }
 
 
+namespace ic::CubemapLoader { namespace {
 
-GLenum ic::CubemapLoader::map_to_texture_format(uint32_t format, bool gammaCorrection) {
+GLenum map_to_texture_format(uint32_t format, bool gammaCorrection) {
     GLenum result;
 
     switch (format) {
@@ -81,10 +82,12 @@ GLenum ic::CubemapLoader::map_to_texture_format(uint32_t format, bool gammaCorre
     return result;
 }
 
-void ic::CubemapLoader::load_cubemap_face(const ic::CubemapFaceInformation &data) {
+void load_cubemap_face(const ic::CubemapFaceInformation &data) {
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + data.faceIndex, 0, data.format, data.width, data.height, 0, data.format, GL_UNSIGNED_BYTE, data.data);
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_REPEAT);
 }
+
+}}

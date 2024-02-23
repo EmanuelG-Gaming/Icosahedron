@@ -404,8 +404,8 @@ class RaymarchingDemo : public ic::Application {
         }
         
         bool load() override {
-            rayShader = ic::ShaderLoader::get().load(rayVertex, rayFragment);
-            screenShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, screenFragment);
+            rayShader = ic::ShaderLoader::load(rayVertex, rayFragment);
+            screenShader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, screenFragment);
             
             // Initialize these values directly
             rayShader.use();
@@ -430,7 +430,7 @@ class RaymarchingDemo : public ic::Application {
 
             framebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, RAYMARCHING_WIDTH, RAYMARCHING_HEIGHT);
 
-            screenQuad = ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f);
+            screenQuad = ic::GeometryGenerator::generate_rectangle_mesh(1.0f, 1.0f);
             
             camera = ic::Camera3D();
             controller = ic::FreeRoamCameraController3D(&camera);

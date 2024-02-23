@@ -78,11 +78,11 @@ void ic::Image::fill_circle(int x, int y, int radius, const image_t &with) {
     int radiusSquared = radius * radius;
 
     // Obtain clipped bounds with the main image,
-    int clippedTopLeftX = ic::Mathf::get().clamp(x - radius, 0, this->width);
-    int clippedTopLeftY = ic::Mathf::get().clamp(y - radius, 0, this->height);
+    int clippedTopLeftX = ic::Mathf::clamp(x - radius, 0, this->width);
+    int clippedTopLeftY = ic::Mathf::clamp(y - radius, 0, this->height);
 
-    int clippedBottomRightX = ic::Mathf::get().clamp(x + radius, 0, this->width);
-    int clippedBottomRightY = ic::Mathf::get().clamp(y + radius, 0, this->height);
+    int clippedBottomRightX = ic::Mathf::clamp(x + radius, 0, this->width);
+    int clippedBottomRightY = ic::Mathf::clamp(y + radius, 0, this->height);
 
     ic::Vec2i clipTopLeft = { clippedTopLeftX - x, clippedTopLeftY - y };
     ic::Vec2i clipBottomRight = { clippedBottomRightX - (x + radius) + radius, clippedBottomRightY - (y + radius) + radius };
@@ -242,11 +242,11 @@ void ic::Image::line_rectangle(int topLeftX, int topLeftY, int w, int h, const i
 
 void ic::Image::fill_rectangle(int topLeftX, int topLeftY, int w, int h, const image_t &with) {
     // Obtain clipped bounds with the main image
-    int clippedTopLeftX = ic::Mathf::get().clamp(topLeftX, 0, this->width);
-    int clippedTopLeftY = ic::Mathf::get().clamp(topLeftY, 0, this->height);
+    int clippedTopLeftX = ic::Mathf::clamp(topLeftX, 0, this->width);
+    int clippedTopLeftY = ic::Mathf::clamp(topLeftY, 0, this->height);
 
-    int clippedBottomRightX = ic::Mathf::get().clamp(topLeftX + w, 0, this->width);
-    int clippedBottomRightY = ic::Mathf::get().clamp(topLeftY + h, 0, this->height);
+    int clippedBottomRightX = ic::Mathf::clamp(topLeftX + w, 0, this->width);
+    int clippedBottomRightY = ic::Mathf::clamp(topLeftY + h, 0, this->height);
 
     ic::Vec2i clipTopLeft = { clippedTopLeftX - topLeftX, clippedTopLeftY - topLeftY };
     ic::Vec2i clipBottomRight = { clippedBottomRightX - (topLeftX + w) + w, clippedBottomRightY - (topLeftY + h) + h };
@@ -266,11 +266,11 @@ void ic::Image::fill_rectangle(int topLeftX, int topLeftY, int w, int h, const i
 void ic::Image::blit(const image_t *data, int topLeftX, int topLeftY, int w, int h) {
     // Obtain clipped bounds with the main image,
     // so that we're not checking on every single pixel of the blitted image for an intersection
-    int clippedTopLeftX = ic::Mathf::get().clamp(topLeftX, 0, this->width);
-    int clippedTopLeftY = ic::Mathf::get().clamp(topLeftY, 0, this->height);
+    int clippedTopLeftX = ic::Mathf::clamp(topLeftX, 0, this->width);
+    int clippedTopLeftY = ic::Mathf::clamp(topLeftY, 0, this->height);
 
-    int clippedBottomRightX = ic::Mathf::get().clamp(topLeftX + w, 0, this->width);
-    int clippedBottomRightY = ic::Mathf::get().clamp(topLeftY + h, 0, this->height);
+    int clippedBottomRightX = ic::Mathf::clamp(topLeftX + w, 0, this->width);
+    int clippedBottomRightY = ic::Mathf::clamp(topLeftY + h, 0, this->height);
 
     ic::Vec2i clipTopLeft = { clippedTopLeftX - topLeftX, clippedTopLeftY - topLeftY };
     ic::Vec2i clipBottomRight = { clippedBottomRightX - (topLeftX + w) + w, clippedBottomRightY - (topLeftY + h) + h };
@@ -288,7 +288,7 @@ void ic::Image::blit(const ic::Image &image, int topLeftX, int topLeftY) {
 }
 
 void ic::Image::blit_png(const std::string &fileName, int topLeftX, int topLeftY) {
-    this->blit(ic::ImageIO::get().read_png(fileName), topLeftX, topLeftY);
+    this->blit(ic::ImageIO::read_png(fileName), topLeftX, topLeftY);
 }
 
 void ic::Image::blit(const std::string &fileName, int topLeftX, int topLeftY) {

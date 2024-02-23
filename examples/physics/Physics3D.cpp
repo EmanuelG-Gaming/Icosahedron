@@ -109,7 +109,7 @@ class Physics3D: public ic::Application {
         bool load() override {
             states.enable_depth_testing(ic::LESS);
             
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
 
 
             std::vector<float> positions = {
@@ -148,7 +148,7 @@ class Physics3D: public ic::Application {
                 rigidBody->apply_velocity(0.0f, 1.0f, 0.0f);
 
                 level.add_object(rigidBody);
-                objects.push_back(new Object({ ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.3f, 12, 12), rigidBody, ic::Colors::lightGray }));
+                objects.push_back(new Object({ ic::GeometryGenerator::generate_UV_sphere_mesh(0.3f, 12, 12), rigidBody, ic::Colors::lightGray }));
             }
 
             {
@@ -159,7 +159,7 @@ class Physics3D: public ic::Application {
                 rigidBody->restitution = 0.1f;
             
                 level.add_object(rigidBody);
-                objects.push_back(new Object({ ic::GeometryGenerator::get().generate_parallelipiped_mesh(10.0f, 0.9f, 10.0f), rigidBody, floorColor }));
+                objects.push_back(new Object({ ic::GeometryGenerator::generate_parallelipiped_mesh(10.0f, 0.9f, 10.0f), rigidBody, floorColor }));
             }
 
             {
@@ -171,7 +171,7 @@ class Physics3D: public ic::Application {
                 rigidBody->transform->rotation = ic::Quaternion().from_euler(0.0f, 1.0f, 2.0f);
 
                 level.add_object(rigidBody);
-                objects.push_back(new Object({ ic::GeometryGenerator::get().generate_parallelipiped_mesh(3.0f, 0.1f, 3.0f), rigidBody, ic::Colors::blue }));
+                objects.push_back(new Object({ ic::GeometryGenerator::generate_parallelipiped_mesh(3.0f, 0.1f, 3.0f), rigidBody, ic::Colors::blue }));
             }
 
 
@@ -179,7 +179,7 @@ class Physics3D: public ic::Application {
 
             keyboard = new ic::KeyboardController();
             keyboard->add_key_down_action([this]() { blowingAir = !blowingAir; }, KEY_Q);
-            ic::InputHandler::get().add_input(keyboard, "key");
+            ic::InputHandler::add_input(keyboard, "key");
 
 
             blowingAir = false;

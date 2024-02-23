@@ -14,72 +14,58 @@ namespace ic {
         ERROR,
     };
 
-    class Log {
-        public:
-            static Log& get() {
-                static Log ins;
-                return ins;
-            }
+    namespace Log {
+        void log(const LogLevels &level, const std::string &message) {
+            if (message.empty()) return;
+            
+            std::cout << message;
 
-            void log(const LogLevels &level, const std::string &message) {
-                if (message.empty()) return;
-                
-                std::cout << message;
-
-                content.append(message);
-            }
+            content.append(message);
+        }
 
 
 
 
-            void info(const std::string &message) {
-                this->log(ic::LogLevels::INFO, message);
-            }
+        void info(const std::string &message) {
+            log(ic::LogLevels::INFO, message);
+        }
 
-            void debug(const std::string &message) {
-                this->log(ic::LogLevels::DEBUG, message);
-            }
+        void debug(const std::string &message) {
+            log(ic::LogLevels::DEBUG, message);
+        }
 
-            void warn(const std::string &message) {
-                this->log(ic::LogLevels::WARN, message);
-            }
+        void warn(const std::string &message) {
+            log(ic::LogLevels::WARN, message);
+        }
 
-            void error(const std::string &message) {
-                this->log(ic::LogLevels::ERROR, message);
-            }
+        void error(const std::string &message) {
+            log(ic::LogLevels::ERROR, message);
+        }
 
-        private:
+        namespace {
             std::string content;
-
-        private:
-            Log() {}
-            ~Log() {}
-
-        public:
-            Log(Log const&) = delete;
-            void operator = (Log const&) = delete;
-
+        };
     };
 };
 
 extern void IC_LOG(const ic::LogLevels &level, const std::string &message) {
-    ic::Log::get().log(level, message);
+    ic::Log::log(level, message);
 }
 
 extern void IC_INFO(const std::string &message) {
-    ic::Log::get().info(message);
+    ic::Log::info(message);
 }
 
 extern void IC_DEBUG(const std::string &message) {
-    ic::Log::get().debug(message);
+    ic::Log::debug(message);
 }
 
 extern void IC_WARN(const std::string &message) {
-    ic::Log::get().warn(message);
+    ic::Log::warn(message);
 }
 
 extern void IC_ERROR(const std::string &message) {
-    ic::Log::get().error(message);
+    ic::Log::error(message);
 }
 
 

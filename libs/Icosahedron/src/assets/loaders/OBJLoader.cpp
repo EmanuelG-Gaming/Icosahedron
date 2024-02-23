@@ -5,6 +5,7 @@
 ///////////////////////////
 
 ic::Mesh3D ic::OBJLoader::load(const std::string &objectFileName) {
+
     std::ifstream objRead(objectFileName);
 
     if (!objRead.is_open() || objRead.fail()) {
@@ -14,16 +15,16 @@ ic::Mesh3D ic::OBJLoader::load(const std::string &objectFileName) {
 
     
     // Calculate size
-    ic::OBJSizes sizes = this->calculate_size(objRead);
+    ic::OBJSizes sizes = calculate_size(objRead);
     objRead.close();
 
     // Attribute references
     objRead.open(objectFileName);
-    ic::OBJAttributeReferences references = this->get_attribute_references(objRead, sizes);
+    ic::OBJAttributeReferences references = get_attribute_references(objRead, sizes);
     objRead.close();
 
     // Now try to convert to indices and geometric data
-    ic::OBJGeometricData data = this->get_geometric_data(references);
+    ic::OBJGeometricData data = get_geometric_data(references);
 
     ic::Mesh3D mesh;
     mesh.add_attribute(0, data.vertices);
@@ -37,7 +38,8 @@ ic::Mesh3D ic::OBJLoader::load(const std::string &objectFileName) {
 }
 
 
-ic::OBJSizes ic::OBJLoader::calculate_size(std::ifstream &objRead) {
+namespace ic::OBJLoader { namespace {
+ic::OBJSizes calculate_size(std::ifstream &objRead) {
     int posSize = 0, 
         tCoordSize = 0, 
         normalSize = 0, 
@@ -68,7 +70,7 @@ ic::OBJSizes ic::OBJLoader::calculate_size(std::ifstream &objRead) {
     return result;
 }
 
-ic::OBJAttributeReferences ic::OBJLoader::get_attribute_references(std::ifstream &objRead, const ic::OBJSizes &sizes) {
+ic::OBJAttributeReferences get_attribute_references(std::ifstream &objRead, const ic::OBJSizes &sizes) {
     ic::OBJAttributeReferences result;
     
     result.posReference.resize(sizes.posSize);
@@ -128,7 +130,7 @@ ic::OBJAttributeReferences ic::OBJLoader::get_attribute_references(std::ifstream
     return result;
 }
 
-ic::OBJGeometricData ic::OBJLoader::get_geometric_data(const ic::OBJAttributeReferences &reference) {
+ic::OBJGeometricData get_geometric_data(const ic::OBJAttributeReferences &reference) {
     ic::OBJGeometricData data;
 
     std::vector<std::string> pointReference = reference.points;
@@ -191,7 +193,7 @@ ic::OBJGeometricData ic::OBJLoader::get_geometric_data(const ic::OBJAttributeRef
 ///// Materials /////
 /////////////////////
 
-std::map<std::string, ic::OBJMaterialInfo> ic::OBJLoader::get_materials(const std::string &materialFileName) {
+std::map<std::string, ic::OBJMaterialInfo> get_materials(const std::string &materialFileName) {
     std::ifstream mtlRead(materialFileName);
     std::map<std::string, ic::OBJMaterialInfo> materials;
 
@@ -251,3 +253,4 @@ std::map<std::string, ic::OBJMaterialInfo> ic::OBJLoader::get_materials(const st
 
     return materials;
 }
+}}

@@ -58,19 +58,19 @@ class Electrostatics : public ic::Application {
         }
         
         bool load() override {
-            shader = ic::ShaderLoader::get().load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
-            vectorFieldShader = ic::ShaderLoader::get().load(shaders.basicShaderVertex2D, shaders.basicShaderFrag2D);
-            textShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
+            vectorFieldShader = ic::ShaderLoader::load(shaders.basicShaderVertex2D, shaders.basicShaderFrag2D);
+            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
             
             batch = ic::Batch(10000, ic::TRIANGLES);
             vectorFieldBatch = ic::Batch(100000, ic::LINES);
             textBatch = ic::Batch(10000, ic::TRIANGLES);
             worldTextBatch = ic::Batch(10000, ic::TRIANGLES);
 
-            ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
-            atlas = ic::FreeType::get().find_atlas("score");
+            ic::FreeType::add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
+            atlas = ic::FreeType::find_atlas("score");
             
-            circleTexture = ic::TextureLoader::get().load_png("resources/textures/ball.png");
+            circleTexture = ic::TextureLoader::load_png("resources/textures/ball.png");
             
             camera = ic::Camera2D();
             camera.scale = 0.5f;
@@ -88,15 +88,15 @@ class Electrostatics : public ic::Application {
 
             ic::MouseController *controller = new ic::MouseController();
             controller->add_mouse_scroll_up_action([this]() { 
-                float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.1f;
+                float p = ic::InputHandler::find_mouse("mouse")->get_wheel_direction() * 0.1f;
                 camera.scale = std::max(0.1f, std::min(camera.scale + p, 4.0f));
             });
             controller->add_mouse_scroll_down_action([this]() { 
-                float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.1f;
+                float p = ic::InputHandler::find_mouse("mouse")->get_wheel_direction() * 0.1f;
                 camera.scale = std::max(0.1f, std::min(camera.scale + p, 4.0f));
             });
 
-            ic::InputHandler::get().add_input(controller, "mouse");
+            ic::InputHandler::add_input(controller, "mouse");
 
 
             ic::KeyboardController *keyboard = (new ic::KeyboardController())->with_WASD();
@@ -107,7 +107,7 @@ class Electrostatics : public ic::Application {
 
             // Neutrons
             keyboard->add_key_up_action([this]() {
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
                 ic::Vec2f levelPos = camera.unproject(pos);
@@ -117,7 +117,7 @@ class Electrostatics : public ic::Application {
 
             // Protons
             keyboard->add_key_up_action([this]() {
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
                 ic::Vec2f levelPos = camera.unproject(pos);
@@ -127,7 +127,7 @@ class Electrostatics : public ic::Application {
 
             // Electrons
             keyboard->add_key_up_action([this]() {
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
                 ic::Vec2f levelPos = camera.unproject(pos);
@@ -135,7 +135,7 @@ class Electrostatics : public ic::Application {
                 add_object(levelPos.x(), levelPos.y(), 0.0f, 0.0f, -1.0f, 1.0f); 
             }, KEY_E);
 
-            ic::InputHandler::get().add_input(keyboard, "keyboard");
+            ic::InputHandler::add_input(keyboard, "keyboard");
 
             
             return true;
@@ -151,7 +151,7 @@ class Electrostatics : public ic::Application {
                 vectorFieldRefreshTime += dt;
             }
 
-            auto *controller = ic::InputHandler::get().find_keyboard("keyboard");
+            auto *controller = ic::InputHandler::find_keyboard("keyboard");
             ic::Vec2i dir = controller->get_direction();
 
             float speed = 1.0f;
@@ -173,7 +173,7 @@ class Electrostatics : public ic::Application {
                     BtoA = BtoA.nor();
 
                     // Coulomb's law
-                    float electrostaticMagnitude = (objectA->charge * objectB->charge) / (2 * ic::Mathf::get().twoPi * length2);
+                    float electrostaticMagnitude = (objectA->charge * objectB->charge) / (2 * ic::Mathf::twoPi * length2);
 
                     // Newton's gravity equation
                     float gravityMagnitude = -0.005f * (objectA->mass * objectB->mass) / (length2);
@@ -207,7 +207,7 @@ class Electrostatics : public ic::Application {
                             BtoA = BtoA.nor();
         
                             // Coulomb's law
-                            float electrostaticMagnitude = -object->charge / (2 * ic::Mathf::get().twoPi * length2);
+                            float electrostaticMagnitude = -object->charge / (2 * ic::Mathf::twoPi * length2);
         
                             // Newton's gravity equation
                             float gravityMagnitude = 0.005f * object->mass / (length2);

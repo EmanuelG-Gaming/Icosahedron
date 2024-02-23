@@ -12,38 +12,25 @@
 
 
 namespace ic {
-    class Audio {
-        public:
-            static Audio& get() {
-                static Audio ins;
-                return ins;
-            }
+    namespace Audio {
+        void init();
+        void dispose();
 
-            void init();
-            void dispose();
-
-            void play(ic::Music *music);
-            void play(ic::Sound *sound);
-           
-            /** @brief Calculates the fast Fourier Transform of the entire audio pool. 
-             *  The amount of "bars", or frequencies of the resulting array is 256.
-            */
-            float *calculate_FFT();
-            float *calculate_waveform();
-            
-        private:
-            Audio() {}
-            ~Audio() {}
-
-        public:
-            Audio(Audio const&) = delete;
-            void operator = (Audio const&) = delete;
+        void play(ic::Music *music);
+        void play(ic::Sound *sound);
         
-        private:
+        /** @brief Calculates the fast Fourier Transform of the entire audio pool. 
+         *  The amount of "bars", or frequencies of the resulting array is 256.
+        */
+        float *calculate_FFT();
+        float *calculate_waveform();
+            
+        namespace {
             std::unique_ptr<SoLoud::Soloud> handler;
             
             bool initialized = false;
             bool disposed = false;
+        };
     };
 }
 #endif

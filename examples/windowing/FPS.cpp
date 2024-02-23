@@ -30,12 +30,12 @@ class FPS : public ic::Application {
         }
         
         bool load() override {
-            shader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
             batch = ic::Batch(10000, ic::TRIANGLES);
 
             camera = ic::Camera2D();
 
-            atlas = ic::FreeType::get().add_atlas("font", "resources/fonts/Roboto-Regular.ttf", 40);
+            atlas = ic::FreeType::add_atlas("font", "resources/fonts/Roboto-Regular.ttf", 40);
 
             fps = 0;
             fpsCounter = lastFPSTime = 0.0f;

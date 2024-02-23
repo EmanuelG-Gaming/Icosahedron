@@ -117,38 +117,38 @@ class HeatEquation : public ic::Application {
 
             tileTexture = ic::Texture().setup_from_array(heatValues.data(), TILE_WIDTH, TILE_HEIGHT, GL_RED, GL_RED, params);
            
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, fragment);
-            textShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
-            wallShader = ic::ShaderLoader::get().load(shaders.basicShaderVertex2D, shaders.basicShaderFrag2D);
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, fragment);
+            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            wallShader = ic::ShaderLoader::load(shaders.basicShaderVertex2D, shaders.basicShaderFrag2D);
              
             
             textBatch = ic::Batch(10000, ic::TRIANGLES);
             wallBatch = ic::Batch(100000, ic::TRIANGLES);
             lineBatch = ic::Batch(100000, ic::LINES);
-            ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
-            atlas = ic::FreeType::get().find_atlas("score");
+            ic::FreeType::add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
+            atlas = ic::FreeType::find_atlas("score");
 
 
 
             camera = ic::Camera2D();
             uiCamera = ic::Camera2D();
 
-            tilesMesh = ic::GeometryGenerator::get().generate_rectangle_mesh(TILE_WIDTH / 2.0f, TILE_HEIGHT / 2.0f);
+            tilesMesh = ic::GeometryGenerator::generate_rectangle_mesh(TILE_WIDTH / 2.0f, TILE_HEIGHT / 2.0f);
             tilesMesh.set_transformation(ic::Mat4x4().set_translation<2>({ TILE_WIDTH / 2.0f, TILE_HEIGHT / 2.0f }));
 
 
             ic::MouseController *controller = new ic::MouseController();
             controller->add_mouse_scroll_up_action([this]() { 
-                float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.05f;
+                float p = ic::InputHandler::find_mouse("mouse")->get_wheel_direction() * 0.05f;
                 camera.scale = std::max(0.01f, std::min(camera.scale + p, 4.0f));
             });
             controller->add_mouse_scroll_down_action([this]() { 
-                float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.05f;
+                float p = ic::InputHandler::find_mouse("mouse")->get_wheel_direction() * 0.05f;
                 camera.scale = std::max(0.01f, std::min(camera.scale + p, 4.0f));
             });
 
             controller->add_mouse_down_action([this]() { 
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
                 ic::Vec2f levelPos = camera.unproject(pos);
 
@@ -159,14 +159,14 @@ class HeatEquation : public ic::Application {
             });
 
             controller->add_mouse_hold_action([this]() { 
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
                 ic::Vec2f levelPos = camera.unproject(pos);
 
                 int x = (int) levelPos.x();
                 int y = (int) (TILE_HEIGHT - levelPos.y());
 
-                ic::Rasterization::get().line(x, y, previousPosition.x(), previousPosition.y(), [this](int i, int j) {
+                ic::Rasterization::line(x, y, previousPosition.x(), previousPosition.y(), [this](int i, int j) {
                     if (i < 0 || j < 0 || i >= TILE_WIDTH || j >= TILE_HEIGHT) return;
                     heatValues[j * TILE_WIDTH + i] += 1000.0f;
                 });
@@ -174,7 +174,7 @@ class HeatEquation : public ic::Application {
                 previousPosition = { x, y };
             });
 
-            ic::InputHandler::get().add_input(controller, "mouse");
+            ic::InputHandler::add_input(controller, "mouse");
 
 
 
@@ -182,7 +182,7 @@ class HeatEquation : public ic::Application {
 
             // These have the same location
             auto move_to = [this]() {
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
                 ic::Vec2f levelPos = camera.unproject(pos);
 
@@ -196,14 +196,14 @@ class HeatEquation : public ic::Application {
             keyboard->add_key_down_action(move_to, KEY_M);
 
             keyboard->add_action([this]() { 
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
                 ic::Vec2f levelPos = camera.unproject(pos);
 
                 int x = (int) levelPos.x();
                 int y = (int) (TILE_HEIGHT - levelPos.y());
 
-                ic::Rasterization::get().line(x, y, previousWallPosition.x(), previousWallPosition.y(), [this](int i, int j) {
+                ic::Rasterization::line(x, y, previousWallPosition.x(), previousWallPosition.y(), [this](int i, int j) {
                     if (i < 0 || j < 0 || i >= TILE_WIDTH || j >= TILE_HEIGHT) return;
                     walls[j * TILE_WIDTH + i] = 1;
                 });
@@ -212,14 +212,14 @@ class HeatEquation : public ic::Application {
             }, KEY_L);
 
             keyboard->add_action([this]() { 
-                ic::Vec2i p = ic::InputHandler::get().find_mouse("mouse")->get_cursor_position();
+                ic::Vec2i p = ic::InputHandler::find_mouse("mouse")->get_cursor_position();
                 ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
                 ic::Vec2f levelPos = camera.unproject(pos);
 
                 int x = (int) levelPos.x();
                 int y = (int) (TILE_HEIGHT - levelPos.y());
 
-                ic::Rasterization::get().line(x, y, previousWallPosition.x(), previousWallPosition.y(), [this](int i, int j) {
+                ic::Rasterization::line(x, y, previousWallPosition.x(), previousWallPosition.y(), [this](int i, int j) {
                     if (i < 0 || j < 0 || i >= TILE_WIDTH || j >= TILE_HEIGHT) return;
                     walls[j * TILE_WIDTH + i] = 0;
                     heatValues[j * TILE_WIDTH + i] = 0.0f;
@@ -232,7 +232,7 @@ class HeatEquation : public ic::Application {
                 hasVectorField = !hasVectorField;
             }, KEY_F);
 
-            ic::InputHandler::get().add_input(keyboard, "WASD");
+            ic::InputHandler::add_input(keyboard, "WASD");
 
 
             time = 0.0f;
@@ -275,7 +275,7 @@ class HeatEquation : public ic::Application {
             time += dt;
             deltaTime = dt;
 
-            auto *controller = ic::InputHandler::get().find_keyboard("WASD");
+            auto *controller = ic::InputHandler::find_keyboard("WASD");
             ic::Vec2i dir = controller->get_direction();
 
             float speed = 50.0f;
@@ -292,7 +292,7 @@ class HeatEquation : public ic::Application {
             averageHeat /= TILE_AREA;
 
             for (int i = 0; i < TILE_AREA; i++) {
-                data[i] = (uint8_t) ic::Mathf::get().clamp(heatValues[i], 0.0f, 255.0f);
+                data[i] = (uint8_t) ic::Mathf::clamp(heatValues[i], 0.0f, 255.0f);
             }
             tileTexture.set_pixel_content(data, GL_RED);
 

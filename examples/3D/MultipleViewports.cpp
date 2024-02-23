@@ -151,23 +151,23 @@ class MultipleViewports : public ic::Application {
         bool load() override {
             states.enable_depth_testing(ic::LESS);
             
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
-            screenShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
+            screenShader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
             
-            meshTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
-            mainCameraTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
+            meshTexture = ic::TextureLoader::load_png("resources/textures/wood.png");
+            mainCameraTexture = ic::TextureLoader::load_png("resources/textures/white.png");
             
             framebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
             
 
-            mesh = ic::GeometryGenerator::get().generate_UV_sphere_mesh(0.5f, 14, 14);
+            mesh = ic::GeometryGenerator::generate_UV_sphere_mesh(0.5f, 14, 14);
             
-            mainCameraMesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
-            secondCameraMesh = ic::OBJLoader::get().load("resources/models/icosahedron.obj");
+            mainCameraMesh = ic::GeometryGenerator::generate_cube_mesh(0.5f);
+            secondCameraMesh = ic::OBJLoader::load("resources/models/icosahedron.obj");
 
             screenQuad = ic::Mesh3D();
             screenQuad.add_attribute(0, 3, std::vector<float>({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f }));
-            screenQuad.add_attribute(2, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            screenQuad.add_attribute(2, 2, ic::GeometryGenerator::generate_UV_rectangle());
             screenQuad.add_attribute(3, 3, std::vector<float>({ 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f }));
             screenQuad.set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 

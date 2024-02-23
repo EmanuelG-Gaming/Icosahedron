@@ -68,17 +68,17 @@ class AnimatedSprites : public ic::Application {
             }
 
             // Mesh 1
-            mesh1 = ic::GeometryGenerator::get().generate_rectangle_mesh(0.3f, 0.3f);
+            mesh1 = ic::GeometryGenerator::generate_rectangle_mesh(0.3f, 0.3f);
             mesh1.set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
             
             // Mesh 2
-            mesh2 = ic::GeometryGenerator::get().generate_rectangle_mesh(0.3f, 0.3f);
+            mesh2 = ic::GeometryGenerator::generate_rectangle_mesh(0.3f, 0.3f);
             mesh2.set_transformation(ic::Mat4x4().set_translation<2>({ 0.35f, 0.0f }));
             
 
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, alphaBlendingFragment);
-            texture1 = ic::TextureLoader::get().load_png("resources/textures/discontinuous-square.png");
-            texture2 = ic::TextureLoader::get().load(image);
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, alphaBlendingFragment);
+            texture1 = ic::TextureLoader::load_png("resources/textures/discontinuous-square.png");
+            texture2 = ic::TextureLoader::load(image);
 
             int images = 3;
             spritesheet = ic::TextureAtlas(32 * images, 32);

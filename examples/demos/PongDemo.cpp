@@ -34,12 +34,12 @@ class PongDemo : public ic::Application {
         }
         
         bool load() override {
-            shader = ic::ShaderLoader::get().load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
-            textShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
+            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
 
             // We use the roboto font
-            ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
-            atlas = ic::FreeType::get().find_atlas("score");
+            ic::FreeType::add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
+            atlas = ic::FreeType::find_atlas("score");
 
             texture = ic::TextureAtlas(2048, 2048);
             texture.add_entries({ "paddle1", "resources/textures/white.png",
@@ -70,8 +70,8 @@ class PongDemo : public ic::Application {
             cont2->add_action([cont2]() {cont2->direction.y() = -1;}, KEY_DOWN);
             
 
-            ic::InputHandler::get().add_input(cont1, "paddle1");
-            ic::InputHandler::get().add_input(cont2, "paddle2");
+            ic::InputHandler::add_input(cont1, "paddle1");
+            ic::InputHandler::add_input(cont2, "paddle2");
 
             return true;
         }
@@ -130,8 +130,8 @@ class PongDemo : public ic::Application {
 
 
             float speed = 1.0f;
-            auto *controller1 = ic::InputHandler::get().find_keyboard("paddle1");
-            auto *controller2 = ic::InputHandler::get().find_keyboard("paddle2");
+            auto *controller1 = ic::InputHandler::find_keyboard("paddle1");
+            auto *controller2 = ic::InputHandler::find_keyboard("paddle2");
             
             ic::Vec2i dir1 = controller1->get_direction();
             ic::Vec2i dir2 = controller2->get_direction();

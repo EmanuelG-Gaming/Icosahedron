@@ -40,11 +40,11 @@ class SoundVisualizer : public ic::Application {
                 weights[i] = value;
             }
             
-            shader = ic::ShaderLoader::get().load(shaders.basicShaderVertex2D, shaders.basicShaderFrag2D);
+            shader = ic::ShaderLoader::load(shaders.basicShaderVertex2D, shaders.basicShaderFrag2D);
 
             batch = ic::Batch(100000, ic::TRIANGLES);
 
-            ic::Audio::get().play(new ic::Music("resources/audio/insert music here.mp3"));
+            ic::Audio::play(new ic::Music("resources/audio/insert music here.mp3"));
             
             return true;
         }
@@ -56,7 +56,7 @@ class SoundVisualizer : public ic::Application {
         }
 
         bool update(float dt) override {
-            float *frequencies = ic::Audio::get().calculate_FFT();
+            float *frequencies = ic::Audio::calculate_FFT();
             float *calculated = new float[256];
 
             // Applies a convolution
@@ -75,7 +75,7 @@ class SoundVisualizer : public ic::Application {
             for (int i = 0; i < 256; i++) {
                 float value = calculated[i] * 0.01f;
                 float b = 256.0f - i * 1.5f;
-                uint8_t brightness = (uint8_t) ic::Mathf::get().clamp(b, 0.0f, 256.0f);
+                uint8_t brightness = (uint8_t) ic::Mathf::clamp(b, 0.0f, 256.0f);
                 ic::Color color = { brightness, brightness, brightness };
 
 

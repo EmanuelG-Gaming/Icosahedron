@@ -202,11 +202,11 @@ class TextureArrays : public ic::Application {
             states.enable_depth_testing(ic::LESS);
             states.enable_face_culling(ic::FRONT, ic::CCW);
             
-            singleTextureShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, singleTextureFragment);
-            textureArrayShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, textureArrayFragment);
+            singleTextureShader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, singleTextureFragment);
+            textureArrayShader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, textureArrayFragment);
             
-            floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
-            whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
+            floorTexture = ic::TextureLoader::load_png("resources/textures/wood.png");
+            whiteTexture = ic::TextureLoader::load_png("resources/textures/white.png");
             
             textureArray = ic::TextureArray(64, 6);
             textureArray.add_texture("resources/textures/stone.png");
@@ -216,9 +216,9 @@ class TextureArrays : public ic::Application {
             textureArray.add_texture("resources/textures/wood.png");
             textureArray.add_texture("resources/textures/tile.png");
 
-            mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
+            mesh = ic::GeometryGenerator::generate_cube_mesh(0.5f);
 
-            floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 25.0f, 0.1f, 25.0f);
+            floorMesh = ic::GeometryGenerator::generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 25.0f, 0.1f, 25.0f);
             floorMesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
 
             camera = new ic::Camera3D();

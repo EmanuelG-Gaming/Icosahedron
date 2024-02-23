@@ -39,31 +39,31 @@ class PiCounting : public ic::Application {
         }
         
         bool load() override {
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
-            textShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
             
             textBatch = ic::Batch(10000, ic::TRIANGLES);
-            ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
-            atlas = ic::FreeType::get().find_atlas("score");
+            ic::FreeType::add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
+            atlas = ic::FreeType::find_atlas("score");
             
-            piTexture = ic::TextureLoader::get().load_png("resources/textures/pi.png");
-            piMesh = ic::GeometryGenerator::get().generate_rectangle_mesh(0.08f, 0.08f);
+            piTexture = ic::TextureLoader::load_png("resources/textures/pi.png");
+            piMesh = ic::GeometryGenerator::generate_rectangle_mesh(0.08f, 0.08f);
             piMesh.set_transformation(ic::Mat4x4().set_translation<2>({ 0.5f, 0.7f }));
 
-            floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
-            wallTexture = ic::TextureLoader::get().load_png("resources/textures/stone-bricks.png");
+            floorTexture = ic::TextureLoader::load_png("resources/textures/wood.png");
+            wallTexture = ic::TextureLoader::load_png("resources/textures/stone-bricks.png");
 
             camera = ic::Camera2D();
             camera.scale = 0.5f;
             uiCamera = ic::Camera2D();
 
-            wallMesh = ic::GeometryGenerator::get().generate_rectangle_mesh(0.3f, 0.5f, 1.0f, 2.0f);
-            floorMesh = ic::GeometryGenerator::get().generate_rectangle_mesh(200.0f, 0.3f, 200.0f, 0.3f);
+            wallMesh = ic::GeometryGenerator::generate_rectangle_mesh(0.3f, 0.5f, 1.0f, 2.0f);
+            floorMesh = ic::GeometryGenerator::generate_rectangle_mesh(200.0f, 0.3f, 200.0f, 0.3f);
             
-            movingMesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(32, 0.2f);
+            movingMesh = ic::GeometryGenerator::generate_regular_polygon_mesh(32, 0.2f);
             movingMesh.set_material(ic::MeshMaterial2D(ic::Colors::yellow, 1.0f));
             
-            rigidMesh = ic::GeometryGenerator::get().generate_regular_polygon_mesh(32, 0.2f);
+            rigidMesh = ic::GeometryGenerator::generate_regular_polygon_mesh(32, 0.2f);
             rigidMesh.set_material(ic::MeshMaterial2D(ic::Colors::cyan, 1.0f));
             
 
@@ -120,7 +120,7 @@ class PiCounting : public ic::Application {
 
             ic::KeyboardController *keys = new ic::KeyboardController();
             keys->add_key_up_action([this]() { spectatingMoving = !spectatingMoving; }, KEY_Q);
-            ic::InputHandler::get().add_input(keys, "Keys");
+            ic::InputHandler::add_input(keys, "Keys");
 
             return true;
         }

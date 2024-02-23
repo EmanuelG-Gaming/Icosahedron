@@ -65,22 +65,22 @@ void ic::UI::Core::load() {
 
 
 
-    ic::UI::Global::get().load();
+    ic::UI::Global::load();
 
     this->uiCamera = ic::Camera2D();
-    this->uiShader = ic::ShaderLoader::get().load(vertex, textureFragment);
-    this->uiTextShader = ic::ShaderLoader::get().load(vertex, textFragment);
-    this->atlas = &ic::UI::Global::get().atlas;
+    this->uiShader = ic::ShaderLoader::load(vertex, textureFragment);
+    this->uiTextShader = ic::ShaderLoader::load(vertex, textFragment);
+    this->atlas = &ic::UI::Global::atlas;
 
     this->mainTable = new ic::UI::Table();
 
 
     this->mouse = new ic::MouseController();
     this->mouse->add_mouse_moved_action([this]() {
-        ic::Vec2i p = ic::InputHandler::get().find_mouse("ui mouse")->get_cursor_position();
+        ic::Vec2i p = ic::InputHandler::find_mouse("ui mouse")->get_cursor_position();
         ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
-        ic::UI::Global::get().mouseCursorPosition = this->uiCamera.unproject(pos);
+        ic::UI::Global::mouseCursorPosition = this->uiCamera.unproject(pos);
 
         this->mainTable->mouse_moved();
     });
@@ -93,7 +93,7 @@ void ic::UI::Core::load() {
         this->mainTable->mouse_down();
     });
 
-    ic::InputHandler::get().add_input(this->mouse, "ui mouse");
+    ic::InputHandler::add_input(this->mouse, "ui mouse");
 }
 
 void ic::UI::Core::update_and_render(float dt) {
@@ -104,8 +104,8 @@ void ic::UI::Core::update_and_render(float dt) {
     this->uiShader.use();
     this->uiCamera.use(this->uiShader);
 
-    ic::UI::Global::get().atlas.use();
-    ic::UI::Global::get().fillBatch.render();
+    ic::UI::Global::atlas.use();
+    ic::UI::Global::fillBatch.render();
 
 
     // Text
@@ -113,14 +113,14 @@ void ic::UI::Core::update_and_render(float dt) {
     this->uiCamera.use(this->uiTextShader);
     
     // Currently uses the default atlas
-    ic::UI::Global::get().defaultAtlas.use();
-    ic::UI::Global::get().fillTextBatch.render();
+    ic::UI::Global::defaultAtlas.use();
+    ic::UI::Global::fillTextBatch.render();
 }
 
 
 void ic::UI::Core::dispose() {
     this->uiShader.clear();
     this->uiTextShader.clear();
-    ic::UI::Global::get().fillBatch.dispose();
-    ic::UI::Global::get().fillTextBatch.dispose();
+    ic::UI::Global::fillBatch.dispose();
+    ic::UI::Global::fillTextBatch.dispose();
 }

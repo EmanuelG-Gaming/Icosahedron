@@ -8,32 +8,19 @@
 #include <Icosahedron/input/MouseController.h>
 
 namespace ic {
-    class InputHandler {
-        public:
-            static InputHandler& get() {
-                static InputHandler ins;
-                return ins;
-            }
-
-            void handle(ic::Event event, float dt);
-            void update(float dt);
-            
-            void add_input(ic::Input* input, const INPUT_LOCATION &location);
-            ic::Input *find_input(const INPUT_LOCATION &location);
-
-            ic::KeyboardController *find_keyboard(const INPUT_LOCATION &location);
-            ic::MouseController *find_mouse(const INPUT_LOCATION &location);
-
-        private:
-            std::map<INPUT_LOCATION, ic::Input*> inputs;
+    namespace InputHandler {
+        void handle(ic::Event event, float dt);
+        void update(float dt);
         
-        private:
-            InputHandler() {}
-            ~InputHandler() {}
+        void add_input(ic::Input* input, const INPUT_LOCATION &location);
+        ic::Input *find_input(const INPUT_LOCATION &location);
 
-        public:
-            InputHandler(InputHandler const&) = delete;
-            void operator = (InputHandler const&) = delete;
+        ic::KeyboardController *find_keyboard(const INPUT_LOCATION &location);
+        ic::MouseController *find_mouse(const INPUT_LOCATION &location);
+
+        namespace {
+            std::map<INPUT_LOCATION, ic::Input*> inputs;
+        };
     };
 }
 #endif

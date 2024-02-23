@@ -174,20 +174,20 @@ class PostProcessing : public ic::Application {
             states.enable_depth_testing(ic::LESS);
             states.enable_face_culling(ic::FRONT, ic::CCW);
             
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
-            screenShader = ic::ShaderLoader::get().load(screenVertex, screenFragment);
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
+            screenShader = ic::ShaderLoader::load(screenVertex, screenFragment);
             
-            floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png");
-            whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
+            floorTexture = ic::TextureLoader::load_png("resources/textures/wood.png");
+            whiteTexture = ic::TextureLoader::load_png("resources/textures/white.png");
             
             framebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
 
-            mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
-            floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
+            mesh = ic::GeometryGenerator::generate_cube_mesh(0.5f);
+            floorMesh = ic::GeometryGenerator::generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
             
             screenQuad = ic::Mesh2D();
-            screenQuad.add_attribute(0, 2, ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
-            screenQuad.add_attribute(1, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            screenQuad.add_attribute(0, 2, ic::GeometryGenerator::generate_rectangle(1.0f, 1.0f));
+            screenQuad.add_attribute(1, 2, ic::GeometryGenerator::generate_UV_rectangle());
             screenQuad.set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
             camera = ic::Camera3D();

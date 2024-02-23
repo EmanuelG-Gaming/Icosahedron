@@ -1,6 +1,5 @@
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 
-
 ic::Shader ic::ShaderLoader::load(const std::string &vertexCode, const std::string &fragmentCode) {
     ic::Shader result(vertexCode, fragmentCode);
     return result;

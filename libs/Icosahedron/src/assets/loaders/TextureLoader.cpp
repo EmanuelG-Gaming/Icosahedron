@@ -9,8 +9,8 @@ ic::Texture ic::TextureLoader::load_png(const std::string &filePath, ic::Texture
         return ic::Texture();
     }
 
-    GLenum textureFormat = this->map_to_texture_format(texture->format->format, gammaCorrection);
-    ic::Texture result = this->load_texture(texture->pixels, texture->w, texture->h, textureFormat, textureFormat, parameters);
+    GLenum textureFormat = map_to_texture_format(texture->format->format, gammaCorrection);
+    ic::Texture result = load_texture(texture->pixels, texture->w, texture->h, textureFormat, textureFormat, parameters);
     SDL_FreeSurface(texture);
 
     return result;
@@ -23,8 +23,8 @@ ic::Texture ic::TextureLoader::load_bmp(const std::string &filePath, ic::Texture
         return ic::Texture();
     }
 
-    GLenum textureFormat = this->map_to_texture_format(texture->format->format, gammaCorrection);
-    ic::Texture result = this->load_texture(texture->pixels, texture->w, texture->h, textureFormat, textureFormat, parameters);
+    GLenum textureFormat = map_to_texture_format(texture->format->format, gammaCorrection);
+    ic::Texture result = load_texture(texture->pixels, texture->w, texture->h, textureFormat, textureFormat, parameters);
     SDL_FreeSurface(texture);
 
     return result;
@@ -32,10 +32,10 @@ ic::Texture ic::TextureLoader::load_bmp(const std::string &filePath, ic::Texture
 
 
 ic::Texture ic::TextureLoader::load(ic::Image &image, ic::TextureParameters parameters, bool gammaCorrection) {
-    bool transparent = ic::ImageIO::get().image_transparent(image);
+    bool transparent = ic::ImageIO::image_transparent(image);
     GLenum format = gammaCorrection ? (transparent ? GL_SRGB_ALPHA : GL_SRGB) : (transparent ? GL_RGBA : GL_RGB);
     
-    return this->load_texture(image.data(), image.get_width(), image.get_height(), format, format, parameters);
+    return load_texture(image.data(), image.get_width(), image.get_height(), format, format, parameters);
 }
 
 
@@ -60,6 +60,8 @@ GLenum ic::TextureLoader::map_to_texture_format(uint32_t format, bool gammaCorre
     return result;
 }
 
-ic::Texture ic::TextureLoader::load_texture(const void *data, int width, int height, GLenum internalFormat, GLenum format, const ic::TextureParameters &parameters) {
+namespace ic::TextureLoader { namespace {
+ic::Texture load_texture(const void *data, int width, int height, GLenum internalFormat, GLenum format, const ic::TextureParameters &parameters) {
     return ic::Texture().setup_from_array(data, width, height, internalFormat, format, parameters);
 }
+}}

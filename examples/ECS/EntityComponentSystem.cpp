@@ -76,7 +76,7 @@ struct MovementSystem {
     void load() {
         keyboard = (new ic::KeyboardController())->with_WASD();
 
-        ic::InputHandler::get().add_input(keyboard, "WASD");
+        ic::InputHandler::add_input(keyboard, "WASD");
     }
 
     void update(ic::Entities &registry, float dt) {
@@ -115,15 +115,15 @@ class EntityComponentSystem : public ic::Application {
         
         bool load() override {
             camera = ic::Camera2D();
-            spriteShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            spriteShader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
             movementSystem.load();
 
             // A floor that has a wood texture
             {
                 ic::Entity *entity = registry.add_entity();
                 entity->add<SpriteComp>(
-                    ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f, 3.0f, 3.0f),
-                    ic::TextureLoader::get().load_png("resources/textures/wood.png")
+                    ic::GeometryGenerator::generate_rectangle_mesh(1.0f, 1.0f, 3.0f, 3.0f),
+                    ic::TextureLoader::load_png("resources/textures/wood.png")
                 );
             }
 
@@ -131,8 +131,8 @@ class EntityComponentSystem : public ic::Application {
             {
                 ic::Entity *entity = registry.add_entity();
                 entity->add<SpriteComp>(
-                    ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f, 0.4f, 0.6f),
-                    ic::TextureLoader::get().load_png("resources/textures/stone-bricks.png")
+                    ic::GeometryGenerator::generate_rectangle_mesh(1.0f, 1.0f, 0.4f, 0.6f),
+                    ic::TextureLoader::load_png("resources/textures/stone-bricks.png")
                 );
                 entity->add<PositionComp>(
                     0.5f, 0.5f,
@@ -144,8 +144,8 @@ class EntityComponentSystem : public ic::Application {
             {
                 ic::Entity *entity = registry.add_entity();
                 entity->add<SpriteComp>(
-                    ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f),
-                    ic::TextureLoader::get().load_png("resources/textures/white.png")
+                    ic::GeometryGenerator::generate_rectangle_mesh(1.0f, 1.0f),
+                    ic::TextureLoader::load_png("resources/textures/white.png")
                 ).mesh.set_material(ic::MeshMaterial2D(ic::Colors::green, 1.0f));
 
                 entity->add<PositionComp>(

@@ -9,7 +9,7 @@ ic::Physics::ManifoldPoints2D ic::Physics::CircleCollider::test(Transform2D *tra
 }
 
 ic::Physics::ManifoldPoints2D ic::Physics::CircleCollider::test(Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) {
-    return ic::Physics::CollisionUtils2D::get().circle_circle(this, transformA, colliderB, transformB);
+    return ic::Physics::CollisionUtils2D::circle_circle(this, transformA, colliderB, transformB);
 }
 
 ic::Physics::ManifoldPoints2D ic::Physics::CircleCollider::test(Transform2D *transformA, RectangleCollider *colliderB, Transform2D *transformB) {
@@ -45,11 +45,11 @@ ic::Physics::ManifoldPoints2D ic::Physics::RectangleCollider::test(Transform2D *
 }
 
 ic::Physics::ManifoldPoints2D ic::Physics::RectangleCollider::test(Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) {
-    return ic::Physics::CollisionUtils2D::get().rectangle_circle(this, transformA, colliderB, transformB);
+    return ic::Physics::CollisionUtils2D::rectangle_circle(this, transformA, colliderB, transformB);
 }
 
 ic::Physics::ManifoldPoints2D ic::Physics::RectangleCollider::test(Transform2D *transformA, RectangleCollider *colliderB, Transform2D *transformB) {
-    return ic::Physics::CollisionUtils2D::get().rectangle_rectangle(this, transformA, colliderB, transformB);
+    return ic::Physics::CollisionUtils2D::rectangle_rectangle(this, transformA, colliderB, transformB);
 }
 
 ic::Physics::ManifoldPoints2D ic::Physics::RectangleCollider::test(Transform2D *transformA, PolygonCollider *colliderB, Transform2D *transformB) {
@@ -64,7 +64,7 @@ ic::Physics::ManifoldPoints2D ic::Physics::PolygonCollider::test(Transform2D *tr
 }
 
 ic::Physics::ManifoldPoints2D ic::Physics::PolygonCollider::test(Transform2D *transformA, CircleCollider *colliderB, Transform2D *transformB) {
-    return ic::Physics::CollisionUtils2D::get().polygon_circle(this, transformA, colliderB, transformB);
+    return ic::Physics::CollisionUtils2D::polygon_circle(this, transformA, colliderB, transformB);
 }
 
 ic::Physics::ManifoldPoints2D ic::Physics::PolygonCollider::test(Transform2D *transformA, RectangleCollider *colliderB, Transform2D *transformB) {

@@ -22,28 +22,15 @@ namespace ic {
         const void *data;
     };
 
-    class CubemapLoader {
-        public:
-            static CubemapLoader& get() {
-                static CubemapLoader ins;
-                return ins;
-            }
+    namespace CubemapLoader {
+        ic::Cubemap load_png(const std::vector<std::string> &filePaths, bool gammaCorrection = false);
+        ic::Cubemap load_bmp(const std::vector<std::string> &filePaths, bool gammaCorrection = false);
 
-
-            ic::Cubemap load_png(const std::vector<std::string> &filePaths, bool gammaCorrection = false);
-            ic::Cubemap load_bmp(const std::vector<std::string> &filePaths, bool gammaCorrection = false);
-
-        private:
+        // Private functions in anonymous namespace
+        namespace {
             GLenum map_to_texture_format(uint32_t format, bool gammaCorrection = false);
             void load_cubemap_face(const ic::CubemapFaceInformation &data);
-
-        private:
-            CubemapLoader() {}
-            ~CubemapLoader() {}
-
-        public:
-            CubemapLoader(CubemapLoader const&) = delete;
-            void operator = (CubemapLoader const&) = delete;
+        };
     };
 }
 #endif

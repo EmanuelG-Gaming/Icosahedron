@@ -47,28 +47,15 @@ namespace ic {
 
 
     /** @brief Loads .obj model files. Can optionally load material content. */
-    class OBJLoader {
-        public:
-            static OBJLoader& get() {
-                static OBJLoader ins;
-                return ins;
-            }
-
-            ic::Mesh3D load(const std::string &objectFileName);
-            std::map<std::string, ic::OBJMaterialInfo> get_materials(const std::string &materialFileName);
+    namespace OBJLoader {
+        ic::Mesh3D load(const std::string &objectFileName);
+        std::map<std::string, ic::OBJMaterialInfo> get_materials(const std::string &materialFileName);
         
-        private:
+        namespace {
             ic::OBJSizes calculate_size(std::ifstream &objRead);
             ic::OBJAttributeReferences get_attribute_references(std::ifstream &objRead, const ic::OBJSizes &sizes);
             ic::OBJGeometricData get_geometric_data(const ic::OBJAttributeReferences &reference);
-
-        private:
-            OBJLoader() {}
-            ~OBJLoader() {}
-
-        public:
-            OBJLoader(OBJLoader const&) = delete;
-            void operator = (OBJLoader const&) = delete;
+        };
     };
 }
 #endif

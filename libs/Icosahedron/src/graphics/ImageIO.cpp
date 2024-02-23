@@ -6,7 +6,7 @@ ic::Image ic::ImageIO::read_png(const std::string &fileName) {
         throw std::runtime_error("IMG_Load Error: " + std::string(IMG_GetError()) + "\n");
     }
 
-    ic::Image result = this->to_image(surface);
+    ic::Image result = to_image(surface);
     SDL_FreeSurface(surface);
     
     return result;
@@ -18,7 +18,7 @@ ic::Image ic::ImageIO::read_bmp(const std::string &fileName) {
         throw std::runtime_error("SDL_LoadBMP Error: " + std::string(SDL_GetError()) + "\n");
     }
 
-    ic::Image result = this->to_image(surface);
+    ic::Image result = to_image(surface);
     SDL_FreeSurface(surface);
     
     return result;
@@ -79,7 +79,7 @@ ic::Image ic::ImageIO::read_ppm(const std::string &fileName) {
 
 
 void ic::ImageIO::write_png(const std::string &fileName, ic::Image &image) {
-    SDL_Surface *surface = this->to_surface(image);
+    SDL_Surface *surface = to_surface(image);
     if (surface == NULL) {
         return;
     }
@@ -90,7 +90,7 @@ void ic::ImageIO::write_png(const std::string &fileName, ic::Image &image) {
 }
 
 void ic::ImageIO::write_bmp(const std::string &fileName, ic::Image &image) {
-    SDL_Surface *surface = this->to_surface(image);
+    SDL_Surface *surface = to_surface(image);
     if (surface == NULL) {
         return;
     }
@@ -105,7 +105,7 @@ void ic::ImageIO::write_ppm(const std::string &fileName, ic::Image &image) {
     float width = image.get_width();
     float height = image.get_height();
 
-    bool transparent = this->image_transparent(image);
+    bool transparent = image_transparent(image);
 
     if (transparent) {
         output << "P4" << "\n";
@@ -134,7 +134,7 @@ void ic::ImageIO::write_ppm(const std::string &fileName, ic::Image &image) {
 
 
 SDL_Surface *ic::ImageIO::to_surface(ic::Image &image) {
-    bool transparent = this->image_transparent(image);
+    bool transparent = image_transparent(image);
 
     int width = image.get_width();
     int height = image.get_height();

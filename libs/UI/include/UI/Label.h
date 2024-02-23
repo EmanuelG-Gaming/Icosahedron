@@ -19,19 +19,19 @@ namespace ic { namespace UI {
             ic::UI::Drawable *background;
             
             LabelStyle() {
-                this->font = ic::UI::Global::get().defaultAtlas;
+                this->font = ic::UI::Global::defaultAtlas;
                 this->fontColor = { 255, 255, 255 };
                 this->background = nullptr;
             }
 
             LabelStyle(const std::string &fontName, ic::UI::Drawable *background = nullptr) {
-                this->font = ic::FreeType::get().find_atlas(fontName);
+                this->font = ic::FreeType::find_atlas(fontName);
                 this->fontColor = { 255, 255, 255 };
                 this->background = background;
             }
 
             LabelStyle(const std::string &fontName, const ic::Color &color, ic::UI::Drawable *background = nullptr) {
-                this->font = ic::FreeType::get().find_atlas(fontName);
+                this->font = ic::FreeType::find_atlas(fontName);
                 this->fontColor = color;
                 this->background = background;
             }

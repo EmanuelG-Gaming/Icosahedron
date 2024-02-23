@@ -222,26 +222,26 @@ class SceneWithShadows : public ic::Application {
         bool load() override {
             states.enable_depth_testing(ic::LESS);
             
-            shader = ic::ShaderLoader::get().load(vert, fragment);
+            shader = ic::ShaderLoader::load(vert, fragment);
             shader.use();
             shader.set_uniform_int("sampleTexture", 0);
             shader.set_uniform_int("shadowMap", 1);
 
-            depthShader = ic::ShaderLoader::get().load(depthShaderVert, depthShaderFrag);
+            depthShader = ic::ShaderLoader::load(depthShaderVert, depthShaderFrag);
 
             ic::TextureParameters floorParams;
             floorParams.usesMipmapping = true;
             
-            floorTexture = ic::TextureLoader::get().load_png("resources/textures/stone-bricks.png", floorParams);
-            whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png");
+            floorTexture = ic::TextureLoader::load_png("resources/textures/stone-bricks.png", floorParams);
+            whiteTexture = ic::TextureLoader::load_png("resources/textures/white.png");
 
             shadowWidth = 1024;
             shadowHeight = 1024;
             shadowMap = ic::Framebuffer(ic::TEXTURE_ATTACH_DEPTH, ic::TEXTURE_DEPTH, shadowWidth, shadowHeight);
 
-            mesh = ic::OBJLoader::get().load("resources/models/vector.obj");
+            mesh = ic::OBJLoader::load("resources/models/vector.obj");
             
-            floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 25.0f, 0.1f, 25.0f);
+            floorMesh = ic::GeometryGenerator::generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 25.0f, 0.1f, 25.0f);
             floorMesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));
 
             camera = ic::Camera3D();

@@ -77,7 +77,7 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::polygon_circle(Poly
         ic::Vec2f sidePointB = colliderA->modelVertices[next] + transformA->position;
 
         
-        bool collides = ic::Raycast::get().line_segments_collide(100000.0f, transformB->position.y(), transformB->position.x(), transformB->position.y(),
+        bool collides = ic::Raycast::line_segments_collide(100000.0f, transformB->position.y(), transformB->position.x(), transformB->position.y(),
                                                                 sidePointA.x(), sidePointA.y(), sidePointB.x(), sidePointB.y());
         
         // Add 1 if the horizontal ray intersects the polygon side, 0 otherwise
@@ -92,7 +92,7 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::polygon_circle(Poly
         ic::Vec2f sidePointA = colliderA->modelVertices[i] + transformA->position;
         ic::Vec2f sidePointB = colliderA->modelVertices[next] + transformA->position;
 
-        ic::Vec2f closest = ic::Raycast::get().get_closest_point(transformB->position, sidePointA, sidePointB);
+        ic::Vec2f closest = ic::Raycast::get_closest_point(transformB->position, sidePointA, sidePointB);
         float distanceCompare = closest.dst2(transformB->position);
     
         if (distanceCompare < closestDistance2) {

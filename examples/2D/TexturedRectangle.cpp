@@ -29,14 +29,14 @@ class TexturedRectangle : public ic::Application {
         }
         
         bool load() override {
-            shape = ic::GeometryGenerator::get().generate_rectangle_mesh(0.2f, 0.2f);
+            shape = ic::GeometryGenerator::generate_rectangle_mesh(0.2f, 0.2f);
             
-            texture = ic::TextureLoader::get().load_png("resources/textures/transformations.png");
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            texture = ic::TextureLoader::load_png("resources/textures/transformations.png");
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
 
             camera = ic::Camera2D();
         
-            ic::InputHandler::get().add_input((new ic::KeyboardController())->with_WASD(), "WASD");
+            ic::InputHandler::add_input((new ic::KeyboardController())->with_WASD(), "WASD");
             shapePosition = { 0.0f, 0.0f };
 
             return true;
@@ -47,7 +47,7 @@ class TexturedRectangle : public ic::Application {
         }
     
         bool update(float dt) override {
-            auto *controller = ic::InputHandler::get().find_keyboard("WASD");
+            auto *controller = ic::InputHandler::find_keyboard("WASD");
             ic::Vec2i dir = controller->get_direction();
 
             float speed = 1.0f;

@@ -75,7 +75,7 @@ struct PolygonShape {
 
     PolygonShape(std::vector<float> vertCoords, ic::Vec2f pos = { 0.0f, 0.0f }) : poly(vertCoords), position(pos) {
         poly.translate(position);
-        indices = ic::EarClippingTriangulation::get().triangulate(vertCoords);
+        indices = ic::EarClippingTriangulation::triangulate(vertCoords);
     }
 
     void draw(ic::Renderer &renderer, ic::Batch &batch, ic::Color color) {
@@ -89,12 +89,12 @@ struct Drop {
     ic::Rectangle hitbox;
 
     Drop() {
-        this->shape = new PolygonShape(ic::GeometryGenerator::get().generate_regular_polygon(3));
+        this->shape = new PolygonShape(ic::GeometryGenerator::generate_regular_polygon(3));
         this->hitbox = ic::Rectangle({ 0.0f, 0.0f }, { 0.8f, 0.8f });
     }
 
     Drop(ic::Vec2f position, int sides, float radius) {
-        this->shape = new PolygonShape(ic::GeometryGenerator::get().generate_regular_polygon(sides, radius), position);
+        this->shape = new PolygonShape(ic::GeometryGenerator::generate_regular_polygon(sides, radius), position);
         this->hitbox = ic::Rectangle(position, { radius - radius * 0.2f, radius - radius * 0.2f });
     }
 };
@@ -126,8 +126,8 @@ class TiledDemo : public ic::Application {
         }
         
         bool load() override {
-            shader = ic::ShaderLoader::get().load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
-            textShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
+            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
 
             camera = ic::Camera2D(0.3f);
             uiCamera = ic::Camera2D();
@@ -144,15 +144,15 @@ class TiledDemo : public ic::Application {
                                    "grass", "resources/textures/grass.png" });
 
             // We use the roboto font
-            ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
-            atlas = ic::FreeType::get().find_atlas("score");
+            ic::FreeType::add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
+            atlas = ic::FreeType::find_atlas("score");
 
             
             ic::KeyboardController *debugCont = new ic::KeyboardController();
             debugCont->add_key_up_action([this]() {collisionDebug = !collisionDebug; }, KEY_T);
             
-            ic::InputHandler::get().add_input((new ic::KeyboardController())->with_WASD(), "WASD");
-            ic::InputHandler::get().add_input(debugCont, "collisionDebug");
+            ic::InputHandler::add_input((new ic::KeyboardController())->with_WASD(), "WASD");
+            ic::InputHandler::add_input(debugCont, "collisionDebug");
 
 
             shape = new RectangleShape({ 0.0f, 0.0f }, { 0.4f, 0.4f }, "player");
@@ -220,7 +220,7 @@ class TiledDemo : public ic::Application {
 
             // Dynamics
             float speed = 3.0f;
-            auto *controller = ic::InputHandler::get().find_keyboard("WASD");
+            auto *controller = ic::InputHandler::find_keyboard("WASD");
             ic::Vec2i dir = controller->direction;
 
             shape->r.position.x() += dir.x() * speed * dt;
@@ -297,11 +297,11 @@ class TiledDemo : public ic::Application {
 
             if (completedLevel) {
                 float t = completeTimer / COMPLETE_POPUP_ANIMATION_DURATION;
-                float alpha = ic::Mathf::get().clamp(t, 0.0f, 1.0f);
+                float alpha = ic::Mathf::clamp(t, 0.0f, 1.0f);
 
                 ic::Vec2f from = { 0.0f, 1.1f }, to = { 0.0f, 0.4f };
-                ic::Vec2f position = from.interpolate(to, ic::Interpolation::get().smoothstep(alpha));
-                float scale = ic::Mathf::get().interpolate_logarithmic(0.5f, 1.5f, alpha);
+                ic::Vec2f position = from.interpolate(to, ic::Interpolation::smoothstep(alpha));
+                float scale = ic::Mathf::interpolate_logarithmic(0.5f, 1.5f, alpha);
 
                 renderer.draw_string_centered(textBatch, atlas, "Level finished!", position.x(), position.y(), scale, scale);
             }
@@ -344,7 +344,7 @@ class TiledDemo : public ic::Application {
                     
                     if (rand() % DROP_DISPARITY == 1) {
                         Drop *drop = new Drop({ 0.0f + x, 0.0f + y }, rand() % 5 + 3, (rand() % 50 / 300.0f) + 0.15f);
-                        drop->shape->poly.set_rotation(ic::Mathf::get().to_radians(rand() % 360));
+                        drop->shape->poly.set_rotation(ic::Mathf::to_radians(rand() % 360));
 
                         drops.push_back(drop);
                     }

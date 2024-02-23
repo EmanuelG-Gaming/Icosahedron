@@ -9,49 +9,35 @@
 
 
 namespace ic {
-    class Events {
-        public:
-            static Events& get() {
-                static Events ins;
-                return ins;
+    namespace Events {
+        void on(const std::string &name, void (*callback)()) {
+            std::vector<void (*)()> &listeners = events[name];
+
+            if (std::find(listeners.begin(), listeners.end(), callback) != listeners.end()) {
+                std::cout << "Event " << name << " already has the same function!" << "\n";
+                return;
             }
 
-            Events& on(const std::string &name, void (*callback)()) {
-                std::vector<void (*)()> &listeners = this->events[name];
+            listeners.emplace_back(callback);
+        }
 
-                if (std::find(listeners.begin(), listeners.end(), callback) != listeners.end()) {
-                    std::cout << "Event " << name << " already has the same function!" << "\n";
-                    return *this;
-                }
 
-                listeners.emplace_back(callback);
+        bool fire(const std::string &name) {
+            std::vector<void (*)()> &listeners = events[name];
 
-                return *this;
+            if (listeners.size() == 0) return false;
+
+            for (int i = 0; i < listeners.size(); i++) {
+                listeners[i]();
             }
 
-
-            bool fire(const std::string &name) {
-                std::vector<void (*)()> &listeners = this->events[name];
-
-                if (listeners.size() == 0) return false;
-
-                for (int i = 0; i < listeners.size(); i++) {
-                    listeners[i]();
-                }
-
-                return true;
-            }
+            return true;
+        }
 
 
-        private:
+        namespace {
             std::map<std::string, std::vector<void (*)()>> events;
-
-        private:
-            Events() {}
-            ~Events() {}
-        public:
-            Events(Events const&) = delete;
-            void operator = (Events const&) = delete;  
+        };
     };
 }
 

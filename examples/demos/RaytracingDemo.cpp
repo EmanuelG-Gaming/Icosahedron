@@ -249,8 +249,8 @@ class RaytracingDemo : public ic::Application {
         }
         
         bool load() override {
-            rayShader = ic::ShaderLoader::get().load(rayVertex, rayFragment);
-            screenShader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, screenFragment);
+            rayShader = ic::ShaderLoader::load(rayVertex, rayFragment);
+            screenShader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, screenFragment);
             
             // Initialize these values directly
             rayShader.use();
@@ -268,7 +268,7 @@ class RaytracingDemo : public ic::Application {
 
             framebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA, RAYTRACING_WIDTH, RAYTRACING_HEIGHT);
 
-            screenQuad = ic::GeometryGenerator::get().generate_rectangle_mesh(1.0f, 1.0f);
+            screenQuad = ic::GeometryGenerator::generate_rectangle_mesh(1.0f, 1.0f);
             
             camera = ic::Camera3D();
 
@@ -293,7 +293,7 @@ class RaytracingDemo : public ic::Application {
             rayShader.use();
             rayShader.set_uniform_vec3f("lightPosition", { 0.5f, 0.1f, 0.0f });
             camera.upload_to_shader(rayShader);
-            rayShader.set_uniform_vec3f("spheres[0].center", { ic::Mathf::get().sinf(time * 0.5f) * 0.3f, 0.0f, 0.5f });
+            rayShader.set_uniform_vec3f("spheres[0].center", { ic::Mathf::sinf(time * 0.5f) * 0.3f, 0.0f, 0.5f });
             
             screenQuad.draw(rayShader);
             framebuffer.unuse();

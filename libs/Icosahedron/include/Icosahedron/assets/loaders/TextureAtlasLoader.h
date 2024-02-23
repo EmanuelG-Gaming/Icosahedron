@@ -8,21 +8,7 @@ namespace ic {
         vertical,
     };
 
-    class TextureAtlasLoader {
-        public:
-            static TextureAtlasLoader& get() {
-                static TextureAtlasLoader ins;
-                return ins;
-            }
-
-            
-        private:
-            TextureAtlasLoader() {}
-            ~TextureAtlasLoader() {}
-
-        public:
-            TextureAtlasLoader(TextureAtlasLoader const&) = delete;
-            void operator = (TextureAtlasLoader const&) = delete;
+    namespace TextureAtlasLoader {
     };
 }
 #endif

@@ -15,28 +15,14 @@ namespace ic {
         }
     };
 
-    class Images {
-        public:
-            static Images& get() {
-                static Images ins;
-                return ins;
-            }
+    namespace Images {
+        ic::Image grayscale(ic::Image source);
+        ic::Image perlin(int width, int height, const ic::ImageNoiseParameters &params = ic::ImageNoiseParameters());
 
-            ic::Image grayscale(ic::Image source);
-            ic::Image perlin(int width, int height, const ic::ImageNoiseParameters &params = ic::ImageNoiseParameters());
-
-            /** @brief Applies Perlin noise over an image, except the range of values before clamping
-             *  is roughly in the interval [0, 1], instead of [-1, 1].
-            */
-            ic::Image perlin_solid(int width, int height, const ic::ImageNoiseParameters &params = ic::ImageNoiseParameters());
-
-        private:
-            Images() {}
-            ~Images() {}
-
-        public:
-            Images(Images const&) = delete;
-            void operator = (Images const&) = delete;
+        /** @brief Applies Perlin noise over an image, except the range of values before clamping
+         *  is roughly in the interval [0, 1], instead of [-1, 1].
+        */
+        ic::Image perlin_solid(int width, int height, const ic::ImageNoiseParameters &params = ic::ImageNoiseParameters());
     };
 }
 #endif

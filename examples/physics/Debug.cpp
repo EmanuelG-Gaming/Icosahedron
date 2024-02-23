@@ -36,16 +36,16 @@ class PhysicsDebug : public ic::Application {
         }
         
         bool load() override {
-            mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(30, 0.5f);
+            mesh2 = ic::GeometryGenerator::generate_regular_polygon_mesh(30, 0.5f);
             mesh2.set_material(ic::MeshMaterial2D(ic::Colors::green, 1.0f));
 
 
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
-            textShader = ic::ShaderLoader::get().load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
             
             textBatch = ic::Batch(10000, ic::TRIANGLES);
-            ic::FreeType::get().add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
-            atlas = ic::FreeType::get().find_atlas("score");
+            ic::FreeType::add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
+            atlas = ic::FreeType::find_atlas("score");
              
             
             camera = ic::Camera2D();
@@ -70,7 +70,7 @@ class PhysicsDebug : public ic::Application {
 
             ic::KeyboardController *keys = new ic::KeyboardController();
             keys->add_key_up_action([this]() { add_object(-3.0f, 0.0f, 5.0f, 0.01f ); }, KEY_P);
-            ic::InputHandler::get().add_input(keys, "Keys");
+            ic::InputHandler::add_input(keys, "Keys");
 
             return true;
         }
@@ -128,7 +128,7 @@ class PhysicsDebug : public ic::Application {
         void add_object(float x, float y, float velX, float velY) {
             float radius = rand() % 50 / 200.0f + 0.01f;
             
-            ic::Mesh2D mesh = ic::GeometryGenerator::get().generate_rectangle_mesh(radius, radius);
+            ic::Mesh2D mesh = ic::GeometryGenerator::generate_rectangle_mesh(radius, radius);
             mesh.set_material(ic::MeshMaterial2D(ic::Colors::lightGray, 1.0f));
 
             ic::Physics::RigidObject2D *rigidBody = new ic::Physics::RigidObject2D();

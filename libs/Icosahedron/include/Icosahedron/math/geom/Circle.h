@@ -45,11 +45,11 @@ namespace ic {
         }
 
         float area() {
-            return radius * radius * ic::Mathf::get().pi;
+            return radius * radius * ic::Mathf::pi;
         }
 
         float circumference() {
-            return radius * ic::Mathf::get().twoPi;
+            return radius * ic::Mathf::twoPi;
         }
 
         friend std::ostream& operator<<(std::ostream &stream, ic::Circle &circle) {

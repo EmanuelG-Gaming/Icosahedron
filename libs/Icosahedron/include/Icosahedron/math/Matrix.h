@@ -139,10 +139,10 @@ namespace ic {
         Mat set_rotation_x(float radians) {
             identity();
 
-            value(1, 1) = ic::Mathf::get().cosf(radians);
-            value(2, 2) = ic::Mathf::get().cosf(radians);
-            value(2, 1) = -ic::Mathf::get().sinf(radians);
-            value(1, 2) = ic::Mathf::get().sinf(radians);
+            value(1, 1) = ic::Mathf::cosf(radians);
+            value(2, 2) = ic::Mathf::cosf(radians);
+            value(2, 1) = -ic::Mathf::sinf(radians);
+            value(1, 2) = ic::Mathf::sinf(radians);
 
             return *this;
         }
@@ -151,10 +151,10 @@ namespace ic {
         Mat set_rotation_y(float radians) {
             identity();
 
-            value(0, 0) = ic::Mathf::get().cosf(radians);
-            value(2, 2) = ic::Mathf::get().cosf(radians);
-            value(2, 0) = ic::Mathf::get().sinf(radians);
-            value(0, 2) = -ic::Mathf::get().sinf(radians);
+            value(0, 0) = ic::Mathf::cosf(radians);
+            value(2, 2) = ic::Mathf::cosf(radians);
+            value(2, 0) = ic::Mathf::sinf(radians);
+            value(0, 2) = -ic::Mathf::sinf(radians);
 
             return *this;
         }
@@ -163,10 +163,10 @@ namespace ic {
         Mat set_rotation_z(float radians) {
             identity();
 
-            value(0, 0) = ic::Mathf::get().cosf(radians);
-            value(1, 1) = ic::Mathf::get().cosf(radians);
-            value(0, 1) = -ic::Mathf::get().sinf(radians);
-            value(1, 0) = ic::Mathf::get().sinf(radians);
+            value(0, 0) = ic::Mathf::cosf(radians);
+            value(1, 1) = ic::Mathf::cosf(radians);
+            value(0, 1) = -ic::Mathf::sinf(radians);
+            value(1, 0) = ic::Mathf::sinf(radians);
 
             return *this;
         }

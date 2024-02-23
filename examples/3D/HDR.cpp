@@ -168,24 +168,24 @@ class HDR : public ic::Application {
             states.enable_depth_testing(ic::LESS);
             states.enable_face_culling(ic::FRONT, ic::CCW);
             
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
-            screenShader = ic::ShaderLoader::get().load(screenVertex, screenFragment);
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
+            screenShader = ic::ShaderLoader::load(screenVertex, screenFragment);
             
             ic::TextureParameters params;
             params.usesMipmapping = true;
 
             // Note that we use sRGB textures
-            floorTexture = ic::TextureLoader::get().load_png("resources/textures/wood.png", params, true);
-            whiteTexture = ic::TextureLoader::get().load_png("resources/textures/white.png", params, true);
+            floorTexture = ic::TextureLoader::load_png("resources/textures/wood.png", params, true);
+            whiteTexture = ic::TextureLoader::load_png("resources/textures/white.png", params, true);
             
             framebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
 
-            mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
-            floorMesh = ic::GeometryGenerator::get().generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
+            mesh = ic::GeometryGenerator::generate_cube_mesh(0.5f);
+            floorMesh = ic::GeometryGenerator::generate_parallelipiped_mesh(25.0f, 0.1f, 25.0f, 50.0f, 0.2f, 50.0f);
             
             screenQuad = ic::Mesh2D();
-            screenQuad.add_attribute(0, 2, ic::GeometryGenerator::get().generate_rectangle(1.0f, 1.0f));
-            screenQuad.add_attribute(1, 2, ic::GeometryGenerator::get().generate_UV_rectangle());
+            screenQuad.add_attribute(0, 2, ic::GeometryGenerator::generate_rectangle(1.0f, 1.0f));
+            screenQuad.add_attribute(1, 2, ic::GeometryGenerator::generate_UV_rectangle());
             screenQuad.set_index_buffer({ 0, 1, 2, 0, 2, 3 });
 
             camera = ic::Camera3D();
@@ -196,14 +196,14 @@ class HDR : public ic::Application {
 
             ic::MouseController *mouse = new ic::MouseController();
             mouse->add_mouse_scroll_up_action([this]() { 
-                float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.05f;
+                float p = ic::InputHandler::find_mouse("mouse")->get_wheel_direction() * 0.05f;
                 exposure = std::max(0.01f, std::min(exposure + p, 5.0f));
             });
             mouse->add_mouse_scroll_down_action([this]() { 
-                float p = ic::InputHandler::get().find_mouse("mouse")->get_wheel_direction() * 0.05f;
+                float p = ic::InputHandler::find_mouse("mouse")->get_wheel_direction() * 0.05f;
                 exposure = std::max(0.01f, std::min(exposure + p, 5.0f));
             });
-            ic::InputHandler::get().add_input(mouse, "mouse");
+            ic::InputHandler::add_input(mouse, "mouse");
 
             time = 0.0f;
             exposure = 0.05;

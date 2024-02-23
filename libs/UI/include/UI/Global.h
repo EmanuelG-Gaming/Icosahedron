@@ -14,30 +14,14 @@
 
 
 namespace ic { namespace UI {
-    class Global {
-        public:
-            ic::Renderer renderer;
-            ic::Batch fillBatch, fillTextBatch;
-            ic::TextAtlas defaultAtlas;
-            ic::TextureAtlas atlas;
-            ic::Vec2f mouseCursorPosition;
+    namespace Global {
+        ic::Renderer renderer;
+        ic::Batch fillBatch, fillTextBatch;
+        ic::TextAtlas defaultAtlas;
+        ic::TextureAtlas atlas;
+        ic::Vec2f mouseCursorPosition;
 
-            static Global& get() {
-                static Global ins;
-                return ins;
-            }
-
-
-            void load();
-
-
-            private:
-                Global() {}
-                ~Global() {}
-    
-            public:
-                Global(Global const&) = delete;
-                void operator = (Global const&) = delete;
+        void load();
     };
 }}
 

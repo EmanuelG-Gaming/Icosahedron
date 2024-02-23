@@ -30,13 +30,13 @@ class BasicPhysics : public ic::Application {
         }
         
         bool load() override {
-            mesh1 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(5, 0.3f);
+            mesh1 = ic::GeometryGenerator::generate_regular_polygon_mesh(5, 0.3f);
             mesh1.set_material(ic::MeshMaterial2D(ic::Colors::yellow, 1.0f));
 
-            mesh2 = ic::GeometryGenerator::get().generate_regular_polygon_mesh(30, 0.5f);
+            mesh2 = ic::GeometryGenerator::generate_regular_polygon_mesh(30, 0.5f);
             mesh2.set_material(ic::MeshMaterial2D(ic::Colors::green, 1.0f));
 
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
             
             camera = ic::Camera2D();
             camera.scale = 0.5f;

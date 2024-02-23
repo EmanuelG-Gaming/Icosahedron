@@ -22,11 +22,11 @@ ic::Image ic::Images::perlin(int width, int height, const ic::ImageNoiseParamete
         float sum = 0.0f, strength = 1.0f, scale = 1.0f;
 
         for (int i = 0; i < params.octaves; i++) {
-            sum += strength * ic::Noise::get().perlin_2D(x * params.scaling * scale, y * params.scaling * scale, false);
+            sum += strength * ic::Noise::perlin_2D(x * params.scaling * scale, y * params.scaling * scale, false);
             scale *= 2.0f;
             strength *= params.persistence;
         }
-        uint8_t noise = (uint8_t) (ic::Mathf::get().clamp(sum, 0.0f, 1.0f) * 255);
+        uint8_t noise = (uint8_t) (ic::Mathf::clamp(sum, 0.0f, 1.0f) * 255);
 
         result.set_pixel_unsafe(x, y, { noise, noise, noise });
     });
@@ -41,7 +41,7 @@ ic::Image ic::Images::perlin_solid(int width, int height, const ic::ImageNoisePa
         float sum = 0.0f, strength = 1.0f, scale = 1.0f;
 
         for (int i = 0; i < params.octaves; i++) {
-            sum += strength * ic::Noise::get().perlin_2D(x * params.scaling * scale, y * params.scaling * scale, false);
+            sum += strength * ic::Noise::perlin_2D(x * params.scaling * scale, y * params.scaling * scale, false);
             scale *= 2.0f;
             strength *= params.persistence;
         }
@@ -49,7 +49,7 @@ ic::Image ic::Images::perlin_solid(int width, int height, const ic::ImageNoisePa
         sum += 1.0f;
         sum *= 0.5f;
         
-        uint8_t noise = (uint8_t) (ic::Mathf::get().clamp(sum, 0.0f, 1.0f) * 255);
+        uint8_t noise = (uint8_t) (ic::Mathf::clamp(sum, 0.0f, 1.0f) * 255);
 
         result.set_pixel_unsafe(x, y, { noise, noise, noise });
     });

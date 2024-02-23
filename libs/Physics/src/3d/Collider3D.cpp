@@ -9,7 +9,7 @@ ic::Physics::ManifoldPoints3D ic::Physics::SphereCollider::test(Transform3D *tra
 }
 
 ic::Physics::ManifoldPoints3D ic::Physics::SphereCollider::test(Transform3D *transformA, SphereCollider *colliderB, Transform3D *transformB) {
-    return ic::Physics::CollisionUtils3D::get().sphere_sphere(this, transformA, colliderB, transformB);
+    return ic::Physics::CollisionUtils3D::sphere_sphere(this, transformA, colliderB, transformB);
 }
 
 ic::Physics::ManifoldPoints3D ic::Physics::SphereCollider::test(Transform3D *transformA, BoxCollider *colliderB, Transform3D *transformB) {
@@ -34,9 +34,9 @@ ic::Physics::ManifoldPoints3D ic::Physics::BoxCollider::test(Transform3D *transf
 }
 
 ic::Physics::ManifoldPoints3D ic::Physics::BoxCollider::test(Transform3D *transformA, SphereCollider *colliderB, Transform3D *transformB) {
-    return ic::Physics::CollisionUtils3D::get().box_sphere(this, transformA, colliderB, transformB);
+    return ic::Physics::CollisionUtils3D::box_sphere(this, transformA, colliderB, transformB);
 }
 
 ic::Physics::ManifoldPoints3D ic::Physics::BoxCollider::test(Transform3D *transformA, BoxCollider *colliderB, Transform3D *transformB) {
-    return ic::Physics::CollisionUtils3D::get().box_box(this, transformA, colliderB, transformB);
+    return ic::Physics::CollisionUtils3D::box_box(this, transformA, colliderB, transformB);
 }

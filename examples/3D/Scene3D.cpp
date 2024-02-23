@@ -89,7 +89,7 @@ class Scene3D : public ic::Application {
         bool load() override {
             states.enable_depth_testing(ic::LESS);
             
-            shader = ic::ShaderLoader::get().load(shaders.meshShaderVertex3D, fragment);
+            shader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
 
 
             std::vector<float> positions = {
@@ -106,7 +106,7 @@ class Scene3D : public ic::Application {
                 0.0f, 1.0f, 0.0f,
             };
 
-            mesh = ic::GeometryGenerator::get().generate_cube_mesh(0.5f);
+            mesh = ic::GeometryGenerator::generate_cube_mesh(0.5f);
             
             // A plane acting as a floor
             floorMesh = ic::Mesh3D();
