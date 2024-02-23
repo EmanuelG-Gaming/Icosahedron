@@ -36,7 +36,8 @@ To get started, run the following commands to install the dependencies:
 ### For Arch-distributions:
 ```
 sudo pacman -S cmake g++
-sudo pacman -S sdl2 sdl2_image
+sudo pacman -S sdl2
+sudo pacman -S sdl2_image
 sudo pacman -S freetype2
 ```
 
@@ -46,6 +47,13 @@ sudo apt install cmake g++
 sudo apt install libsdl2-dev
 sudo apt install libsdl2-image-dev
 sudo apt install libfreetype6-dev
+```
+### For RHEL (dnf)-distributions:
+```
+sudo dnf install cmake g++
+sudo dnf install SDL2-devel
+sudo dnf install SDL2_image-devel
+sudo dnf install freetype-devel
 ```
 
 If you haven't got OpenGL installed, especially on ( virtual machine? ) Debian, do so by typing this command to install the MESA OGL driver:
