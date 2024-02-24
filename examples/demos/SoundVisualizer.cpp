@@ -40,7 +40,7 @@ class SoundVisualizer : public ic::Application {
                 weights[i] = value;
             }
             
-            shader = ic::ShaderLoader::load(shaders.basicShaderVertex2D, shaders.basicShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::basicShaderVertex2D, ic::Shaders::basicShaderFrag2D);
 
             batch = ic::Batch(100000, ic::TRIANGLES);
 
@@ -82,7 +82,7 @@ class SoundVisualizer : public ic::Application {
                 float x = -1.0f + i / (256.0f / 2.0f);
                 float y = -1.0f + value / 2.0f;
 
-                renderer.draw_rectangle(batch, x, y, 1.0f / 256.0f, value, color);
+                ic::Renderer::draw_rectangle(batch, x, y, 1.0f / 256.0f, value, color);
             }
 
             clear_color(ic::Colors::blue);

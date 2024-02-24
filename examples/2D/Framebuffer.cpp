@@ -85,7 +85,7 @@ class Framebuffer : public ic::Application {
 
             screenQuad = ic::GeometryGenerator::generate_rectangle_mesh(1.0f, 1.0f);
 
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, ic::Shaders::meshShaderFrag2D);
             screenShader = ic::ShaderLoader::load(screenVertex, screenFragment);
             texture = ic::TextureLoader::load_png("resources/textures/wood.png");
             
@@ -140,7 +140,7 @@ class Framebuffer : public ic::Application {
             postProcessing.use();
             clear_color(ic::Colors::blue);
             
-            states.set_viewport(IC_WINDOW_WIDTH / PIXEL_DENOMINATOR, IC_WINDOW_HEIGHT / PIXEL_DENOMINATOR);
+            ic::GLStateHandler::set_viewport(IC_WINDOW_WIDTH / PIXEL_DENOMINATOR, IC_WINDOW_HEIGHT / PIXEL_DENOMINATOR);
 
             shader.use();
             camera.use(shader);
@@ -157,7 +157,7 @@ class Framebuffer : public ic::Application {
 
             // Rendering to the screen quad
             clear_color(ic::Colors::cyan);
-            states.set_viewport(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            ic::GLStateHandler::set_viewport(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
 
             screenShader.use();
             postProcessing.use_texture();

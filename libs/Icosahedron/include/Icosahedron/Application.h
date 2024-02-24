@@ -115,10 +115,6 @@ namespace ic {
             /** Whether or not the cursor is hidden. Note that the mouse's motion would still be registered in the game loop. */
             bool hideCursor = false;
             
-            ic::GLStateHandler states;
-            ic::Shaders shaders;
-            ic::Renderer renderer;
-
         private:
             int width = 0, height = 0;
             float delta = 0.0f;

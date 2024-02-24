@@ -30,7 +30,7 @@ class FPS : public ic::Application {
         }
         
         bool load() override {
-            shader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::basicTextShaderVertex2D, ic::Shaders::basicTextShaderFrag2D);
             batch = ic::Batch(10000, ic::TRIANGLES);
 
             camera = ic::Camera2D();
@@ -65,7 +65,7 @@ class FPS : public ic::Application {
         }
 
         bool update(float dt) override {
-            renderer.draw_string_centered(batch, atlas, "Frame rate: " + std::to_string(fps) + " FPS", 0.0f, 0.0f, 2.0f, 2.0f);
+            ic::Renderer::draw_string_centered(batch, atlas, "Frame rate: " + std::to_string(fps) + " FPS", 0.0f, 0.0f, 2.0f, 2.0f);
 
             clear_color(ic::Colors::blue);
 

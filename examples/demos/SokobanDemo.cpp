@@ -192,8 +192,8 @@ class SokobanDemo : public ic::Application {
             
             fontAtlas = ic::FreeType::add_atlas("text", "resources/fonts/Roboto-Regular.ttf", 48);
 
-            shader = ic::ShaderLoader::load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
-            uiShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::basicTextureShaderVertex2D, ic::Shaders::basicTextureShaderFrag2D);
+            uiShader = ic::ShaderLoader::load(ic::Shaders::basicTextShaderVertex2D, ic::Shaders::basicTextShaderFrag2D);
 
 
             camera = uiCamera = ic::Camera2D();
@@ -361,7 +361,7 @@ class SokobanDemo : public ic::Application {
                             break;
                     }
 
-                    renderer.draw_rectangle(tileBatch, tileAtlas.get_entry(entryName), x, y, 0.5f, 0.5f);
+                    ic::Renderer::draw_rectangle(tileBatch, tileAtlas.get_entry(entryName), x, y, 0.5f, 0.5f);
                 }
             }
 
@@ -369,7 +369,7 @@ class SokobanDemo : public ic::Application {
                 for (int x = 0; x < currentLevel->width; x++) {
                     if (currentLevel->overlays[y * currentLevel->width + x] == 1) {
                         // Partitions
-                        renderer.draw_rectangle(tileBatch, tileAtlas.get_entry("discontinuous-square"), x, y, 0.5f, 0.5f, ic::Colors::green);
+                        ic::Renderer::draw_rectangle(tileBatch, tileAtlas.get_entry("discontinuous-square"), x, y, 0.5f, 0.5f, ic::Colors::green);
                     }
                 }
             }
@@ -378,16 +378,16 @@ class SokobanDemo : public ic::Application {
                 for (int x = 0; x < currentLevel->width; x++) {
                     if (currentLevel->boxes[y * currentLevel->width + x] == 1) {
                         // Boxes
-                        renderer.draw_rectangle(tileBatch, tileAtlas.get_entry("box"), x, y, 0.5f, 0.5f);
+                        ic::Renderer::draw_rectangle(tileBatch, tileAtlas.get_entry("box"), x, y, 0.5f, 0.5f);
                     }
                 }
             }
 
             // Player renderer
-            renderer.draw_rectangle(tileBatch, tileAtlas.get_entry("white"), shownPlayerPosition.x(), shownPlayerPosition.y(), 0.5f, 0.5f, ic::Colors::yellow);
+            ic::Renderer::draw_rectangle(tileBatch, tileAtlas.get_entry("white"), shownPlayerPosition.x(), shownPlayerPosition.y(), 0.5f, 0.5f, ic::Colors::yellow);
             
             if (isBoxPushed) {
-                renderer.draw_rectangle(tileBatch, tileAtlas.get_entry("box"), shownBoxPosition.x(), shownBoxPosition.y(), 0.5f, 0.5f);
+                ic::Renderer::draw_rectangle(tileBatch, tileAtlas.get_entry("box"), shownBoxPosition.x(), shownBoxPosition.y(), 0.5f, 0.5f);
             }
 
             // Mouse hold indicator
@@ -399,7 +399,7 @@ class SokobanDemo : public ic::Application {
 
                     if (!turn(nextX, nextY)) continue;
 
-                    renderer.draw_rectangle(tileBatch, tileAtlas.get_entry("circle"), nextX, nextY, 0.25f, 0.25f);
+                    ic::Renderer::draw_rectangle(tileBatch, tileAtlas.get_entry("circle"), nextX, nextY, 0.25f, 0.25f);
                 }
             }
 
@@ -420,8 +420,8 @@ class SokobanDemo : public ic::Application {
                 float scale = ic::Mathf::interpolate(from, to, ic::Interpolation::square_root(t));
 
                 // Text shadow
-                renderer.draw_string_centered(uiBatch, fontAtlas, "Level finished!", -0.01f * scale, -0.01f * scale, scale, scale, ic::Colors::black);
-                renderer.draw_string_centered(uiBatch, fontAtlas, "Level finished!", 0.0f, 0.0f, scale, scale);
+                ic::Renderer::draw_string_centered(uiBatch, fontAtlas, "Level finished!", -0.01f * scale, -0.01f * scale, scale, scale, ic::Colors::black);
+                ic::Renderer::draw_string_centered(uiBatch, fontAtlas, "Level finished!", 0.0f, 0.0f, scale, scale);
             }
 
             uiBatch.render();
@@ -565,7 +565,7 @@ class SokobanDemoBatched : public ic::Application {
         bool load() override {
             tileBatch = ic::Batch(1000000000, ic::TRIANGLES);
 
-            shader = ic::ShaderLoader::load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::basicTextureShaderVertex2D, ic::Shaders::basicTextureShaderFrag2D);
             texture = ic::TextureLoader::load_png("resources/textures/wood.png");
             
             camera = ic::Camera2D();
@@ -604,7 +604,7 @@ class SokobanDemoBatched : public ic::Application {
             texture.use();
             for (int y = 0; y < HEIGHT; y++) {
                 for (int x = 0; x < WIDTH; x++) {
-                    renderer.draw_rectangle(tileBatch, (float) x, (float) y, 0.5f, 0.5f);
+                    ic::Renderer::draw_rectangle(tileBatch, (float) x, (float) y, 0.5f, 0.5f);
                 }
             }
             tileBatch.render();
@@ -662,7 +662,7 @@ class SokobanDemoMeshes : public ic::Application {
         bool load() override {
             tileMesh = ic::GeometryGenerator::generate_rectangle_mesh(0.5f, 0.5f);
 
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, ic::Shaders::meshShaderFrag2D);
             texture = ic::TextureLoader::load_png("resources/textures/wood.png");
             
             camera = ic::Camera2D();

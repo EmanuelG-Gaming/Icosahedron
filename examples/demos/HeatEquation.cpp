@@ -117,9 +117,9 @@ class HeatEquation : public ic::Application {
 
             tileTexture = ic::Texture().setup_from_array(heatValues.data(), TILE_WIDTH, TILE_HEIGHT, GL_RED, GL_RED, params);
            
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, fragment);
-            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
-            wallShader = ic::ShaderLoader::load(shaders.basicShaderVertex2D, shaders.basicShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, fragment);
+            textShader = ic::ShaderLoader::load(ic::Shaders::basicTextShaderVertex2D, ic::Shaders::basicTextShaderFrag2D);
+            wallShader = ic::ShaderLoader::load(ic::Shaders::basicShaderVertex2D, ic::Shaders::basicShaderFrag2D);
              
             
             textBatch = ic::Batch(10000, ic::TRIANGLES);
@@ -318,8 +318,8 @@ class HeatEquation : public ic::Application {
                     if (walls[index]) {
                         float x = i * 1.0f + 0.5f;
                         float y = (TILE_HEIGHT - 1) - j * 1.0f + 0.5f;
-                        renderer.draw_rectangle(wallBatch, x, y, 0.5f, 0.5f, ic::Colors::gray);
-                        renderer.draw_rectangle(wallBatch, x, y, 0.4f, 0.4f, ic::Colors::lightGray);
+                        ic::Renderer::draw_rectangle(wallBatch, x, y, 0.5f, 0.5f, ic::Colors::gray);
+                        ic::Renderer::draw_rectangle(wallBatch, x, y, 0.4f, 0.4f, ic::Colors::lightGray);
                     }
                 }
             }
@@ -343,9 +343,9 @@ class HeatEquation : public ic::Application {
                         ic::Vec2f perpendicular = v.perpendicular(0);
                         perpendicular = perpendicular.nor() * 0.25f * length;
 
-                        renderer.draw_line(lineBatch, x, y, x + v.x(), y + v.y());
-                        renderer.draw_line(lineBatch, x + v.x(), y + v.y(), x + v.x() * 0.7f - perpendicular.x(), y + v.y() * 0.7f - perpendicular.y());
-                        renderer.draw_line(lineBatch, x + v.x(), y + v.y(), x + v.x() * 0.7f + perpendicular.x(), y + v.y() * 0.7f + perpendicular.y());
+                        ic::Renderer::draw_line(lineBatch, x, y, x + v.x(), y + v.y());
+                        ic::Renderer::draw_line(lineBatch, x + v.x(), y + v.y(), x + v.x() * 0.7f - perpendicular.x(), y + v.y() * 0.7f - perpendicular.y());
+                        ic::Renderer::draw_line(lineBatch, x + v.x(), y + v.y(), x + v.x() * 0.7f + perpendicular.x(), y + v.y() * 0.7f + perpendicular.y());
                     }
                 }
                 lineBatch.render();
@@ -357,10 +357,10 @@ class HeatEquation : public ic::Application {
             atlas.use();
 
             uiCamera.use(textShader);
-            renderer.draw_string(textBatch, atlas, "Average heat: " + std::to_string(averageHeat) + " Celsius", -1.2f, 0.9f, 1.0f, 1.0f, { 200, 200, 200 });
-            renderer.draw_string(textBatch, atlas, "Use the mouse buttons to add heat,", -1.2f, 0.8f, 0.7f, 0.7f);
-            renderer.draw_string(textBatch, atlas, "and the L/M keys to place/remove walls.", -1.2f, 0.72f, 0.7f, 0.7f);
-            renderer.draw_string(textBatch, atlas, "Press F to enable the heat flux vector field.", -1.2f, 0.6f, 0.7f, 0.7f);
+            ic::Renderer::draw_string(textBatch, atlas, "Average heat: " + std::to_string(averageHeat) + " Celsius", -1.2f, 0.9f, 1.0f, 1.0f, { 200, 200, 200 });
+            ic::Renderer::draw_string(textBatch, atlas, "Use the mouse buttons to add heat,", -1.2f, 0.8f, 0.7f, 0.7f);
+            ic::Renderer::draw_string(textBatch, atlas, "and the L/M keys to place/remove walls.", -1.2f, 0.72f, 0.7f, 0.7f);
+            ic::Renderer::draw_string(textBatch, atlas, "Press F to enable the heat flux vector field.", -1.2f, 0.6f, 0.7f, 0.7f);
             textBatch.render();
 
 

@@ -397,8 +397,8 @@ class GLCraft : public ic::Application {
         bool load() override {
             time = 0.0f;
 
-            states.enable_depth_testing(ic::LESS);
-            states.enable_face_culling(ic::FRONT, ic::CCW);
+            ic::GLStateHandler::enable_depth_testing(ic::LESS);
+            ic::GLStateHandler::enable_face_culling(ic::FRONT, ic::CCW);
             
             
             chunkShader = ic::ShaderLoader::load(chunkVertexShader, chunkFragmentShader);

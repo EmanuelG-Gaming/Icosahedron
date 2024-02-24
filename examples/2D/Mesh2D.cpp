@@ -51,7 +51,7 @@ class Mesh2D : public ic::Application {
             mesh2.set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
             
 
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, ic::Shaders::meshShaderFrag2D);
             texture = ic::TextureLoader::load_png("resources/textures/wood.png");
             
             camera = ic::Camera2D();

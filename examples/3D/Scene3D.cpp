@@ -87,9 +87,9 @@ class Scene3D : public ic::Application {
         }
         
         bool load() override {
-            states.enable_depth_testing(ic::LESS);
+            ic::GLStateHandler::enable_depth_testing(ic::LESS);
             
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, fragment);
 
 
             std::vector<float> positions = {
@@ -138,14 +138,14 @@ class Scene3D : public ic::Application {
             shader.set_uniform_vec3f("viewPosition", camera.position);
             camera.upload_to_shader(shader);
 
-            states.enable_face_culling(ic::FRONT, ic::CCW);
+            ic::GLStateHandler::enable_face_culling(ic::FRONT, ic::CCW);
             mesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.5f, 0.0f}));
             shader.set_uniform_color("diffuseColor", meshColor);
             mesh.draw(shader);
 
             // The calculated plane's normals might face away from the camera, 
             // so this function prevents the face from getting "culled" away from view
-            states.disable_face_culling();
+            ic::GLStateHandler::disable_face_culling();
             shader.set_uniform_color("diffuseColor", floorColor);
             floorMesh.draw(shader);
 

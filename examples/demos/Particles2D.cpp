@@ -40,7 +40,7 @@ class Particles2D : public ic::Application {
         
         bool load() override {
             particleBatch = ic::Batch(100000, ic::TRIANGLES);
-            particleShader = ic::Shader(shaders.basicShaderVertex2D, shaders.basicTextureShaderFrag2D);
+            particleShader = ic::Shader(ic::Shaders::basicShaderVertex2D, ic::Shaders::basicTextureShaderFrag2D);
             circleTexture = ic::TextureLoader::load_png("resources/textures/ball.png");
 
             camera = ic::Camera2D(0.5f);
@@ -102,7 +102,7 @@ class Particles2D : public ic::Application {
                 float alpha = particle->timeElapsed / PARTICLE_DISSAPEAR_TIME;
                 float interpolated = ic::Mathf::interpolate(from, to, sqrt(alpha));
 
-                renderer.draw_rectangle(particleBatch, pos.x(), pos.y(), interpolated, interpolated, ic::Colors::yellow);
+                ic::Renderer::draw_rectangle(particleBatch, pos.x(), pos.y(), interpolated, interpolated, ic::Colors::yellow);
             }
 
             particleBatch.render();

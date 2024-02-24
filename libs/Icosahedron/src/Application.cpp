@@ -7,7 +7,6 @@
 #include <Icosahedron/util/Noise.h>
 
 #include <Icosahedron/graphics/ImageIO.h>
-#include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/math/Mathf.h>
 
 
@@ -262,8 +261,6 @@ void ic::Application::pre_load() {
         SDL_SetRelativeMouseMode(SDL_TRUE);
     }
     
-    
-    shaders.load_shaders();
     ic::FreeType::load();
     ic::Audio::init();
     ic::Noise::init();

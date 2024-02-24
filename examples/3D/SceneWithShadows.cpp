@@ -220,7 +220,7 @@ class SceneWithShadows : public ic::Application {
         }
         
         bool load() override {
-            states.enable_depth_testing(ic::LESS);
+            ic::GLStateHandler::enable_depth_testing(ic::LESS);
             
             shader = ic::ShaderLoader::load(vert, fragment);
             shader.use();
@@ -268,8 +268,8 @@ class SceneWithShadows : public ic::Application {
 
 
             // First pass - render to the depth map
-            states.set_viewport(shadowWidth, shadowHeight);
-            states.disable_face_culling();
+            ic::GLStateHandler::set_viewport(shadowWidth, shadowHeight);
+            ic::GLStateHandler::disable_face_culling();
 
             shadowMap.use();
             clear_color(ic::Colors::black);
@@ -287,8 +287,8 @@ class SceneWithShadows : public ic::Application {
             shadowMap.unuse();
             
             // Second pass - render scene using shadow map
-            states.set_viewport(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
-            states.enable_face_culling(ic::BACK, ic::CW);
+            ic::GLStateHandler::set_viewport(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            ic::GLStateHandler::enable_face_culling(ic::BACK, ic::CW);
 
             clear_color(ic::Colors::blue);
 

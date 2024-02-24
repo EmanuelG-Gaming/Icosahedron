@@ -32,7 +32,7 @@ class TexturedRectangle : public ic::Application {
             shape = ic::GeometryGenerator::generate_rectangle_mesh(0.2f, 0.2f);
             
             texture = ic::TextureLoader::load_png("resources/textures/transformations.png");
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, ic::Shaders::meshShaderFrag2D);
 
             camera = ic::Camera2D();
         

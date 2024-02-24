@@ -78,9 +78,9 @@ struct PolygonShape {
         indices = ic::EarClippingTriangulation::triangulate(vertCoords);
     }
 
-    void draw(ic::Renderer &renderer, ic::Batch &batch, ic::Color color) {
+    void draw(ic::Batch &batch, ic::Color color) {
         auto components = poly.get_transformed_vertices();
-        renderer.draw_vertices(batch, components, indices, ic::Colors::lightGray);
+        ic::Renderer::draw_vertices(batch, components, indices, ic::Colors::lightGray);
     }
 };
 
@@ -126,8 +126,8 @@ class TiledDemo : public ic::Application {
         }
         
         bool load() override {
-            shader = ic::ShaderLoader::load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
-            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::basicTextureShaderVertex2D, ic::Shaders::basicTextureShaderFrag2D);
+            textShader = ic::ShaderLoader::load(ic::Shaders::basicTextShaderVertex2D, ic::Shaders::basicTextShaderFrag2D);
 
             camera = ic::Camera2D(0.3f);
             uiCamera = ic::Camera2D();
@@ -255,7 +255,7 @@ class TiledDemo : public ic::Application {
                 int x = i % MAP_WIDTH;
                 int y = i / MAP_HEIGHT;
 
-                renderer.draw_rectangle(batch, texture.get_entry(entryName), x, y, 0.5f, 0.5f);
+                ic::Renderer::draw_rectangle(batch, texture.get_entry(entryName), x, y, 0.5f, 0.5f);
             }
 
             if (collisionDebug) {
@@ -271,18 +271,18 @@ class TiledDemo : public ic::Application {
                         std::string sprite = "ball";
                         if (obstructing[cy * MAP_WIDTH + cx]) sprite = "white";
 
-                        renderer.draw_rectangle(batch, texture.get_entry(sprite), cx, cy, 0.4f, 0.4f);
+                        ic::Renderer::draw_rectangle(batch, texture.get_entry(sprite), cx, cy, 0.4f, 0.4f);
                     }
                 }
             }
 
-            renderer.draw_rectangle(batch, texture.get_entry(shape->atlasEntryName),
+            ic::Renderer::draw_rectangle(batch, texture.get_entry(shape->atlasEntryName),
                 shape->r.position.x(), shape->r.position.y(), 
                 shape->r.size.x(),     shape->r.size.y(), 
                 ic::Colors::green);
 
             for (auto &drop : drops) {
-                drop->shape->draw(renderer, batch, ic::Colors::lightGray);
+                drop->shape->draw(batch, ic::Colors::lightGray);
             }
 
             batch.render();
@@ -292,8 +292,8 @@ class TiledDemo : public ic::Application {
             uiCamera.use(textShader);
 
             atlas.use();
-            renderer.draw_string(textBatch, atlas, "T key - toggle potential collisions", -1.2f, 0.9f, 0.8f, 0.8f);
-            renderer.draw_string(textBatch, atlas, std::to_string(collected) + "/" + std::to_string(initialSize) + " polygons remaining", -1.2f, 0.75f, 0.8f, 0.8f);
+            ic::Renderer::draw_string(textBatch, atlas, "T key - toggle potential collisions", -1.2f, 0.9f, 0.8f, 0.8f);
+            ic::Renderer::draw_string(textBatch, atlas, std::to_string(collected) + "/" + std::to_string(initialSize) + " polygons remaining", -1.2f, 0.75f, 0.8f, 0.8f);
 
             if (completedLevel) {
                 float t = completeTimer / COMPLETE_POPUP_ANIMATION_DURATION;
@@ -303,7 +303,7 @@ class TiledDemo : public ic::Application {
                 ic::Vec2f position = from.interpolate(to, ic::Interpolation::smoothstep(alpha));
                 float scale = ic::Mathf::interpolate_logarithmic(0.5f, 1.5f, alpha);
 
-                renderer.draw_string_centered(textBatch, atlas, "Level finished!", position.x(), position.y(), scale, scale);
+                ic::Renderer::draw_string_centered(textBatch, atlas, "Level finished!", position.x(), position.y(), scale, scale);
             }
             textBatch.render();
 

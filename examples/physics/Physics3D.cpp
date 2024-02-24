@@ -107,9 +107,9 @@ class Physics3D: public ic::Application {
         }
         
         bool load() override {
-            states.enable_depth_testing(ic::LESS);
+            ic::GLStateHandler::enable_depth_testing(ic::LESS);
             
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, fragment);
 
 
             std::vector<float> positions = {

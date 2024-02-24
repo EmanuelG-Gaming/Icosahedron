@@ -14,7 +14,7 @@
 #include <Icosahedron/assets/loaders/TextureLoader.h>
 #include <IcosahedronDebug/ConsoleOutput.h>
 
-// shaders.basicTextureShaderFrag2D with slight modifications to allow more "refined" alpha blending,
+// ic::Shaders::basicTextureShaderFrag2D with slight modifications to allow more "refined" alpha blending,
 // rather than a cheap fragment discard when the color reaches a certain threshold
 std::string alphaBlendingFragment = IC_ADD_GLSL_DEFINITION(
     precision mediump float;
@@ -52,7 +52,7 @@ class AnimatedSprites : public ic::Application {
         
         bool load() override {
             // Alpha blending
-            states.enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
+            ic::GLStateHandler::enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
 
             image = ic::Image(64, 64);
             int rings = 10;
@@ -76,7 +76,7 @@ class AnimatedSprites : public ic::Application {
             mesh2.set_transformation(ic::Mat4x4().set_translation<2>({ 0.35f, 0.0f }));
             
 
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, alphaBlendingFragment);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, alphaBlendingFragment);
             texture1 = ic::TextureLoader::load_png("resources/textures/discontinuous-square.png");
             texture2 = ic::TextureLoader::load(image);
 

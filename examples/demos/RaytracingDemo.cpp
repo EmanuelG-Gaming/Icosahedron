@@ -250,7 +250,7 @@ class RaytracingDemo : public ic::Application {
         
         bool load() override {
             rayShader = ic::ShaderLoader::load(rayVertex, rayFragment);
-            screenShader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, screenFragment);
+            screenShader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, screenFragment);
             
             // Initialize these values directly
             rayShader.use();

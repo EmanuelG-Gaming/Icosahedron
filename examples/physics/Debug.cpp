@@ -40,8 +40,8 @@ class PhysicsDebug : public ic::Application {
             mesh2.set_material(ic::MeshMaterial2D(ic::Colors::green, 1.0f));
 
 
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
-            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, ic::Shaders::meshShaderFrag2D);
+            textShader = ic::ShaderLoader::load(ic::Shaders::basicTextShaderVertex2D, ic::Shaders::basicTextShaderFrag2D);
             
             textBatch = ic::Batch(10000, ic::TRIANGLES);
             ic::FreeType::add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
@@ -116,8 +116,8 @@ class PhysicsDebug : public ic::Application {
             uiCamera.use(textShader);
             atlas.use();
 
-            renderer.draw_string(textBatch, atlas, "Object count: " + std::to_string(size), -1.2f, 0.9f);
-            renderer.draw_string(textBatch, atlas, "Total kinetic energy: " + std::to_string(kineticEnergy) + " J", -1.2f, 0.8f);
+            ic::Renderer::draw_string(textBatch, atlas, "Object count: " + std::to_string(size), -1.2f, 0.9f);
+            ic::Renderer::draw_string(textBatch, atlas, "Total kinetic energy: " + std::to_string(kineticEnergy) + " J", -1.2f, 0.8f);
            
             textBatch.render();
 

@@ -170,13 +170,13 @@ class DeferredRendering : public ic::Application {
         }
         
         bool load() override {
-            states.enable_depth_testing(ic::LESS);
-            states.enable_face_culling(ic::FRONT, ic::CCW);
+            ic::GLStateHandler::enable_depth_testing(ic::LESS);
+            ic::GLStateHandler::enable_face_culling(ic::FRONT, ic::CCW);
             
 
-            gShader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, gShaderFragment);
+            gShader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, gShaderFragment);
             laterShader = ic::ShaderLoader::load(screenLaterVertex, laterCompileFragment);
-            lightShader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, lightShaderFragment);
+            lightShader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, lightShaderFragment);
             
             // Shader configuration
             laterShader.use();

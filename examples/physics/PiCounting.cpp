@@ -39,8 +39,8 @@ class PiCounting : public ic::Application {
         }
         
         bool load() override {
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
-            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, ic::Shaders::meshShaderFrag2D);
+            textShader = ic::ShaderLoader::load(ic::Shaders::basicTextShaderVertex2D, ic::Shaders::basicTextShaderFrag2D);
             
             textBatch = ic::Batch(10000, ic::TRIANGLES);
             ic::FreeType::add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
@@ -161,10 +161,10 @@ class PiCounting : public ic::Application {
             uiCamera.use(textShader);
             atlas.use();
 
-            renderer.draw_string(textBatch, atlas, " = 3.14159265...", 0.55f, 0.65f);
-            renderer.draw_string(textBatch, atlas, "Collisions: " + std::to_string(collisions), 0.4f, 0.85f);
-            renderer.draw_string(textBatch, atlas, "Use the Q key to", -1.2f, 0.85f, 0.8f, 0.8f);
-            renderer.draw_string(textBatch, atlas, "switch between the two objects.", -1.2f, 0.75f, 0.8f, 0.8f);
+            ic::Renderer::draw_string(textBatch, atlas, " = 3.14159265...", 0.55f, 0.65f);
+            ic::Renderer::draw_string(textBatch, atlas, "Collisions: " + std::to_string(collisions), 0.4f, 0.85f);
+            ic::Renderer::draw_string(textBatch, atlas, "Use the Q key to", -1.2f, 0.85f, 0.8f, 0.8f);
+            ic::Renderer::draw_string(textBatch, atlas, "switch between the two objects.", -1.2f, 0.75f, 0.8f, 0.8f);
             
             textBatch.render();
 

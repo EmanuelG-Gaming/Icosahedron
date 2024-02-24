@@ -17,7 +17,7 @@ void ic::UI::Label::draw() {
         this->style.background->draw(this->translation.x() + halfWidth, this->translation.y() + halfHeight, halfWidth, halfHeight);
     }
 
-    ic::UI::Global::renderer.draw_string(ic::UI::Global::fillTextBatch, this->style.font, this->text, this->translation.x(), this->translation.y(), 1.0f, 1.0f, this->style.fontColor);
+    ic::Renderer::draw_string(ic::UI::Global::fillTextBatch, this->style.font, this->text, this->translation.x(), this->translation.y(), 1.0f, 1.0f, this->style.fontColor);
 }
 
 

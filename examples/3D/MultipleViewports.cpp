@@ -149,10 +149,10 @@ class MultipleViewports : public ic::Application {
         }
         
         bool load() override {
-            states.enable_depth_testing(ic::LESS);
+            ic::GLStateHandler::enable_depth_testing(ic::LESS);
             
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
-            screenShader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, fragment);
+            screenShader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, fragment);
             
             meshTexture = ic::TextureLoader::load_png("resources/textures/wood.png");
             mainCameraTexture = ic::TextureLoader::load_png("resources/textures/white.png");
@@ -215,7 +215,7 @@ class MultipleViewports : public ic::Application {
             clear_color(ic::Colors::blue);
             
             // Second pass - drawing via framebuffer
-            states.disable_face_culling();
+            ic::GLStateHandler::disable_face_culling();
             screenShader.use();
             screenShader.set_uniform_vec3f("viewPosition", camera.position);
             camera.upload_to_shader(screenShader);
@@ -233,7 +233,7 @@ class MultipleViewports : public ic::Application {
         }
 
         void render_scene(ic::Camera3D &cam) {
-            states.enable_face_culling(ic::FRONT, ic::CCW);
+            ic::GLStateHandler::enable_face_culling(ic::FRONT, ic::CCW);
             
             shader.use();
             shader.set_uniform_vec3f("viewPosition", cam.position);

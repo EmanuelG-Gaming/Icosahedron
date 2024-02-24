@@ -197,7 +197,8 @@ void Renderer::draw_string_centered(ic::Batch &batch, ic::TextAtlas &textAtlas, 
 }
 
 
-void Renderer::draw_string_itself(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float sclX, float sclY, const ic::Color &color) {
+namespace ic::Renderer { namespace {
+void draw_string_itself(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float sclX, float sclY, const ic::Color &color) {
     std::vector<BatchVertex> vertices;
     
     float px = x;
@@ -226,6 +227,7 @@ void Renderer::draw_string_itself(ic::Batch &batch, ic::TextAtlas &textAtlas, co
               
     batch.add(vertices);
 }
+}}
 
         
 void Renderer::tint(const ic::Color &to, float amount) {

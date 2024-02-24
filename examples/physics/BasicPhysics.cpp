@@ -36,7 +36,7 @@ class BasicPhysics : public ic::Application {
             mesh2 = ic::GeometryGenerator::generate_regular_polygon_mesh(30, 0.5f);
             mesh2.set_material(ic::MeshMaterial2D(ic::Colors::green, 1.0f));
 
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, ic::Shaders::meshShaderFrag2D);
             
             camera = ic::Camera2D();
             camera.scale = 0.5f;

@@ -34,8 +34,8 @@ class PongDemo : public ic::Application {
         }
         
         bool load() override {
-            shader = ic::ShaderLoader::load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
-            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::basicTextureShaderVertex2D, ic::Shaders::basicTextureShaderFrag2D);
+            textShader = ic::ShaderLoader::load(ic::Shaders::basicTextShaderVertex2D, ic::Shaders::basicTextShaderFrag2D);
 
             // We use the roboto font
             ic::FreeType::add_atlas("score", "resources/fonts/Roboto-Regular.ttf", 48);
@@ -150,15 +150,15 @@ class PongDemo : public ic::Application {
             camera.use(shader);
             texture.use();
 
-            renderer.draw_rectangle(batch, texture.get_entry(paddle1->atlasEntryName),
+            ic::Renderer::draw_rectangle(batch, texture.get_entry(paddle1->atlasEntryName),
                 paddle1->r.position.x(), paddle1->r.position.y(), 
                 paddle1->r.size.x(),     paddle1->r.size.y(), 
                 ic::Colors::white);
-            renderer.draw_rectangle(batch, texture.get_entry(paddle2->atlasEntryName),
+            ic::Renderer::draw_rectangle(batch, texture.get_entry(paddle2->atlasEntryName),
                 paddle2->r.position.x(), paddle2->r.position.y(), 
                 paddle2->r.size.x(),     paddle2->r.size.y(), 
                 ic::Colors::white);
-            renderer.draw_rectangle(batch, texture.get_entry(ball->atlasEntryName),
+            ic::Renderer::draw_rectangle(batch, texture.get_entry(ball->atlasEntryName),
                 ball->r.position.x(), ball->r.position.y(), 
                 ball->r.size.x(),     ball->r.size.y(), 
                 ic::Colors::white);
@@ -169,7 +169,7 @@ class PongDemo : public ic::Application {
             textShader.use();
             camera.use(textShader);
             atlas.use();
-            renderer.draw_string_centered(textBatch, atlas, std::to_string(points1) + " | " + std::to_string(points2), 0.0f, 0.7f);
+            ic::Renderer::draw_string_centered(textBatch, atlas, std::to_string(points1) + " | " + std::to_string(points2), 0.0f, 0.7f);
             textBatch.render();
 
             return true; 

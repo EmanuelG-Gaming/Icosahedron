@@ -58,9 +58,9 @@ class Electrostatics : public ic::Application {
         }
         
         bool load() override {
-            shader = ic::ShaderLoader::load(shaders.basicTextureShaderVertex2D, shaders.basicTextureShaderFrag2D);
-            vectorFieldShader = ic::ShaderLoader::load(shaders.basicShaderVertex2D, shaders.basicShaderFrag2D);
-            textShader = ic::ShaderLoader::load(shaders.basicTextShaderVertex2D, shaders.basicTextShaderFrag2D);
+            shader = ic::ShaderLoader::load(ic::Shaders::basicTextureShaderVertex2D, ic::Shaders::basicTextureShaderFrag2D);
+            vectorFieldShader = ic::ShaderLoader::load(ic::Shaders::basicShaderVertex2D, ic::Shaders::basicShaderFrag2D);
+            textShader = ic::ShaderLoader::load(ic::Shaders::basicTextShaderVertex2D, ic::Shaders::basicTextShaderFrag2D);
             
             batch = ic::Batch(10000, ic::TRIANGLES);
             vectorFieldBatch = ic::Batch(100000, ic::LINES);
@@ -259,9 +259,9 @@ class Electrostatics : public ic::Application {
 
                         ic::Color color = ic::Color((uint8_t) c.x(), (uint8_t) c.y(), (uint8_t) c.z());
 
-                        renderer.draw_line(vectorFieldBatch, x, y, x + v.x(), y + v.y(), color);
-                        renderer.draw_line(vectorFieldBatch, x + v.x(), y + v.y(), x + v.x() * 0.9f - perpendicular.x(), y + v.y() * 0.9f - perpendicular.y(), color);
-                        renderer.draw_line(vectorFieldBatch, x + v.x(), y + v.y(), x + v.x() * 0.9f + perpendicular.x(), y + v.y() * 0.9f + perpendicular.y(), color);
+                        ic::Renderer::draw_line(vectorFieldBatch, x, y, x + v.x(), y + v.y(), color);
+                        ic::Renderer::draw_line(vectorFieldBatch, x + v.x(), y + v.y(), x + v.x() * 0.9f - perpendicular.x(), y + v.y() * 0.9f - perpendicular.y(), color);
+                        ic::Renderer::draw_line(vectorFieldBatch, x + v.x(), y + v.y(), x + v.x() * 0.9f + perpendicular.x(), y + v.y() * 0.9f + perpendicular.y(), color);
                     }
                 }
                 vectorFieldBatch.render();
@@ -275,14 +275,14 @@ class Electrostatics : public ic::Application {
                 ic::Vec2f pos = object->transform->position;
 
                 if (object->charge < 0.0f) {
-                    renderer.draw_rectangle(batch, pos.x(), pos.y(), object->radius, object->radius, ic::Colors::green);
-                    renderer.draw_string_centered(worldTextBatch, atlas, "-", pos.x(), pos.y() - 0.05f, 2.0f, 2.0f);
+                    ic::Renderer::draw_rectangle(batch, pos.x(), pos.y(), object->radius, object->radius, ic::Colors::green);
+                    ic::Renderer::draw_string_centered(worldTextBatch, atlas, "-", pos.x(), pos.y() - 0.05f, 2.0f, 2.0f);
                 } else if (object->charge > 0.0f) {
-                    renderer.draw_rectangle(batch, pos.x(), pos.y(), object->radius, object->radius, ic::Colors::yellow);
-                    renderer.draw_string_centered(worldTextBatch, atlas, "+", pos.x(), pos.y(), 2.0f, 2.0f);
+                    ic::Renderer::draw_rectangle(batch, pos.x(), pos.y(), object->radius, object->radius, ic::Colors::yellow);
+                    ic::Renderer::draw_string_centered(worldTextBatch, atlas, "+", pos.x(), pos.y(), 2.0f, 2.0f);
                 } else {
-                    renderer.draw_rectangle(batch, pos.x(), pos.y(), object->radius, object->radius, ic::Colors::lightGray);
-                    renderer.draw_string_centered(worldTextBatch, atlas, "0", pos.x(), pos.y(), 1.5f, 1.5f);
+                    ic::Renderer::draw_rectangle(batch, pos.x(), pos.y(), object->radius, object->radius, ic::Colors::lightGray);
+                    ic::Renderer::draw_string_centered(worldTextBatch, atlas, "0", pos.x(), pos.y(), 1.5f, 1.5f);
                 }
             }
 
@@ -299,10 +299,10 @@ class Electrostatics : public ic::Application {
 
             uiCamera.use(textShader);
 
-            renderer.draw_string(textBatch, atlas, "Object count: " + std::to_string(size), -1.2f, 0.9f);
-            renderer.draw_string(textBatch, atlas, "Total kinetic energy: " + std::to_string(kineticEnergy) + " J", -1.2f, 0.8f);
-            renderer.draw_string(textBatch, atlas, "Press T to toggle electrostatic vector field,", -1.2f, 0.7f, 0.8f, 0.8f);
-            renderer.draw_string(textBatch, atlas, "and N, P, E for adding neutrons, protons, and electrons.", -1.2f, 0.6f, 0.8f, 0.8f);
+            ic::Renderer::draw_string(textBatch, atlas, "Object count: " + std::to_string(size), -1.2f, 0.9f);
+            ic::Renderer::draw_string(textBatch, atlas, "Total kinetic energy: " + std::to_string(kineticEnergy) + " J", -1.2f, 0.8f);
+            ic::Renderer::draw_string(textBatch, atlas, "Press T to toggle electrostatic vector field,", -1.2f, 0.7f, 0.8f, 0.8f);
+            ic::Renderer::draw_string(textBatch, atlas, "and N, P, E for adding neutrons, protons, and electrons.", -1.2f, 0.6f, 0.8f, 0.8f);
             textBatch.render();
 
 

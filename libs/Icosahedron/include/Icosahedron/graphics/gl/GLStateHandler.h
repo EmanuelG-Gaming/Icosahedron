@@ -9,24 +9,23 @@
 #include <Icosahedron/graphics/gl/GL.h>
 
 namespace ic {
-    class GLStateHandler {
-        public:
-            void enable_depth_testing(ic::GLDepthSettings depth);
-            void enable_blending(ic::GLBlendingSource source, ic::GLBlendingDestination dest);
-            void enable_face_culling(ic::GLCullSettings culling, ic::GLFaceWindingOrder winding = ic::CCW);
+    namespace GLStateHandler {
+        void enable_depth_testing(ic::GLDepthSettings depth);
+        void enable_blending(ic::GLBlendingSource source, ic::GLBlendingDestination dest);
+        void enable_face_culling(ic::GLCullSettings culling, ic::GLFaceWindingOrder winding = ic::CCW);
 
-            void set_depth_testing(ic::GLDepthSettings depth);
-            void set_blending(ic::GLBlendingSource source, ic::GLBlendingDestination dest);
-            void set_face_culling(ic::GLCullSettings culling, ic::GLFaceWindingOrder winding = ic::CCW);
+        void set_depth_testing(ic::GLDepthSettings depth);
+        void set_blending(ic::GLBlendingSource source, ic::GLBlendingDestination dest);
+        void set_face_culling(ic::GLCullSettings culling, ic::GLFaceWindingOrder winding = ic::CCW);
 
-            void set_viewport(int w, int h);
-            
-            void enable(ic::GLContextSettings setting);
-            void disable(ic::GLContextSettings setting);
+        void set_viewport(int w, int h);
+        
+        void enable(ic::GLContextSettings setting);
+        void disable(ic::GLContextSettings setting);
 
-            void disable_depth_testing();
-            void disable_blending();
-            void disable_face_culling();
+        void disable_depth_testing();
+        void disable_blending();
+        void disable_face_culling();
     };
 }
 #endif

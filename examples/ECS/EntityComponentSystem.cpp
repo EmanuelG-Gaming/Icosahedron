@@ -115,7 +115,7 @@ class EntityComponentSystem : public ic::Application {
         
         bool load() override {
             camera = ic::Camera2D();
-            spriteShader = ic::ShaderLoader::load(shaders.meshShaderVertex2D, shaders.meshShaderFrag2D);
+            spriteShader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, ic::Shaders::meshShaderFrag2D);
             movementSystem.load();
 
             // A floor that has a wood texture

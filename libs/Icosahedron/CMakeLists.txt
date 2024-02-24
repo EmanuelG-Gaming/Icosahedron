@@ -96,6 +96,7 @@ set(LIBRARY_HEADERS
 set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/math/Mathf.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/math/Interpolation.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/math/EarClippingTriangulation.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/Image.cpp

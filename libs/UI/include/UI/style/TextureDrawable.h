@@ -28,8 +28,7 @@ namespace ic { namespace UI {
             }
             
             void draw(float x, float y, float width, float height) override {
-                //ic::UI::Global::renderer.tint(this->tint, 1.0f);
-                ic::UI::Global::renderer.draw_rectangle(ic::UI::Global::fillBatch, entry, x, y, width, height, this->tint);
+                ic::Renderer::draw_rectangle(ic::UI::Global::fillBatch, entry, x, y, width, height, this->tint);
             }
     };
 }}

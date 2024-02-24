@@ -119,10 +119,10 @@ class ModelViewerDemo : public ic::Application {
         }
         
         bool load() override {
-            states.enable_depth_testing(ic::LESS);
-            states.enable_face_culling(ic::FRONT, ic::CCW);
+            ic::GLStateHandler::enable_depth_testing(ic::LESS);
+            ic::GLStateHandler::enable_face_culling(ic::FRONT, ic::CCW);
             
-            shader = ic::ShaderLoader::load(shaders.meshShaderVertex3D, fragment);
+            shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, fragment);
             
             mesh = ic::OBJLoader::load("resources/models/boat.obj");
             mesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.0f, 0.0f}));

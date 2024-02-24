@@ -15,7 +15,6 @@
 
 namespace ic { namespace UI {
     namespace Global {
-        ic::Renderer renderer;
         ic::Batch fillBatch, fillTextBatch;
         ic::TextAtlas defaultAtlas;
         ic::TextureAtlas atlas;
