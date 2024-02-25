@@ -32,7 +32,7 @@ std::string alphaBlendingFragment = IC_ADD_GLSL_DEFINITION(
 );
 
 /* Shows how to achieve alpha transparency by using a loaded .png texture and a procedural image. */
-class Transparency : public ic::Application {
+class Transparency2D : public ic::Application {
     ic::Image image;
     ic::Mesh2D mesh1, mesh2;
 
@@ -125,7 +125,7 @@ class Transparency : public ic::Application {
 };
 
 int main() {
-    Transparency application;
+    Transparency2D application;
     
     if (application.construct(640, 480)) {
         application.start();
