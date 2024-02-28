@@ -166,6 +166,43 @@ namespace ic {
                 gl_Position = projection * view * pos;
             }
         );
+
+        // ----- Skyboxes -----
+
+        // A modified ic::Shaders::meshShaderVertex3D that removes the translational component (mat4 -> mat3 -> mat4 again) of the camera's view matrix,
+        // thus fixing the skybox in place
+        const std::string skyboxVertex = IC_ADD_GLSL_DEFINITION(
+            layout (location = 0) in vec3 position;
+        
+            uniform mat4 projection = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+            uniform mat4 view = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+            uniform mat4 model = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+            
+            out vec3 vPosition;
+        
+            void main() {
+                mat4 viewNoTranslation = mat4(mat3(view));
+                vec4 pos = model * vec4(position, 1.0);
+        
+                vPosition = pos.xyz;
+                gl_Position = projection * viewNoTranslation * pos;
+            }
+        );
+
+        // A basic GLSL fragment code for rendering a skybox that doesn't support gamma correction
+        const std::string skyboxFragment = IC_ADD_GLSL_DEFINITION(
+            precision mediump float;
+        
+            in vec3 vPosition;
+
+            uniform samplerCube sampleTexture;
+        
+            out vec4 outColor;
+        
+            void main() {
+                outColor = texture(sampleTexture, vPosition);
+            }
+        );
     };
 }
 

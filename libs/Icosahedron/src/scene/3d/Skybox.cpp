@@ -4,6 +4,9 @@
 using namespace ic;
 
 
+Skybox::Skybox() {
+}
+
 Skybox::Skybox(const std::vector<std::string> &fileNames) {
     this->textureCube = ic::CubemapLoader::load_png(fileNames);
 

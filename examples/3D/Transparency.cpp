@@ -28,7 +28,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
     };
 
     DirectionalLight l = DirectionalLight(
-        vec3(-8.0, -5.0, -2.0), 
+        vec3(2.0, -2.0, -2.0), 
         vec3(0.2, 0.2, 0.2), 
         vec3(0.8, 0.8, 0.8), 
         vec3(0.5, 0.5, 0.5)
@@ -50,8 +50,9 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
         vec4 ambientColor = vec4(light.ambient * ambientIntensity, 0.0);
 
         // Diffuse reflection
+        vec4 albedo = texture(textureSample, vTCoords);
         float diffuseIntensity = clamp(dotProduct, 0.0, 1.0);
-        vec4 diffuseColor = texture(textureSample, vTCoords) * vec4(light.diffuse * diffuseIntensity, 1.0);
+        vec4 diffuseColor = albedo * vec4(light.diffuse * diffuseIntensity, 1.0);
 
         // Specular reflection
         // Blinn-Phong reflection
@@ -62,7 +63,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
         //vec3 reflectDirection = reflect(-lightDirection, normal); 
         //float specularIntensity = pow(max(dot(viewDirection, reflectDirection), 0.0), (0.1 * 128.0) * 4.0);
         
-        vec4 specularColor = vec4(light.specular, 1.0) * specularIntensity;
+        vec4 specularColor = vec4(light.specular, albedo.a) * specularIntensity;
         vec4 result = ambientColor + diffuseColor + specularColor;
         return result;
     }
@@ -172,6 +173,7 @@ class Transparency3D : public ic::Application {
             windowTexture.use();
 
             // Inspired from LearnOpenGL.com
+            // Sort quads based on their midpoint distance to the camera, in order to prevent overwriting 
             std::map<float, ic::Vec3f> sorted;
             ic::Vec3f xAxis(1.0f, 0.0f, 0.0f);
 
@@ -181,6 +183,7 @@ class Transparency3D : public ic::Application {
             }
 
             for (std::map<float, ic::Vec3f>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); it++) {
+                // Switch normal direction if the camera is facing away from the X axis
                 bool frontFacing = (camera.position - it->second).dot(xAxis) >= 0.0f;
                 ic::Mat4x4 scaling = ic::Mat4x4().set_scaling<3>({ frontFacing ? 1.0f : -1.0f, 1.0f, 1.0f });
 

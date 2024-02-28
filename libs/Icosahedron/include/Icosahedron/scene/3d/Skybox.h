@@ -17,6 +17,9 @@
 namespace ic {
     class Skybox {
         public:
+            /** @brief Initializes an empty skybox. */
+            Skybox();
+
             /** @brief Initializes a cube skybox with face images. 
              *  @param fileNames File names (f1...f6) corresponding to each face.
              *  @note f1 - right face
