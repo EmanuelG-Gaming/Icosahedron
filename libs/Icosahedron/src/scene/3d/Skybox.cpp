@@ -7,16 +7,25 @@ using namespace ic;
 Skybox::Skybox() {
 }
 
-Skybox::Skybox(const std::vector<std::string> &fileNames) {
-    this->textureCube = ic::CubemapLoader::load_png(fileNames);
+Skybox::Skybox(const std::vector<std::string> &fileNames, bool loadsBMP) {
+    if (loadsBMP) {
+        this->textureCube = ic::CubemapLoader::load_bmp(fileNames);
+    } else {
+        this->textureCube = ic::CubemapLoader::load_png(fileNames);
+    }
 
     this->mesh = ic::Mesh3D();
     this->mesh.add_attribute(0, 3, ic::GeometryGenerator::generate_cube(1.0f));
     this->mesh.set_index_buffer(ic::GeometryGenerator::generate_parallelipiped_indices());
 }
 
-Skybox::Skybox(const ic::Mesh3D &mesh, const std::vector<std::string> &fileNames) {
-    this->textureCube = ic::CubemapLoader::load_png(fileNames);
+Skybox::Skybox(const ic::Mesh3D &mesh, const std::vector<std::string> &fileNames, bool loadsBMP) {
+    if (loadsBMP) {
+        this->textureCube = ic::CubemapLoader::load_bmp(fileNames);
+    } else {
+        this->textureCube = ic::CubemapLoader::load_png(fileNames);
+    }
+
     this->mesh = mesh;
 }
 

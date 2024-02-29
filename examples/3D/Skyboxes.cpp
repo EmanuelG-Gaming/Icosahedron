@@ -11,6 +11,7 @@
 
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
+#include <IcosahedronDebug/ConsoleOutput.h>
 
 
 std::string fragment = IC_ADD_GLSL_DEFINITION(
@@ -28,14 +29,14 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 
     DirectionalLight l = DirectionalLight(
         vec3(5.0, -8.0, 5.0), 
-        vec3(0.2, 0.2, 0.2), 
+        vec3(0.7, 0.7, 0.9), 
         vec3(0.8, 0.8, 0.8), 
         vec3(0.5, 0.5, 0.5)
     );
     
     uniform vec3 diffuseColor = vec3(1.0, 1.0, 1.0);
     uniform samplerCube skyboxSampler;
-    uniform bool hasDiffuseShading = false;
+    uniform bool hasDiffuseShading = true;
 
 
     uniform vec3 viewPosition;
@@ -53,8 +54,8 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 
         // Diffuse reflection
         float diffuseIntensity = clamp(dotProduct, 0.0, 1.0);
-        vec3 diffusePart = hasDiffuseShading ? diffuseColor * light.diffuse * diffuseIntensity : vec3(0.0);
-        vec4 diffuse = vec4(texture(skyboxSampler, reflect(-viewDirection, normal)).rgb + diffusePart, 1.0);
+        vec3 diffusePart = hasDiffuseShading ? light.diffuse * diffuseIntensity : vec3(1.0);
+        vec4 diffuse = vec4(texture(skyboxSampler, reflect(-viewDirection, normal)).rgb * diffuseColor * diffusePart, 1.0);
 
         // Specular reflection
         // Blinn-Phong reflection
@@ -100,41 +101,25 @@ class Skyboxes : public ic::Application {
         
         bool load() override {
             ic::GLStateHandler::enable_depth_testing(ic::LESS);
+            ic::GLStateHandler::enable_face_culling(ic::FRONT, ic::CCW);
+
             
             shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, fragment);
             skyShader = ic::ShaderLoader::load(ic::Shaders::skyboxVertex, ic::Shaders::skyboxFragment);
 
 
-            std::vector<float> positions = {
-                -5.0f, 0.0f, -5.0f,
-                5.0f, 0.0f, -5.0f,
-                5.0f, 0.0f, 5.0f,
-                -5.0f, 0.0f, 5.0f, 
-            };
-
-            std::vector<float> normals = {
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-            };
-
-            mesh = ic::GeometryGenerator::generate_UV_sphere_mesh(0.5f, 20, 20);
+            mesh = ic::GeometryGenerator::generate_UV_sphere_mesh(0.5f, 100, 100);
             
             skybox = ic::Skybox(std::vector<std::string>({ 
-                skyboxPath + "right.png",
-                skyboxPath + "left.png",
-                skyboxPath + "top.png",
-                skyboxPath + "bottom.png",
-                skyboxPath + "front.png",
-                skyboxPath + "back.png",
-            }));
+                skyboxPath + "right.bmp",
+                skyboxPath + "left.bmp",
+                skyboxPath + "top.bmp",
+                skyboxPath + "bottom.bmp",
+                skyboxPath + "front.bmp",
+                skyboxPath + "back.bmp",
+            }), true);
 
-            // A plane acting as a floor
-            floorMesh = ic::Mesh3D();
-            floorMesh.add_attribute(0, 3, positions);
-            floorMesh.add_attribute(3, 3, normals);
-            floorMesh.set_index_buffer({ 0, 1, 2, 0, 2, 3 });
+            floorMesh = ic::GeometryGenerator::generate_parallelipiped_mesh(20.0f, 0.1f, 20.0f);
 
 
             camera = ic::Camera3D();
@@ -144,7 +129,7 @@ class Skyboxes : public ic::Application {
             controller = ic::FreeRoamCameraController3D(&camera);
             controller.flying = true;
 
-            meshColor = ic::Color().hexadecimal_to_RGB("BD5A4C");
+            meshColor = ic::Color().hexadecimal_to_RGB("444444");
             floorColor = ic::Color().hexadecimal_to_RGB("268B07");
             
             return true;
@@ -153,6 +138,7 @@ class Skyboxes : public ic::Application {
         bool handle_event(ic::Event event, float dt) override { 
             return true;
         }
+
 
         bool update(float dt) override {
             controller.act(dt);
@@ -174,16 +160,12 @@ class Skyboxes : public ic::Application {
 
             skybox.use_texture();
             
-            ic::GLStateHandler::enable_face_culling(ic::FRONT, ic::CCW);
-            mesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.5f, 0.0f}));
+            mesh.set_transformation(ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f}));
             shader.set_uniform_color("diffuseColor", meshColor);
             mesh.draw(shader);
 
-            // The calculated plane's normals might face away from the camera, 
-            // so this function prevents the face from getting "culled" away from view
-            ic::GLStateHandler::disable_face_culling();
             shader.set_uniform_color("diffuseColor", floorColor);
-            //floorMesh.draw(shader);
+            floorMesh.draw(shader);
 
             return true; 
         }
@@ -200,6 +182,7 @@ class Skyboxes : public ic::Application {
 
 int main() {
     Skyboxes application;
+    //ic::Debug::ConsoleOutput::get().write_file("yet.txt", stderr);
 
     if (application.construct(640, 480)) {
         application.start();

@@ -51,10 +51,18 @@ ic::Cubemap ic::CubemapLoader::load_bmp(const std::vector<std::string> &filePath
     
         GLenum textureFormat = map_to_texture_format(texture->format->format, gammaCorrection);
         ic::CubemapFaceInformation face = { texture->w, texture->h, i, textureFormat, texture->pixels };
+        fprintf(stderr, "Width: %i\n", face.width);
+        fprintf(stderr, "Format: %i\n", textureFormat);
 
         load_cubemap_face(face);
         SDL_FreeSurface(texture);
     }
+
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    
 
     return result;
 }
@@ -83,7 +91,7 @@ GLenum map_to_texture_format(uint32_t format, bool gammaCorrection) {
 }
 
 void load_cubemap_face(const ic::CubemapFaceInformation &data) {
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + data.faceIndex, 0, data.format, data.width, data.height, 0, data.format, GL_UNSIGNED_BYTE, data.data);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + data.faceIndex, 0, data.format, data.width, data.height, 0, GL_BGR, GL_UNSIGNED_BYTE, data.data);
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);

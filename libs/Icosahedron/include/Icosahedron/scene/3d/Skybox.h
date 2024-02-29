@@ -29,7 +29,7 @@ namespace ic {
              *  @note f5 - front face
              *  @note f6 - back face
             */
-            Skybox(const std::vector<std::string> &fileNames);
+            Skybox(const std::vector<std::string> &fileNames, bool loadsBMP = false);
 
             /** @brief Initializes a new skybox, depending on a mesh. 
              *  @param fileNames File names (f1...f6) corresponding to each face.
@@ -40,7 +40,7 @@ namespace ic {
              *  @note f5 - front face
              *  @note f6 - back face
             */
-            Skybox(const ic::Mesh3D &mesh, const std::vector<std::string> &fileNames);
+            Skybox(const ic::Mesh3D &mesh, const std::vector<std::string> &fileNames, bool loadsBMP = false);
 
             void draw(ic::Shader &shader, ic::GLPrimitives primitive = ic::TRIANGLES);
             void dispose();
