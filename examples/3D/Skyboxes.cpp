@@ -12,6 +12,7 @@
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
 #include <IcosahedronDebug/ConsoleOutput.h>
+#include <Icosahedron/assets/loaders/OBJLoader.h>
 
 
 std::string fragment = IC_ADD_GLSL_DEFINITION(
@@ -30,7 +31,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
     DirectionalLight l = DirectionalLight(
         vec3(5.0, -8.0, 5.0), 
         vec3(0.7, 0.7, 0.9), 
-        vec3(0.8, 0.8, 0.8), 
+        vec3(1.0, 1.0, 0.95), 
         vec3(0.5, 0.5, 0.5)
     );
     
@@ -38,6 +39,8 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
     uniform samplerCube skyboxSampler;
     uniform bool hasDiffuseShading = true;
 
+    uniform float reflectivity = 0.2f;
+    uniform float refractionRatio = 1.0 / 1.518;
 
     uniform vec3 viewPosition;
     out vec4 outColor;
@@ -49,13 +52,13 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
         float dotProduct = dot(lightDirection, normal);
 
         // Ambient reflection (indirect illumination approximation)
-        float ambientIntensity = 0.4;
+        float ambientIntensity = 0.5;
         vec4 ambientColor = vec4(light.ambient, 1.0) * ambientIntensity;
 
         // Diffuse reflection
         float diffuseIntensity = clamp(dotProduct, 0.0, 1.0);
         vec3 diffusePart = hasDiffuseShading ? light.diffuse * diffuseIntensity : vec3(1.0);
-        vec4 diffuse = vec4(texture(skyboxSampler, reflect(-viewDirection, normal)).rgb * diffuseColor * diffusePart, 1.0);
+        vec4 diffuse = vec4((texture(skyboxSampler, reflect(-viewDirection, normal)) * reflectivity + texture(skyboxSampler, refract(-viewDirection, normal, refractionRatio)) * (1.0 - reflectivity)).rgb * diffuseColor * diffusePart, 1.0);
 
         // Specular reflection
         // Blinn-Phong reflection
@@ -81,15 +84,16 @@ const std::string skyboxPath = "resources/textures/skybox/";
 
 /** Showcases skyboxes and environmental mapping (using the skybox for light interations such as reflections, refractions, etc). */
 class Skyboxes : public ic::Application {
-    ic::Color meshColor, floorColor;
+    ic::Color meshColor, mesh2Color, floorColor;
     ic::Shader shader, skyShader;
 
     ic::Camera3D camera;
     ic::FreeRoamCameraController3D controller;
 
-    ic::Mesh3D mesh, floorMesh;
+    ic::Mesh3D mesh, mesh2, floorMesh;
 
     ic::Skybox skybox;
+    float time = 0.0f;
 
     public:
         bool init() override {
@@ -109,6 +113,7 @@ class Skyboxes : public ic::Application {
 
 
             mesh = ic::GeometryGenerator::generate_UV_sphere_mesh(0.5f, 100, 100);
+            mesh2 = ic::OBJLoader::load("resources/models/monkey.obj");
             
             skybox = ic::Skybox(std::vector<std::string>({ 
                 skyboxPath + "right.bmp",
@@ -129,9 +134,11 @@ class Skyboxes : public ic::Application {
             controller = ic::FreeRoamCameraController3D(&camera);
             controller.flying = true;
 
-            meshColor = ic::Color().hexadecimal_to_RGB("444444");
+            meshColor = ic::Colors::white;
             floorColor = ic::Color().hexadecimal_to_RGB("268B07");
-            
+            mesh2Color = ic::Colors::yellow;
+
+           
             return true;
         }
 
@@ -141,6 +148,8 @@ class Skyboxes : public ic::Application {
 
 
         bool update(float dt) override {
+            time += dt;
+
             controller.act(dt);
             camera.update();
             
@@ -164,7 +173,13 @@ class Skyboxes : public ic::Application {
             shader.set_uniform_color("diffuseColor", meshColor);
             mesh.draw(shader);
 
+            mesh2.set_transformation(ic::Mat4x4().set_translation<3>({10.0f, 2.0f, -5.0f}));
+            shader.set_uniform_color("diffuseColor", mesh2Color);
+            mesh2.draw(shader);
+
             shader.set_uniform_color("diffuseColor", floorColor);
+            shader.set_uniform_float("reflectivity", 0.0f);
+            shader.set_uniform_float("refractiveRatio", 1 / 1000.0f);
             floorMesh.draw(shader);
 
             return true; 
@@ -175,6 +190,7 @@ class Skyboxes : public ic::Application {
             skyShader.clear();
 
             mesh.dispose();
+            mesh2.dispose();
             floorMesh.dispose();
         }
 };
@@ -182,7 +198,7 @@ class Skyboxes : public ic::Application {
 
 int main() {
     Skyboxes application;
-    //ic::Debug::ConsoleOutput::get().write_file("yet.txt", stderr);
+    //ic::Debug::ConsoleOutput::get().write_file("yet.txt", stdout);
 
     if (application.construct(640, 480)) {
         application.start();

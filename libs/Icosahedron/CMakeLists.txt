@@ -32,6 +32,7 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/math/EarClippingTriangulation.h
     
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Quaternion.h
+    ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Bezier.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Rasterization.h
 
@@ -97,6 +98,9 @@ set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/math/Mathf.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/math/Interpolation.cpp
+
+    ${LIBRARY_SOURCE_DIRECTORY}/math/geom/Bezier.cpp
+
     ${LIBRARY_SOURCE_DIRECTORY}/math/EarClippingTriangulation.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/Image.cpp
