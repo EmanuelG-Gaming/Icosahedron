@@ -12,7 +12,7 @@
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
 #include <IcosahedronDebug/ConsoleOutput.h>
-#include <Icosahedron/assets/loaders/OBJLoader.h>
+
 
 
 std::string fragment = IC_ADD_GLSL_DEFINITION(
@@ -39,7 +39,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
     uniform samplerCube skyboxSampler;
     uniform bool hasDiffuseShading = true;
 
-    uniform float reflectivity = 0.2f;
+    uniform float reflectivity = 0.5f;
     uniform float refractionRatio = 1.0 / 1.518;
 
     uniform vec3 viewPosition;
@@ -113,7 +113,7 @@ class Skyboxes : public ic::Application {
 
 
             mesh = ic::GeometryGenerator::generate_UV_sphere_mesh(0.5f, 100, 100);
-            mesh2 = ic::OBJLoader::load("resources/models/monkey.obj");
+            mesh2 = ic::GeometryGenerator::generate_parallelipiped_mesh(3.0f, 1.0f, 4.0f);
             
             skybox = ic::Skybox(std::vector<std::string>({ 
                 skyboxPath + "right.bmp",
@@ -178,8 +178,6 @@ class Skyboxes : public ic::Application {
             mesh2.draw(shader);
 
             shader.set_uniform_color("diffuseColor", floorColor);
-            shader.set_uniform_float("reflectivity", 0.0f);
-            shader.set_uniform_float("refractiveRatio", 1 / 1000.0f);
             floorMesh.draw(shader);
 
             return true; 

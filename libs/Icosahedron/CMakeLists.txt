@@ -100,6 +100,7 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/math/Interpolation.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/math/geom/Bezier.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/math/geom/Rasterization.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/math/EarClippingTriangulation.cpp
 
