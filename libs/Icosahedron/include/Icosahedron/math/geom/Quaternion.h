@@ -149,18 +149,17 @@ namespace ic {
          *  meaning that an arrow mesh pointing in this axis, in model space, will point from position1 to position2,
          *  in world space coordinates.
         */
-        Quaternion look_at(ic::Vec3f &position1, ic::Vec3f &position2) {
-            ic::Vec3f forward = (position2 - position1).nor();
-            ic::Vec3f up = { 1.0f, 0.0f, 0.0f };
-            float dot = forward.dot(up);
+        Quaternion look_at(ic::Vec3f origin, ic::Vec3f to, ic::Vec3f fwd = ic::Vec3(1.0f, 0.0f, 0.0f), ic::Vec3f up = { 0.0f, 1.0f, 0.0f }) {
+            ic::Vec3f between = (to - origin).nor();
+            float dot = fwd.dot(between);
             float threshold = 0.00001f;
 
             if (abs(dot + 1.0f) < threshold) return Quaternion(up.x(), up.y(), up.z(), M_PI);
             if (abs(dot - 1.0f) < threshold) return Quaternion().identity();
 
-            float angle = acos(dot);
+            float angle = -acosf(dot);
 
-            ic::Vec3f axis = up.crs(forward).nor();
+            ic::Vec3f axis = fwd.crs(between).nor();
             return from_axis_angle(axis, angle);
         }
 
@@ -174,7 +173,7 @@ namespace ic {
             z = axis.z() * sine;
             w = cos(halfAngle);
 
-            return *this;
+            return nor();
         }
 
         /** @brief Spherical interpolation. 
