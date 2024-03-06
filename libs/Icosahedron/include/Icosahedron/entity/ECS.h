@@ -40,7 +40,6 @@ namespace ic {
     
         return entities;
     }
-
 }
 
 #endif

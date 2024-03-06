@@ -144,23 +144,61 @@ namespace ic {
             return r;
         }
 
+        //Quaternion look_rotation(ic::Vec3f origin, ic::Vec3f to, ic::Vec3f up = ic::Vec3(0.0f, 1.0f, 0.0f)) {
+        //    ic::Vec3 forward = (origin - to).nor();
+        //    ic::Vec3 side = up.crs(forward).nor();
+//
+        //    ic::Vec3 b = (forward + ic::Vec3(0.0f, 0.0f, -1.0f)).nor();
+        //    ic::Vec3 bCrossForward = b.crs(forward);
+//
+        //    ic::Quaternion p = ic::Quaternion(bCrossForward.x(), bCrossForward.y(), bCrossForward.z(), b.dot(forward));
+//
+        //    ic::Vec3 r = ic::Vec3(p.w * p.w + p.x * p.x - p.y * p.y - p.z * p.z,
+        //    (2 * p.x * p.y) - (2 * p.w * p.z),
+        //    (2 * p.x * p.z) + (2 * p.w * p.y));
+//
+        //    b = (side + r).nor();
+        //    ic::Vec3 bCrossSide = b.crs(side);
+        //    ic::Quaternion q = ic::Quaternion(bCrossSide.x(), bCrossSide.y(), bCrossSide.z(), b.dot(side));
+//
+        //    return p * q;
+        //}
+
+        /** @return A quaternion that has the effect of rotating about an arbitrary unit axis by an angle. */
+        //Quaternion from_axis_angle(ic::Vec3f &axis, float angle) {
+        //    float d = axis.len();
+        //    //if (d == 0.0f) return identity();
+        //    d = 1.0f / d;
+//
+        //    float a = angle < 0.0f ? M_PI - (-angle) : angle;
+        //    float halfAngle = a / 2.0f;
+        //    float sine = sin(halfAngle);
+//
+        //    x = axis.x() * sine * d;
+        //    y = axis.y() * sine * d;
+        //    z = axis.z() * sine * d;
+        //    w = cos(halfAngle);
+        //    
+//
+        //    return *this;
+        //}
+
         /** @brief Forms a quaternion that rotates from a starting point to an end point. This
          *  internally uses axis-angle calculations, and this function's "up" vector is the x axis,
          *  meaning that an arrow mesh pointing in this axis, in model space, will point from position1 to position2,
          *  in world space coordinates.
         */
-        Quaternion look_at(ic::Vec3f &position1, ic::Vec3f &position2) {
-            ic::Vec3f forward = (position2 - position1).nor();
-            ic::Vec3f up = { 1.0f, 0.0f, 0.0f };
-            float dot = forward.dot(up);
+        Quaternion look_at(ic::Vec3f origin, ic::Vec3f to, ic::Vec3f fwd = ic::Vec3(1.0f, 0.0f, 0.0f), ic::Vec3f up = { 0.0f, 1.0f, 0.0f }) {
+            ic::Vec3f between = (to - origin).nor();
+            float dot = fwd.dot(between);
             float threshold = 0.00001f;
 
             if (abs(dot + 1.0f) < threshold) return Quaternion(up.x(), up.y(), up.z(), M_PI);
             if (abs(dot - 1.0f) < threshold) return Quaternion().identity();
 
-            float angle = acos(dot);
+            float angle = -acosf(dot);
 
-            ic::Vec3f axis = up.crs(forward).nor();
+            ic::Vec3f axis = fwd.crs(between).nor();
             return from_axis_angle(axis, angle);
         }
 
@@ -174,7 +212,7 @@ namespace ic {
             z = axis.z() * sine;
             w = cos(halfAngle);
 
-            return *this;
+            return nor();
         }
 
         /** @brief Spherical interpolation. 

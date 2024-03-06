@@ -2,13 +2,17 @@
 #define IC_ENTITIES_H
 
 #include <vector>
+#include <Icosahedron/entity/ECS.h>
 #include <Icosahedron/entity/Entity.h>
 #include <Icosahedron/entity/ECS.h>
+#include <algorithm>
 
 
 namespace ic {
     class Entities {
         public:
+            std::vector<ic::Entity*> entities;
+            
             Entities() {
                 this->startEntityIndex = 0;
                 this->addedFirstEntity = false;
@@ -28,6 +32,15 @@ namespace ic {
                 return entity;
             }
 
+            void remove_entity(ic::Entity *entity) {
+                if (!entity) return;
+
+                auto iterator = std::find(entities.begin(), entities.end(), entity);
+                if (iterator == entities.end()) return;
+            
+                entities.erase(iterator);
+            }
+
             ic::Entity *get_entity(int index) {
                 return entities[index];
             }
@@ -38,7 +51,6 @@ namespace ic {
             }
             
         private:
-            std::vector<ic::Entity*> entities;
             ic::EntityTypeIndex startEntityIndex;
             bool addedFirstEntity;
     };
