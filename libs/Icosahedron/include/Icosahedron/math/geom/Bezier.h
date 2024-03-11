@@ -32,6 +32,13 @@ namespace ic {
         /** @returns each of the slopes of a cubic Bezier curve on the X, Y, Z... axes, encoded in a vector. */
         template<std::size_t dims>
         ic::Vector<float, dims> cubic_derivative(ic::Vector<float, dims> &P1, ic::Vector<float, dims> &P2, ic::Vector<float, dims> &P3, ic::Vector<float, dims> &P4, float t);
+
+        /** @brief The length of a Bezier curve has no clear closed-form solution, meaning that an approximate solution needs to be calculated. */
+        template<std::size_t dims>
+        float quadratic_length(ic::Vector<float, dims> &P1, ic::Vector<float, dims> &P2, ic::Vector<float, dims> &P3, int divisions = 50);
+
+        template<std::size_t dims>
+        float cubic_length(ic::Vector<float, dims> &P1, ic::Vector<float, dims> &P2, ic::Vector<float, dims> &P3, ic::Vector<float, dims> &P4, int divisions = 50);
     };
 }
 #endif

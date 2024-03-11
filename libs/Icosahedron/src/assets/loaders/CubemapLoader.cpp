@@ -91,7 +91,7 @@ GLenum map_to_texture_format(uint32_t format, bool gammaCorrection) {
 }
 
 void load_cubemap_face(const ic::CubemapFaceInformation &data) {
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + data.faceIndex, 0, data.format, data.width, data.height, 0, GL_BGR, GL_UNSIGNED_BYTE, data.data);
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + data.faceIndex, 0, data.format, data.width, data.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data.data);
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_REPEAT);

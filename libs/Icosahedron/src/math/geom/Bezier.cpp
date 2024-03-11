@@ -45,3 +45,35 @@ ic::Vector<float, dims> ic::Bezier::cubic_derivative(ic::Vector<float, dims> &P1
 
     return result;
 }
+
+template<std::size_t dims>
+float ic::Bezier::quadratic_length(ic::Vector<float, dims> &P1, ic::Vector<float, dims> &P2, ic::Vector<float, dims> &P3, int divisions) {
+    float result = 0.0f;
+    ic::Vector<float, dims> previous = P1, next;
+
+    for (int i = 0; i <= divisions; i++) {
+        float percentage = i / (float) divisions;
+        next = ic::Bezier::quadratic(P1, P2, P3, percentage);
+        result += previous.dst(next);
+
+        previous = next;
+    }
+    
+    return result;
+}
+
+template<std::size_t dims>
+float ic::Bezier::cubic_length(ic::Vector<float, dims> &P1, ic::Vector<float, dims> &P2, ic::Vector<float, dims> &P3, ic::Vector<float, dims> &P4, int divisions) {
+    float result = 0.0f;
+    ic::Vector<float, dims> previous = P1, next;
+
+    for (int i = 0; i <= divisions; i++) {
+        float percentage = i / (float) divisions;
+        next = ic::Bezier::cubic(P1, P2, P3, P4, percentage);
+        result += previous.dst(next);
+
+        previous = next;
+    }
+    
+    return result;
+}
