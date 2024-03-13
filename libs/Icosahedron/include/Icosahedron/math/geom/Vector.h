@@ -85,73 +85,73 @@ namespace ic {
         }
 
 
-        Vec operator+(Vec other) {
+        // Unary operations (vector negation)
+
+        Vec operator-() const {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
-                result.values[i] = values[i] + other[i];
+                result[i] = values[i] * -1;
             }
             return result;
         }
 
-        Vec operator-(Vec other) {
+        // Binary operations
+
+        Vec operator+(const Vec &other) const {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
-                result.values[i] = values[i] - other[i];
+                result[i] = values[i] + other.values[i];
             }
+            return result;
+        }
+
+        Vec operator-(const Vec &other) const {
+            Vec result;
+            for (int i = 0; i < dimensions; i++) {
+                result[i] = values[i] - other.values[i];
+            }
+
             return result;
         }
     
-        Vec operator*(Vec other) {
+        Vec operator*(const Vec &other) const {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
-                result.values[i] = values[i] * other[i];
+                result[i] = values[i] * other.values[i];
             }
             return result;
         }
 
-        Vec operator/(Vec other) {
+        Vec operator/(const Vec &other) const {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
-                result.values[i] = values[i] / other[i];
+                result[i] = values[i] / other.values[i];
             }
             return result;
         }
         
-        Vec operator+(T scalar) {
+        Vec operator*(const T scalar) const {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
-                result.values[i] = values[i] + scalar;
+                result[i] = values[i] * scalar;
             }
             return result;
         }
-        Vec operator-(T scalar) {
+        Vec operator/(const T scalar) const {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
-                result.values[i] = values[i] - scalar;
+                result[i] = values[i] / scalar;
             }
             return result;
         }
-        Vec operator*(T scalar) {
-            Vec result;
-            for (int i = 0; i < dimensions; i++) {
-                result.values[i] = values[i] * scalar;
-            }
-            return result;
-        }
-        Vec operator/(T scalar) {
-            Vec result;
-            for (int i = 0; i < dimensions; i++) {
-                result.values[i] = values[i] / scalar;
-            }
-            return result;
-        }
+
 
         
         // Incremental operators
 
-        Vec& operator+=(const Vec& other) {
+        Vec& operator+=(const Vec &other) {
             for (int i = 0; i < dimensions; i++) {
-                values[i] = values[i] + other.values[i];
+                values[i] = this[i] + other[i];
             }
             return *this;
         }
@@ -177,18 +177,7 @@ namespace ic {
             return *this;
         }
         
-        Vec& operator+=(T scalar) {
-            for (int i = 0; i < dimensions; i++) {
-                values[i] = values[i] + scalar;
-            }
-            return *this;
-        }
-        Vec& operator-=(T scalar) {
-            for (int i = 0; i < dimensions; i++) {
-                values[i] = values[i] - scalar;
-            }
-            return *this;
-        }
+        
         Vec& operator*=(T scalar) {
             for (int i = 0; i < dimensions; i++) {
                 values[i] = values[i] * scalar;
@@ -203,19 +192,20 @@ namespace ic {
         }
 
 
+
         
-        float dot(Vec &other) {
+        float dot(const Vec &other) const {
             float result = 0.0f;
             for (int i = 0; i < dimensions; i++) {
-                result += values[i] * other[i];
+                result += values[i] * other.values[i];
             }
             return result;
         }
 
-        float dst(Vec &other) {
+        float dst(const Vec &other) const {
             float result = 0.0f;
             for (int i = 0; i < dimensions; i++) {
-                T v = other[i] - values[i];
+                T v = other.other[i] - values[i];
                 result += v * v;
             }
             result = sqrt(result);
@@ -223,17 +213,17 @@ namespace ic {
             return result;
         }
         
-        float dst2(Vec &other) {
+        float dst2(const Vec &other) const {
             float result = 0.0f;
             for (int i = 0; i < dimensions; i++) {
-                T v = other[i] - values[i];
+                T v = other.values[i] - values[i];
                 result += v * v;
             }
             
             return result;
         }
 
-        float len() {
+        float len() const {
             float result = 0.0f;
             for (int i = 0; i < dimensions; i++) {
                 result += values[i] * values[i];
@@ -244,7 +234,7 @@ namespace ic {
         }
 
         /** @brief The squared length of this vector. */
-        float len2() {
+        float len2() const {
             float result = 0.0f;
             for (int i = 0; i < dimensions; i++) {
                 result += values[i] * values[i];
@@ -253,7 +243,7 @@ namespace ic {
             return result;
         }
 
-        Vec nor() {
+        Vec nor() const {
             Vec result;
             float length = len();
 
@@ -266,21 +256,20 @@ namespace ic {
             return result;
         }
 
-        float crs(ic::Vector<T, 2> &other) {
+        float crs(const ic::Vector<T, 2> &other) const {
             return x() * other.y() - y() * other.x();
         }
-        ic::Vector<T, 3> crs(ic::Vector<T, 3> &other) {
+        ic::Vector<T, 3> crs(const ic::Vector<T, 3> &other) const {
             float cx = y() * other.z() - z() * other.y();
             float cy = z() * other.x() - x() * other.z();
             float cz = x() * other.y() - y() * other.x();
         
             ic::Vector<T, 3> result = { cx, cy, cz };
-        
             return result;
         }
 
 
-        ic::Vector<T, 2> perpendicular(int facing) {
+        ic::Vector<T, 2> perpendicular(int facing) const {
             int j = facing >= 0 ? 1 : -1;
             float ax = x();
 
@@ -293,7 +282,7 @@ namespace ic {
 
         /** @brief Rotates this vector by an angle beginning
          *  on the positive X semiaxis, going counter-clockwise, in radians. */
-        ic::Vector<T, 2> rotate(float radians) {
+        ic::Vector<T, 2> rotate(const float radians) const {
             float sine = sin(radians), cosine = cos(radians);
 
             ic::Vector<T, 2> result;
@@ -303,7 +292,7 @@ namespace ic {
             return result;
         }
 
-        Vec clamp(Vec lower, Vec upper) {
+        Vec clamp(const Vec &lower, const Vec &upper) const {
             Vec result;
 
             for (int i = 0; i < dimensions; i++) {
@@ -314,7 +303,7 @@ namespace ic {
         }
 
         /** @brief Applies linear interpolation over each vector's components. */
-        Vec interpolate(Vec &other, float alpha) {
+        Vec interpolate(const Vec &other, const float alpha) const {
             Vec result;
             for (int i = 0; i < dimensions; i++) {
                 result.values[i] = values[i] * (1 - alpha) + other[i] * alpha;
@@ -322,7 +311,7 @@ namespace ic {
             return result;
         }
 
-        friend std::ostream& operator<<(std::ostream &stream, Vec &vector) {
+        friend std::ostream& operator<<(std::ostream &stream, const Vec &vector) {
             std::size_t dims = vector.size();
 
             stream << "(";
@@ -336,7 +325,7 @@ namespace ic {
         }
 
         template <typename T2>
-        ic::Vector<T2, dimensions> as() {
+        ic::Vector<T2, dimensions> as() const {
             ic::Vector<T2, dimensions> result;
 
             for (int i = 0; i < dimensions; i++) {
@@ -346,28 +335,27 @@ namespace ic {
             return result;
         }
 
-        T& x() {
-            static_assert(dimensions >= 1, "X is only avaiable for dimensions >= 1.");
-            return values[0];
-        }
-        T& y() {
-            static_assert(dimensions >= 2, "Y is only avaiable for dimensions >= 2.");
-            return values[1];
-        }
-        T& z() {
-            static_assert(dimensions >= 3, "Z is only avaiable for dimensions >= 3.");
-            return values[2];
-        }
-        T& w() {
-            static_assert(dimensions >= 4, "W is only avaiable for dimensions >= 4.");
-            return values[3];
-        }
+        T x() const { return values[0]; }
+        T y() const { return values[1]; }
+        T z() const { return values[2]; }
+        T w() const { return values[3]; }
+
+        T& x() { return values[0]; }
+        T& y() { return values[1]; }
+        T& z() { return values[2]; }
+        T& w() { return values[3]; }
+    
+
         
-        T& operator[](const int index) {
+        T& operator[](int index) {
+            return values[index];
+        }
+        T operator[](int index) const {
             return values[index];
         }
 
-        std::size_t size() {
+
+        std::size_t size() const {
             return dimensions;
         }
     };    

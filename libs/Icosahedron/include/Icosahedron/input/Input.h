@@ -63,6 +63,14 @@ enum KeyboardInput {
     KEY_RIGHT = SDL_SCANCODE_RIGHT,
 
     KEY_SPACE = SDL_SCANCODE_SPACE,
+    KEY_LSHIFT = SDL_SCANCODE_LSHIFT,
+    KEY_RHIFT = SDL_SCANCODE_RSHIFT,
+
+    KEY_TAB = SDL_SCANCODE_TAB,
+    KEY_LCTRL = SDL_SCANCODE_LCTRL,
+    KEY_RCTRL = SDL_SCANCODE_RCTRL,
+    KEY_DELETE = SDL_SCANCODE_DELETE,
+    KEY_PRINT_SCR = SDL_SCANCODE_PRINTSCREEN,
 };
 
 enum KeyboardInputActionTypes {
@@ -93,7 +101,7 @@ namespace ic {
     using Keycode = SDL_Keycode;
 
     struct KeyboardInputAction {
-        std::function<void()> pressed = nullptr;
+        std::function<void()> pressed =nullptr;
         std::function<void()> held = nullptr;
         std::function<void()> released = nullptr;
 
@@ -106,9 +114,8 @@ namespace ic {
     };
 
     struct Input {
-        public:
-            virtual void handle_event(const ic::Event &event, float dt) {}
-            virtual void update(float dt) {}
+        virtual void update(float dt) = 0;
+        virtual void handle_event(const ic::Event &event, float dt) = 0;
     };
 }
 

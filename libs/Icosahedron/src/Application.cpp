@@ -13,6 +13,11 @@
 int IC_WINDOW_WIDTH = 0;
 int IC_WINDOW_HEIGHT = 0;
 bool IC_IS_OPENGL_CONTEXT_PRESENT = false;
+float ic::Time::delta = 0.0f;
+float ic::Time::globalDelta = 0.0f;
+float ic::Time::deltaMultiplier = 1.0f;
+float ic::Time::globalTime = 0.0f;
+float ic::Time::time = 0.0f;
 
 void ic::Application::clear_color() {
     this->clear_color(0.0f, 0.0f, 0.0f);
@@ -175,12 +180,15 @@ void ic::Application::start() {
     SDL_Event e;
     bool disabled = false;
     while (!disabled) {
+        ic::Time::globalTime += ic::Time::globalDelta;
+        ic::Time::time += ic::Time::delta;
+
         if (!this->poll_events(e)) {
             break;
         }
 
         // Update and render to screen code
-        if (!this->update(delta)) {
+        if (!this->update()) {
             break;
         }
 
@@ -188,7 +196,8 @@ void ic::Application::start() {
 	    SDL_GL_SwapWindow(this->window);
         
         Uint32 current = SDL_GetTicks();
-        this->delta = (current - lastUpdate) / 1000.0f;
+        ic::Time::globalDelta = (current - lastUpdate) / 1000.0f;
+        ic::Time::delta = ic::Time::globalDelta * ic::Time::deltaMultiplier; 
         lastUpdate = current;
 	}
 
@@ -272,9 +281,9 @@ void ic::Application::pre_load() {
 bool ic::Application::poll_events(ic::Event &e) {
     SDL_PumpEvents();
     while (SDL_PollEvent(&e)) {
-        ic::InputHandler::handle(e, delta);
+        ic::InputHandler::handle(e);
 
-        if (!this->handle_event(e, delta)) {
+        if (!this->handle_event(e)) {
             return false;
         }
 
@@ -305,7 +314,7 @@ bool ic::Application::poll_events(ic::Event &e) {
         }
     }
     
-    ic::InputHandler::update(delta);
+    ic::InputHandler::update();
 
     return true;
 }
@@ -335,7 +344,7 @@ void ic::Application::set_current_working_directory() {
         dir.erase(findResult);
     }
 
-    std::cout << dir << "\n";
+    std::cout << "Current working directory: " << dir << "\n";
     
     std::filesystem::current_path(dir);
 }

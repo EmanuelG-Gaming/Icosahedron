@@ -9,7 +9,7 @@
 
 
 namespace ic {
-    struct MouseController : public Input {
+    struct MouseController : public ic::Input {
         public:
             MouseController();
 

@@ -1,13 +1,14 @@
 #include <Icosahedron/input/InputHandler.h>
+#include <Icosahedron/util/Time.h>
 
-void ic::InputHandler::handle(ic::Event event, float dt) {
+void ic::InputHandler::handle(ic::Event event) {
     for (auto pair : inputs) {
-        pair.second->handle_event(event, dt);
+        pair.second->handle_event(event, ic::Time::globalDelta);
     }
 }
-void ic::InputHandler::update(float dt) {
+void ic::InputHandler::update() {
     for (auto pair : inputs) {
-        pair.second->update(dt);
+        pair.second->update(ic::Time::globalDelta);
     }
 }
             

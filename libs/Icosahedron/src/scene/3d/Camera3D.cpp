@@ -60,15 +60,16 @@ void ic::Camera3D::resize(float width, float height) {
 
 
 ic::Vec3f ic::Camera3D::unproject(ic::Vec2f &screenPosition) {
-    float x = (2.0f * screenPosition.x()) / this->settings.width - 1.0f;
-    float y = 1.0f - (2.0f * screenPosition.y()) / this->settings.height;
-    ic::Vec4f beforeClip = { x, y, -1.0f, 1.0f };
+    //float x = (2.0f * screenPosition.x()) / this->settings.width - 1.0f;
+    //float y = 1.0f - (2.0f * screenPosition.y()) / this->settings.height;
+    //ic::Vec4f beforeClip = { x, y, -1.0f, 1.0f };
+//
+    //ic::Vec4f eyeCoords = this->projectionMatrix.inverse() * beforeClip;
+    //eyeCoords = { eyeCoords.x(), eyeCoords.y(), -1.0f, 0.0f };
+//
+    //ic::Vec4f worldCoords = this->viewMatrix.inverse() * eyeCoords;
+    //ic::Vec3f result = { worldCoords.x(), worldCoords.y(), worldCoords.z() };
 
-    ic::Vec4f eyeCoords = this->projectionMatrix.inverse() * beforeClip;
-    eyeCoords = { eyeCoords.x(), eyeCoords.y(), -1.0f, 0.0f };
-
-    ic::Vec4f worldCoords = this->viewMatrix.inverse() * eyeCoords;
-    ic::Vec3f result = { worldCoords.x(), worldCoords.y(), worldCoords.z() };
-
+    ic::Vec3 result(0.0f, 0.0f, 1.0f);
     return result;
 }

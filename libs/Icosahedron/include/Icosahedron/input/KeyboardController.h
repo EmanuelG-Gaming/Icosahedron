@@ -9,7 +9,7 @@
 
 
 namespace ic {
-    struct KeyboardController : public Input {
+    struct KeyboardController : ic::Input {
         public:
             ic::Vec2i direction;
             

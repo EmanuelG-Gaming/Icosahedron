@@ -22,6 +22,7 @@
 
 #include <Icosahedron/graphics/FreeType.h>
 #include <Icosahedron/graphics/Image.h>
+#include <Icosahedron/util/Time.h>
 #include <Icosahedron/Renderer.h>
 
 
@@ -44,10 +45,10 @@ namespace ic {
             /* Called after setting a window and a valid OpenGL context, inside the start() function. */
             virtual bool load() { return true; }
 
-            virtual bool handle_event(ic::Event event, float dt) { return true; }
+            virtual bool handle_event(ic::Event event) { return true; }
             virtual void window_size_changed(int w, int h) {}
             
-            virtual bool update(float dt) { return true; }
+            virtual bool update() { return true; }
             virtual void dispose() {};
 
             /* Sets up an SDL window along with an OpenGL context. */
@@ -117,7 +118,6 @@ namespace ic {
             
         private:
             int width = 0, height = 0;
-            float delta = 0.0f;
             
             SDL_Window *window;
             SDL_GLContext context;

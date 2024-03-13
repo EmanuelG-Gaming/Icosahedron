@@ -77,7 +77,7 @@ void ic::UI::Core::load() {
 
     this->mouse = new ic::MouseController();
     this->mouse->add_mouse_moved_action([this]() {
-        ic::Vec2i p = ic::InputHandler::find_mouse("ui mouse")->get_cursor_position();
+        ic::Vec2i p = this->mouse->get_cursor_position();
         ic::Vec2f pos = { p.x() * 1.0f, p.y() * 1.0f };
 
         ic::UI::Global::mouseCursorPosition = this->uiCamera.unproject(pos);

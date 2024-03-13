@@ -20,7 +20,7 @@ namespace ic {
 
         /** @brief Initializes an identity matrix, with diagonal terms being 1. */
         Matrix() {
-            identity();
+            this->identity();
         }
 
         /** @brief Initialises the matrix in column-major order. */
@@ -30,16 +30,18 @@ namespace ic {
             }
         }
 
-        void identity() {
+        Mat &identity() {
             for (int i = 0; i < area(); i++) {
                 values[i] = 0.0f;
             }
             for (int i = 0; i < n; i++) {
                 value(i, i) = 1.0f;
             }
+    
+            return *this;
         }
 
-        Mat set_perspective(float fovDegrees, float zNear, float zFar, float aspectRatio) {
+        Mat &set_perspective(float fovDegrees, float zNear, float zFar, float aspectRatio) {
             static_assert(n == 4, "Tried to initialize a perspective matrix with a size != 4.");
             
             float fovR = float(1.0f / tan(fovDegrees * (M_PI / 180.0f) / 2.0f));           
@@ -229,17 +231,6 @@ namespace ic {
         }
 
 
-        float determinant() {
-            return 1.0f;
-        }
-
-        Mat inverse() {
-            return Mat();
-        }
-
-
-
-
         friend std::ostream& operator<<(std::ostream &stream, Mat &matrix) {
             std::size_t size = matrix.area();
             int r = 0;
@@ -257,23 +248,59 @@ namespace ic {
             return stream;
         }
 
-        T& value(const int x, const int y) {
-            return values[y * n + x];
-        }
 
-        T& operator[](const int index) {
+
+        // Matrix indexing
+
+        T& operator[](int index) {
             return values[index];
         }
-        T& operator()(const int x, const int y) {
+        T& operator()(int x, int y) {
             return values[y * n + x];
         }
 
-        bool is_square() {
+        T operator[](int index) const {
+            return values[index];
+        }
+        T operator()(int x, int y) const {
+            return values[y * n + x];
+        }
+
+        T value(int x, int y) const {
+            return values[y * n + x];
+        }
+        T& value(int x, int y) {
+            return values[y * n + x];
+        }
+
+
+        // Matrix size operations
+
+        bool is_square() const{
             return (n == m);
         }
-        std::size_t area() {
+
+        std::size_t area() const {
             return n * m;
         }
     };
+
+    /*
+    template <typename T, std::size_t l>
+    ic::Matrix<T, l, l> &matrix_identity() {
+        ic::Matrix<T, l, l> result;
+
+        std::size_t area = l*l;
+
+        for (int i = 0; i < area; i++) {
+            result.values[i] = 0.0f;
+        }
+        for (int i = 0; i < l; i++) {
+            result(i, i) = 1.0f;
+        }
+
+        return result;
+    }
+    */
 }
 #endif
