@@ -30,6 +30,8 @@ namespace ic {
             }
         }
 
+        // Matrix overriding
+        
         Mat &identity() {
             for (int i = 0; i < area(); i++) {
                 values[i] = 0.0f;
@@ -59,7 +61,7 @@ namespace ic {
             return *this;           
         }
 
-        Mat set_orthographic(float left, float right, float bottom, float top, float near = 0.0f, float far = 1000.0f) {
+        Mat &set_orthographic(float left, float right, float bottom, float top, float near = 0.0f, float far = 1000.0f) {
             //static_assert(is_square(), "Orthographic matrices work if they're square.");
             static_assert(n == 4, "Tried to initialize an orthographic matrix with a size != 4.");
             
@@ -76,7 +78,7 @@ namespace ic {
             return *this;
         }
 
-        Mat set_look_at(ic::Vec3f cameraPosition, ic::Vec3f lookingAt, ic::Vec3f up) {
+        Mat &set_look_at(ic::Vec3f cameraPosition, ic::Vec3f lookingAt, ic::Vec3f up) {
             //static_assert(is_square(), "View matrices work if they're square.");
             static_assert(n == 4, "Tried to initialize a view matrix with a size != 4.");
             
@@ -106,7 +108,7 @@ namespace ic {
         }
 
         template <std::size_t p>
-        Mat set_translation(ic::Vector<T, p> by) {
+        Mat &set_translation(ic::Vector<T, p> by) {
             identity();
 
             for (int i = 0; i < p; i++) {
@@ -117,7 +119,7 @@ namespace ic {
         }
 
         template <std::size_t p>
-        Mat set_scaling(ic::Vector<T, p> by) {
+        Mat &set_scaling(ic::Vector<T, p> by) {
             identity();
 
             for (int i = 0; i < p; i++) {
@@ -127,7 +129,7 @@ namespace ic {
             return *this;
         }
 
-        Mat set_scaling(T by) {
+        Mat &set_scaling(T by) {
             identity();
 
             for (int i = 0; i < n - 1; i++) {
@@ -138,7 +140,7 @@ namespace ic {
         }
 
         /** @brief Sets this matrix to a rotation about the X axis. */
-        Mat set_rotation_x(float radians) {
+        Mat &set_rotation_x(float radians) {
             identity();
 
             value(1, 1) = ic::Mathf::cosf(radians);
@@ -150,7 +152,7 @@ namespace ic {
         }
 
         /** @brief Sets this matrix to a rotation about the Y axis. */
-        Mat set_rotation_y(float radians) {
+        Mat &set_rotation_y(float radians) {
             identity();
 
             value(0, 0) = ic::Mathf::cosf(radians);
@@ -162,7 +164,7 @@ namespace ic {
         }
 
         /** @brief Sets this matrix to a rotation about the Z axis. */
-        Mat set_rotation_z(float radians) {
+        Mat &set_rotation_z(float radians) {
             identity();
 
             value(0, 0) = ic::Mathf::cosf(radians);
@@ -174,13 +176,13 @@ namespace ic {
         }
 
         /** @brief Does the same effect as rotating about the Z axis. */
-        Mat set_rotation(float radians) {
+        Mat &set_rotation(float radians) {
             return set_rotation_z(radians);
         }
 
         /** @brief Sets this matrix's columns as vectors. */
         template <std::size_t p>
-        Mat set_vectors(std::initializer_list<ic::Vector<T, p>> from) {
+        Mat &set_vectors(std::initializer_list<ic::Vector<T, p>> from) {
             int j = 0;
 
             for (auto element : from) {
@@ -194,8 +196,8 @@ namespace ic {
             return *this;
         }
 
-        /* Matrix-matrix multiplication. */
-        Mat operator*(Mat &other) {
+        /** @brief Matrix-matrix multiplication. */
+        Mat operator*(const Mat &other) const {
             Mat result;
             if (!is_square()) {
                 printf("Project didn't implement non-square matrix multiplication.\n");
@@ -217,8 +219,8 @@ namespace ic {
             return result;
         }
 
-        /* Matrix-vector multiplication.*/
-        ic::Vector<T, n> operator*(ic::Vector<T, n> &other) {
+        /** @brief Matrix-vector multiplication. */
+        ic::Vector<T, n> operator*(const ic::Vector<T, n> &other) const {
             ic::Vector<T, n> result;
 
             for (int i = 0; i < n; i++) {
@@ -231,7 +233,7 @@ namespace ic {
         }
 
 
-        friend std::ostream& operator<<(std::ostream &stream, Mat &matrix) {
+        friend std::ostream& operator<<(std::ostream &stream, const Mat &matrix) {
             std::size_t size = matrix.area();
             int r = 0;
 

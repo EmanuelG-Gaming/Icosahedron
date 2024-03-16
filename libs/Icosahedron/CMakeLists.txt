@@ -145,7 +145,7 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/controllers/FreeRoamCameraController3D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/controllers/OrbitalCameraController3D.cpp
 
-
+    ${LIBRARY_SOURCE_DIRECTORY}/util/Noise.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/util/GeometryGenerator.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/Renderer.cpp

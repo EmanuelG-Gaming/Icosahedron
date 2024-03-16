@@ -27,5 +27,10 @@ namespace ic {
     using Vec3 = Vec3f;
     // Same as ic::Vec4f
     using Vec4 = Vec4f;
+
+    namespace Vectors {
+        /** @brief Euclidean 3D axes. */
+        const ic::Vec3 right(1.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f), front(0.0f, 0.0f, 1.0f);
+    }
 }
 #endif
