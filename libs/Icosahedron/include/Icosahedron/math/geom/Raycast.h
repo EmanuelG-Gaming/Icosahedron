@@ -4,38 +4,36 @@
 #include <Icosahedron/math/geom/Vectors.h>
 #include <Icosahedron/math/Mathf.h>
 
+#define IC_RAYCAST_MAX_HITS 5
+
 
 namespace ic {
+    /** @brief The hit positions are ought to be sorted by the distance from the ray's origin to the hit position,
+     *  meaning that the closest distance percentage will be at the index 0.
+    */ 
+    template <std::size_t dims>
+    struct RaycastHit {
+        float hitAlphas[IC_RAYCAST_MAX_HITS];
+        ic::Vector<float, dims> hitPos[IC_RAYCAST_MAX_HITS];
+        ic::Vector<float, dims> hitNormals[IC_RAYCAST_MAX_HITS];
+        
+        ic::Vector<float, dims> rayPos, rayDir;
+        bool collided = false;
+    };
+
+    /** @brief A suite of utilities made for testing collisions between various objects and rays and also
+     *  getting the closest point to a shape.
+    */
     namespace Raycast {
-        bool line_segments_collide(float x1, float y1, float x2, float y2,
-                                    float x3, float y3, float x4, float y4) {
+        bool line_segments_collide(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
 
-            float denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+        template <std::size_t dims>
+        ic::RaycastHit<dims> ray_nsphere(ic::Vector<float, dims> sphereCenter, float radius, const ic::Vector<float, dims> &rayOrigin, const ic::Vector<float, dims> &rayDir);
 
-            bool linesParallelOrCoincident = denominator == 0.0f;
-            if (linesParallelOrCoincident) {
-                return false;
-            }
 
-            float t = (x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4);
-            float u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3));
-
-            t /= denominator;
-            u /= denominator;
-
-            bool intersects = (t >= 0.0f && t <= 1.0f) && (u >= 0.0f && u <= 1.0f);
-            return intersects; 
-        }
-
-        ic::Vec2f get_closest_point(ic::Vec2f &point, ic::Vec2f sidePointA, ic::Vec2f sidePointB) {
-            ic::Vec2f gradientLine = sidePointB - sidePointA;
-            ic::Vec2f gradientPoint = point - sidePointA;
-
-            float t = gradientLine.dot(gradientPoint) / gradientLine.len2();
-            t = ic::Mathf::clamp(t, 0.0f, 1.0f);
-
-            return sidePointA + gradientLine * t;
-        }
+        ic::RaycastHit<3> ray_sphere(ic::Vec3 sphereCenter, float radius, const ic::Vec3 &rayOrigin, const ic::Vec3 &rayDir);
+        
+        ic::Vec2f get_closest_point_line(ic::Vec2f &point, ic::Vec2f sidePointA, ic::Vec2f sidePointB);
     };
 }
 

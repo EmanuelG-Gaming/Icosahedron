@@ -9,9 +9,9 @@ namespace ic {
         const float pi = 3.1415927f;
         const float twoPi = 6.2831853f;
 
-        /* Multiply by this to convert from degrees to radians. */
+        /** @brief Multiply by this to convert from degrees to radians. */
         const float degToRad = pi / 180.0f;
-        /* Multiply by this to convert from radians to degrees. */
+        /** @brief Multiply by this to convert from radians to degrees. */
         const float radToDeg = 180.0f / pi;
 
         float to_radians(float degrees);
