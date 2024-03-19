@@ -1,4 +1,5 @@
 #include <Icosahedron/math/geom/Raycast.h>
+#include <algorithm>
 
 bool ic::Raycast::line_segments_collide(float x1, float y1, float x2, float y2,
                             float x3, float y3, float x4, float y4) {
@@ -41,8 +42,8 @@ ic::RaycastHit<dims> ic::Raycast::ray_nsphere(ic::Vector<float, dims> sphereCent
         result.hitAlphas[1] = alpha2;
         result.hitPos[0] = (rayOrigin + rayDir * alpha1);
         result.hitPos[1] = (rayOrigin + rayDir * alpha2);
-        result.hitNormals[0] = (result.hitPos[0] - sphereCenter).nor();
-        result.hitNormals[1] = (result.hitPos[1] - sphereCenter).nor();
+        result.hitNormals[0] = (sphereCenter - result.hitPos[0]).nor();
+        result.hitNormals[1] = (sphereCenter - result.hitPos[1]).nor();
 
         result.collided = true;
 
@@ -53,6 +54,73 @@ ic::RaycastHit<dims> ic::Raycast::ray_nsphere(ic::Vector<float, dims> sphereCent
     return result;
 }
 
+ic::RaycastHit<3> ic::Raycast::ray_box(ic::Vec3 boxLower, ic::Vec3f boxUpper, const ic::Vec3 &rayOrigin, const ic::Vec3 &rayDir) {
+    ic::RaycastHit<3> result;
+    
+    ic::Vec3f alphaNear = (boxLower - rayOrigin) / rayDir, alphaFar = (boxUpper - rayOrigin) / rayDir;
+
+    if (alphaNear.x() > alphaFar.x()) std::swap(alphaNear.x(), alphaFar.x());
+    if (alphaNear.y() > alphaFar.y()) std::swap(alphaNear.y(), alphaFar.y());
+    if (alphaNear.z() > alphaFar.z()) std::swap(alphaNear.z(), alphaFar.z());
+
+    if (alphaNear.x() > alphaFar.y() || alphaNear.y() > alphaFar.x()) {
+        result.collided = false;
+        return result;
+    }
+
+    float hitNear = std::max({ alphaNear.x(), alphaNear.y(), alphaNear.z() });
+    float hitFar = std::min({ alphaFar.x(), alphaFar.y(), alphaFar.z() });
+
+    if (hitFar < 0.0f) {
+        result.collided = false;
+        return result;
+    }
+
+    result.hitAlphas[0] = hitNear;
+    result.hitAlphas[1] = hitFar;
+    result.hitPos[0] = (rayOrigin + rayDir * hitNear);
+    result.hitPos[1] = (rayOrigin + rayDir * hitFar);
+    result.hitNormals[0] = ic::Vectors::up;
+    result.hitNormals[1] = ic::Vectors::up;
+
+    result.collided = true;
+    return result;
+}
+
+ic::RaycastPlaneHit ic::Raycast::ray_plane(ic::Vec3 planeOrigin, ic::Vec3 planeNormal, const ic::Vec3 &rayOrigin, const ic::Vec3 &rayDir) {
+    float denominator = planeNormal.dot(rayDir);
+
+    ic::RaycastPlaneHit result;
+    
+    // Check if the ray's direction is facing the plane
+    if (denominator <= -0.001f) {
+        ic::Vec3 difference = planeOrigin - rayOrigin;
+        float alpha = difference.dot(planeNormal) / denominator;
+
+        bool collided = (alpha >= 0.0f);
+        if (collided) {
+            result.rayIntersect.hitAlphas[0] = alpha;
+            result.rayIntersect.hitPos[0] = (rayOrigin + rayDir * alpha);
+            result.rayIntersect.hitNormals[0] = planeNormal;
+
+            // Get the plane's bitangents
+            ic::Vec3f bt1 = planeNormal.crs(ic::Vectors::right);
+            ic::Vec3f bt2 = bt1.crs(planeNormal);
+            ic::Vec3f pointToOrigin = result.rayIntersect.hitPos[0] - planeOrigin;
+
+            result.u = pointToOrigin.dot(bt1);
+            result.v = pointToOrigin.dot(bt2);
+        }
+
+        result.rayIntersect.collided = collided;
+        return result;
+    }
+
+    result.rayIntersect.collided = false;
+    return result;
+}
+
+        
 ic::RaycastHit<3> ic::Raycast::ray_sphere(ic::Vec3 sphereCenter, float radius, const ic::Vec3 &rayOrigin, const ic::Vec3 &rayDir) {
     return ic::Raycast::ray_nsphere<3>(sphereCenter, radius, rayOrigin, rayDir);
 }

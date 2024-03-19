@@ -92,7 +92,7 @@ ic::Physics::ManifoldPoints2D ic::Physics::CollisionUtils2D::polygon_circle(Poly
         ic::Vec2f sidePointA = colliderA->modelVertices[i] + transformA->position;
         ic::Vec2f sidePointB = colliderA->modelVertices[next] + transformA->position;
 
-        ic::Vec2f closest = ic::Raycast::get_closest_point(transformB->position, sidePointA, sidePointB);
+        ic::Vec2f closest = ic::Raycast::get_closest_point_line(transformB->position, sidePointA, sidePointB);
         float distanceCompare = closest.dst2(transformB->position);
     
         if (distanceCompare < closestDistance2) {

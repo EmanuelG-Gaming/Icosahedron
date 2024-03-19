@@ -30,7 +30,7 @@ namespace ic {
 
     namespace Vectors {
         /** @brief Euclidean 3D axes. */
-        const ic::Vec3 right(1.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f), front(0.0f, 0.0f, 1.0f);
+        const ic::Vec3 right(1.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f), front(0.0f, 0.0f, 1.0f), left(-1.0f, 0.0f, 0.0f), down(0.0f, -1.0f, 0.0f), back(0.0f, 0.0f, -1.0f);
     }
 }
 #endif
