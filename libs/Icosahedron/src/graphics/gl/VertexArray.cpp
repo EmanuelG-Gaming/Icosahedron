@@ -56,7 +56,7 @@ void ic::VertexArray::reset() {
     indicesUsed = 0;
 }
 
-void ic::VertexArray::add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<float> &content) {
+GLuint ic::VertexArray::vertex_buffer(int attributeIndex, int dimensions, const std::vector<float> &content) {
     use();
 
     GLuint vertexBuffer;
@@ -66,11 +66,12 @@ void ic::VertexArray::add_vertex_buffer(int attributeIndex, int dimensions, cons
     
     glVertexAttribPointer(attributeIndex, dimensions, GL_FLOAT, GL_FALSE, 0, (GLvoid*)(0));
     glEnableVertexAttribArray(attributeIndex);
-
-    bufferObjects.push_back(vertexBuffer);
+    
+    return vertexBuffer;
 }
 
-void ic::VertexArray::add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<int> &content) {
+
+GLuint ic::VertexArray::vertex_buffer(int attributeIndex, int dimensions, const std::vector<int> &content) {
     use();
 
     GLuint vertexBuffer;
@@ -81,13 +82,26 @@ void ic::VertexArray::add_vertex_buffer(int attributeIndex, int dimensions, cons
     glVertexAttribIPointer(attributeIndex, dimensions, GL_INT, 0, (GLvoid*)(0));
     glEnableVertexAttribArray(attributeIndex);
 
-    bufferObjects.push_back(vertexBuffer);
+    return vertexBuffer;
+}
+
+GLuint ic::VertexArray::add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<float> &content) {
+    GLuint vbo = vertex_buffer(attributeIndex, dimensions, content);
+    bufferObjects.emplace_back(vbo);
+
+    return vbo;
+}
+
+GLuint ic::VertexArray::add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<int> &content) {
+    GLuint vbo = vertex_buffer(attributeIndex, dimensions, content);
+    bufferObjects.emplace_back(vbo);
+
+    return vbo;
 }
 
 
 
-
-void ic::VertexArray::set_index_buffer(const std::vector<unsigned int> &content) {
+GLuint ic::VertexArray::set_index_buffer(const std::vector<unsigned int> &content) {
     use();
 
     GLuint indexBuffer;
@@ -97,6 +111,8 @@ void ic::VertexArray::set_index_buffer(const std::vector<unsigned int> &content)
 
     ibo = indexBuffer;
     indicesUsed = content.size();
+
+    return indexBuffer;
 }
 
 

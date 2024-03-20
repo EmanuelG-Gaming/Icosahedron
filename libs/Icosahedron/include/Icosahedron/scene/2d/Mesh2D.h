@@ -41,6 +41,8 @@ namespace ic {
 
             void set_material(ic::MeshMaterial2D newMaterial);
 
+            void attribute(int attributeIndex, int dimensions, const std::vector<float> &content);
+
             void add_attribute(int attributeIndex, int dimensions, const std::vector<float> &content);
             void add_attribute(int attributeIndex, int dimensions, const std::vector<int> &content);
             void add_attribute(int attributeIndex, int dimensions, const std::vector<ic::Color> &content);

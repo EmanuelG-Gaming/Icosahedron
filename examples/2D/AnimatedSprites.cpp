@@ -41,7 +41,6 @@ class AnimatedSprites : public ic::Application {
     ic::Camera2D camera;
 
     ic::Shader shader;
-    float time;
 
     public:
         bool init() override {
@@ -80,15 +79,13 @@ class AnimatedSprites : public ic::Application {
             texture1 = ic::TextureLoader::load_png("resources/textures/discontinuous-square.png");
             texture2 = ic::TextureLoader::load(image);
 
-            int images = 3;
-            spritesheet = ic::TextureAtlas(32 * images, 32);
-            for (int i = 1; i <= 3; i++) {
+            int images = 10;
+            spritesheet = ic::TextureAtlas(9086, 9086);
+            for (int i = 1; i <= images; i++) {
                 spritesheet.add_entry("sprite-animation-frame-" + std::to_string(i), "resources/textures/animation/frame-" + std::to_string(i) + ".png");
             }
             
             camera = ic::Camera2D();
-
-            time = 0.0f;
 
             return true;
         }
@@ -97,13 +94,9 @@ class AnimatedSprites : public ic::Application {
             camera.width = w;
             camera.height = h;
         }
-
-        bool handle_event(ic::Event event, float dt) override { 
-            return true;
-        }
     
-        bool update(float dt) override {
-            time += dt;
+        bool update() override {
+            set_texture_dynamic(mesh2, ((int) ic::Time::globalTime) % (10 - 1));
 
             clear_color(ic::Colors::blue);
             
@@ -114,7 +107,7 @@ class AnimatedSprites : public ic::Application {
             texture1.use();
             mesh1.draw(shader);
 
-            texture2.use();
+            spritesheet.use();
             mesh2.draw(shader);
 
             return true; 
@@ -132,7 +125,7 @@ class AnimatedSprites : public ic::Application {
 
         void set_texture_dynamic(ic::Mesh2D &mesh, int entryAtIndex) {
             auto &entry = spritesheet.get_entry(entryAtIndex);
-            
+            mesh.attribute(2, 2, std::vector<float>({ entry.u, entry.v, entry.u2, entry.v, entry.u2, entry.v2, entry.u, entry.v2 }));
         }
 };
 

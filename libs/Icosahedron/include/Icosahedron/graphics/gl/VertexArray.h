@@ -39,25 +39,31 @@ namespace ic {
 
             void dispose();
 
-            /** @brief Adds a floating-point vertex buffer to this VAO. If you already have vertex data on the respective location, it will get overriden.
+            /** @brief Sets a floating-point vertex buffer to this VAO, without appending it to a CPU-side buffer object pool,
+             *  making it useful for dynamically changing animation frames.
              *  @param attributeIndex The index of the attribute, as in the shader code.
              *  @param dimensions The number of dimensions of the attribute vector.
              *  @param content Attribute content in the following form: { x1, y1, ... n1,
              *                                                            x2, y2,  ... n2,
              *                                                            ... }, where n is the number of dimensions.
             */
-            void add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<float> &content);
+            GLuint vertex_buffer(int attributeIndex, int dimensions, const std::vector<float> &content);
 
-            /** @brief Adds an integer vertex buffer to this VAO.
+            /** @brief Sets an integer vertex buffer to this VAO, without appending it to a CPU-side buffer object pool,
+             *  making it useful for dynamically changing animation frames.
              *  @param attributeIndex The index of the attribute, as in the shader code.
              *  @param dimensions The number of dimensions of the attribute vector.
              *  @param content Attribute content in the following form: { x1, y1, ... n1,
              *                                                            x2, y2,  ... n2,
              *                                                            ... }, where n is the number of dimensions.
             */
-            void add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<int> &content);
+            GLuint vertex_buffer(int attributeIndex, int dimensions, const std::vector<int> &content);
 
-            void set_index_buffer(const std::vector<unsigned int> &content);
+            GLuint add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<float> &content);
+            GLuint add_vertex_buffer(int attributeIndex, int dimensions, const std::vector<int> &content);
+
+
+            GLuint set_index_buffer(const std::vector<unsigned int> &content);
 
             void unuse_attribute_definitions();
 
