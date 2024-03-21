@@ -14,6 +14,7 @@
 namespace ic { namespace UI {
     class Button;
 
+    /** @brief A table may also be a branch of the UI tree, with the root of it also being a table. */
     class Table {
         public:
             Table();
@@ -34,10 +35,26 @@ namespace ic { namespace UI {
             void mouse_down();
             void update(float dt);
             
-            /* UI elements */
+            void recalculate_size();
+            
+
+            void set_layout(Table *table);
+
+            Table *set_background(Drawable *drawable);
+            bool has_background();
+
+            Table *set_position(float x, float y);
+            Table *set_position(ic::Vec2f &pos);
+
+
+            /** @brief UI elements notation shorthands. */
 
             Cell *add(Element *element);
+            Cell *add(Cell *cell);
             Table *add(Table *table);
+
+            void remove(Cell *cell);
+            void remove(Table *table);
 
             Table *table(const std::function<void(Table*)> &consumer);
 
@@ -53,19 +70,17 @@ namespace ic { namespace UI {
 
             Button *text_button(const std::string &text, const std::function<void()> &clicked= nullptr);
 
-
-            Table *set_background(Drawable *drawable);
-            bool has_background();
-
-            Table *set_position(float x, float y);
-            Table *set_position(ic::Vec2f &pos);
-
+        
         protected:
             void draw_elements();
-
+            
         protected:
             ic::Vec2f position;
+            float width, height;
+            float prefWidth, prefHeight;
             Drawable *background;
+
+            Table *previous;
 
             std::vector<Cell*> cells;
             std::vector<Table*> tables;

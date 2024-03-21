@@ -14,6 +14,7 @@ namespace ic { namespace UI {
             ic::Vec2f elementPosition;
 
             Cell();
+            Cell(ic::UI::Element *elem);
 
             virtual void mouse_moved_callback() {}
             virtual void mouse_up_callback() {}
@@ -25,6 +26,7 @@ namespace ic { namespace UI {
             bool has_element();
 
         private: 
+            // The inheritor table of this cell
             Table *table;
     };
 }}

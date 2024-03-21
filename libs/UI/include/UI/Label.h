@@ -19,7 +19,7 @@ namespace ic { namespace UI {
             ic::UI::Drawable *background;
             
             LabelStyle() {
-                this->font = ic::UI::Global::defaultAtlas;
+                this->font = ic::UI::Global::get().defaultAtlas;
                 this->fontColor = { 255, 255, 255 };
                 this->background = nullptr;
             }

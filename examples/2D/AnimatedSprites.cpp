@@ -33,10 +33,8 @@ std::string alphaBlendingFragment = IC_ADD_GLSL_DEFINITION(
 );
 
 class AnimatedSprites : public ic::Application {
-    ic::Image image;
-    ic::Mesh2D mesh1, mesh2;
+    ic::Mesh2D mesh;
 
-    ic::Texture texture1, texture2;
     ic::TextureAtlas spritesheet;
     ic::Camera2D camera;
 
@@ -53,32 +51,12 @@ class AnimatedSprites : public ic::Application {
             // Alpha blending
             ic::GLStateHandler::enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
 
-            image = ic::Image(64, 64);
-            int rings = 10;
-            int ringSize = 2;
-            int ringCount = 10;
 
-            for (int j = 0; j < ringCount; j++) {
-                int x = rand() % (image.get_width() - 1), y = rand() % (image.get_height() - 1);
-
-                for (int i = 0; i < 10; i++) {
-                    image.fill_circle(x, y, (rings + 1) * ringSize - i, { 255, 255, 255, (uint8_t) (255 - i * rings * 2.5f) });
-                }
-            }
-
-            // Mesh 1
-            mesh1 = ic::GeometryGenerator::generate_rectangle_mesh(0.3f, 0.3f);
-            mesh1.set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
+            // Mesh
+            mesh = ic::GeometryGenerator::generate_rectangle_mesh(1.0f, 1.0f);
             
-            // Mesh 2
-            mesh2 = ic::GeometryGenerator::generate_rectangle_mesh(0.3f, 0.3f);
-            mesh2.set_transformation(ic::Mat4x4().set_translation<2>({ 0.35f, 0.0f }));
-            
-
             shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, alphaBlendingFragment);
-            texture1 = ic::TextureLoader::load_png("resources/textures/discontinuous-square.png");
-            texture2 = ic::TextureLoader::load(image);
-
+            
             int images = 10;
             spritesheet = ic::TextureAtlas(9086, 9086);
             for (int i = 1; i <= images; i++) {
@@ -96,19 +74,22 @@ class AnimatedSprites : public ic::Application {
         }
     
         bool update() override {
-            set_texture_dynamic(mesh2, ((int) ic::Time::globalTime) % (10 - 1));
+            set_texture_dynamic(mesh, (int) (ic::Time::globalTime * 5.0f) % (10 - 1));
 
             clear_color(ic::Colors::blue);
             
-            
             shader.use();
-            camera.use(shader);
-
-            texture1.use();
-            mesh1.draw(shader);
+            //camera.use(shader);
 
             spritesheet.use();
-            mesh2.draw(shader);
+
+            int count = 1000;
+            float w = 1.0f;
+            float h = 1.0f;
+            for (int i = count; i >= 0; i--) {
+                mesh.set_transformation(ic::Mat4x4().set_scaling<2>(ic::Vec2((i / (float) count) * w, (i / (float) count) * h)));
+                mesh.draw(shader);
+            }
 
             return true; 
         }
@@ -116,16 +97,13 @@ class AnimatedSprites : public ic::Application {
         void dispose() {
             shader.clear();
             
-            texture1.dispose();
-            texture2.dispose();
-
-            mesh1.dispose();
-            mesh2.dispose();
+            spritesheet.dispose();
+            mesh.dispose();
         }
 
-        void set_texture_dynamic(ic::Mesh2D &mesh, int entryAtIndex) {
+        void set_texture_dynamic(ic::Mesh2D &m, int entryAtIndex) {
             auto &entry = spritesheet.get_entry(entryAtIndex);
-            mesh.attribute(2, 2, std::vector<float>({ entry.u, entry.v, entry.u2, entry.v, entry.u2, entry.v2, entry.u, entry.v2 }));
+            m.attribute(2, 2, std::vector<float>({ entry.u, entry.v, entry.u2, entry.v, entry.u2, entry.v2, entry.u, entry.v2 }));
         }
 };
 

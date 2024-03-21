@@ -8,6 +8,8 @@ namespace ic { namespace UI {
         public:
             /** @brief The total displacement of this element over the UI scene. */
             ic::Vec2f translation;
+
+            /** @brief Size of the bounding box. */
             float width, height;
             
             Element();
@@ -18,6 +20,9 @@ namespace ic { namespace UI {
 
             ic::UI::Element *set_position(float x, float y);
             ic::UI::Element *set_position(ic::Vec2f to);
+
+            ic::UI::Element *set_size(float w, float h);
+            ic::UI::Element *set_size(ic::Vec2f to);
     };
 }}
 

@@ -11,13 +11,10 @@ Label::Label(const std::string &text) {
 
 void ic::UI::Label::draw() {
     if (this->style.background != nullptr) {
-        float halfWidth = this->width / 2.0f;
-        float halfHeight = this->height / 2.0f;
-
-        this->style.background->draw(this->translation.x() + halfWidth, this->translation.y() + halfHeight, halfWidth, halfHeight);
+        this->style.background->draw(this->translation.x(), this->translation.y(), this->width, this->height);
     }
 
-    ic::Renderer::draw_string(ic::UI::Global::fillTextBatch, this->style.font, this->text, this->translation.x(), this->translation.y(), 1.0f, 1.0f, this->style.fontColor);
+    ic::Renderer::draw_string(ic::UI::Global::get().fillTextBatch, this->style.font, this->text, this->translation.x() - this->width, this->translation.y() - this->height, 1.0f, 1.0f, this->style.fontColor);
 }
 
 
@@ -77,7 +74,7 @@ ic::Vec2f ic::UI::Label::compute_size(ic::TextAtlas &font) {
     w *= sclX;
     h *= sclY;
 
-    ic::Vec2f result = { w, h };
+    ic::Vec2f result = ic::Vec2f(w, h) / 2.0f;
 
     return result;
 }

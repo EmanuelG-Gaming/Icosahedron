@@ -8,6 +8,11 @@ Cell::Cell() {
     this->element = nullptr;
 }
 
+Cell::Cell(ic::UI::Element *elem) : Cell() {
+    this->element = elem;
+}
+
+
 void ic::UI::Cell::set_layout(ic::UI::Table *table) {
     this->table = table;
 }

@@ -19,21 +19,28 @@ class UIBasics : public ic::Application {
         bool load() override {
             static auto &ui = ic::UI::Core::get();
             ui.load();
-
             ui.atlas->add_entry("wood", "resources/textures/wood.png");
             ui.atlas->add_entry("ball", "resources/textures/ball.png");
             ui.atlas->add_entry("white", "resources/textures/white.png");
+            
+            
+            ic::UI::Button *button = ui.mainTable->text_button("Show dialog", [&]() {
+                auto *tinted = new ic::UI::TextureDrawable("white");
+                tinted->tint = ic::Colors::black;
 
-            ui.mainTable->label("Press the button below to print 'Testing'.")->set_position(-0.8f, 0.15f);
+                auto *table = new ic::UI::Table(tinted);
 
-            ui.mainTable->button([this]() {
-                std::cout << "Testing." << "\n";
-            })->set_style(ic::UI::ButtonStyle(
-                nullptr,
-                new ic::UI::TextureDrawable("ball"),
-                new ic::UI::TextureDrawable("white")
-            ))->set_background(new ic::UI::TextureDrawable("wood"));
+                table->label("print 'Testing'.")->set_position(-0.8f, 0.15f);
+                table->label("print 'Testing'.")->set_background(new ic::UI::TextureDrawable("wood"))->set_position(-0.3f, 0.5f);
+                table->label("the.")->set_background(new ic::UI::TextureDrawable("wood"))->set_position(0.5f, -0.5f);
+                //table->recalculate_size();
 
+                ui.mainTable->add(table);
+            });
+            button->set_background(new ic::UI::TextureDrawable("wood"));
+            button->set_position(0.0f, -0.7f);
+
+            
             return true;
         }
 
@@ -41,20 +48,16 @@ class UIBasics : public ic::Application {
             
         }
 
-        bool handle_event(ic::Event event, float dt) override { 
-            return true;
-        }
-
-        bool update(float dt) override {
+        bool update() override {
             clear_color(ic::Colors::blue);
 
-            ic::UI::Core::update_and_render(dt);
+            ic::UI::Core::get().update_and_render(ic::Time::globalDelta);
 
             return true; 
         }
 
         void dispose() override {
-            ic::UI::Core::dispose();
+            ic::UI::Core::get().dispose();
         }
 };
 

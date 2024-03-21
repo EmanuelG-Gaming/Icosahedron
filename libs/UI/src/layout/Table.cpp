@@ -6,9 +6,12 @@ using namespace ic::UI;
 
 Table::Table() {
     this->background = nullptr;
+    this->previous = nullptr;
+    this->width = 0.0f; this->prefWidth = -1.0f;
+    this->height = 0.0f; this->prefHeight = -1.0f;
 }
 
-Table::Table(Drawable *background) {
+Table::Table(Drawable *background) : Table() {
     this->background = background;
 }
 
@@ -25,7 +28,7 @@ Table::Table(Drawable *background, const std::function<void(Table*)> &consumer) 
 
 void ic::UI::Table::draw() {
     if (this->has_background()) {
-        this->background->draw(this->position.x(), this->position.y(), 0.1f, 0.1f);
+        this->background->draw(this->position.x(), this->position.y(), this->width, this->height);
     }
 
     this->draw_elements();
@@ -88,26 +91,61 @@ void ic::UI::Table::update(float dt) {
 
 
 
+void ic::UI::Table::remove(ic::UI::Cell *cell) {
+    if (!cell) return;
+
+    auto iterator = std::find(cells.begin(), cells.end(), cell);
+    if (iterator == cells.end()) return;
+
+    cells.erase(iterator);
+}
+
+void ic::UI::Table::remove(ic::UI::Table *table) {
+    if (!table) return;
+
+    auto iterator = std::find(tables.begin(), tables.end(), table);
+    if (iterator == tables.end()) return;
+
+    for (auto &tab : table->tables) {
+        table->remove(tab);
+    }
+    for (auto &cell : table->cells) {
+        table->remove(cell);
+    }
+
+    tables.erase(iterator);
+}
+
+
+ic::UI::Cell *ic::UI::Table::add(ic::UI::Cell *cell) {
+    this->cells.push_back(cell);
+    //this->recalculate_size();
+
+    return cell;
+}
 
 ic::UI::Cell *ic::UI::Table::add(Element *element) {
     ic::UI::Cell *cell = new ic::UI::Cell();
     cell->set_layout(this);
     cell->element = element;
     
-    this->cells.push_back(cell);
-
+    add(cell);
+    
     return cell;
 }
 
 ic::UI::Table *ic::UI::Table::add(Table *table) {
+    table->set_layout(this);
     this->tables.push_back(table);
-    
+
     return table;
 }
 
 ic::UI::Table *ic::UI::Table::table(const std::function<void(Table*)> &consumer) {
     ic::UI::Table *table = new ic::UI::Table();
+    table->set_layout(this);
     consumer(table);
+
     this->tables.push_back(table);
     
     return table;
@@ -119,14 +157,15 @@ ic::UI::Label *ic::UI::Table::label(const std::string &text) {
     ic::UI::Cell *cell = new ic::UI::Cell();
     cell->set_layout(this);
     cell->element = label;
-    
-    this->cells.push_back(cell);
 
+    add(cell);
+    
     return label;
 }
 
 ic::UI::Button *ic::UI::Table::button() {
     ic::UI::Button *b = new ic::UI::Button();
+    b->set_layout(this);
     this->tables.push_back(b);
 
     return b;
@@ -134,6 +173,7 @@ ic::UI::Button *ic::UI::Table::button() {
 
 ic::UI::Button *ic::UI::Table::button(const std::function<void()> &clicked) {
     ic::UI::Button *b = new ic::UI::Button();
+    b->set_layout(this);
     if (clicked != nullptr) {
         b->clickListener = clicked;
     }
@@ -181,7 +221,7 @@ ic::UI::ImageElement *ic::UI::Table::image(const std::string &atlasEntryName, fl
     cell->set_layout(this);
     cell->element = i;
     
-    this->cells.push_back(cell);
+    add(cell);
 
     return i;
 }
@@ -203,6 +243,7 @@ ic::UI::Table *ic::UI::Table::set_position(float x, float y) {
     this->position.x() = x;
     this->position.y() = y;
 
+    // Move tables with it
     for (auto &cell : this->cells) {
         cell->element->set_position(this->position);
     }
@@ -217,4 +258,84 @@ ic::UI::Table *ic::UI::Table::set_position(float x, float y) {
 
 ic::UI::Table *ic::UI::Table::set_position(ic::Vec2f &pos) {
     return this->set_position(pos.x(), pos.y());
+}
+
+
+void ic::UI::Table::set_layout(ic::UI::Table *table) {
+    this->previous = table;
+}
+
+
+void ic::UI::Table::recalculate_size() {
+    for (auto &table : this->tables) {
+        table->recalculate_size();
+    }
+
+    if (this->prefWidth >= 0.0f || this->prefHeight >= 0.0f) {
+        this->width = this->prefWidth;
+        this->height = this->prefHeight;
+    } else {
+        if (cells.empty()) return;
+        
+        ic::UI::Element *e = cells[0]->element;
+        ic::Vec2 s(e->width, e->height);
+        ic::Vec2 min = e->translation - s, max = e->translation + s;
+    
+        // First calculate at the size of cells
+        
+        for (auto &cell : this->cells) {
+            ic::UI::Element *elem = cell->element;
+    
+            float relativeMinX = elem->translation.x() - elem->width;
+            float relativeMinY = elem->translation.y() - elem->height;
+    
+            float relativeMaxX = elem->translation.x() + elem->width;
+            float relativeMaxY = elem->translation.y() + elem->height;
+            
+    
+            if (relativeMinX < min.x()) min.x() = relativeMinX;
+            if (relativeMinY < min.y()) min.y() = relativeMinY;
+    
+            if (relativeMaxX > max.x()) max.x() = relativeMaxX;
+            if (relativeMaxY > max.y()) max.y() = relativeMaxY;
+        }
+    
+        this->width = (max.x() - min.x()) / 2.0f;
+        this->height = (max.y() - min.y()) / 2.0f;
+
+        this->position.x() = (max.x() + min.x()) / 2.0f;
+        this->position.y() = (max.y() + min.y()) / 2.0f;
+    
+    
+
+        // Then calculate the rest of the derived tables
+        /*
+        for (auto &tab : this->tables) {
+            ic::UI::Table *elem = tab;
+    
+            float relativeMinX = elem->position.x() - elem->width;
+            float relativeMinY = elem->position.y() - elem->height;
+    
+            float relativeMaxX = elem->position.x() + elem->width;
+            float relativeMaxY = elem->position.y() + elem->height;
+            
+    
+            if (relativeMinX < min.x()) min.x() = relativeMinX;
+            if (relativeMinY < min.y()) min.y() = relativeMinY;
+    
+            if (relativeMaxX > max.x()) max.x() = relativeMaxX;
+            if (relativeMaxY > max.y()) max.y() = relativeMaxY;
+        }
+    
+        this->width = (max.x() - min.x()) / 2.0f;
+        this->height = (max.y() - min.y()) / 2.0f;
+
+        this->position.x() = (max.x() + min.x()) / 2.0f;
+        this->position.y() = (max.y() + min.y()) / 2.0f;
+
+        for (auto &table : this->tables) {
+            table->recalculate_size();
+        }
+        */
+    }
 }

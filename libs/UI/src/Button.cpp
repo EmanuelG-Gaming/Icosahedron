@@ -6,12 +6,15 @@ Button::Button() {
     this->clickListener = nullptr;
     this->isPressed = false;
     this->isChecked = false;
+
+    this->width = 0.1f;
+    this->height = 0.1f;
 }
 
 
 void ic::UI::Button::mouse_moved_callback() {
     bool before = this->isChecked;
-    this->isChecked = this->contains(ic::UI::Global::mouseCursorPosition);
+    this->isChecked = this->contains(ic::UI::Global::get().mouseCursorPosition);
 
     if (this->isChecked != before) {
         if (!this->isChecked) {
@@ -50,11 +53,11 @@ void ic::UI::Button::draw() {
 
 
     if (this->has_background()) {
-        this->background->draw(this->position.x(), this->position.y(), 0.1f, 0.1f);
+        this->background->draw(this->position.x(), this->position.y(), this->width, this->height);
     }
 
     if (top != nullptr) {
-        top->draw(this->position.x(), this->position.y(), 0.1f, 0.1f);
+        top->draw(this->position.x(), this->position.y(), this->width, this->height);
     }
 
 
@@ -69,6 +72,6 @@ ic::UI::Button *ic::UI::Button::set_style(const ic::UI::ButtonStyle &style) {
 }
             
 bool ic::UI::Button::contains(ic::Vec2f &point) {
-    return (point.x() >= position.x() - 0.1f && point.x() <= position.x() + 0.1f) &&
-           (point.y() >= position.y() - 0.1f && point.y() <= position.y() + 0.1f);
+    return (point.x() >= position.x() - this->width && point.x() <= position.x() + this->width) &&
+           (point.y() >= position.y() - this->height && point.y() <= position.y() + this->height);
 }
