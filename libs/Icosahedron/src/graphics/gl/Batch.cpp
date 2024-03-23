@@ -39,11 +39,11 @@ void Batch::setup() {
     glEnableVertexAttribArray(position);
            
     GLint color = 1;
-    glVertexAttribPointer(color, 3, GL_FLOAT, GL_FALSE, sizeof(BatchVertex), (void*)(2 * sizeof(float)));
+    glVertexAttribPointer(color, 4, GL_FLOAT, GL_FALSE, sizeof(BatchVertex), (void*)(2 * sizeof(float)));
     glEnableVertexAttribArray(color);
 
     GLint texCoords = 2;
-    glVertexAttribPointer(texCoords, 2, GL_FLOAT, GL_FALSE, sizeof(BatchVertex), (void*)(5 * sizeof(float)));
+    glVertexAttribPointer(texCoords, 2, GL_FLOAT, GL_FALSE, sizeof(BatchVertex), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(texCoords);
             
     glBindVertexArray(0);

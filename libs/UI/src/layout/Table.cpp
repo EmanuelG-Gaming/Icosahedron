@@ -28,7 +28,7 @@ Table::Table(Drawable *background, const std::function<void(Table*)> &consumer) 
 
 void ic::UI::Table::draw() {
     if (this->has_background()) {
-        this->background->draw(this->position.x(), this->position.y(), this->width, this->height);
+        this->background->draw(this->rectanglePosition.x(), this->rectanglePosition.y(), this->width, this->height);
     }
 
     this->draw_elements();
@@ -102,16 +102,10 @@ void ic::UI::Table::remove(ic::UI::Cell *cell) {
 
 void ic::UI::Table::remove(ic::UI::Table *table) {
     if (!table) return;
-
+    
     auto iterator = std::find(tables.begin(), tables.end(), table);
     if (iterator == tables.end()) return;
 
-    for (auto &tab : table->tables) {
-        table->remove(tab);
-    }
-    for (auto &cell : table->cells) {
-        table->remove(cell);
-    }
 
     tables.erase(iterator);
 }
@@ -243,9 +237,9 @@ ic::UI::Table *ic::UI::Table::set_position(float x, float y) {
     this->position.x() = x;
     this->position.y() = y;
 
-    // Move tables with it
+    // Move cells and tables with it
     for (auto &cell : this->cells) {
-        cell->element->set_position(this->position);
+        cell->element->translation = cell->element->relativePosition + this->position;
     }
 
     for (auto &table : this->tables) {
@@ -260,10 +254,23 @@ ic::UI::Table *ic::UI::Table::set_position(ic::Vec2f &pos) {
     return this->set_position(pos.x(), pos.y());
 }
 
+ic::UI::Table *ic::UI::Table::set_size(float w, float h) {
+    this->width = this->prefWidth = w;
+    this->height = this->prefHeight = h;
+
+    return this;
+}
+
+ic::UI::Table *ic::UI::Table::set_size(ic::Vec2f &size) {
+    return this->set_size(size.x(), size.y());
+}
+
+
 
 void ic::UI::Table::set_layout(ic::UI::Table *table) {
     this->previous = table;
 }
+
 
 
 void ic::UI::Table::recalculate_size() {
@@ -303,13 +310,12 @@ void ic::UI::Table::recalculate_size() {
         this->width = (max.x() - min.x()) / 2.0f;
         this->height = (max.y() - min.y()) / 2.0f;
 
-        this->position.x() = (max.x() + min.x()) / 2.0f;
-        this->position.y() = (max.y() + min.y()) / 2.0f;
+        this->rectanglePosition.x() = (max.x() + min.x()) / 2.0f;
+        this->rectanglePosition.y() = (max.y() + min.y()) / 2.0f;
     
     
 
         // Then calculate the rest of the derived tables
-        /*
         for (auto &tab : this->tables) {
             ic::UI::Table *elem = tab;
     
@@ -330,12 +336,11 @@ void ic::UI::Table::recalculate_size() {
         this->width = (max.x() - min.x()) / 2.0f;
         this->height = (max.y() - min.y()) / 2.0f;
 
-        this->position.x() = (max.x() + min.x()) / 2.0f;
-        this->position.y() = (max.y() + min.y()) / 2.0f;
+        this->rectanglePosition.x() = (max.x() + min.x()) / 2.0f;
+        this->rectanglePosition.y() = (max.y() + min.y()) / 2.0f;
 
         for (auto &table : this->tables) {
             table->recalculate_size();
         }
-        */
     }
 }

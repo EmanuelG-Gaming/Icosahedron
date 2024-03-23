@@ -9,8 +9,8 @@ Element::Element() {
 
 
 ic::UI::Element *ic::UI::Element::set_position(float x, float y) {
-    this->translation.x() = x;
-    this->translation.y() = y;
+    this->relativePosition.x() = this->translation.x() = x;
+    this->relativePosition.y() = this->translation.y() = y;
 
     return this;
 }

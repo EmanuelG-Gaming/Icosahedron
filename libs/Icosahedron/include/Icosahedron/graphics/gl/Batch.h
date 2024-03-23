@@ -13,12 +13,12 @@ namespace ic {
     /* A vertex for a batch. */
     struct BatchVertex {
         ic::Vec2f Position;
-        ic::Vec3f Color;
+        ic::Vec4f Color;
         ic::Vec2f TextureCoords;
 
         BatchVertex() {}
-        BatchVertex(float x, float y, ic::Color color) : Position({x, y}), Color({color.r / 255.0f, color.g / 255.0f, color.b / 255.0f}) {}
-        BatchVertex(float x, float y, float tx, float ty, ic::Color color) : Position({x, y}), TextureCoords({tx, ty}), Color({color.r / 255.0f, color.g / 255.0f, color.b / 255.0f}) {}
+        BatchVertex(float x, float y, ic::Color color) : Position({x, y}), Color({color.r / 255.0f, color.g / 255.0f, color.b / 255.0f,  color.a / 255.0f }) {}
+        BatchVertex(float x, float y, float tx, float ty, ic::Color color) : Position({x, y}), TextureCoords({tx, ty}), Color({color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f}) {}
     };
 
     /*

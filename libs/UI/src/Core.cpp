@@ -8,12 +8,12 @@
 void ic::UI::Core::load() {
     std::string vertex = IC_ADD_GLSL_DEFINITION(
         layout (location = 0) in vec2 position;
-        layout (location = 1) in vec3 color;
+        layout (location = 1) in vec4 color;
         layout (location = 2) in vec2 tCoords;
 
         uniform mat4 projection = mat4(1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
         
-        out vec3 vColor;
+        out vec4 vColor;
         out vec2 vTCoords;
 
         void main() {
@@ -31,7 +31,7 @@ void ic::UI::Core::load() {
     std::string textureFragment = IC_ADD_GLSL_DEFINITION(
         precision mediump float;
 
-        in vec3 vColor;
+        in vec4 vColor;
         in vec2 vTCoords;
 
         uniform sampler2D sampleTexture;
@@ -40,15 +40,14 @@ void ic::UI::Core::load() {
 
         void main() {
             vec4 color = texture(sampleTexture, vTCoords);
-            if (color.a <= 0.1) discard;
-            outColor = color * vec4(vColor, 1.0);
+            outColor = color * vColor;
         }
     );
 
     std::string textFragment = IC_ADD_GLSL_DEFINITION(
         precision mediump float;
 
-        in vec3 vColor;
+        in vec4 vColor;
         in vec2 vTCoords;
 
         uniform sampler2D sampleTexture;
@@ -58,7 +57,7 @@ void ic::UI::Core::load() {
         void main() {
             vec4 color = texture(sampleTexture, vTCoords);
             if (color.r <= 0.1) discard;
-            outColor = vec4(color.r, color.r, color.r, 1.0) * vec4(vColor, 1.0);
+            outColor = vec4(color.r, color.r, color.r, 1.0) * vec4(vColor.rgb, 1.0);
         }
     );
 

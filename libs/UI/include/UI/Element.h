@@ -9,6 +9,9 @@ namespace ic { namespace UI {
             /** @brief The total displacement of this element over the UI scene. */
             ic::Vec2f translation;
 
+            /** @brief Position that is relative to the table. */
+            ic::Vec2f relativePosition;
+
             /** @brief Size of the bounding box. */
             float width, height;
             

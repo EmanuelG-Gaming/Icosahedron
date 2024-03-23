@@ -46,6 +46,9 @@ namespace ic { namespace UI {
             Table *set_position(float x, float y);
             Table *set_position(ic::Vec2f &pos);
 
+            /** @brief Forcefully sets the table's width and height, without automatic scaling. */
+            Table *set_size(float w, float h);
+            Table *set_size(ic::Vec2f &size);
 
             /** @brief UI elements notation shorthands. */
 
@@ -76,6 +79,8 @@ namespace ic { namespace UI {
             
         protected:
             ic::Vec2f position;
+            ic::Vec2f rectanglePosition;
+
             float width, height;
             float prefWidth, prefHeight;
             Drawable *background;
