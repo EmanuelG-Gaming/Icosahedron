@@ -80,7 +80,7 @@ namespace ic {
         
             void main() {
                 vec4 color = texture(sampleTexture, vTCoords);
-                if (color.r <= 0.1) discard;
+                if (color.r <= 0.5) discard;
                 outColor = vec4(color.r, color.r, color.r, 1.0) * vec4(vColor, 1.0);
             }
         );

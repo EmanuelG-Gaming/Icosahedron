@@ -90,7 +90,6 @@ void ic::UI::Table::update(float dt) {
 }
 
 
-
 void ic::UI::Table::remove(ic::UI::Cell *cell) {
     if (!cell) return;
 
@@ -196,6 +195,7 @@ ic::UI::Button *ic::UI::Table::image_button(const std::string &atlasEntryName, c
 
 ic::UI::Button *ic::UI::Table::text_button(const std::string &text, const std::function<void()> &clicked) {
     ic::UI::Button *b = new ic::UI::Button();
+    b->set_layout(this);
     if (clicked != nullptr) {
         b->clickListener = clicked;
     }
@@ -282,38 +282,39 @@ void ic::UI::Table::recalculate_size() {
         this->width = this->prefWidth;
         this->height = this->prefHeight;
     } else {
-        if (cells.empty()) return;
-        
-        ic::UI::Element *e = cells[0]->element;
-        ic::Vec2 s(e->width, e->height);
-        ic::Vec2 min = e->translation - s, max = e->translation + s;
-    
-        // First calculate at the size of cells
-        
-        for (auto &cell : this->cells) {
-            ic::UI::Element *elem = cell->element;
-    
-            float relativeMinX = elem->translation.x() - elem->width;
-            float relativeMinY = elem->translation.y() - elem->height;
-    
-            float relativeMaxX = elem->translation.x() + elem->width;
-            float relativeMaxY = elem->translation.y() + elem->height;
-            
-    
-            if (relativeMinX < min.x()) min.x() = relativeMinX;
-            if (relativeMinY < min.y()) min.y() = relativeMinY;
-    
-            if (relativeMaxX > max.x()) max.x() = relativeMaxX;
-            if (relativeMaxY > max.y()) max.y() = relativeMaxY;
-        }
-    
-        this->width = (max.x() - min.x()) / 2.0f;
-        this->height = (max.y() - min.y()) / 2.0f;
+        ic::Vec2f min, max;
 
-        this->rectanglePosition.x() = (max.x() + min.x()) / 2.0f;
-        this->rectanglePosition.y() = (max.y() + min.y()) / 2.0f;
+        if (!cells.empty()) {
+            ic::UI::Element *e = cells[0]->element;
+            ic::Vec2 s(e->width, e->height);
+            min = e->translation - s, max = e->translation + s;
+        
+            // First calculate at the size of cells
+            
+            for (auto &cell : this->cells) {
+                ic::UI::Element *elem = cell->element;
+        
+                float relativeMinX = elem->translation.x() - elem->width;
+                float relativeMinY = elem->translation.y() - elem->height;
+        
+                float relativeMaxX = elem->translation.x() + elem->width;
+                float relativeMaxY = elem->translation.y() + elem->height;
+                
+        
+                if (relativeMinX < min.x()) min.x() = relativeMinX;
+                if (relativeMinY < min.y()) min.y() = relativeMinY;
+        
+                if (relativeMaxX > max.x()) max.x() = relativeMaxX;
+                if (relativeMaxY > max.y()) max.y() = relativeMaxY;
+            }
+        
+            this->width = (max.x() - min.x()) / 2.0f;
+            this->height = (max.y() - min.y()) / 2.0f;
     
-    
+            this->rectanglePosition.x() = (max.x() + min.x()) / 2.0f;
+            this->rectanglePosition.y() = (max.y() + min.y()) / 2.0f;
+        }
+
 
         // Then calculate the rest of the derived tables
         for (auto &tab : this->tables) {

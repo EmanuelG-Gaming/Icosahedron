@@ -56,7 +56,7 @@ void ic::UI::Core::load() {
 
         void main() {
             vec4 color = texture(sampleTexture, vTCoords);
-            if (color.r <= 0.1) discard;
+            if (color.r <= 0.5) discard;
             outColor = vec4(color.r, color.r, color.r, 1.0) * vec4(vColor.rgb, 1.0);
         }
     );
@@ -105,6 +105,9 @@ void ic::UI::Core::update(float dt) {
 void ic::UI::Core::render(float dt) {
     this->mainTable->draw();
 
+    glCullFace(GL_BACK);
+    glDepthMask(GL_FALSE);
+
     // Textures
     this->uiShader.use();
     this->uiCamera.use(this->uiShader);
@@ -120,6 +123,9 @@ void ic::UI::Core::render(float dt) {
     // Currently uses the default atlas
     ic::UI::Global::get().defaultAtlas.use();
     ic::UI::Global::get().fillTextBatch.render();
+
+    glDepthMask(GL_TRUE);
+    glCullFace(GL_FRONT);
 }
 
 

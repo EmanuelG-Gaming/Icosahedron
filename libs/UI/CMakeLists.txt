@@ -25,6 +25,7 @@ add_library(${LIBRARY_NAME} STATIC
     ${LIBRARY_HEADERS_DIRECTORY}/Label.h
     ${LIBRARY_HEADERS_DIRECTORY}/ImageElement.h
     ${LIBRARY_HEADERS_DIRECTORY}/Button.h
+    ${LIBRARY_HEADERS_DIRECTORY}/Checkbox.h
     ${LIBRARY_HEADERS_DIRECTORY}/Core.h
     
     # Sources
@@ -38,6 +39,7 @@ add_library(${LIBRARY_NAME} STATIC
     ${LIBRARY_SOURCE_DIRECTORY}/Label.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/ImageElement.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/Button.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/Checkbox.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/Core.cpp
 )
 

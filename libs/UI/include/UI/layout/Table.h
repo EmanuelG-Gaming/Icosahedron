@@ -33,6 +33,7 @@ namespace ic { namespace UI {
             void mouse_moved();
             void mouse_up();
             void mouse_down();
+            
             void update(float dt);
             
             void recalculate_size();
