@@ -169,6 +169,7 @@ class UI3D : public ic::Application {
             ui.load();
             ui.atlas->add_entry("wood", "resources/textures/wood.png");
             ui.atlas->add_entry("ball", "resources/textures/ball.png");
+            ui.atlas->add_entry("back", "resources/textures/back.png");
             ui.atlas->add_entry("white", "resources/textures/white.png");
 
             srand(time(NULL));
@@ -180,23 +181,46 @@ class UI3D : public ic::Application {
             
 
             {
-                ic::UI::Table *tab = new ic::UI::Table(tinted);
+                ic::UI::Table *tab1 = new ic::UI::Table(tinted);
+                ic::UI::Table *tab2 = new ic::UI::Table(tinted);
 
-                ic::UI::Button *button1 = tab->text_button("Play");
+                ic::UI::Button *backButton = new ic::UI::Button();
+                backButton->image("back");
+                backButton->clickListener = [=]() {
+                    this->state = MENU;
+                    ui.mainTable->remove(backButton);
+                    ui.mainTable->add(tab1);
+                };
+                backButton->set_position(-0.9f, 0.8f)->set_size(0.1f, 0.1f)->set_background(tinted);
+
+
+                ic::UI::Button *buttonBack = tab2->text_button("Back");
+                buttonBack->clickListener = [=]() {
+                    this->state = MENU;
+                    ui.mainTable->remove(tab2);
+                    ui.mainTable->add(tab1);
+                };
+                buttonBack->set_position(0.0f, -0.8f)->set_size(0.2f, 0.05f)->set_background(buttonDrawable);
+
+
+                ic::UI::Button *button1 = tab1->text_button("Play");
                 button1->clickListener = [=]() {
                     this->state = PLAYING;
-                    ui.mainTable->remove(tab);
+                    ui.mainTable->remove(tab1);
+                    ui.mainTable->add(backButton);
                 };
-                button1->set_position(0.0f, 0.2f)->set_background(buttonDrawable);
+                button1->set_position(0.0f, 0.4f)->set_size(0.3f, 0.05f)->set_background(buttonDrawable);
 
 
-                ic::UI::Button *button2 = tab->text_button("Settings");
+                ic::UI::Button *button2 = tab1->text_button("Settings");
                 button2->clickListener = [=]() {
                     this->state = SETTINGS;
+                    ui.mainTable->remove(tab1);
+                    ui.mainTable->add(tab2);
                 };
-                button2->set_position(0.0f, -0.2f)->set_background(buttonDrawable);
+                button2->set_position(0.0f, -0.4f)->set_size(0.3f, 0.05f)->set_background(buttonDrawable);
                 
-                ui.mainTable->add(tab);
+                ui.mainTable->add(tab1);
             }
             
             

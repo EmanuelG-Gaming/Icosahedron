@@ -283,57 +283,68 @@ void ic::UI::Table::recalculate_size() {
         this->height = this->prefHeight;
     } else {
         ic::Vec2f min, max;
+        ic::Vec2f cellMin, cellMax;
+        ic::Vec2f tableMin, tableMax;
 
+        // First calculate at the size of cells 
         if (!cells.empty()) {
             ic::UI::Element *e = cells[0]->element;
             ic::Vec2 s(e->width, e->height);
-            min = e->translation - s, max = e->translation + s;
-        
-            // First calculate at the size of cells
-            
+            cellMin = e->translation - s, cellMax = e->translation + s;
+    
             for (auto &cell : this->cells) {
                 ic::UI::Element *elem = cell->element;
         
                 float relativeMinX = elem->translation.x() - elem->width;
                 float relativeMinY = elem->translation.y() - elem->height;
-        
                 float relativeMaxX = elem->translation.x() + elem->width;
                 float relativeMaxY = elem->translation.y() + elem->height;
                 
-        
-                if (relativeMinX < min.x()) min.x() = relativeMinX;
-                if (relativeMinY < min.y()) min.y() = relativeMinY;
-        
-                if (relativeMaxX > max.x()) max.x() = relativeMaxX;
-                if (relativeMaxY > max.y()) max.y() = relativeMaxY;
+                if (relativeMinX < cellMin.x()) cellMin.x() = relativeMinX;
+                if (relativeMinY < cellMin.y()) cellMin.y() = relativeMinY;
+                if (relativeMaxX > cellMax.x()) cellMax.x() = relativeMaxX;
+                if (relativeMaxY > cellMax.y()) cellMax.y() = relativeMaxY;
             }
-        
-            this->width = (max.x() - min.x()) / 2.0f;
-            this->height = (max.y() - min.y()) / 2.0f;
-    
-            this->rectanglePosition.x() = (max.x() + min.x()) / 2.0f;
-            this->rectanglePosition.y() = (max.y() + min.y()) / 2.0f;
         }
 
 
         // Then calculate the rest of the derived tables
-        for (auto &tab : this->tables) {
-            ic::UI::Table *elem = tab;
-    
-            float relativeMinX = elem->position.x() - elem->width;
-            float relativeMinY = elem->position.y() - elem->height;
-    
-            float relativeMaxX = elem->position.x() + elem->width;
-            float relativeMaxY = elem->position.y() + elem->height;
+        if (!tables.empty()) {
+            ic::UI::Table *e = tables[0];
+            ic::Vec2 s(e->width, e->height);
+            tableMin = e->position - s, tableMax = e->position + s;
             
-    
-            if (relativeMinX < min.x()) min.x() = relativeMinX;
-            if (relativeMinY < min.y()) min.y() = relativeMinY;
-    
-            if (relativeMaxX > max.x()) max.x() = relativeMaxX;
-            if (relativeMaxY > max.y()) max.y() = relativeMaxY;
+            for (auto &tab : this->tables) {
+                ic::UI::Table *elem = tab;
+        
+                float relativeMinX = elem->position.x() - elem->width;
+                float relativeMinY = elem->position.y() - elem->height;
+                float relativeMaxX = elem->position.x() + elem->width;
+                float relativeMaxY = elem->position.y() + elem->height;
+                
+                if (relativeMinX < tableMin.x()) tableMin.x() = relativeMinX;
+                if (relativeMinY < tableMin.y()) tableMin.y() = relativeMinY;
+                if (relativeMaxX > tableMax.x()) tableMax.x() = relativeMaxX;
+                if (relativeMaxY > tableMax.y()) tableMax.y() = relativeMaxY;
+            }
         }
-    
+        
+        if (tables.empty()) {
+            min = cellMin;
+            max = cellMax;
+        } else if (cells.empty()) {
+            min = tableMin;
+            max = tableMax;
+        } else {
+            min.x() = std::min(cellMin.x(), tableMin.x());
+            min.y() = std::min(cellMin.y(), tableMin.y());
+            
+            max.x() = std::max(cellMax.x(), tableMax.x());
+            max.y() = std::max(cellMax.y(), tableMax.y());
+        }
+        
+
+
         this->width = (max.x() - min.x()) / 2.0f;
         this->height = (max.y() - min.y()) / 2.0f;
 
