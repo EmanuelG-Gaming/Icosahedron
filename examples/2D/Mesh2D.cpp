@@ -20,7 +20,6 @@ class Mesh2D : public ic::Application {
     ic::Camera2D camera;
 
     ic::Shader shader;
-    float time;
 
     public:
         bool init() override {
@@ -56,8 +55,7 @@ class Mesh2D : public ic::Application {
             
             camera = ic::Camera2D();
 
-            time = 0.0f;
-
+            
             return true;
         }
 
@@ -66,18 +64,16 @@ class Mesh2D : public ic::Application {
             camera.height = h;
         }
 
-        bool handle_event(ic::Event event, float dt) override { 
+        bool handle_event(ic::Event event) override { 
             return true;
         }
     
-        bool update(float dt) override {
-            time += dt;
-
+        bool update() override {
             clear_color(ic::Colors::blue);
             
             ic::Mat4x4 combined, scaling, rotation, translation;
-            scaling.set_scaling<2>({ ic::Mathf::sinf(time), ic::Mathf::cosf(time) });
-            rotation.set_rotation(-time);
+            scaling.set_scaling<2>({ ic::Mathf::sinf(ic::Time::time), ic::Mathf::cosf(ic::Time::time) });
+            rotation.set_rotation(-ic::Time::time);
             translation.set_translation<2>({ 0.35f, 0.0f });
             
             // Multiplying matrices together this way follows column-major notation, so

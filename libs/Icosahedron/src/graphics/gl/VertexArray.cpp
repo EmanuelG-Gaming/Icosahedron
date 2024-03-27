@@ -4,15 +4,20 @@ using namespace ic;
 
 ///// Drawable /////
 
-VertexArrayDrawable::VertexArrayDrawable(GLuint vao, GLuint ibo, GLsizei indicesUsed) : vao(vao), ibo(ibo), indicesUsed(indicesUsed) {
+VertexArrayDrawable::VertexArrayDrawable(GLuint vao, GLuint ibo, GLsizei indicesUsed, bool usingIndices) : vao(vao), ibo(ibo), indicesUsed(indicesUsed), usingIndices(usingIndices) {
 }
 
 void ic::VertexArrayDrawable::use() {
     glBindVertexArray(vao);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 }
+
 void ic::VertexArrayDrawable::draw(GLPrimitives primitive) {
-    glDrawElements(primitive, indicesUsed, GL_UNSIGNED_INT, nullptr);
+    if (usingIndices) {
+        glDrawElements(primitive, indicesUsed, GL_UNSIGNED_INT, nullptr);
+    } else {
+        glDrawArrays(primitive, 0, indicesUsed);
+    }
 }
 
 void ic::VertexArrayDrawable::use_and_draw(GLPrimitives primitive) {
@@ -24,12 +29,11 @@ void ic::VertexArrayDrawable::use_and_draw(GLPrimitives primitive) {
 ///// Vertex array /////
 
 VertexArray::VertexArray() {
-    this->setup();
 }
 
 
 ic::VertexArrayDrawable ic::VertexArray::get_drawable() {
-    return ic::VertexArrayDrawable(vao, ibo, indicesUsed);
+    return ic::VertexArrayDrawable(vao, ibo, indicesUsed, usingIndices);
 }
 
 
@@ -132,4 +136,15 @@ void ic::VertexArray::setup() {
     if (!this->vao) {
         glGenVertexArrays(1, &vao);
     }
+}
+
+
+ic::VertexArray &ic::VertexArray::using_indices(bool to) {
+    this->usingIndices = to;
+    return *this;
+}
+
+ic::VertexArray &ic::VertexArray::set_index_count(GLsizei to) {
+    this->indicesUsed = to;
+    return *this;
 }

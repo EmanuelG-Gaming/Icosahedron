@@ -12,7 +12,7 @@ namespace ic {
     /** @brief Drawn using a vertex array object with glDrawElements. */
     class VertexArrayDrawable final {
         public:
-            VertexArrayDrawable(GLuint vao, GLuint ibo, GLsizei indicesUsed);
+            VertexArrayDrawable(GLuint vao, GLuint ibo, GLsizei indicesUsed, bool usingIndices);
 
             void use();
             void draw(GLPrimitives primitive = TRIANGLES);
@@ -23,17 +23,23 @@ namespace ic {
             const GLuint vao = 0;
             const GLuint ibo = 0;
             const GLsizei indicesUsed = 0;
+            const bool usingIndices = false;
     };
 
     /** @brief A wrapper for an OpenGL vertex array object (VAO). 
      * This can have multiple vertex buffers, depending on what
-     * attributes are being used. */
+     * attributes are being used. 
+     * 
+     * By default, the VAO uses an index buffer. */
     class VertexArray {
         public:
             VertexArray();
 
             VertexArrayDrawable get_drawable();
 
+            void setup();
+            
+            
             void use();
             void unuse();
 
@@ -67,14 +73,17 @@ namespace ic {
 
             void unuse_attribute_definitions();
 
+            ic::VertexArray &using_indices(bool to);
+            ic::VertexArray &set_index_count(GLsizei to);
+
         protected:
-            void setup();
             void reset();
             
         private:
             std::vector<GLuint> bufferObjects;
             GLuint vao = 0, ibo = 0;
             GLsizei indicesUsed = 0;
+            bool usingIndices = true;
     };
 }
 

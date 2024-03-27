@@ -37,6 +37,8 @@ namespace ic {
     };
     */
     
+    /** TODO: Implement 3D position batching. */
+    
     class Batch {
         public:
             Batch();

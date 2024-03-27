@@ -29,7 +29,7 @@ namespace ic {
             Mesh2D();
             
             /** @brief Constructs a new mesh, depending on a vertex array. */
-            Mesh2D(ic::VertexArray *vao);
+            Mesh2D(ic::VertexArray &vao);
 
 
             /** @brief Overrides the mesh's current model-level transformation matrix. */
@@ -59,7 +59,7 @@ namespace ic {
         private:
             std::vector<unsigned int> indices;
 
-            ic::VertexArray *vao = nullptr;
+            ic::VertexArray vao;
             ic::MeshMaterial2D material;
 
             ic::Mat4x4 model;
