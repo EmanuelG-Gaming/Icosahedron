@@ -195,8 +195,7 @@ class Bloom : public ic::Application {
 
     ic::Texture floorTexture, whiteTexture;
     ic::FreeRoamCameraController3D controller;
-    
-    float time;
+
     float exposure;
 
     public:
@@ -265,13 +264,12 @@ class Bloom : public ic::Application {
             });
             ic::InputHandler::add_input(mouse, "mouse");
 
-            time = 0.0f;
             exposure = 0.05;
 
             return true;
         }
 
-        bool handle_event(ic::Event event, float dt) override { 
+        bool handle_event(ic::Event event) override { 
             return true;
         }
 
@@ -283,10 +281,9 @@ class Bloom : public ic::Application {
             pingpong2.resize(w, h);
         }
 
-        bool update(float dt) override {
-            time += dt;
+        bool update() override {
 
-            controller.act(dt);
+            controller.act(ic::Time::delta);
             camera.update();
             
             clear_color(ic::Colors::blue);
@@ -300,7 +297,7 @@ class Bloom : public ic::Application {
             camera.upload_to_shader(shader);
             
 
-            ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
+            ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, ic::Time::time, ic::Time::time);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
             mesh.set_transformation(translation * rotation);

@@ -21,7 +21,7 @@ namespace ic {
             Mesh3D();
             
             /** @brief Constructs a new mesh based on a vertex array. */
-            Mesh3D(ic::VertexArray *vao);
+            Mesh3D(ic::VertexArray &vao);
 
 
             /** @brief Overrides the mesh's current model-level transformation matrix. */
@@ -49,10 +49,13 @@ namespace ic {
             void draw(ic::Shader &shader, ic::GLPrimitives primitive = ic::TRIANGLES);
             void dispose();
 
+            void using_indices(bool to);
+            void set_index_count(GLsizei to);
+
         private:
             std::vector<unsigned int> indices;
 
-            ic::VertexArray *vao = nullptr;
+            ic::VertexArray vao;
             
             ic::Mat4x4 model;
             ic::Mat4x4 normalModel;

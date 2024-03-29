@@ -82,3 +82,11 @@ void ic::Mesh2D::upload_material(ic::Shader &shader, const ic::MeshMaterial2D &m
     shader.set_uniform_float("material.colorBlending", mat.colorBlending);
     shader.set_uniform_vec3f("material.baseColor", mat.baseColor);
 }
+
+void ic::Mesh2D::using_indices(bool to) {
+    this->vao.using_indices(to);
+}
+
+void ic::Mesh2D::set_index_count(GLsizei to) {
+    this->vao.set_index_count(to);
+}

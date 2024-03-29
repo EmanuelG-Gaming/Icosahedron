@@ -7,11 +7,11 @@ using namespace ic;
 
 Mesh3D::Mesh3D() {
     if (IC_IS_OPENGL_CONTEXT_PRESENT) {
-        this->vao = new ic::VertexArray();
+        this->vao.setup();
     }
 }
 
-Mesh3D::Mesh3D(ic::VertexArray *vao) {
+Mesh3D::Mesh3D(ic::VertexArray &vao) {
     if (IC_IS_OPENGL_CONTEXT_PRESENT) {
         this->vao = vao;
     }
@@ -36,16 +36,10 @@ void ic::Mesh3D::combine_normal_transformation(ic::Mat4x4 &with) {
 
 
 void ic::Mesh3D::add_attribute(int attributeIndex, int dimensions, const std::vector<float> &content) {
-    if (this->vao == nullptr) {
-        throw std::runtime_error("Couldn't add vertex attribute. The VAO was not initialized.");
-    }
-    this->vao->add_vertex_buffer(attributeIndex, dimensions, content);
+    this->vao.add_vertex_buffer(attributeIndex, dimensions, content);
 }
 void ic::Mesh3D::add_attribute(int attributeIndex, int dimensions, const std::vector<int> &content) {
-    if (this->vao == nullptr) {
-        throw std::runtime_error("Couldn't add vertex attribute. The VAO was not initialized.");
-    }
-    this->vao->add_vertex_buffer(attributeIndex, dimensions, content);
+    this->vao.add_vertex_buffer(attributeIndex, dimensions, content);
 }
 void ic::Mesh3D::add_attribute(int attributeIndex, int dimensions, const std::vector<ic::Color> &content) {
     std::vector<float> colorValues;
@@ -86,21 +80,15 @@ void ic::Mesh3D::add_attribute(int attributeIndex, const std::vector<ic::Vec3f> 
     
 
 void ic::Mesh3D::set_index_buffer(const std::vector<unsigned int> &content) {
-    if (this->vao == nullptr) {
-        throw std::runtime_error("Couldn't add index buffer. VAO was not initialized.");
-    }
-    this->vao->set_index_buffer(content);
+    this->vao.set_index_buffer(content);
 }
 
 void ic::Mesh3D::unuse_attribute_definitions() {
-    if (this->vao == nullptr) return;
-    this->vao->unuse_attribute_definitions();
+    this->vao.unuse_attribute_definitions();
 }
 
 void ic::Mesh3D::draw(ic::Shader &shader, ic::GLPrimitives primitive) {
-    if (this->vao == nullptr) return;
-
-    auto drawable = this->vao->get_drawable();
+    auto drawable = this->vao.get_drawable();
 
     shader.set_uniform_mat4("model", this->model);
     shader.set_uniform_mat4("normalModel", this->normalModel);
@@ -108,5 +96,13 @@ void ic::Mesh3D::draw(ic::Shader &shader, ic::GLPrimitives primitive) {
 }
 
 void ic::Mesh3D::dispose() {
-    this->vao->dispose();
+    this->vao.dispose();
+}
+
+void ic::Mesh3D::using_indices(bool to) {
+    this->vao.using_indices(to);
+}
+
+void ic::Mesh3D::set_index_count(GLsizei to) {
+    this->vao.set_index_count(to);
 }

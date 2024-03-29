@@ -31,8 +31,7 @@ class Mesh2D : public ic::Application {
         bool load() override {
             // Mesh 1
             mesh1 = ic::GeometryGenerator::generate_regular_polygon_mesh(7, 0.3f);
-
-
+            
             // Note that this can also be more verbosely expressed as:
 
             //auto vertices = ic::GeometryGenerator::generate_regular_polygon(7, 0.3f);
@@ -44,7 +43,13 @@ class Mesh2D : public ic::Application {
             // Mesh 2
             mesh2 = ic::GeometryGenerator::generate_regular_polygon_mesh(3, 0.3f);
             mesh2.add_attribute(1, 3, { ic::Colors::red, ic::Colors::green, ic::Colors::blue }); // Add a "color" attribute to mesh2
+            
+            // Because the mesh only has 3 vertices, using glDrawArrays instead of 
+            // the index buffer way of glDrawIndices will have no new visual changes at all
+            mesh2.using_indices(false);
+            mesh2.set_index_count(3);
 
+            
             // Add a material that slightly brightens the colours shown by the vertex attributes 
             mesh2.set_material(ic::MeshMaterial2D(ic::Colors::white, 0.2f));
             mesh2.set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));

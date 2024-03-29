@@ -53,6 +53,10 @@ namespace ic {
             void draw(ic::Shader &shader, ic::GLPrimitives primitive = ic::TRIANGLES);
             void dispose();
 
+            void using_indices(bool to);
+            void set_index_count(GLsizei to);
+            
+
         protected:
             void upload_material(ic::Shader &shader, const ic::MeshMaterial2D &mat);
 
