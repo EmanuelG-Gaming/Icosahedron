@@ -6,6 +6,8 @@
 #include <glad/glad.h>
 
 #include <Icosahedron/math/geom/Vector.h>
+#include <Icosahedron/graphics/Colors.h>
+
 
 namespace ic {
     enum GLPrimitives {
@@ -125,6 +127,30 @@ namespace ic {
         TEXTURE_WRAP_MIRRORED_REPEAT = GL_MIRRORED_REPEAT,
         TEXTURE_WRAP_CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,
         TEXTURE_WRAP_CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER,
+    };
+
+    /** @brief Has functions for handling OpenGL state. */
+    namespace GL {
+        void enable_depth_testing(ic::GLDepthSettings depth);
+        void enable_blending(ic::GLBlendingSource source, ic::GLBlendingDestination dest);
+        void enable_face_culling(ic::GLCullSettings culling, ic::GLFaceWindingOrder winding = ic::CCW);
+
+        void set_depth_testing(ic::GLDepthSettings depth);
+        void set_blending(ic::GLBlendingSource source, ic::GLBlendingDestination dest);
+        void set_face_culling(ic::GLCullSettings culling, ic::GLFaceWindingOrder winding = ic::CCW);
+
+        void set_viewport(int w, int h);
+        
+        void enable(ic::GLContextSettings setting);
+        void disable(ic::GLContextSettings setting);
+
+        void disable_depth_testing();
+        void disable_blending();
+        void disable_face_culling();
+
+        void clear_color(float r, float g, float b);
+        void clear_color(const ic::Color &color);
+        void clear_color();
     };
 }
 

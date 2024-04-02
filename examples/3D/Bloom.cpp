@@ -200,15 +200,16 @@ class Bloom : public ic::Application {
 
     public:
         bool init() override {
-            displayName = "Bloom example";
-            hideCursor = true;
+            this->window.set_title("Bloom example");
+            this->window.set_cursor_visibility(false);
+            this->window.set_cursor_lock(true);
 
             return true;
         }
         
         bool load() override {
-            ic::GLStateHandler::enable_depth_testing(ic::LESS);
-            ic::GLStateHandler::enable_face_culling(ic::FRONT, ic::CCW);
+            ic::GL::enable_depth_testing(ic::LESS);
+            ic::GL::enable_face_culling(ic::FRONT, ic::CCW);
             
             shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, fragment);
             blurShader = ic::ShaderLoader::load(screenVertex, blurShaderFragment);
@@ -286,7 +287,7 @@ class Bloom : public ic::Application {
             controller.act(ic::Time::delta);
             camera.update();
             
-            clear_color(ic::Colors::blue);
+            ic::GL::clear_color(ic::Colors::blue);
             
             // First pass - scene
             sceneFramebuffer.use();

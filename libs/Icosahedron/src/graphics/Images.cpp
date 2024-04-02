@@ -8,8 +8,7 @@ ic::Image ic::Images::grayscale(ic::Image source) {
     source.each([&](int x, int y) {
         ic::Color sourceColor = source.pixel_at_unsafe(x, y);
         uint8_t average = (uint8_t) 0.2126f * sourceColor.r + 0.7152f * sourceColor.g + 0.0722f * sourceColor.b;
-        
-        result.set_pixel_unsafe(x, y, { average, average, average });
+        result.pixel_at_unsafe(x, y) = { average, average, average };
     });
 
     return result;
@@ -26,9 +25,9 @@ ic::Image ic::Images::perlin(int width, int height, const ic::ImageNoiseParamete
             scale *= 2.0f;
             strength *= params.persistence;
         }
-        uint8_t noise = (uint8_t) (ic::Mathf::clamp(sum, 0.0f, 1.0f) * 255);
 
-        result.set_pixel_unsafe(x, y, { noise, noise, noise });
+        uint8_t noise = (uint8_t) (ic::Mathf::clamp(sum, 0.0f, 1.0f) * 255);
+        result.pixel_at_unsafe(x, y) = { noise, noise, noise };
     });
 
     return result;
@@ -50,8 +49,7 @@ ic::Image ic::Images::perlin_solid(int width, int height, const ic::ImageNoisePa
         sum *= 0.5f;
         
         uint8_t noise = (uint8_t) (ic::Mathf::clamp(sum, 0.0f, 1.0f) * 255);
-
-        result.set_pixel_unsafe(x, y, { noise, noise, noise });
+        result.pixel_at_unsafe(x, y) = { noise, noise, noise };
     });
 
     return result;

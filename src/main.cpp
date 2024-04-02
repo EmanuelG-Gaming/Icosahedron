@@ -7,7 +7,7 @@ class WindowExample : public ic::Application {
     public:
         bool init() override {
             // Use this to set up window settings, although this can also be done in the constructor
-            displayName = "Example window";
+            this->window.set_title("Example window");
 
             return true;
         }
@@ -32,7 +32,7 @@ class WindowExample : public ic::Application {
         bool update() override {
             // This is called once every frame
         
-            clear_color(ic::Colors::blue);
+            ic::GL::clear_color(ic::Colors::blue);
             return true; 
         }
 

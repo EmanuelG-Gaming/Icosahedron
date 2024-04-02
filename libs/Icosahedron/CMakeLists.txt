@@ -46,7 +46,6 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Images.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/GL.h
-    ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/GLStateHandler.h
     
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Shader.h
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Shaders.h
@@ -110,7 +109,7 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/ImageIO.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/Images.cpp
 
-    ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/GLStateHandler.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/GL.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Shader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Framebuffer.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Texture.cpp

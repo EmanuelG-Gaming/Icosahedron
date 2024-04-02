@@ -11,7 +11,7 @@ Image::Image() {
     this->height = 1;
     this->pixels = new image_t[width * height];
 
-    this->pixels[0] = { 255, 255, 255 };
+    this->pixels[0] = ic::Colors::white;
 }
 
 Image::Image(int width, int height) {
@@ -20,9 +20,10 @@ Image::Image(int width, int height) {
     this->pixels = new image_t[width * height];
 
     for (int i = 0; i < this->width * this->height; i++) {
-        this->pixels[i] = { 255, 255, 255 };
+        this->pixels[i] = ic::Colors::white;
     }
 }
+
 Image::Image(int width, int height, image_t *pixelData) {
     this->width = width;
     this->height = height;
@@ -39,40 +40,35 @@ void ic::Image::set_size(int width, int height) {
     }
 }
 
+
 void ic::Image::dispose() {
     delete[] this->pixels;
 }
 
-bool ic::Image::inside(int x, int y) {
-    return (x >= 0 && y >= 0 && x < this->width && y < this->height);
-}
 
-image_t ic::Image::pixel_at_unsafe(int x, int y) {
+image_t ic::Image::pixel_at_unsafe(int x, int y) const {
     return this->pixels[y * width + x];
 }
-image_t ic::Image::pixel_at_unsafe(int index) {
+image_t ic::Image::pixel_at_unsafe(int index) const {
     return this->pixels[index];
 }
-
-image_t ic::Image::pixel_at(int x, int y) {
+image_t ic::Image::pixel_at(int x, int y) const {
     if (!this->inside(x, y)) return { 0, 0, 0 };
     return this->pixel_at_unsafe(x, y);
 }
-
-image_t ic::Image::pixel_at(int index) {
+image_t ic::Image::pixel_at(int index) const {
     if (index < 0 || index >= width * height) return { 0, 0, 0 };
     return this->pixel_at_unsafe(index);
 }
 
 
-void ic::Image::set_pixel_unsafe(int x, int y, const image_t &with) {
-    this->pixels[y * width + x] = with;
+image_t &ic::Image::pixel_at_unsafe(int x, int y) {
+    return this->pixels[y * width + x];
 }
-void ic::Image::set_pixel(int x, int y, const image_t &with) {
-    if (!this->inside(x, y)) return;
+image_t &ic::Image::pixel_at_unsafe(int index) {
+    return this->pixels[index];
+}
 
-    set_pixel_unsafe(x, y, with);
-}
 
 void ic::Image::fill_circle(int x, int y, int radius, const image_t &with) {
     int radiusSquared = radius * radius;
@@ -95,7 +91,7 @@ void ic::Image::fill_circle(int x, int y, int radius, const image_t &with) {
             int px = x + i;
 
             if (i*i + j*j <= radiusSquared) {
-                this->set_pixel_unsafe(px, py, with);
+                this->pixel_at_unsafe(px, py) = with;
             }
         }
     }
@@ -105,32 +101,9 @@ void ic::Image::fill_circle(int x, int y, int radius, const image_t &with) {
 ///// Lines /////
 
 void ic::Image::draw_line(int x0, int y0, int x1, int y1, const image_t &with) {
-    int dx = abs(x1 - x0);
-    int dy = -abs(y1 - y0);
-    int displacementX = x0 < x1 ? 1 : -1;
-    int displacementY = y0 < y1 ? 1 : -1;
-
-    int error = dx + dy;
-
-    while (true) {
-        this->set_pixel(x0, y0, with);
-        if (x0 == x1 && y0 == y1) break;
-
-        int twoTimesError = 2 * error;
-        if (twoTimesError >= dy) {
-            if (x0 == x1) break;
-
-            error += dy;
-            x0 += displacementX;
-        }
-
-        if (twoTimesError <= dx) {
-            if (y0 == y1) break;
-
-            error += dx;
-            y0 += displacementY;
-        }
-    }
+    ic::Rasterization::line(x0, y0, x1, y1, [&](int x, int y) {
+        this->pixel_at(x, y) = with;
+    });
 }
 
 
@@ -143,79 +116,10 @@ void ic::Image::line_triangle(int x0, int y0, int x1, int y1, int x2, int y2, co
 }
 
 void ic::Image::fill_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with) {
-    int ry0 = y0, ry1 = y1, ry2 = y2;
-    int rx0 = x0, rx1 = x1, rx2 = x2;
-
-    // Do vertex y sorting
-    if (ry1 < ry0) { 
-        std::swap(ry0, ry1); 
-        std::swap(rx0, rx1); 
-    }
-    if (ry2 < ry0) { 
-        std::swap(ry0, ry2); 
-        std::swap(rx0, rx2);
-    }
-    if (ry2 < ry1) { 
-        std::swap(ry1, ry2); 
-        std::swap(rx1, rx2);
-    }
-
-
-    if (ry1 == ry2) {
-        this->fill_bottom_triangle(rx0, ry0, rx1, ry1, rx2, ry2, with);
-    } else if (ry0 == ry1) {
-        this->fill_top_triangle(rx0, ry0, rx1, ry1, rx2, ry2, with);
-    } else {
-        ic::Vec2i v = { rx0 + (int) (((float) (ry1 - ry0) / (float)(ry2 - ry0)) * (rx2 - rx0)), ry1 };
-
-        this->fill_bottom_triangle(rx0, ry0, rx1, ry1, v.x(), v.y(), with);
-        this->fill_top_triangle(rx1, ry1, v.x(), v.y(), rx2, ry2, with);
-    }
+    ic::Rasterization::triangle(x0, y0, x1, y1, x2, y2, [&](int x, int y) {
+        this->pixel_at(x, y) = with;
+    });
 }
-
-
-void ic::Image::fill_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with) {
-    float inverseSlope1 = (x1 - x0) / (float) (y1 - y0);
-    float inverseSlope2 = (x2 - x0) / (float) (y2 - y0);
-
-    float currentX1 = x0, currentX2 = x0;
-    
-    for (int scanY = y0; scanY <= y1; scanY++) {
-        float cx1 = currentX1;
-        float cx2 = currentX2;
-        if (cx2 < cx1) std::swap(cx1, cx2);
-        
-        // Draw horizontal line
-        for (int i = (int) cx1; i <= (int) cx2; i++) {
-            this->set_pixel(i, scanY, with);
-        }
-       
-        currentX1 += inverseSlope1;
-        currentX2 += inverseSlope2;
-    }
-}
-
-void ic::Image::fill_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with) {
-    float inverseSlope1 = (x2 - x0) / (float) (y2 - y0);
-    float inverseSlope2 = (x2 - x1) / (float) (y2 - y1);
-
-    float currentX1 = x2, currentX2 = x2;
-    
-    for (int scanY = y2; scanY > y0; scanY--) {
-        float cx1 = currentX1;
-        float cx2 = currentX2;
-        if (cx2 < cx1) std::swap(cx1, cx2);
-        
-        // Draw horizontal line
-        for (int i = (int) cx1; i <= (int) cx2; i++) {
-            this->set_pixel(i, scanY, with);
-        }
-
-        currentX1 -= inverseSlope1;
-        currentX2 -= inverseSlope2;
-    }
-}
-
 
 void ic::Image::line_quad(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, const image_t &with) {
     this->draw_line(x0, y0, x1, y1, with);
@@ -254,7 +158,7 @@ void ic::Image::fill_rectangle(int topLeftX, int topLeftY, int w, int h, const i
 
     for (int j = clipTopLeft.y(); j < clipBottomRight.y(); j++) {
         for (int i = clipTopLeft.x(); i < clipBottomRight.x(); i++) {
-            this->set_pixel_unsafe(i + topLeftX, j + topLeftY, with);
+            this->pixel_at_unsafe(i + topLeftX, j + topLeftY) = with;
         }
     }
 }
@@ -278,7 +182,7 @@ void ic::Image::blit(const image_t *data, int topLeftX, int topLeftY, int w, int
 
     for (int j = clipTopLeft.y(); j < clipBottomRight.y(); j++) {
         for (int i = clipTopLeft.x(); i < clipBottomRight.x(); i++) {
-            this->set_pixel_unsafe(i + topLeftX, j + topLeftY, data[j * w + i]);
+            this->pixel_at_unsafe(i + topLeftX, j + topLeftY) = data[j * w + i];
         }
     }
 }
@@ -327,20 +231,25 @@ void ic::Image::convolve(const std::array<float, 9> &kernel) {
     });
 
     each([&](int x, int y) {
-        this->set_pixel_unsafe(x, y, tmpBuffer[y * this->width + x]);
+        this->pixel_at_unsafe(x, y) = tmpBuffer[y * this->width + x];
     });
 
     delete[] tmpBuffer;
 }
 
-int ic::Image::get_width() {
+int ic::Image::get_width() const {
     return this->width;
 }
-int ic::Image::get_height() {
+
+int ic::Image::get_height() const {
     return this->height;
 }
 
+bool ic::Image::inside(int x, int y) const {
+    return (x >= 0 && y >= 0 && x < this->width && y < this->height);
+}
 
-void *ic::Image::data() {
+
+void *ic::Image::data() const {
     return this->pixels;
 }

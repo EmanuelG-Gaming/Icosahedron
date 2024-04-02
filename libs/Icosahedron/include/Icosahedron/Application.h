@@ -15,7 +15,7 @@
 
 #include <Icosahedron/graphics/Color.h>
 
-#include <Icosahedron/graphics/gl/GLStateHandler.h>
+#include <Icosahedron/graphics/gl/GL.h>
 #include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/input/Input.h>
 #include <Icosahedron/input/InputHandler.h>
@@ -36,6 +36,69 @@ namespace ic {
         fullscreenClamped = SDL_WINDOW_FULLSCREEN
     };
 
+    const int TOTAL_WINDOWS = 5;
+
+    struct Window {
+        public:
+            int get_width() const;
+            int get_height() const;
+
+            void init(int w, int h);
+            void dispose();
+
+            void set_header_image(const ic::Image &image);
+            void set_size(int w, int h);
+            void set_scaling(ic::WindowScaling to);
+
+            /** @brief Sets the swap interval for the window's OpenGL context.
+             *  By default, the application already uses normal vsync.
+             *  @param interval 0 for updating the screen immediately,
+             *                  1 for updates syncronized with the screen's refresh rate,
+             *                  -1 for adaptive vsync
+             *          
+            */
+            void set_vsync(int interval);
+
+            void set_title(const char *title);
+            void set_title(const std::string &title);
+
+            void set_cursor_visibility(bool to);
+            void set_cursor_lock(bool to);
+
+
+
+
+            /** @brief Takes an image of a rectangular portion of the viewport. */
+            ic::Image take_screenshot(int x, int y, int width, int height);
+
+            /** @brief Takes an image of the whole viewport. */
+            ic::Image take_screenshot();
+
+            SDL_Window *get_handle() const;
+            ic::WindowScaling get_scaling() const;
+
+
+        protected:
+            /** Whether or not the cursor is hidden. Note that the mouse's motion will still be registered in the game loop,
+             *  even if the cursor is hidden. */
+            bool cursorVisibility = true;
+        
+            /* The name that is displayed on the window. */
+            const char *displayName = "test";
+
+            /* The type of scaling that this window uses. */
+            ic::WindowScaling scaling = ic::WindowScaling::fixed;
+
+            SDL_Window *windowHandle = NULL;
+            SDL_GLContext glContext;
+            
+            /** @brief Window dimensions, expressed in physical screen pixels. */
+            int width, height;
+            int windowIndex;
+
+    };
+
+
     class Application {
         public:
             /* Initializes the application. Called before load(), inside the construct() function.
@@ -55,47 +118,16 @@ namespace ic {
             bool construct(int w, int h);
             /* The actual starting point of the application. */
             void start();
-
-            /** @note This would dispose the image. */
-            void set_window_image(ic::Image image);
-            void set_window_size(int w, int h);
-            void set_window_scaling(ic::WindowScaling to);
-
-            /** @brief Sets the swap interval for the window's OpenGL context.
-             *  By default, the application already uses normal vsync.
-             *  @param interval 0 for updating the screen immediately,
-             *                  1 for updates syncronized with the screen's refresh rate,
-             *                  -1 for adaptive vsync
-             *          
-            */
-            void set_window_vsync(int interval);
-
-            void set_window_title(const char *title);
-            void set_window_title(const std::string &title);
-
-            
-            void clear_color(float r, float g, float b);
-            void clear_color(const ic::Color &color);
-            void clear_color();
-
-            /** @brief Takes an image of a rectangular portion of the viewport. */
-            ic::Image take_screenshot(int x, int y, int width, int height);
-
-            /** @brief Takes an image of the whole viewport. */
-            ic::Image take_screenshot();
-            
-            int screen_width();
-            int screen_height();
             
         private:
             /* Sends relevant information such as the current OpenGL, GLEW, and SDL contexts' versions. */
             void send_application_information();
 
             void set_window_attributes();
-            void prepare_window();
+            void prepare_window(int w, int h);
 
             /* Called before load(). */
-            void pre_load();
+            void pre_load(int w, int h);
 
             /** @brief Sets the app's working directory.
              *  @note The working directory would not be the generated "build" folder.
@@ -107,21 +139,8 @@ namespace ic {
             void close();
             
         protected:
-            /* The name that is displayed on the window. */
-            std::string displayName = "test";
+            ic::Window window;
 
-            /* The type of scaling that this window uses. */
-            ic::WindowScaling scaling = ic::WindowScaling::fixed;
-
-            /** Whether or not the cursor is hidden. Note that the mouse's motion would still be registered in the game loop. */
-            bool hideCursor = false;
-            
-        private:
-            int width = 0, height = 0;
-            
-            SDL_Window *window;
-            SDL_GLContext context;
-            
             bool constructed = false;
     };
 }

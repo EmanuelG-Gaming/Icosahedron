@@ -8,6 +8,8 @@
 #include <array>
 
 #include <Icosahedron/graphics/Color.h>
+#include <Icosahedron/graphics/Colors.h>
+#include <Icosahedron/math/geom/Rasterization.h>
 
 
 namespace ic {
@@ -32,22 +34,15 @@ namespace ic {
             void dispose();
 
 
-            bool inside(int x, int y);
+            bool inside(int x, int y) const;
 
-            /** @return The pixel at integer coordinates, WITHOUT boundary checking. */
-            image_t pixel_at_unsafe(int x, int y);
-            image_t pixel_at_unsafe(int index);
+            image_t pixel_at_unsafe(int x, int y) const;
+            image_t pixel_at_unsafe(int index) const;
+            image_t pixel_at(int x, int y) const;
+            image_t pixel_at(int index) const;
 
-            /** @return The pixel at integer coordinates, with boundary checking. */
-            image_t pixel_at(int x, int y);
-            image_t pixel_at(int index);
-            
-
-            /** @brief Sets the pixel at the position without boundary checking. */
-            void set_pixel_unsafe(int x, int y, const image_t &with);
-            /** @brief Sets the pixel at the position with boundary checking. */
-            void set_pixel(int x, int y, const image_t &with);
-
+            image_t &pixel_at_unsafe(int x, int y);
+            image_t &pixel_at_unsafe(int index);
 
             void fill_circle(int x, int y, int radius, const image_t &with);
             
@@ -60,6 +55,9 @@ namespace ic {
             void fill_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with);
             void fill_quad(int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3, const image_t &with);
 
+            void line_rectangle(int topLeftX, int topLeftY, int w, int h, const image_t &with);
+            void fill_rectangle(int topLeftX, int topLeftY, int w, int h, const image_t &with);
+
 
             void blit(const image_t *data, int topLeftX, int topLeftY, int w, int h);
             void blit(const ic::Image &image, int topLeftX, int topLeftY);
@@ -70,8 +68,7 @@ namespace ic {
             void blit(const std::string &fileName, int topLeftX, int topLeftY);
 
 
-            void line_rectangle(int topLeftX, int topLeftY, int w, int h, const image_t &with);
-            void fill_rectangle(int topLeftX, int topLeftY, int w, int h, const image_t &with);
+            
 
 
             /** @brief Iterates over each pixel of the image. */
@@ -79,16 +76,12 @@ namespace ic {
 
             void convolve(const std::array<float, 9> &kernel);
 
-            int get_width();
-            int get_height();
+            int get_width() const;
+            int get_height() const;
 
-            void *data();
+            void *data() const;
         
         protected:
-            void fill_bottom_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with);
-            void fill_top_triangle(int x0, int y0, int x1, int y1, int x2, int y2, const image_t &with);
-
-        private:
             int width, height;
             image_t *pixels;
     };

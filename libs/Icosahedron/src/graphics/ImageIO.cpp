@@ -78,7 +78,7 @@ ic::Image ic::ImageIO::read_ppm(const std::string &fileName) {
 
 
 
-void ic::ImageIO::write_png(const std::string &fileName, ic::Image &image) {
+void ic::ImageIO::write_png(const std::string &fileName, const ic::Image &image) {
     SDL_Surface *surface = to_surface(image);
     if (surface == NULL) {
         return;
@@ -89,18 +89,21 @@ void ic::ImageIO::write_png(const std::string &fileName, ic::Image &image) {
     SDL_FreeSurface(surface);
 }
 
-void ic::ImageIO::write_bmp(const std::string &fileName, ic::Image &image) {
+void ic::ImageIO::write_bmp(const std::string &fileName, const ic::Image &image) {
     SDL_Surface *surface = to_surface(image);
+
     if (surface == NULL) {
         return;
     }
+
     if (SDL_SaveBMP(surface, fileName.c_str()) == -1) {
         printf("Bitmap image couldn't be saved!\n");
     }
+
     SDL_FreeSurface(surface);
 }
 
-void ic::ImageIO::write_ppm(const std::string &fileName, ic::Image &image) {
+void ic::ImageIO::write_ppm(const std::string &fileName, const ic::Image &image) {
     std::ofstream output(fileName);
     float width = image.get_width();
     float height = image.get_height();
@@ -133,7 +136,7 @@ void ic::ImageIO::write_ppm(const std::string &fileName, ic::Image &image) {
 }
 
 
-SDL_Surface *ic::ImageIO::to_surface(ic::Image &image) {
+SDL_Surface *ic::ImageIO::to_surface(const ic::Image &image) {
     bool transparent = image_transparent(image);
 
     int width = image.get_width();
@@ -183,7 +186,7 @@ ic::Image ic::ImageIO::to_image(SDL_Surface *surface) {
 
 
 
-bool ic::ImageIO::image_transparent(ic::Image &source) {
+bool ic::ImageIO::image_transparent(const ic::Image &source) {
     int area = source.get_width() * source.get_height();
 
     for (int i = 0; i < area; i++) {
