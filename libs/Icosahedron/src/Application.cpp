@@ -50,6 +50,8 @@ void ic::Window::set_size(int w, int h) {
 
     SDL_SetWindowSize(this->windowHandle, this->width, this->height);
     glViewport(0, 0, this->width, this->height);
+
+    // TODO: Event-based programming
     //window_size_changed(this->width, this->height);
 }
 
@@ -110,9 +112,6 @@ void ic::Window::set_cursor_lock(bool to) {
 
 void ic::Window::init(int w, int h) {
     Uint32 flags = 0;
-    //if (this->scaling != ic::WindowScaling::invalid && this->scaling != ic::WindowScaling::fixed) {
-    //    flags |= (SDL_WindowFlags) this->scaling;
-    //}
     flags |= SDL_WINDOW_OPENGL;
     flags |= SDL_WINDOW_SHOWN;
 
@@ -166,14 +165,6 @@ ic::WindowScaling ic::Window::get_scaling() const {
 bool ic::Application::construct(int w, int h) {
     SDL_SetMainReady();
     
-    //this->width = w;
-    //this->height = h;
-    //this->window = NULL;
-
-    //IC_WINDOW_WIDTH = width;
-    //IC_WINDOW_HEIGHT = height;
-
-
     this->set_current_working_directory();
     
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) != 0) {
@@ -267,28 +258,6 @@ void ic::Application::set_window_attributes() {
 
 void ic::Application::prepare_window(int w, int h) {
     window.init(w, h);
-    /*
-    Uint32 flags = 0;
-    if (this->scaling != ic::WindowScaling::invalid && this->scaling != ic::WindowScaling::fixed) {
-        flags |= (SDL_WindowFlags) this->scaling;
-    }
-    flags |= SDL_WINDOW_OPENGL;
-    flags |= SDL_WINDOW_SHOWN;
-
-
-    SDL_Window *win = SDL_CreateWindow(this->displayName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
-	if (win == NULL) {
-		auto errorMessage = "SDL_CreateWindow Error: " + std::string(SDL_GetError()) + "\n";
-        throw std::runtime_error(errorMessage);
-	}
-    
-
-	// We will not actually need a context created, but we should create one
-	SDL_GLContext cont = SDL_GL_CreateContext(win);
-    this->window = win;
-    this->context = cont;
-    IC_IS_OPENGL_CONTEXT_PRESENT = true;
-    */
 }
 
 void ic::Application::pre_load(int w, int h) {
@@ -342,6 +311,8 @@ bool ic::Application::poll_events(ic::Event &e) {
 
                     this->window.set_size(displayRectangle.w, displayRectangle.h);
                 }
+                
+                window_size_changed(this->window.get_width(), this->window.get_height());
         }
     }
     
@@ -351,18 +322,12 @@ bool ic::Application::poll_events(ic::Event &e) {
 }
 
 void ic::Application::close() {
-    //std::cout << displayName << " exited." << "\n\n";
-
     this->dispose();
 
     //ic::FreeType::dispose();
     //ic::Audio::dispose();
 
     this->window.dispose();
-
-
-    //SDL_DestroyWindow(window);
-    //SDL_GL_DeleteContext(context);
 
     IMG_Quit();
     SDL_Quit();

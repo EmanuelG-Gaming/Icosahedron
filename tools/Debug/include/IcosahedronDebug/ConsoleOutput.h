@@ -4,8 +4,20 @@
 #include <stdio.h>
 #include <string>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 namespace ic { namespace Debug {
+    static void create_console() {
+#ifdef _WIN32
+        AllocConsole();
+        freopen("CONIN$", "r", stdin);
+        freopen("CONOUT$", "w", stdout);
+        freopen("CONOUT$", "w", stderr);
+#endif
+    }
+
     /** @brief By default, SDL2 prevents the command prompt from being shown on startup (at least on Windows) 
      *  and even halts the user from directly outputting text to the terminal (i.e. in real-time).
      *  Though, the text is still logged in to stdin/stdout/stderr, and even the fprintf() function takes in these file locations as parameters.

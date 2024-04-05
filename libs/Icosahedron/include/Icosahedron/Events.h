@@ -10,6 +10,10 @@
 
 namespace ic {
     namespace Events {
+        namespace {
+            std::map<std::string, std::vector<void (*)()>> events;
+        };
+        
         void on(const std::string &name, void (*callback)()) {
             std::vector<void (*)()> &listeners = events[name];
 
@@ -33,11 +37,6 @@ namespace ic {
 
             return true;
         }
-
-
-        namespace {
-            std::map<std::string, std::vector<void (*)()>> events;
-        };
     };
 }
 
