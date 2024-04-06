@@ -1,5 +1,14 @@
 #include <IcosahedronDebug/ConsoleOutput.h>
 
-void ic::Debug::ConsoleOutput::write_file(const std::string &fileName, FILE *stream) {
-    freopen(fileName.c_str(), "w", stream);
+static void create_console() {
+#ifdef _WIN32
+    AllocConsole();
+    freopen("CONIN$", "r", stdin);
+    freopen("CONOUT$", "w", stdout);
+    freopen("CONOUT$", "w", stderr);
+#endif
+}
+
+static void ic::Debug::write_file(const char *fileName, FILE *stream) {
+    freopen(fileName, "w", stream);
 }

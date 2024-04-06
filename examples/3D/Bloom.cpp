@@ -203,7 +203,6 @@ class Bloom : public ic::Application {
             this->window.set_title("Bloom example");
             this->window.set_cursor_visibility(false);
             this->window.set_cursor_lock(true);
-            this->window.set_scaling(ic::WindowScaling::fullscreen);
 
             return true;
         }
