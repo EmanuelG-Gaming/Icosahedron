@@ -20,14 +20,14 @@ namespace ic {
          *  This does not necesarily require an ic::Application instance.
          *  Credits: https://wiki.libsdl.org/SDL2/FAQWindows.
         */
-        static void create_console();
+        void create_console();
 
         
 
         /** @brief Writes to a file, based on a stream.
          *  @param stream Can be either stdin. stdout or stderr, but it can also be a custom file.
         */
-        static void write_file(const char *fileName, FILE *stream);
+        void write_file(const char *fileName, FILE *stream);
     }
 }
 

@@ -76,7 +76,8 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/TextureAtlasLoader.h
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/CubemapLoader.h
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/OBJLoader.h
-
+    
+    ${LIBRARY_HEADERS_DIRECTORY}/audio/AudioSource.h
     ${LIBRARY_HEADERS_DIRECTORY}/audio/Music.h
     ${LIBRARY_HEADERS_DIRECTORY}/audio/Sound.h
     ${LIBRARY_HEADERS_DIRECTORY}/audio/Audio.h

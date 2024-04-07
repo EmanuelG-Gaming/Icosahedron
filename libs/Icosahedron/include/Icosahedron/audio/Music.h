@@ -12,12 +12,12 @@ namespace ic {
     */
     class Music {
         public:
-            Music(const std::string &filePath);
+            Music(const char *filePath);
 
             SoLoud::WavStream &get_stream();
             
         private:
-            void load(const std::string &filePath);
+            void load(const char *filePath);
 
         private:
             SoLoud::WavStream stream;

@@ -29,8 +29,15 @@ namespace ic {
     using Vec4 = Vec4f;
 
     namespace Vectors {
+        /** @brief Euclidean 2D axes. */
+        const ic::Vec2 X(1.0f, 0.0f), Y(0.0f, 1.0f), negativeX(-1.0f, 0.0f), negativeY(0.0f, -1.0f);
+        
         /** @brief Euclidean 3D axes. */
-        const ic::Vec3 right(1.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f), front(0.0f, 0.0f, 1.0f), left(-1.0f, 0.0f, 0.0f), down(0.0f, -1.0f, 0.0f), back(0.0f, 0.0f, -1.0f);
+        const ic::Vec3 right(1.0f, 0.0f, 0.0f), up(0.0f, 1.0f, 0.0f), front(0.0f, 0.0f, 1.0f), 
+                       left(-1.0f, 0.0f, 0.0f), down(0.0f, -1.0f, 0.0f), back(0.0f, 0.0f, -1.0f);
+        
+        const ic::Vec2 null2D(0.0f, 0.0f);
+        const ic::Vec3 null3D(0.0f, 0.0f, 0.0f);
     }
 }
 #endif

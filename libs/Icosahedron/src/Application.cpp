@@ -208,6 +208,8 @@ void ic::Application::start() {
             break;
         }
 
+        ic::Audio::update();
+        
         // Update and render to screen code
         if (!this->update()) {
             break;
@@ -268,9 +270,9 @@ void ic::Application::pre_load(int w, int h) {
     SDL_GL_SetSwapInterval(1); // Enables VSync
     glViewport(0, 0, w, h);
     
-    //ic::FreeType::load();
-    //ic::Audio::init();
-    //ic::Noise::init();
+    ic::FreeType::load();
+    ic::Audio::init();
+    ic::Noise::init();
 
     this->send_application_information();
 }
@@ -324,8 +326,8 @@ bool ic::Application::poll_events(ic::Event &e) {
 void ic::Application::close() {
     this->dispose();
 
-    //ic::FreeType::dispose();
-    //ic::Audio::dispose();
+    ic::FreeType::dispose();
+    ic::Audio::dispose();
 
     this->window.dispose();
 

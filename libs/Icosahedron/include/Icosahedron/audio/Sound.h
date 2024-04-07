@@ -6,16 +6,22 @@
 #include "soloud.h"
 #include "soloud_wav.h"
 
+#include <Icosahedron/audio/AudioSource.h>
+
 
 namespace ic {
-    class Sound {
+    class Sound : public AudioSource {
         public:
-            Sound(const std::string &filePath);
+            bool spatial = false;
+            
+            Sound(const char *filePath);
+
+            void update() override;
 
             SoLoud::Wav &get_stream();
         
         private:
-            void load(const std::string &filePath);
+            void load(const char *filePath);
 
         private:
             SoLoud::Wav stream;

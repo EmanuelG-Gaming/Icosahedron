@@ -1,6 +1,6 @@
 #include <IcosahedronDebug/ConsoleOutput.h>
 
-static void create_console() {
+void ic::Debug::create_console() {
 #ifdef _WIN32
     AllocConsole();
     freopen("CONIN$", "r", stdin);
@@ -9,6 +9,6 @@ static void create_console() {
 #endif
 }
 
-static void ic::Debug::write_file(const char *fileName, FILE *stream) {
+void ic::Debug::write_file(const char *fileName, FILE *stream) {
     freopen(fileName, "w", stream);
 }
