@@ -208,19 +208,19 @@ class SceneWithShadows : public ic::Application {
     ic::Texture floorTexture, whiteTexture;
     ic::FreeRoamCameraController3D controller;
 
-    float time;
     int shadowWidth, shadowHeight;
 
     public:
         bool init() override {
-            displayName = "Scene Example";
-            hideCursor = true;
+            window.set_title("Scene Example");
+            window.set_cursor_visibility(false);
+            window.set_cursor_lock(true);
 
             return true;
         }
         
         bool load() override {
-            ic::GLStateHandler::enable_depth_testing(ic::LESS);
+            ic::GL::enable_depth_testing(ic::LESS);
             
             shader = ic::ShaderLoader::load(vert, fragment);
             shader.use();
@@ -249,30 +249,22 @@ class SceneWithShadows : public ic::Application {
 
             controller = ic::FreeRoamCameraController3D(&camera);
             controller.flying = true;
-            
-            time = 0.0f;
 
             return true;
         }
 
-        bool handle_event(ic::Event event, float dt) override { 
-            return true;
-        }
-    
-        bool update(float dt) override {
-            time += dt;
-            
-            controller.act(dt);
+        bool update() override {
+            controller.act(ic::Time::globalDelta);
             camera.resize(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
             camera.update();
 
 
             // First pass - render to the depth map
-            ic::GLStateHandler::set_viewport(shadowWidth, shadowHeight);
-            ic::GLStateHandler::disable_face_culling();
+            ic::GL::set_viewport(shadowWidth, shadowHeight);
+            ic::GL::disable_face_culling();
 
             shadowMap.use();
-            clear_color(ic::Colors::black);
+            ic::GL::clear_color(ic::Colors::black);
 
             depthShader.use();
 
@@ -287,10 +279,10 @@ class SceneWithShadows : public ic::Application {
             shadowMap.unuse();
             
             // Second pass - render scene using shadow map
-            ic::GLStateHandler::set_viewport(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
-            ic::GLStateHandler::enable_face_culling(ic::BACK, ic::CW);
+            ic::GL::set_viewport(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            ic::GL::enable_face_culling(ic::BACK, ic::CW);
 
-            clear_color(ic::Colors::blue);
+            ic::GL::clear_color(ic::Colors::blue);
 
             shader.use();
             camera.upload_to_shader(shader);
@@ -305,7 +297,7 @@ class SceneWithShadows : public ic::Application {
 
         void render_scene(ic::Shader &passShader) {
             // Mesh
-            ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, time, 0.0f);
+            ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, ic::Time::time, 0.0f);
             ic::Mat4x4 rotation = quat.to_rotation_matrix();
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
             

@@ -48,8 +48,10 @@ namespace ic {
 
     /** @brief Loads .obj model files. Can optionally load material content. */
     namespace OBJLoader {
-        ic::Mesh3D load(const std::string &objectFileName);
-        std::map<std::string, ic::OBJMaterialInfo> get_materials(const std::string &materialFileName);
+        ic::Mesh3D load(const char *objectFileName);
+        std::vector<ic::Mesh3D> load_multiple(const char *objectFileName, const char *separator = "o");
+
+        std::map<std::string, ic::OBJMaterialInfo> get_materials(const char *materialFileName);
         
         namespace {
             ic::OBJSizes calculate_size(std::ifstream &objRead);

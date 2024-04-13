@@ -4,8 +4,7 @@
 ///// Object geometry /////
 ///////////////////////////
 
-ic::Mesh3D ic::OBJLoader::load(const std::string &objectFileName) {
-
+ic::Mesh3D ic::OBJLoader::load(const char *objectFileName) {
     std::ifstream objRead(objectFileName);
 
     if (!objRead.is_open() || objRead.fail()) {
@@ -36,6 +35,134 @@ ic::Mesh3D ic::OBJLoader::load(const std::string &objectFileName) {
 
     return mesh;
 }
+
+
+std::vector<ic::Mesh3D> ic::OBJLoader::load_multiple(const char *objectFileName, const char *separator) {
+    std::vector<ic::Mesh3D> result;
+    std::ifstream objRead(objectFileName);
+    
+    std::vector<ic::Vec3f> positions, normals;
+    std::vector<ic::Vec2f> textureCoordinates;
+    std::vector<GLuint> vertexIndices, uvIndices, normalIndices;
+    
+    if (!objRead.is_open() || objRead.fail()) {
+        printf("Couldn't open the .obj file.\n");
+        return result;
+    }   
+  
+    std::string line; 
+    while (std::getline(objRead, line)) {
+        if (!line.compare("") || !line.compare(" ")) {
+            continue;
+        }
+        
+        std::istringstream stream(line);
+        std::string key;
+        stream >> key;
+        
+        // Vertex position
+        if (!key.compare("v")) {
+            Vec3f position;
+            stream >> position.x() >> position.y() >> position.z();
+            
+            positions.push_back(position);
+        }
+        // Vertex normal
+        else if (!key.compare("vn")) {
+            Vec3f normal;
+            stream >> normal.x() >> normal.y() >> normal.z();
+            
+            normals.push_back(normal);
+        }
+        // Vertex texture coordinates
+        else if (!key.compare("vt")) {
+            Vec2f coords;
+            stream >> coords.x() >> coords.y();
+            
+            textureCoordinates.push_back(coords);
+        }
+        // Face indices
+        else if (!key.compare("f")) {
+            std::string faceIndices[3];
+            stream >> faceIndices[0] >> faceIndices[1] >> faceIndices[2];
+            
+            for (int i = 0; i < 3; i++) {
+                GLuint indexPosition, indexUV, indexNormal;
+                sscanf(faceIndices[i].c_str(), "%d/%d/%d", &indexPosition, &indexUV, &indexNormal);
+                indexPosition--; indexUV--; indexNormal--;
+                
+                vertexIndices.push_back(indexPosition);
+                uvIndices.push_back(indexUV);
+                normalIndices.push_back(indexNormal);
+            }
+        }
+        
+        // Build mesh
+        if (!key.compare(separator)) {
+            std::vector<ic::Vec3> vertices, normal;
+            std::vector<ic::Vec2> texCoords;
+
+            ic::Mesh3D structure;
+
+            for (int i = 0; i < vertexIndices.size(); i++) {
+                ic::Vec3 position = positions[vertexIndices.at(i)];
+                ic::Vec2 UV = textureCoordinates[uvIndices.at(i)];
+                ic::Vec3 nor = normals[normalIndices.at(i)];
+
+                vertices.push_back(position);
+                texCoords.push_back(UV);
+                normal.push_back(nor);
+            }
+
+            structure.add_attribute(0, vertices);
+            structure.add_attribute(2, texCoords);
+            structure.add_attribute(3, normal);
+
+            structure.set_index_count(vertexIndices.size());
+            structure.using_indices(false);
+
+            if (!vertexIndices.empty()) {
+                result.push_back(structure);
+            }
+
+            vertexIndices.clear();
+            uvIndices.clear();
+            normalIndices.clear();
+        }
+    }
+
+    // Builds the final mesh
+    {
+        std::vector<ic::Vec3> vertices, normal;
+        std::vector<ic::Vec2> texCoords;
+
+        ic::Mesh3D structure;
+
+        for (int i = 0; i < vertexIndices.size(); i++) {
+            ic::Vec3 position = positions[vertexIndices.at(i)];
+            ic::Vec2 UV = textureCoordinates[uvIndices.at(i)];
+            ic::Vec3 nor = normals[normalIndices.at(i)];
+
+            vertices.push_back(position);
+            texCoords.push_back(UV);
+            normal.push_back(nor);
+        }
+
+        structure.add_attribute(0, vertices);
+        structure.add_attribute(2, texCoords);
+        structure.add_attribute(3, normal);
+
+        structure.set_index_count(vertexIndices.size());
+        structure.using_indices(false);
+
+        if (!vertexIndices.empty()) {
+            result.push_back(structure);
+        }
+    }
+
+    return result;
+}
+
 
 
 namespace ic::OBJLoader { namespace {
@@ -193,7 +320,7 @@ ic::OBJGeometricData get_geometric_data(const ic::OBJAttributeReferences &refere
 ///// Materials /////
 /////////////////////
 
-std::map<std::string, ic::OBJMaterialInfo> get_materials(const std::string &materialFileName) {
+std::map<std::string, ic::OBJMaterialInfo> get_materials(const char *materialFileName) {
     std::ifstream mtlRead(materialFileName);
     std::map<std::string, ic::OBJMaterialInfo> materials;
 
