@@ -13,7 +13,7 @@ A game engine that uses OpenGL for graphics. It is supposed to be for both 2D an
 - Add more math functions. ( )
 - Allow raycasting for 3D boxes. ( )
 - You only need one controller per input device, not 69 quintillion controllers that each do their own thing. ( )
-- Reimplement multiple mesh loading in ic::OBJLoader. ( )
+- Reimplement multiple mesh loading in ic::OBJLoader. (done)
 
 
 # Links:

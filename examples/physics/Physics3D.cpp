@@ -12,9 +12,10 @@
 
 #include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
 
-#include <Physics/3d/objects/RigidObject3D.h>
-#include <Physics/3d/levels/PhysicsLevel3D.h>
-#include <Physics/3d/forces/WindForce3D.h>
+#include <Physics/objects/RigidObject.h>
+#include <Physics/levels/PhysicsLevel.h>
+#include <Physics/forces/WindForce.h>
+
 
 
 std::string fragment = IC_ADD_GLSL_DEFINITION(
@@ -79,7 +80,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 
 struct Object {
     ic::Mesh3D mesh;
-    ic::Physics::RigidObject3D *rigidBody;
+    ic::Physics::RigidObject *rigidBody;
     ic::Color color;
 };
 
@@ -91,23 +92,24 @@ class Physics3D: public ic::Application {
     ic::Camera3D camera;
     std::vector<Object*> objects;
 
-    ic::Physics::PhysicsLevel3D level;
+    ic::Physics::PhysicsLevel level;
     ic::FreeRoamCameraController3D controller;
-    ic::Physics::WindForce3D blowForce;
+    ic::Physics::WindForce blowForce;
 
     ic::KeyboardController *keyboard;
     bool blowingAir;
 
     public:
         bool init() override {
-            displayName = "Physics in 3D";
-            hideCursor = true;
+            window.set_title("Physics in 3D");
+            window.set_cursor_visibility(false);
+            window.set_cursor_lock(true);
 
             return true;
         }
         
         bool load() override {
-            ic::GLStateHandler::enable_depth_testing(ic::LESS);
+            ic::GL::enable_depth_testing(ic::LESS);
             
             shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, fragment);
 
@@ -136,12 +138,12 @@ class Physics3D: public ic::Application {
 
             floorColor = ic::Color().hexadecimal_to_RGB("268B07");
             
-            level = ic::Physics::PhysicsLevel3D();
+            level = ic::Physics::PhysicsLevel();
             level.set_gravity(0.0f, -0.981f, 0.0f);
             level.simulationSteps = 10;
 
             for (int i = 0; i < 100; i++) {
-                ic::Physics::RigidObject3D *rigidBody = new ic::Physics::RigidObject3D();
+                ic::Physics::RigidObject *rigidBody = new ic::Physics::RigidObject();
                 rigidBody->collider = new ic::Physics::SphereCollider(0.3f);
                 rigidBody->dynamic = true;
                 rigidBody->set_position(-0.5f + rand() % 300 / 300.0f, -5.0f + 0.3f + 0.9f + i * 0.6f, 0.0f + rand() % 300 / 300.0f);
@@ -152,7 +154,7 @@ class Physics3D: public ic::Application {
             }
 
             {
-                ic::Physics::RigidObject3D *rigidBody = new ic::Physics::RigidObject3D();
+                ic::Physics::RigidObject *rigidBody = new ic::Physics::RigidObject();
                 rigidBody->collider = new ic::Physics::BoxCollider(10.0f, 0.9f, 10.0f);
                 rigidBody->dynamic = false;
                 rigidBody->set_position(0.0f, -5.0f, 0.0f);
@@ -163,7 +165,7 @@ class Physics3D: public ic::Application {
             }
 
             {
-                ic::Physics::RigidObject3D *rigidBody = new ic::Physics::RigidObject3D();
+                ic::Physics::RigidObject *rigidBody = new ic::Physics::RigidObject();
                 rigidBody->collider = new ic::Physics::BoxCollider(3.0f, 0.1f, 3.0f);
                 rigidBody->dynamic = false;
                 rigidBody->set_position(0.0f, -3.0f, 0.0f);
@@ -175,7 +177,7 @@ class Physics3D: public ic::Application {
             }
 
 
-            blowForce = ic::Physics::WindForce3D(0.1f, 0.1f);
+            blowForce = ic::Physics::WindForce(0.1f, 0.1f);
 
             keyboard = new ic::KeyboardController();
             keyboard->add_key_down_action([this]() { blowingAir = !blowingAir; }, KEY_Q);
@@ -188,12 +190,8 @@ class Physics3D: public ic::Application {
             return true;
         }
 
-        bool handle_event(ic::Event event, float dt) override { 
-            return true;
-        }
-
-        bool update(float dt) override {
-            controller.act(dt);
+        bool update() override {
+            controller.act(ic::Time::globalDelta);
 
             level.reset_forces();
             if (blowingAir) {
@@ -204,12 +202,12 @@ class Physics3D: public ic::Application {
                 }
             }
 
-            level.update(dt);
+            level.update(ic::Time::delta);
 
             camera.update();
             
 
-            clear_color(ic::Colors::blue);
+            ic::GL::clear_color(ic::Colors::blue);
             
             shader.use();
             shader.set_uniform_vec3f("viewPosition", camera.position);

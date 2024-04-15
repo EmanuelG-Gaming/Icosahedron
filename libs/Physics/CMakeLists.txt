@@ -12,82 +12,44 @@ project(${PROJECT_NAME})
 
 add_library(${LIBRARY_NAME} STATIC
     # -----Headers-----
-    # 2D
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/Transform2D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/ManifoldPoints2D.h
-
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/Collider2D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/CollisionUtils2D.h
-    
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/objects/Object2D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/objects/RigidObject2D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/objects/SpringMassSystem2D.h
-
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/Manifold2D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/Solver2D.h
-
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/forces/Force2D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/forces/Gravity2D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/forces/WindForce2D.h
-
-    ${LIBRARY_HEADERS_DIRECTORY}/2d/levels/PhysicsLevel2D.h
-
     # 3D
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/Transform3D.h
-    
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/ManifoldPoints3D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/Collider3D.h
-    
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/CollisionUtils3D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/objects/Object3D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/objects/RigidObject3D.h
-    
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/Manifold3D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/Solver3D.h
-    
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/forces/Force3D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/forces/Gravity3D.h
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/forces/WindForce3D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/Transform.h
 
-    ${LIBRARY_HEADERS_DIRECTORY}/3d/levels/PhysicsLevel3D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/ManifoldPoints.h
+
+    ${LIBRARY_HEADERS_DIRECTORY}/Collider.h
+    ${LIBRARY_HEADERS_DIRECTORY}/CollisionUtils.h
+
+    ${LIBRARY_HEADERS_DIRECTORY}/objects/Object.h
+    ${LIBRARY_HEADERS_DIRECTORY}/Manifold.h
+    ${LIBRARY_HEADERS_DIRECTORY}/objects/RigidObject.h
+    
+    ${LIBRARY_HEADERS_DIRECTORY}/Solver.h
+    
+    ${LIBRARY_HEADERS_DIRECTORY}/forces/Force.h
+    ${LIBRARY_HEADERS_DIRECTORY}/forces/Gravity.h
+    ${LIBRARY_HEADERS_DIRECTORY}/forces/WindForce.h
+
+    ${LIBRARY_HEADERS_DIRECTORY}/Levels/PhysicsLevel.h
 
 
 
     # -----Sources-----
-    # 2D
-    ${LIBRARY_SOURCE_DIRECTORY}/2d/Transform2D.cpp
-
-    ${LIBRARY_SOURCE_DIRECTORY}/2d/Collider2D.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/2d/CollisionUtils2D.cpp
-
-    ${LIBRARY_SOURCE_DIRECTORY}/2d/objects/Object2D.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/2d/objects/RigidObject2D.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/2d/objects/SpringMassSystem2D.cpp
-
-    ${LIBRARY_SOURCE_DIRECTORY}/2d/Solver2D.cpp
-
-    ${LIBRARY_SOURCE_DIRECTORY}/2d/forces/Gravity2D.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/2d/forces/WindForce2D.cpp
-
-
-    ${LIBRARY_SOURCE_DIRECTORY}/2d/levels/PhysicsLevel2D.cpp
-
     # 3D
-    ${LIBRARY_SOURCE_DIRECTORY}/3d/Transform3D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/Transform.cpp
     
-    ${LIBRARY_SOURCE_DIRECTORY}/3d/Collider3D.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/3d/CollisionUtils3D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/Collider.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/CollisionUtils.cpp
     
-    ${LIBRARY_SOURCE_DIRECTORY}/3d/objects/Object3D.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/3d/objects/RigidObject3D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/objects/Object.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/objects/RigidObject.cpp
     
-    ${LIBRARY_SOURCE_DIRECTORY}/3d/Solver3D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/Solver.cpp
     
-    ${LIBRARY_SOURCE_DIRECTORY}/3d/forces/Gravity3D.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/3d/forces/WindForce3D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/forces/Gravity.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/forces/WindForce.cpp
 
-
-    ${LIBRARY_SOURCE_DIRECTORY}/3d/levels/PhysicsLevel3D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/levels/PhysicsLevel.cpp
 )
 
 target_include_directories(${LIBRARY_NAME} PRIVATE

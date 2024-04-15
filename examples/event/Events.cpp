@@ -2,6 +2,18 @@
 #include <Icosahedron/Events.h>
 #include <IcosahedronDebug/ConsoleOutput.h>
 
+template <typename T>
+struct Consumer {
+    void (T::*cons_member)(void);
+};
+
+
+class YesClass {
+    public:
+        void the() {
+            std::cout << "Yes." << "\n";
+        }
+};
 
 void event_callback() {
     std::cout << "This is a callback from an event.\n";
@@ -11,9 +23,18 @@ int main() {
     // For Windows-specific platforms, this makes a command prompt window
     ic::Debug::create_console();
 
+    YesClass yes;
+
+
+    Consumer<YesClass> c;
+    c.cons_member = &YesClass::the;
+
+
     std::cout << "hello." << "\n";
 
     ic::Events::on("eventTest", event_callback);
+    ic::Events::on("eventYes", (yes.the));
+
     ic::Events::fire("eventTest");
     ic::Events::fire("eventTest");
 
