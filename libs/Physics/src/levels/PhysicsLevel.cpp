@@ -12,7 +12,6 @@ void ic::Physics::PhysicsLevel::load() {
 
     timeAccumulator = 0.0f;
     fixedTimeLength = 1 / 40.0f;
-    shouldResetForces = true;
     
     objects.clear();
     solvers.clear();
@@ -25,13 +24,17 @@ void ic::Physics::PhysicsLevel::load() {
     add_force(gravity);
 }
 
-void ic::Physics::PhysicsLevel::update(float timeTook) {
+void ic::Physics::PhysicsLevel::update(float timeTook, const std::function<void(float)> &consumer) {
     timeAccumulator += timeTook;
 
     if (timeAccumulator >= fixedTimeLength) {
         float stepSize = fixedTimeLength / (float)simulationSteps;
         for (int i = 0; i < simulationSteps; i++) {
-            update_with_sub_steps(stepSize);
+            if (consumer) {
+                consumer(stepSize);
+            } else {
+                update_with_sub_steps(stepSize);
+            }
         }
 
         timeAccumulator -= fixedTimeLength;
@@ -40,24 +43,16 @@ void ic::Physics::PhysicsLevel::update(float timeTook) {
 
 void ic::Physics::PhysicsLevel::update_with_sub_steps(float timeTook) {
     // Reseting the forces + applying
-    if (this->shouldResetForces) {
-        for (auto &object : objects) {
-            ic::Physics::RigidObject *body = dynamic_cast<ic::Physics::RigidObject*>(object);
-            
-            object->collides = false;
-
-            if (body != nullptr) {
-                body->force = { 0.0f, 0.0f };
-            }
-
-            for (auto &force : forces) {
-                force->apply(object);
-            }
-        }
-    }
-    this->shouldResetForces = true;
+    this->reset_forces();
 
     // Motion integration
+    this->integrate(timeTook);
+
+    // Resolve collisions
+    resolve_collisions(timeTook);
+}
+
+void ic::Physics::PhysicsLevel::integrate(float timeTook) {
     for (auto &object : objects) {
         ic::Physics::RigidObject *body = dynamic_cast<ic::Physics::RigidObject*>(object);
 
@@ -71,8 +66,6 @@ void ic::Physics::PhysicsLevel::update_with_sub_steps(float timeTook) {
             body->transform->position = body->transform->position + body->velocity * timeTook;
         }
     }
-
-    resolve_collisions(timeTook);
 }
 
 
@@ -139,7 +132,7 @@ void ic::Physics::PhysicsLevel::resolve_collisions(float timeTook) {
     
     // Don't resolve collisions with triggers
     for (auto &solver : solvers) {
-         solver->solve(manifolds);
+        solver->solve(manifolds);
     }
     send_collision_callbacks(manifolds, timeTook);
     send_collision_callbacks(triggers, timeTook);
@@ -164,6 +157,7 @@ void ic::Physics::PhysicsLevel::set_gravity(ic::Vec3f &force) {
 }
 
 
+
 void ic::Physics::PhysicsLevel::reset_forces() {
     for (auto &object : objects) {
         ic::Physics::RigidObject *body = dynamic_cast<ic::Physics::RigidObject*>(object);
@@ -176,6 +170,4 @@ void ic::Physics::PhysicsLevel::reset_forces() {
             force->apply(object);
         }
     }
-
-    this->shouldResetForces = false;
 }

@@ -18,14 +18,19 @@ namespace ic { namespace Physics {
 
             PhysicsLevel();
 
-            void load();
-            
-            void update(float timeTook);
 
-            
+            void load();
+            void update(float timeTook, const std::function<void(float)> &consumer = nullptr);
+
+            void reset_forces();
+            void integrate(float timeTook);
+            void resolve_collisions(float timeTook);
+
+
             void set_fixed_time_length(int framesPerSecond);
             void set_gravity(float x, float y, float z = 0.0f);
             void set_gravity(ic::Vec3f &force);
+
 
             void add_object(ic::Physics::Object *object);
             void remove_object(ic::Physics::Object *object);
@@ -34,21 +39,16 @@ namespace ic { namespace Physics {
             std::vector<ic::Physics::Object*> &get_objects();
             
             void add_force(ic::Physics::Force *force);
-            void reset_forces();
+            void add_solver(ic::Physics::Solver *solver);
+            
             
         private:
             void update_with_sub_steps(float timeTook);
-
             void send_collision_callbacks(const std::vector<ic::Physics::Manifold> &collisions, float timeTook);
-            void resolve_collisions(float timeTook);
 
-
-            void add_solver(ic::Physics::Solver *solver);
-            
         private:
             float timeAccumulator;
             float fixedTimeLength;
-            bool shouldResetForces;
 
             ic::Physics::Gravity *gravity;
 
