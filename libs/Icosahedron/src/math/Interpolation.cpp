@@ -1,4 +1,5 @@
 #include <Icosahedron/math/Interpolation.h>
+#include <Icosahedron/math/Mathf.h>
 
 float ic::Interpolation::linear(float x) {
     return x;
@@ -22,15 +23,7 @@ float ic::Interpolation::square_root(float x) {
 
 
 float ic::Interpolation::exponential(float x) {
-    float sum = 0.0f;
-    int factorial = 1;
-    
-    // Calculate power series
-    for (int i = 1; i <= 3; i++) {
-        factorial *= i;
-        sum += pow(x, i) / (float) factorial;
-    }
-    return sum * (4.0f / 7.0f);
+    return ic::Mathf::exponential(x) * (4.0f / 7.0f);
 }
 
 float ic::Interpolation::smoothstep(float x) {

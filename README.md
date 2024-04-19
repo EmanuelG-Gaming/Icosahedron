@@ -10,7 +10,7 @@ A game engine that uses OpenGL for graphics. It is supposed to be for both 2D an
 - Add support for multiple windows in one application. ( )
 - Add built-in checkboxes, sliders, text fields and dialogs via the ic::UI extension. ( ) 
 - Make event-driven programming accept multiple parameters in functions and also allow it to use methods from classes. ( )
-- Add more math functions. ( )
+- Add more math functions. (in progress)
 - Allow raycasting for 3D boxes. ( )
 - You only need one controller per input device, not 69 quintillion controllers that each do their own thing. ( )
 - Reimplement multiple mesh loading in ic::OBJLoader. (done)

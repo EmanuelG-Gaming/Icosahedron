@@ -20,16 +20,30 @@ namespace ic {
         float sinf(float radians);
         float cosf(float radians);
 
+        float sinc(float radians);
+
         float absinf(float radians);
         float abcosf(float radians);
 
         float positive_sinf(float radians);
         float positive_cosf(float radians);
 
+        float exponential(float x, int iterationBound1 = 1, int iterationBound2 = 3);
+
+
+        /** @brief A hyperbolic sine approximation for the absolute function. */
+        float abs(float x);
+
 
         float clamp(float x, float min, float max);
         int clamp(int x, int min, int max);
 
+        /** @returns The sign at a point. 1 if the point is above the x axis,
+         *  -1 if the point is below the x axis and 0 if it is on that axis.
+        */
+        int sign(float x);
+
+        
         /* @brief Linear interpolation. */
         float interpolate(float from, float to, float alpha);
         float interpolate_logarithmic(float from, float to, float alpha);
