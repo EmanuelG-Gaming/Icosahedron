@@ -98,8 +98,6 @@ class HeatEquation : public ic::Application {
 
     public:
         bool init() override {
-            displayName = "Heat equation";
-
             return true;
         }
         
@@ -267,11 +265,9 @@ class HeatEquation : public ic::Application {
             camera.resize(w, h);
         }
 
-        bool handle_event(ic::Event event, float dt) override { 
-            return true;
-        }
+        bool update() override {
+            float dt = ic::Time::delta;
 
-        bool update(float dt) override {
             time += dt;
             deltaTime = dt;
 
@@ -298,7 +294,7 @@ class HeatEquation : public ic::Application {
 
 
             // Rendering
-            clear_color(ic::Colors::blue);
+            ic::GL::clear_color(ic::Colors::blue);
 
             shader.use();
             camera.use(shader);
@@ -464,9 +460,8 @@ class HeatEquation : public ic::Application {
 int main() {
     HeatEquation application;
 
-    if (application.construct(640, 480)) {
-        application.start();
-    }
+    application.construct("heat Equation", 640, 480);
+    application.start();
 
     return 0;
 }

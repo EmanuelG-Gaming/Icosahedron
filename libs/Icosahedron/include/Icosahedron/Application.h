@@ -44,7 +44,8 @@ namespace ic {
             int get_width() const;
             int get_height() const;
 
-            void set(int w, int h, const char *title);
+            void set(const char *title, int w, int h);
+            void set(int w, int h);
             void init();
 
             void dispose();
@@ -112,9 +113,6 @@ namespace ic {
             /* Sets up an SDL window along with an OpenGL context. */
             bool construct();
 
-            /* The actual starting point of the application. */
-            void start();
-
             void close();
 
             void tick();
@@ -140,6 +138,22 @@ namespace ic {
 
     class Application {
         public:
+            void construct(const char *title, int w, int h);
+            void construct(int w, int h);
+
+            void start();
+
+            virtual bool init() { return true; }
+            virtual bool update() { return true; }
+            virtual bool load() { return true; }
+            virtual bool handle_event(ic::Event event) { return true; }
+            virtual void window_size_changed(int w, int h) {}
+            virtual void dispose() {}
+        
+        private:
+            void pre_load();
+            
+        protected:
             ic::Engine engine;
     };
 }

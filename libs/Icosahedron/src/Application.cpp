@@ -21,7 +21,7 @@ float ic::Time::time = 0.0f;
 Uint32 ic::Time::lastUpdate = 0;
 
 /////////////////////
-//// Window /////////
+////// Window  //////
 /////////////////////
 
 ic::Image ic::Window::take_screenshot(int x, int y, int width, int height) {
@@ -38,7 +38,10 @@ ic::Image ic::Window::take_screenshot() {
 
 void ic::Window::set_header_image(const ic::Image &image) {
     SDL_Surface *surface = ic::ImageIO::to_surface(image);
-    SDL_SetWindowIcon(this->windowHandle, surface);
+
+    if (this->windowHandle) {
+        SDL_SetWindowIcon(this->windowHandle, surface);
+    }
 
     SDL_FreeSurface(surface);
 }
@@ -49,8 +52,10 @@ void ic::Window::set_size(int w, int h) {
     IC_WINDOW_WIDTH = this->width;
     IC_WINDOW_HEIGHT = this->height;
 
-    SDL_SetWindowSize(this->windowHandle, this->width, this->height);
-    glViewport(0, 0, this->width, this->height);
+    if (this->windowHandle) {
+        SDL_SetWindowSize(this->windowHandle, this->width, this->height);
+        glViewport(0, 0, this->width, this->height);
+    }
 
     // TODO: Event-based programming
     //window_size_changed(this->width, this->height);
@@ -75,8 +80,10 @@ void ic::Window::set_scaling(ic::WindowScaling to) {
             break;
     }
 
-    SDL_SetWindowFullscreen(this->windowHandle, flags);
-    SDL_SetWindowResizable(this->windowHandle, (to == ic::WindowScaling::resizeable) ? SDL_TRUE : SDL_FALSE);
+    if (this->windowHandle) { 
+        SDL_SetWindowFullscreen(this->windowHandle, flags);
+        SDL_SetWindowResizable(this->windowHandle, (to == ic::WindowScaling::resizeable) ? SDL_TRUE : SDL_FALSE);
+    }
 
     this->scaling = to;
 }
@@ -89,14 +96,16 @@ void ic::Window::set_vsync(int interval) {
 }
 
 void ic::Window::swap_buffers() {
-    SDL_GL_SwapWindow(this->get_handle());
+    if (this->windowHandle) SDL_GL_SwapWindow(this->windowHandle);
 }
 
 
 
 void ic::Window::set_title(const char *title) {
     this->displayName = title;
-    SDL_SetWindowTitle(this->windowHandle, title);
+    if (this->windowHandle) {
+        SDL_SetWindowTitle(this->windowHandle, title);
+    }
 }
 
 void ic::Window::set_title(const std::string &title) {
@@ -119,11 +128,14 @@ void ic::Window::set_cursor_lock(bool to) {
 
 
 
-void ic::Window::set(int w, int h, const char *title) {
-    this->displayName = title;
-    this->width = w;
-    this->height = h;
+void ic::Window::set(const char *title, int w, int h) {
+    this->set_title(title);
+    this->set_size(w, h);
 }
+void ic::Window::set(int w, int h) {
+    this->set_size(w, h);
+}
+
 
 void ic::Window::init() {
     Uint32 flags = 0;
@@ -187,6 +199,7 @@ ic::WindowScaling ic::Window::get_scaling() const {
 bool ic::Engine::construct() {
     this->set_current_working_directory();
 
+    
     SDL_SetMainReady();
     
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) != 0) {
@@ -197,57 +210,9 @@ bool ic::Engine::construct() {
     this->set_window_attributes();
     this->window.init();
 
-    /*
-    if (!this->init()) {
-        std::cerr << "Couldn't initialize the application." << "\n";
-        return false;
-    }
-    */
-
-    
     this->pre_load(this->window.get_width(), this->window.get_height());
 
     return true;
-}
-
-void ic::Engine::start() {
-    /*
-    if (!this->constructed) {
-        std::cerr << "Couldn't start the application. It wasn't constructed first." << "\n";
-        return;
-    }
-
-    if (!load()) {
-        std::cerr << "Couldn't load the application." << "\n";
-        return;
-    }
-    */
-
-    //ic::Time::lastUpdate = SDL_GetTicks();
-    SDL_Event e;
-    bool disabled = false;
-    while (!disabled) {
-        //if (!this->poll_events(e)) {
-        //    break;
-        //}
-
-        //ic::InputHandler::update();
-        //ic::Audio::update();
-        
-        // Update and render to screen code
-        //if (!this->update()) {
-        //    break;
-        //}
-
-        // Swap buffers
-        this->window.swap_buffers();
-	    //SDL_GL_SwapWindow(this->window.get_handle());
-        
-        //ic::Time::tick(SDL_GetTicks());
-        this->tick();
-	}
-
-    this->close();
 }
 
 
@@ -290,9 +255,9 @@ void ic::Engine::pre_load(int w, int h) {
     SDL_GL_SetSwapInterval(1); // Enables VSync
     glViewport(0, 0, w, h);
     
-    ic::FreeType::load();
-    ic::Audio::init();
-    ic::Noise::init();
+    //ic::FreeType::load();
+    //ic::Audio::init();
+    //ic::Noise::init();
 
     this->send_application_information();
 }
@@ -309,53 +274,7 @@ void ic::Engine::tick() {
 
 
 int ic::Engine::poll_events(ic::Event &e) {
-    //SDL_PumpEvents();
     return SDL_PollEvent(&e);
-        //ic::InputHandler::handle(e);
-
-        //if (!this->handle_event(e)) {
-        //    return false;
-        //}
-
-        //this->poll_events(e);
-
-        //ic::InputHandler::handle(e);
-
-        //if (!this->process_window_callbacks(e)) {
-        //    break;
-        //}
-
-        /*
-        switch (e.type) {
-            case SDL_QUIT: 
-                return false;
-
-            case SDL_KEYUP:
-                if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
-                    return false;
-                }
-
-            case SDL_WINDOWEVENT:
-                ic::WindowScaling scaling = this->window.get_scaling();
-
-                bool resized = e.window.event == SDL_WINDOWEVENT_RESIZED || e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED;
-                if (scaling == WindowScaling::fixed || !resized) {
-                    continue;
-                }
-
-                if (scaling == WindowScaling::resizeable) {
-                    this->window.set_size(e.window.data1, e.window.data2);
-                } else if (scaling == WindowScaling::fullscreen) {
-                    SDL_Rect displayRectangle;
-                    SDL_GetDisplayBounds(0, &displayRectangle);
-
-                    this->window.set_size(displayRectangle.w, displayRectangle.h);
-                }
-                
-                window_size_changed(this->window.get_width(), this->window.get_height());
-        }
-        */
-    //}
 }
 
 bool ic::Engine::process_window_callbacks(ic::Event &e) {
@@ -417,3 +336,70 @@ void ic::Engine::set_current_working_directory() {
     
     std::filesystem::current_path(dir);
 }
+
+///////////////
+/// Application
+///////////////
+
+void ic::Application::construct(int w, int h) {
+    engine.window.set(w, h);
+    this->pre_load();
+}
+void ic::Application::construct(const char *title, int w, int h) {
+    engine.window.set(title, w, h);
+    this->pre_load();
+}
+
+void ic::Application::pre_load() {
+    if (!this->init()) {
+        return;
+    }
+
+    engine.construct();
+
+    ic::FreeType::load();
+    ic::Audio::init();
+    ic::Noise::init();
+}
+
+
+void ic::Application::start() {
+    if (!this->load()) {
+        return;
+    }
+
+    bool enabled = true;
+    ic::Event event;
+    while (enabled) {
+        while (engine.poll_events(event)) {
+            if (!this->handle_event(event)) {
+                enabled = false;
+                break;
+            }
+
+            if (!engine.process_window_callbacks(event)) {
+                enabled = false;
+                break;
+            }
+        }
+
+        ic::Audio::update();
+        ic::InputHandler::update();
+        
+        if (!this->update()) {
+            enabled = false;
+            break;
+        }
+
+        engine.window.swap_buffers();
+	    engine.tick();
+    }
+
+
+    ic::FreeType::dispose();
+    ic::Audio::dispose();
+
+    this->dispose();
+    engine.close();
+}
+

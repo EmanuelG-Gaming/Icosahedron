@@ -43,69 +43,26 @@ class WindowExample : public ic::Application {
 };
 */
 
+/** A shorter main function declaration. You can still use argc 
+ *  and argv as parameters, though. */
+
+
 // Short version:
-/*
 #include <Icosahedron/Application.h>
 #include <Icosahedron/graphics/Colors.h>
 
-class WindowExample : public ic::Application {
-    public:
-        bool init() override {
-            this->window.set_title("Example window");
-            return true;
-        }
-
-        bool update() override {
-            ic::GL::clear_color(ic::Colors::blue);
-            return true;
-        }
+struct WindowExample : public ic::Application {
+    bool update() override {
+        ic::GL::clear_color(ic::Colors::blue);
+        return true;
+    }
 };
-*/
 
-/** A shorter main function declaration. You can still use argc 
- *  and argv as parameters, though. */
-/*
 int main() {
     WindowExample application;
 
-    if (application.construct(640, 480)) {
-        application.start();
-    }
-
-    return 0;
-}
-*/
-
-
-
-#include <Icosahedron/Application.h>
-#include <IcosahedronDebug/ConsoleOutput.h>
-
-ic::Engine engine;
-
-void start_application() {
-    engine.window.set(1028, 304, "test window");
-    engine.construct();
-
-    bool enabled = true;
-    ic::Event event;
-    while (enabled) {
-        while (engine.poll_events(event)) {
-            enabled = engine.process_window_callbacks(event);
-        }
-
-        ic::GL::clear_color(ic::Colors::blue);
-
-        engine.window.swap_buffers();
-	    engine.tick();
-    }
-    
-    engine.close();
-}
-
-int main() {
-    ic::Debug::create_console();
-    start_application();
+    application.construct("Example window", 640, 480);
+    application.start();
 
     return 0;
 }
