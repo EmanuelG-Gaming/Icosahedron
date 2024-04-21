@@ -50,19 +50,44 @@ void ic::GL::disable_face_culling() {
 }
 
 
+void ic::GL::color() {
+    clear_color(0.0f, 0.0f, 0.0f);
+}
+
+void ic::GL::color(float r, float g, float b) {
+    glClearColor(r, g, b, 1.0f);
+}
+
+void ic::GL::color(const ic::Color &c) {
+    float r = c.r / 255.0f;
+    float g = c.g / 255.0f;
+    float b = c.b / 255.0f;
+    
+    color(r, g, b);
+}
+
+
+
 void ic::GL::clear_color() {
     clear_color(0.0f, 0.0f, 0.0f);
 }
 
 void ic::GL::clear_color(float r, float g, float b) {
-    glClearColor(r, g, b, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    color(r, g, b);
+    clear();
 }
 
-void ic::GL::clear_color(const ic::Color &color) {
-    float r = color.r / 255.0f;
-    float g = color.g / 255.0f;
-    float b = color.b / 255.0f;
-    
-    clear_color(r, g, b);
+void ic::GL::clear_color(const ic::Color &c) {
+    color(c);
+    clear();
+}
+
+
+
+void ic::GL::clear() {
+    clear(ic::COLOR_BIT | ic::DEPTH_BIT);
+}
+
+void ic::GL::clear(int bits) {
+    glClear(bits);
 }

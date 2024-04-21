@@ -60,11 +60,10 @@ class Framebuffer : public ic::Application {
     std::size_t PIXEL_DENOMINATOR;
 
     ic::Shader shader, screenShader;
-    float time;
 
     public:
         bool init() override {
-            displayName = "Framebuffers";
+            window.set_title("Framebuffers");
             
             return true;
         }
@@ -113,7 +112,6 @@ class Framebuffer : public ic::Application {
 
             ic::InputHandler::add_input((new ic::KeyboardController())->with_WASD(), "WASD");
             
-            time = 0.0f;
             
             return true;
         }
@@ -123,24 +121,19 @@ class Framebuffer : public ic::Application {
             postProcessing.resize(w / PIXEL_DENOMINATOR, h / PIXEL_DENOMINATOR);
         }
 
-        bool handle_event(ic::Event event, float dt) override { 
-            return true;
-        }
-    
-        bool update(float dt) override {
-            time += dt;
-
+        
+        bool update() override {
             auto *controller = ic::InputHandler::find_keyboard("WASD");
             ic::Vec2i dir = controller->get_direction();
 
             float speed = 1.5f;
-            camera.position.x() += dir.x() * speed * dt;
-            camera.position.y() += dir.y() * speed * dt;
+            camera.position.x() += dir.x() * speed * ic::Time::delta;
+            camera.position.y() += dir.y() * speed * ic::Time::delta;
             
             postProcessing.use();
-            clear_color(ic::Colors::blue);
+            ic::GL::clear_color(ic::Colors::blue);
             
-            ic::GLStateHandler::set_viewport(IC_WINDOW_WIDTH / PIXEL_DENOMINATOR, IC_WINDOW_HEIGHT / PIXEL_DENOMINATOR);
+            ic::GL::set_viewport(IC_WINDOW_WIDTH / PIXEL_DENOMINATOR, IC_WINDOW_HEIGHT / PIXEL_DENOMINATOR);
 
             shader.use();
             camera.use(shader);
@@ -156,8 +149,8 @@ class Framebuffer : public ic::Application {
 
 
             // Rendering to the screen quad
-            clear_color(ic::Colors::cyan);
-            ic::GLStateHandler::set_viewport(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
+            ic::GL::clear_color(ic::Colors::cyan);
+            ic::GL::set_viewport(IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
 
             screenShader.use();
             postProcessing.use_texture();

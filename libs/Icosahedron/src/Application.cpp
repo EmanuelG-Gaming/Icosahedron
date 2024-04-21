@@ -18,6 +18,7 @@ float ic::Time::globalDelta = 0.0f;
 float ic::Time::deltaMultiplier = 1.0f;
 float ic::Time::globalTime = 0.0f;
 float ic::Time::time = 0.0f;
+Uint32 ic::Time::lastUpdate = 0;
 
 /////////////////////
 //// Window /////////
@@ -87,6 +88,12 @@ void ic::Window::set_vsync(int interval) {
 	}
 }
 
+void ic::Window::swap_buffers() {
+    SDL_GL_SwapWindow(this->get_handle());
+}
+
+
+
 void ic::Window::set_title(const char *title) {
     this->displayName = title;
     SDL_SetWindowTitle(this->windowHandle, title);
@@ -110,13 +117,19 @@ void ic::Window::set_cursor_lock(bool to) {
     SDL_SetRelativeMouseMode((SDL_bool) to);
 }
 
-void ic::Window::init(int w, int h) {
+
+
+void ic::Window::set(int w, int h, const char *title) {
+    this->displayName = title;
+    this->width = w;
+    this->height = h;
+}
+
+void ic::Window::init() {
     Uint32 flags = 0;
     flags |= SDL_WINDOW_OPENGL;
     flags |= SDL_WINDOW_SHOWN;
 
-    this->width = w;
-    this->height = h;
     IC_WINDOW_WIDTH = this->width;
     IC_WINDOW_HEIGHT = this->height;
 
@@ -134,12 +147,16 @@ void ic::Window::init(int w, int h) {
 }
 
 
+
+
+
 void ic::Window::dispose() {
     std::cout << "Window with name: " << this->displayName << " at index: " << this->windowIndex << " was disposed." << "\n";
 
     SDL_DestroyWindow(this->windowHandle);
     SDL_GL_DeleteContext(this->glContext);
 }
+
 
 
 int ic::Window::get_width() const {
@@ -150,6 +167,11 @@ int ic::Window::get_height() const {
     return this->height;
 }
 
+const char *ic::Window::get_title() const {
+    return this->displayName;
+}
+
+ 
 SDL_Window *ic::Window::get_handle() const {
     return this->windowHandle;
 }
@@ -159,13 +181,13 @@ ic::WindowScaling ic::Window::get_scaling() const {
 
 
 //////////////////////////
-//// Application /////////
+///////// Engine /////////
 //////////////////////////
 
-bool ic::Application::construct(int w, int h) {
-    SDL_SetMainReady();
-    
+bool ic::Engine::construct() {
     this->set_current_working_directory();
+
+    SDL_SetMainReady();
     
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) != 0) {
 		std::cerr << "SDL_Init Error: " << SDL_GetError();
@@ -173,20 +195,23 @@ bool ic::Application::construct(int w, int h) {
 	}
 
     this->set_window_attributes();
-    this->prepare_window(w, h);
+    this->window.init();
 
+    /*
     if (!this->init()) {
         std::cerr << "Couldn't initialize the application." << "\n";
         return false;
     }
-    
-    this->pre_load(w, h);
+    */
 
-    this->constructed = true;
+    
+    this->pre_load(this->window.get_width(), this->window.get_height());
+
     return true;
 }
 
-void ic::Application::start() {
+void ic::Engine::start() {
+    /*
     if (!this->constructed) {
         std::cerr << "Couldn't start the application. It wasn't constructed first." << "\n";
         return;
@@ -196,32 +221,30 @@ void ic::Application::start() {
         std::cerr << "Couldn't load the application." << "\n";
         return;
     }
+    */
 
-    Uint32 lastUpdate = SDL_GetTicks();
+    //ic::Time::lastUpdate = SDL_GetTicks();
     SDL_Event e;
     bool disabled = false;
     while (!disabled) {
-        ic::Time::globalTime += ic::Time::globalDelta;
-        ic::Time::time += ic::Time::delta;
+        //if (!this->poll_events(e)) {
+        //    break;
+        //}
 
-        if (!this->poll_events(e)) {
-            break;
-        }
-
-        ic::Audio::update();
+        //ic::InputHandler::update();
+        //ic::Audio::update();
         
         // Update and render to screen code
-        if (!this->update()) {
-            break;
-        }
+        //if (!this->update()) {
+        //    break;
+        //}
 
         // Swap buffers
-	    SDL_GL_SwapWindow(this->window.get_handle());
+        this->window.swap_buffers();
+	    //SDL_GL_SwapWindow(this->window.get_handle());
         
-        Uint32 current = SDL_GetTicks();
-        ic::Time::globalDelta = (current - lastUpdate) / 1000.0f;
-        ic::Time::delta = ic::Time::globalDelta * ic::Time::deltaMultiplier; 
-        lastUpdate = current;
+        //ic::Time::tick(SDL_GetTicks());
+        this->tick();
 	}
 
     this->close();
@@ -230,7 +253,7 @@ void ic::Application::start() {
 
 
 
-void ic::Application::send_application_information() {
+void ic::Engine::send_application_information() {
     std::string version = std::string((char*) glGetString(GL_VERSION));
     std::string sub = version.substr(0, 5);
 
@@ -244,7 +267,7 @@ void ic::Application::send_application_information() {
 }
 
 
-void ic::Application::set_window_attributes() {
+void ic::Engine::set_window_attributes() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
@@ -258,11 +281,8 @@ void ic::Application::set_window_attributes() {
 }
 
 
-void ic::Application::prepare_window(int w, int h) {
-    window.init(w, h);
-}
 
-void ic::Application::pre_load(int w, int h) {
+void ic::Engine::pre_load(int w, int h) {
     if (!gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress)) {
         throw std::runtime_error("Couldn't initialize GLAD.\n");
     }
@@ -277,17 +297,35 @@ void ic::Application::pre_load(int w, int h) {
     this->send_application_information();
 }
 
+void ic::Engine::swap_buffers() {
+    this->window.swap_buffers();
+}
 
-bool ic::Application::poll_events(ic::Event &e) {
-    SDL_PumpEvents();
-    while (SDL_PollEvent(&e)) {
-        ic::InputHandler::handle(e);
+void ic::Engine::tick() {
+    ic::Time::tick(SDL_GetTicks());
+}
 
-        if (!this->handle_event(e)) {
-            return false;
-        }
 
-        
+
+
+int ic::Engine::poll_events(ic::Event &e) {
+    //SDL_PumpEvents();
+    return SDL_PollEvent(&e);
+        //ic::InputHandler::handle(e);
+
+        //if (!this->handle_event(e)) {
+        //    return false;
+        //}
+
+        //this->poll_events(e);
+
+        //ic::InputHandler::handle(e);
+
+        //if (!this->process_window_callbacks(e)) {
+        //    break;
+        //}
+
+        /*
         switch (e.type) {
             case SDL_QUIT: 
                 return false;
@@ -316,26 +354,56 @@ bool ic::Application::poll_events(ic::Event &e) {
                 
                 window_size_changed(this->window.get_width(), this->window.get_height());
         }
+        */
+    //}
+}
+
+bool ic::Engine::process_window_callbacks(ic::Event &e) {
+    ic::InputHandler::handle(e);
+
+    switch (e.type) {
+        case SDL_QUIT: 
+            return false;
+
+        case SDL_KEYUP:
+            if (e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+                return false;
+            }
+
+        case SDL_WINDOWEVENT:
+            ic::WindowScaling scaling = this->window.get_scaling();
+
+            bool resized = e.window.event == SDL_WINDOWEVENT_RESIZED || e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED;
+            if (scaling == WindowScaling::fixed || !resized) {
+                break;
+            }
+
+            if (scaling == WindowScaling::resizeable) {
+                this->window.set_size(e.window.data1, e.window.data2);
+            } else if (scaling == WindowScaling::fullscreen) {
+                SDL_Rect displayRectangle;
+                SDL_GetDisplayBounds(0, &displayRectangle);
+
+                this->window.set_size(displayRectangle.w, displayRectangle.h);
+            }
+            
+            //window_size_changed(this->window.get_width(), this->window.get_height());
     }
-    
-    ic::InputHandler::update();
 
     return true;
 }
 
-void ic::Application::close() {
-    this->dispose();
 
-    ic::FreeType::dispose();
-    ic::Audio::dispose();
-
+void ic::Engine::close() {
+    //ic::FreeType::dispose();
+    //ic::Audio::dispose();
     this->window.dispose();
 
     IMG_Quit();
     SDL_Quit();
 }
 
-void ic::Application::set_current_working_directory() {
+void ic::Engine::set_current_working_directory() {
     std::string dir = std::string(SDL_GetBasePath());
     std::replace(dir.begin(), dir.end(), '\\', '/');
 

@@ -47,15 +47,15 @@ add_subdirectory(libs/UI)
 add_subdirectory(tools/Debug)
 
 ##### Main program #####
-add_executable(main "src/FourierDrawing.cpp")
+add_executable(main "src/main.cpp")
 target_link_libraries(main Icosahedron Physics UI 
 IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
 
 ##### Examples #####
-add_executable(examples "examples/3D/Bloom.cpp")
-
-target_link_libraries(examples Icosahedron Physics UI 
-IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
+#add_executable(examples "examples/2D/Framebuffer.cpp")
+#
+#target_link_libraries(examples Icosahedron Physics UI 
+#IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)#
 
 include(CTest)
 enable_testing()

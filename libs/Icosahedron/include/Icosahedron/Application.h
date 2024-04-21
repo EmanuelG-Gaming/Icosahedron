@@ -40,10 +40,13 @@ namespace ic {
 
     struct Window {
         public:
+            const char *get_title() const;
             int get_width() const;
             int get_height() const;
 
-            void init(int w, int h);
+            void set(int w, int h, const char *title);
+            void init();
+
             void dispose();
 
             void set_header_image(const ic::Image &image);
@@ -58,6 +61,9 @@ namespace ic {
              *          
             */
             void set_vsync(int interval);
+
+            void swap_buffers();
+
 
             void set_title(const char *title);
             void set_title(const std::string &title);
@@ -93,55 +99,48 @@ namespace ic {
             SDL_GLContext glContext;
             
             /** @brief Window dimensions, expressed in physical screen pixels. */
-            int width, height;
+            int width = 640, height = 480;
             int windowIndex;
 
     };
 
 
-    class Application {
+    class Engine {
         public:
-            /* Initializes the application. Called before load(), inside the construct() function.
-             * Don't use this to add OpenGL stuff, as a GL context doesn't exist during this stage. */
-            virtual bool init() { return true; }
-
-            /* Called after setting a window and a valid OpenGL context, inside the start() function. */
-            virtual bool load() { return true; }
-
-            virtual bool handle_event(ic::Event event) { return true; }
-            virtual void window_size_changed(int w, int h) {}
-            
-            virtual bool update() { return true; }
-            virtual void dispose() {};
+            ic::Window window;
 
             /* Sets up an SDL window along with an OpenGL context. */
-            bool construct(int w, int h);
+            bool construct();
+
             /* The actual starting point of the application. */
             void start();
+
+            void close();
+
+            void tick();
+
+            int poll_events(ic::Event &e);
+            bool process_window_callbacks(ic::Event &e);
+            void swap_buffers();
             
         private:
             /* Sends relevant information such as the current OpenGL, GLEW, and SDL contexts' versions. */
             void send_application_information();
 
             void set_window_attributes();
-            void prepare_window(int w, int h);
 
             /* Called before load(). */
             void pre_load(int w, int h);
-
+    
             /** @brief Sets the app's working directory.
              *  @note The working directory would not be the generated "build" folder.
             */
             void set_current_working_directory();
+    };
 
-            bool poll_events(ic::Event &e);
-            
-            void close();
-            
-        protected:
-            ic::Window window;
-
-            bool constructed = false;
+    class Application {
+        public:
+            ic::Engine engine;
     };
 }
 

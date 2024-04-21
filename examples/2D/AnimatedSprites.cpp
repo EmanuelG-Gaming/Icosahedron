@@ -42,14 +42,14 @@ class AnimatedSprites : public ic::Application {
 
     public:
         bool init() override {
-            displayName = "Animated sprites";
+            window.set_title("Animated sprites");
             
             return true;
         }
         
         bool load() override {
             // Alpha blending
-            ic::GLStateHandler::enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
+            ic::GL::enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
 
 
             // Mesh
@@ -74,18 +74,19 @@ class AnimatedSprites : public ic::Application {
         }
     
         bool update() override {
-            set_texture_dynamic(mesh, (int) (ic::Time::globalTime * 5.0f) % (10 - 1));
+            set_texture_dynamic(mesh, (int) (ic::Time::globalTime * 1.0f) % (10 - 1));
 
-            clear_color(ic::Colors::blue);
+            ic::GL::color(ic::Colors::blue);
+
             
             shader.use();
             //camera.use(shader);
 
             spritesheet.use();
 
-            int count = 1000;
-            float w = 1.0f;
-            float h = 1.0f;
+            int count = 10;
+            float w = 0.5f;
+            float h = 0.5f;
             for (int i = count; i >= 0; i--) {
                 mesh.set_transformation(ic::Mat4x4().set_scaling<2>(ic::Vec2((i / (float) count) * w, (i / (float) count) * h)));
                 mesh.draw(shader);

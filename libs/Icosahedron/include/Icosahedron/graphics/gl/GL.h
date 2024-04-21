@@ -129,6 +129,12 @@ namespace ic {
         TEXTURE_WRAP_CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER,
     };
 
+    enum GLBufferBits {
+        COLOR_BIT = GL_COLOR_BUFFER_BIT,
+        DEPTH_BIT = GL_DEPTH_BUFFER_BIT,
+    };
+
+
     /** @brief Has functions for handling OpenGL state. */
     namespace GL {
         void enable_depth_testing(ic::GLDepthSettings depth);
@@ -148,9 +154,16 @@ namespace ic {
         void disable_blending();
         void disable_face_culling();
 
+        void color(float r, float g, float b);
+        void color(const ic::Color &c);
+        void color();
+
         void clear_color(float r, float g, float b);
-        void clear_color(const ic::Color &color);
+        void clear_color(const ic::Color &c);
         void clear_color();
+        
+        void clear();
+        void clear(int bits);
     };
 }
 
