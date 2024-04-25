@@ -25,3 +25,8 @@ void ic::Physics::Object::set_position(float x, float y, float z) {
 void ic::Physics::Object::set_position(ic::Vec3f &to) {
     this->set_position(to.x(), to.y(), to.z());
 }
+
+
+void ic::Physics::Object::set_position(ic::Vec2f &to) {
+    this->set_position(to.x(), to.y(), 0.0f);
+}

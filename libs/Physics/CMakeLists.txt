@@ -30,7 +30,7 @@ add_library(${LIBRARY_NAME} STATIC
     ${LIBRARY_HEADERS_DIRECTORY}/forces/Gravity.h
     ${LIBRARY_HEADERS_DIRECTORY}/forces/WindForce.h
 
-    ${LIBRARY_HEADERS_DIRECTORY}/Levels/PhysicsLevel.h
+    ${LIBRARY_HEADERS_DIRECTORY}/levels/PhysicsLevel.h
 
 
 

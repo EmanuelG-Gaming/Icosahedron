@@ -3,7 +3,7 @@
 using namespace ic::Physics;
 
 RigidObject::RigidObject() : Object() {
-    this->mass = 1.0f;
+    this->mass = this->inverseMass = 1.0f;
 
     this->restitution = 1.0f;
     this->staticFriction = 0.0f;
@@ -22,9 +22,15 @@ ic::Physics::RigidObject *ic::Physics::RigidObject::apply_velocity(ic::Vec3f &ve
     return this->apply_velocity(vel.x(), vel.y(), vel.z());
 }
 
+ic::Physics::RigidObject *ic::Physics::RigidObject::apply_velocity(ic::Vec2 &vel) {
+    return this->apply_velocity(vel.x(), vel.y(), 0.0f);
+}
+
+
 
 ic::Physics::RigidObject *ic::Physics::RigidObject::set_mass(float to) {
     this->mass = to;
+    this->inverseMass = 1 / to;
 
     return this;
 }

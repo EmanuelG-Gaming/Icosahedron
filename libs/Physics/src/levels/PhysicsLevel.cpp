@@ -58,7 +58,7 @@ void ic::Physics::PhysicsLevel::integrate(float timeTook) {
 
         if (body != nullptr) {
             // Calculate acceleration and angular acceleration based on the formula F = ma, with a = F/m
-            ic::Vec3f acceleration = body->force / body->mass;
+            ic::Vec3f acceleration = body->force * body->inverseMass;
             
             // Currently uses Euler's method
             // Linear part

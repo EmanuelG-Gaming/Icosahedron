@@ -15,6 +15,7 @@ namespace ic { namespace Physics {
         ManifoldPoints sphere_sphere(SphereCollider *colliderA, Transform *transformA, SphereCollider *colliderB, Transform *transformB);
         ManifoldPoints box_sphere(BoxCollider *colliderA, Transform *transformA, SphereCollider *colliderB, Transform *transformB);
         ManifoldPoints box_box(BoxCollider *colliderA, Transform *transformA, BoxCollider *colliderB, Transform *transformB);
+        ManifoldPoints polygon_sphere(PolygonCollider *colliderA, Transform *transformA, SphereCollider *colliderB, Transform *transformB);
     };
 }}
 #endif

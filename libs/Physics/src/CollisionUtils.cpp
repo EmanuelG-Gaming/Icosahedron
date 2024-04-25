@@ -1,4 +1,5 @@
 #include <Physics/CollisionUtils.h>
+#include <Icosahedron/math/geom/Raycast.h>
 
 ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::sphere_sphere(SphereCollider *colliderA, Transform *transformA, SphereCollider *colliderB, Transform *transformB) {
     float distance2 = transformA->position.dst2(transformB->position);
@@ -112,4 +113,31 @@ ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::box_box(BoxCollider *co
     normal = normal.nor();
 
     return ic::Physics::ManifoldPoints(normal, length);
+}
+
+ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::polygon_sphere(PolygonCollider *colliderA, Transform *transformA, SphereCollider *colliderB, Transform *transformB) {
+    ic::Vec3 ballPos = transformB->position;
+    bool colliding = false;
+    int intersectionCount = 0;
+
+    for (int i = 1; i < colliderA->points.size(); i++) {
+        ic::Vec2 prev = colliderA->points[i - 1], next = colliderA->points[i];
+        if (ic::Raycast::line_segments_collide(prev.x(), prev.y(), next.x(), next.y(), -15.0f, ballPos.y(), ballPos.x(), ballPos.y())) {
+            intersectionCount++;
+        }
+    }
+
+    if (intersectionCount % 2 == 1) {
+        colliding = true;
+        std::cout << "the\n";
+    }
+
+    if (!colliding) {
+        return ic::Physics::ManifoldPoints();
+    }
+
+    ic::Vec3 normal = ic::Vec3f(0.0f, 1.0f, 0.0f);
+    float normalLength = 1.0f;
+
+    return ic::Physics::ManifoldPoints(normal, normalLength);
 }

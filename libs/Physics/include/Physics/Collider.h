@@ -3,12 +3,14 @@
 
 #include <Physics/ManifoldPoints.h>
 #include <Physics/Transform.h>
+#include <vector>
 
 
 namespace ic { namespace Physics {
     struct Collider;
     struct SphereCollider;
     struct BoxCollider;
+    struct PolygonCollider;
 
     struct Collider {
         Collider() {}
@@ -16,6 +18,7 @@ namespace ic { namespace Physics {
         virtual ManifoldPoints test(Transform *TransformA, Collider *colliderB, Transform *transformB) = 0;
         virtual ManifoldPoints test(Transform *TransformA, SphereCollider *colliderB, Transform *TransformB) = 0;
         virtual ManifoldPoints test(Transform *TransformA, BoxCollider *colliderB, Transform *TransformB) = 0;
+        virtual ManifoldPoints test(Transform *TransformA, PolygonCollider *colliderB, Transform *TransformB) = 0;
     };
 
     struct SphereCollider : Collider {
@@ -28,6 +31,7 @@ namespace ic { namespace Physics {
             ManifoldPoints test(Transform *TransformA, Collider *colliderB, Transform *transformB) override;
             ManifoldPoints test(Transform *TransformA, SphereCollider *colliderB, Transform *TransformB) override;
             ManifoldPoints test(Transform *TransformA, BoxCollider *colliderB, Transform *TransformB) override;
+            ManifoldPoints test(Transform *TransformA, PolygonCollider *colliderB, Transform *TransformB) override;
     };
 
     struct BoxCollider : Collider {
@@ -40,6 +44,20 @@ namespace ic { namespace Physics {
             ManifoldPoints test(Transform *TransformA, Collider *colliderB, Transform *transformB) override;
             ManifoldPoints test(Transform *TransformA, SphereCollider *colliderB, Transform *TransformB) override;
             ManifoldPoints test(Transform *TransformA, BoxCollider *colliderB, Transform *TransformB) override;
+            ManifoldPoints test(Transform *TransformA, PolygonCollider *colliderB, Transform *TransformB) override;
+    };
+
+    struct PolygonCollider : Collider {
+        public:
+            std::vector<ic::Vec2> points;
+            
+            PolygonCollider() {}
+            PolygonCollider(const std::vector<ic::Vec2> &points) : points(points) {}
+
+            ManifoldPoints test(Transform *TransformA, Collider *colliderB, Transform *transformB) override;
+            ManifoldPoints test(Transform *TransformA, SphereCollider *colliderB, Transform *TransformB) override;
+            ManifoldPoints test(Transform *TransformA, BoxCollider *colliderB, Transform *TransformB) override;
+            ManifoldPoints test(Transform *TransformA, PolygonCollider *colliderB, Transform *TransformB) override;
     };
 }}
 

@@ -10,7 +10,11 @@ namespace ic { namespace Physics {
         public:
             ic::Vec3 force, velocity;
 
-            float mass, inertia;
+            float mass;
+            
+            /** @brief Precomputed value for the quotient of the object's mass. */
+            float inverseMass;
+        
             float restitution;
             float staticFriction, dynamicFriction;
             
