@@ -116,28 +116,70 @@ ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::box_box(BoxCollider *co
 }
 
 ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::polygon_sphere(PolygonCollider *colliderA, Transform *transformA, SphereCollider *colliderB, Transform *transformB) {
-    ic::Vec3 ballPos = transformB->position;
-    bool colliding = false;
+    ic::Vec3 ballPosTmp(transformB->position - transformA->position);
+    ic::Vec3 ballPos = transformA->rotation.transform(ballPosTmp);
+
+
     int intersectionCount = 0;
+    int maximumIndex = colliderA->points.size() - 1;
 
     for (int i = 1; i < colliderA->points.size(); i++) {
         ic::Vec2 prev = colliderA->points[i - 1], next = colliderA->points[i];
-        if (ic::Raycast::line_segments_collide(prev.x(), prev.y(), next.x(), next.y(), -15.0f, ballPos.y(), ballPos.x(), ballPos.y())) {
+        if (ic::Raycast::line_segments_collide(prev.x(), prev.y(), next.x(), next.y(), -10000.0f, ballPos.y(), ballPos.x(), ballPos.y())) {
             intersectionCount++;
         }
     }
 
-    if (intersectionCount % 2 == 1) {
-        colliding = true;
-        std::cout << "the\n";
+    // Now do the same for the first and last points
+    {
+        ic::Vec2 prev = colliderA->points[maximumIndex], next = colliderA->points[0];
+        if (ic::Raycast::line_segments_collide(prev.x(), prev.y(), next.x(), next.y(), -10000.0f, ballPos.y(), ballPos.x(), ballPos.y())) {
+            intersectionCount++;
+        }
     }
 
-    if (!colliding) {
+
+    bool even = intersectionCount % 2 == 0;
+    if (even) {
         return ic::Physics::ManifoldPoints();
     }
 
-    ic::Vec3 normal = ic::Vec3f(0.0f, 1.0f, 0.0f);
-    float normalLength = 1.0f;
+    Vec2f closest;
+    float closestDistance = 0.0f;
+    ic::Vec2 bpos2D = ic::Vec2(ballPos.x(), ballPos.y());
 
-    return ic::Physics::ManifoldPoints(normal, normalLength);
+    for (int i = 1; i < colliderA->points.size(); i++) {
+        Vec2f p1 = colliderA->points[i - 1], p2 = colliderA->points[i];
+        
+        Vec2f compare = ic::Raycast::get_closest_point_line(bpos2D, p1, p2);
+        float distance2 = compare.dst2(bpos2D);
+        if (closestDistance == 0.0f ||distance2 < closestDistance) {
+            closest = compare;
+            closestDistance = distance2;
+        }
+    }
+
+    {
+        Vec2f p1 = colliderA->points[maximumIndex], p2 = colliderA->points[0];
+        
+        Vec2f compare = ic::Raycast::get_closest_point_line(bpos2D, p1, p2);
+        float distance2 = compare.dst2(bpos2D);
+        if (closestDistance == 0.0f ||distance2 < closestDistance) {
+            closest = compare;
+            closestDistance = distance2;
+        }
+    }
+
+    closestDistance = sqrt(closestDistance);
+
+
+    ballPos = ballPos + transformA->position;
+    Vec2f to = (bpos2D - closest);
+    to = ic::Quaternion(transformA->rotation).conjugate().transform(to);
+
+
+    ic::Vec2 normal = to.nor();
+    float normalLength = closestDistance;
+
+    return ic::Physics::ManifoldPoints(ic::Vec3(normal.x(), normal.y(), 0.0f), normalLength);
 }

@@ -109,7 +109,22 @@ namespace ic {
             result.z() = temporary2.z;
          
             return result;
+        }
+
+        ic::Vec2f transform(Vec2f &reference) {
+            // p' = q * p * conj(q)
+            
+            Quaternion temporary1 = Quaternion(reference.x(), reference.y(), 0.0f, 0.0f), temporary2 = Quaternion(*this);
+            temporary2 = temporary2.conjugate();
+            temporary2 = temporary2 * temporary1 * (*this);
+         
+            ic::Vec2f result;
+            result.x() = temporary2.x;
+            result.y() = temporary2.y;
+            
+            return result;
         } 
+        
     
         Quaternion multiply_left(float otherX, float otherY, float otherZ, float otherW) {
             float newX = otherW * x + otherX * w + otherY * z - otherZ * y;

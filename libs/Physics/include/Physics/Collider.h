@@ -53,6 +53,12 @@ namespace ic { namespace Physics {
             
             PolygonCollider() {}
             PolygonCollider(const std::vector<ic::Vec2> &points) : points(points) {}
+            PolygonCollider(const std::vector<float> &unpacked) {
+                for (int i = 0; i < unpacked.size(); i += 2) {
+                    ic::Vec2 p(unpacked[i], unpacked[i + 1]);
+                    points.push_back(p);
+                }
+            }
 
             ManifoldPoints test(Transform *TransformA, Collider *colliderB, Transform *transformB) override;
             ManifoldPoints test(Transform *TransformA, SphereCollider *colliderB, Transform *TransformB) override;
