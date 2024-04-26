@@ -140,9 +140,6 @@ ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::polygon_sphere(PolygonC
 
 
     bool even = intersectionCount % 2 == 0;
-    if (even) {
-        return ic::Physics::ManifoldPoints();
-    }
 
     Vec2f closest;
     float closestDistance = 0.0f;
@@ -172,14 +169,17 @@ ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::polygon_sphere(PolygonC
 
     closestDistance = sqrt(closestDistance);
 
+    if (closestDistance > colliderB->radius) {
+        return ic::Physics::ManifoldPoints();
+    }
 
     ballPos = ballPos + transformA->position;
-    Vec2f to = (bpos2D - closest);
+    Vec2f to = (closest - bpos2D);
     to = ic::Quaternion(transformA->rotation).conjugate().transform(to);
 
 
     ic::Vec2 normal = to.nor();
-    float normalLength = closestDistance;
+    float normalLength = std::max(closestDistance - colliderB->radius, 0.01f);
 
     return ic::Physics::ManifoldPoints(ic::Vec3(normal.x(), normal.y(), 0.0f), normalLength);
 }
