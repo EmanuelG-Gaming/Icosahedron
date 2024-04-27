@@ -32,17 +32,17 @@ class BasicPhysics : public ic::Application {
         }
         
         bool load() override {
-            angle1 = -0.5f;
-            angle2 = 0.1f;
+            angle1 = M_PI / 4.0f;
+            angle2 = 0.0f;
 
             mesh1 = ic::GeometryGenerator::generate_regular_polygon_mesh(20, 0.3f);
             mesh1.set_material(ic::MeshMaterial2D(ic::Colors::yellow, 1.0f));
 
             auto positions1 = std::vector<float>({
-                -2.0f, -0.5f,
-                2.0f, -0.5f,
-                2.0f, 0.5f,
-                -2.0f, 0.5f,
+                -0.5f, -0.5f,
+                0.5f, -0.5f,
+                0.5f, 0.5f,
+                -0.5f, 0.5f,
             });
             auto positions2 = std::vector<float>({
                 -2.0f, -0.5f,
@@ -70,8 +70,8 @@ class BasicPhysics : public ic::Application {
             rigidBody1 = new ic::Physics::RigidObject();
             rigidBody1->collider = new ic::Physics::SphereCollider(0.3f);
             rigidBody1->dynamic = true;
-            rigidBody1->set_position(-1.5f, 2.0f);
-            rigidBody1->apply_velocity(0.8f, 0.0f);
+            rigidBody1->set_position(0.0f, 1.0f);
+            rigidBody1->apply_velocity(0.0f, 0.0f);
 
             level.add_object(rigidBody1);
 
@@ -100,8 +100,8 @@ class BasicPhysics : public ic::Application {
             // Retry
             ic::KeyboardController *kb = new ic::KeyboardController();
             kb->add_key_up_action([=]() {
-                rigidBody1->set_position(-1.5f, 2.0f);
-                rigidBody1->velocity = ic::Vec3(0.8f, 0.0f, 0.0f);
+                rigidBody1->set_position(0.0f, 1.0f);
+                rigidBody1->velocity = ic::Vec3(0.0f, 0.5f, 0.0f);
             }, KEY_Q);
             ic::InputHandler::add_input(kb, "keyboard");
 

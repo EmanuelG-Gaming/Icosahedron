@@ -139,18 +139,15 @@ ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::polygon_sphere(PolygonC
     }
 
 
-    bool even = intersectionCount % 2 == 0;
-
     Vec2f closest;
     float closestDistance = 0.0f;
     ic::Vec2 bpos2D = ic::Vec2(ballPos.x(), ballPos.y());
-
     for (int i = 1; i < colliderA->points.size(); i++) {
         Vec2f p1 = colliderA->points[i - 1], p2 = colliderA->points[i];
         
         Vec2f compare = ic::Raycast::get_closest_point_line(bpos2D, p1, p2);
         float distance2 = compare.dst2(bpos2D);
-        if (closestDistance == 0.0f ||distance2 < closestDistance) {
+        if (closestDistance == 0.0f || distance2 < closestDistance) {
             closest = compare;
             closestDistance = distance2;
         }
@@ -161,7 +158,7 @@ ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::polygon_sphere(PolygonC
         
         Vec2f compare = ic::Raycast::get_closest_point_line(bpos2D, p1, p2);
         float distance2 = compare.dst2(bpos2D);
-        if (closestDistance == 0.0f ||distance2 < closestDistance) {
+        if (closestDistance == 0.0f || distance2 < closestDistance) {
             closest = compare;
             closestDistance = distance2;
         }
@@ -169,9 +166,12 @@ ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::polygon_sphere(PolygonC
 
     closestDistance = sqrt(closestDistance);
 
-    if (closestDistance > colliderB->radius) {
+    bool odd = intersectionCount % 2 == 1;
+    if (odd || closestDistance > colliderB->radius) {
         return ic::Physics::ManifoldPoints();
     }
+
+
 
     ballPos = ballPos + transformA->position;
     Vec2f to = (closest - bpos2D);
@@ -179,7 +179,9 @@ ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::polygon_sphere(PolygonC
 
 
     ic::Vec2 normal = to.nor();
-    float normalLength = std::max(closestDistance - colliderB->radius, 0.01f);
+    if (odd) normal = -normal;
+
+    float normalLength = std::max(closestDistance - colliderB->radius, 0.001f);
 
     return ic::Physics::ManifoldPoints(ic::Vec3(normal.x(), normal.y(), 0.0f), normalLength);
 }
