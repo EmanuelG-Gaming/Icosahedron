@@ -185,3 +185,7 @@ ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::polygon_sphere(PolygonC
 
     return ic::Physics::ManifoldPoints(ic::Vec3(normal.x(), normal.y(), 0.0f), normalLength);
 }
+
+ic::Physics::ManifoldPoints ic::Physics::CollisionUtils::polygon_polygon_SAT(PolygonCollider *colliderA, Transform *transformA, PolygonCollider *colliderB, Transform *transformB) {
+    
+}

@@ -16,6 +16,9 @@ namespace ic { namespace Physics {
         ManifoldPoints box_sphere(BoxCollider *colliderA, Transform *transformA, SphereCollider *colliderB, Transform *transformB);
         ManifoldPoints box_box(BoxCollider *colliderA, Transform *transformA, BoxCollider *colliderB, Transform *transformB);
         ManifoldPoints polygon_sphere(PolygonCollider *colliderA, Transform *transformA, SphereCollider *colliderB, Transform *transformB);
+        
+        /** @brief Separating Axis Theorem. */
+        ManifoldPoints polygon_polygon_SAT(PolygonCollider *colliderA, Transform *transformA, PolygonCollider *colliderB, Transform *transformB);
     };
 }}
 #endif
