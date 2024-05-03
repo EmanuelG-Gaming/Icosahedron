@@ -5,21 +5,21 @@ namespace ic::Noise { namespace {
     void load_permutation_lookup() {
         memset(permutations, 0, sizeof(permutations));
 
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < IC_NOISE_PERMUTATION_COUNT; i++) {
             permutations[i] = i;
         }
 
         // Shuffle element indices
-        for (int i = 256 - 1; i > 0; i--) {
-            int index = rand() % (256 - 1);
+        for (int i = IC_NOISE_PERMUTATION_COUNT - 1; i > 0; i--) {
+            int index = rand() % (IC_NOISE_PERMUTATION_COUNT - 1);
             uint8_t temporary = permutations[i];
 
             permutations[i] = permutations[index];
             permutations[index] = temporary;
         }
 
-        for (int i = 0; i < 256; i++) {
-            permutations[i + 256 - 1] = permutations[i];
+        for (int i = 0; i < IC_NOISE_PERMUTATION_COUNT; i++) {
+            permutations[i + IC_NOISE_PERMUTATION_COUNT - 1] = permutations[i];
         }
     }
 
@@ -51,7 +51,6 @@ namespace ic::Noise { namespace {
 
 void ic::Noise::init() {
     if (loaded) {
-        printf("Noise library was already loaded!\n");
         return;
     }
     load_permutation_lookup();

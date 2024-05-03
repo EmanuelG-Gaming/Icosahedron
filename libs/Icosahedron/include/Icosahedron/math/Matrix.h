@@ -30,6 +30,14 @@ namespace ic {
             }
         }
 
+        int width() const {
+            return n;
+        }
+        int height() const {
+            return m;
+        }
+        
+
         // Matrix overriding
         
         Mat &identity() {

@@ -11,6 +11,7 @@
 
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/assets/loaders/TextureLoader.h>
+#include <Icosahedron/util/Noise.h>
 #include <IcosahedronDebug/ConsoleOutput.h>
 
 // ic::Shaders::basicTextureShaderFrag2D with slight modifications to allow more "refined" alpha blending,
@@ -34,37 +35,26 @@ std::string alphaBlendingFragment = IC_ADD_GLSL_DEFINITION(
 /* Shows how to achieve alpha transparency by using a loaded .png texture and a procedural image. */
 class Transparency2D : public ic::Application {
     ic::Image image;
+                
     ic::Mesh2D mesh1, mesh2;
 
     ic::Texture texture1, texture2;
     ic::Camera2D camera;
 
     ic::Shader shader;
-    float time;
 
     public:
         bool init() override {
-            displayName = "2D transparency";
+            engine.window.set_title("2D transparency");
             
             return true;
         }
         
         bool load() override {
             // Alpha blending
-            ic::GLStateHandler::enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
+            ic::GL::enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
 
             image = ic::Image(64, 64);
-            int rings = 10;
-            int ringSize = 2;
-            int ringCount = 10;
-
-            for (int j = 0; j < ringCount; j++) {
-                int x = rand() % (image.get_width() - 1), y = rand() % (image.get_height() - 1);
-
-                for (int i = 0; i < 10; i++) {
-                    image.fill_circle(x, y, (rings + 1) * ringSize - i, { 255, 255, 255, (uint8_t) (255 - i * rings * 2.5f) });
-                }
-            }
 
             // Mesh 1
             mesh1 = ic::GeometryGenerator::generate_rectangle_mesh(0.3f, 0.3f);
@@ -72,17 +62,24 @@ class Transparency2D : public ic::Application {
             
             // Mesh 2
             mesh2 = ic::GeometryGenerator::generate_rectangle_mesh(0.3f, 0.3f);
-            mesh2.set_transformation(ic::Mat4x4().set_translation<2>({ 0.35f, 0.0f }));
-            
 
             shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, alphaBlendingFragment);
             texture1 = ic::TextureLoader::load_png("resources/textures/discontinuous-square.png");
-            texture2 = ic::TextureLoader::load(image);
             
             camera = ic::Camera2D();
 
-            time = 0.0f;
+            ic::Time::wait(2.5f, [&]() {
+                int ringCount = 200;
+    
+                for (int j = 0; j < ringCount; j++) {
+                    int x = rand() % (image.get_width() - 1), y = rand() % (image.get_height() - 1);
+                    int ringSize = rand() % 5 + 1;
+    
+                    image.fill_circle(x, y, ringSize, { 255, 255, 255, (uint8_t) (ic::Noise::perlin_1D(j / (float) ringCount) * 255) });
+                }
+            });
 
+            
             return true;
         }
 
@@ -91,14 +88,18 @@ class Transparency2D : public ic::Application {
             camera.height = h;
         }
 
-        bool handle_event(ic::Event event, float dt) override { 
+        bool handle_event(ic::Event event) override { 
             return true;
         }
     
-        bool update(float dt) override {
-            time += dt;
+        bool update() override {
+            ic::TextureParameters params; params.magFilter = params.minFilter = ic::TEXTURE_FILTER_LINEAR;
+            texture2 = ic::TextureLoader::load(image, params);
 
-            clear_color(ic::Colors::blue);
+            mesh2.set_transformation(ic::Mat4x4().set_translation<2>({ 0.35f, 0.0f }) * ic::Mat4x4().set_scaling<2>({ sin(ic::Time::time), 1.0f }));
+
+
+            ic::GL::clear_color(ic::Colors::blue);
             
             
             shader.use();
@@ -125,11 +126,12 @@ class Transparency2D : public ic::Application {
 };
 
 int main() {
+    ic::Debug::create_console();
+
     Transparency2D application;
     
-    if (application.construct(640, 480)) {
-        application.start();
-    }
+    application.construct(640, 480);
+    application.start();
 
     return 0;
 }

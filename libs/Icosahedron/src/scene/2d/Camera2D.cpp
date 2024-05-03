@@ -33,7 +33,7 @@ void Camera2D::unuse(ic::Shader &shader) {
     shader.set_uniform_mat4("projection", ic::Mat4x4());
 }
 
-ic::Vec2f Camera2D::project(ic::Vec2f &worldPosition) {
+ic::Vec2f Camera2D::project(const ic::Vec2f &worldPosition) {
     ic::Vec2f result;
 
     result.x() = (worldPosition.x() - position.x()) * this->scale;
@@ -42,21 +42,21 @@ ic::Vec2f Camera2D::project(ic::Vec2f &worldPosition) {
     return result;
 }
 
-ic::Vec2f Camera2D::unproject(ic::Vec2f &screenPosition) {
+ic::Vec2f Camera2D::unproject(const ic::Vec2f &screenPosition) {
     ic::Vec2f result;
 
     ic::Vec2f pos = screenPosition;
-    pos.x() /= width;
-    pos.y() /= height;
+    //pos.x() /= width;
+    //pos.y() /= height;
+//
+    //pos.x() *= 2.0f;
+    //pos.y() *= 2.0f;
+    //pos.x() -= 1.0f;
+    //pos.y() -= 1.0f;
+    //pos.y() *= -1.0f;
 
-    pos.x() *= 2.0f;
-    pos.y() *= 2.0f;
-    pos.x() -= 1.0f;
-    pos.y() -= 1.0f;
-    pos.y() *= -1.0f;
 
-
-    result.x() = (pos.x() / this->scale) * (width / (float) height) + position.x();
+    result.x() = (pos.x() / this->scale) + position.x(); //* (width / (float) height) + position.x();
     result.y() = (pos.y() / this->scale) + position.y();
 
     return result;

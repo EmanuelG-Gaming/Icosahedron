@@ -29,10 +29,10 @@ namespace ic {
             void resize(int width, int height);
 
             /* Projects world coordinates to screen coordinates. */
-            ic::Vec2f project(ic::Vec2f &worldPosition);
+            ic::Vec2f project(const ic::Vec2f &worldPosition);
 
             /* Projects screen coordinates to world coordinates. */
-            ic::Vec2f unproject(ic::Vec2f &screenPosition);
+            ic::Vec2f unproject(const ic::Vec2f &screenPosition);
         
         protected:
             ic::Mat4x4 projection;

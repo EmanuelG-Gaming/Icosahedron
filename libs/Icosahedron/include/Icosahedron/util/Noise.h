@@ -8,11 +8,12 @@
 #include <Icosahedron/math/geom/Vectors.h>
 #include <Icosahedron/math/Interpolation.h>
 
+#define IC_NOISE_PERMUTATION_COUNT 512u
 
 namespace ic {
     namespace Noise {
         namespace {
-            uint8_t permutations[256 * 2];
+            uint8_t permutations[IC_NOISE_PERMUTATION_COUNT * 2];
             bool loaded = false;
 
             void load_permutation_lookup();
