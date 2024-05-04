@@ -44,12 +44,6 @@ class Transparency2D : public ic::Application {
     ic::Shader shader;
 
     public:
-        bool init() override {
-            engine.window.set_title("2D transparency");
-            
-            return true;
-        }
-        
         bool load() override {
             // Alpha blending
             ic::GL::enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
@@ -68,7 +62,7 @@ class Transparency2D : public ic::Application {
             
             camera = ic::Camera2D();
 
-            ic::Time::wait(2.5f, [&]() {
+            ic::Time::run(5.0f, [&]() {
                 int ringCount = 200;
     
                 for (int j = 0; j < ringCount; j++) {
@@ -130,7 +124,7 @@ int main() {
 
     Transparency2D application;
     
-    application.construct(640, 480);
+    application.construct("2D transparency", 640, 480);
     application.start();
 
     return 0;

@@ -3,17 +3,21 @@
 
 #include <cstdint>
 #include <functional>
-#include <thread>
-#include <chrono>
-#include <iostream>
 
 
 namespace ic {
-    struct TimedThread {
-        void operator()(float timeSeconds, float snapshot, const std::function<void()> &cons);
+    struct DelayedRun {
+        float delay;
+        float snapshot;
+        std::function<void()> runAtEnd;
     };
 
     namespace Time {
+        namespace {
+            std::vector<DelayedRun*> running;
+        };
+
+
         /** @brief The time elapsed since startup in seconds. */
         extern float globalTime;
 
@@ -30,8 +34,7 @@ namespace ic {
 
         void tick(uint32_t current);
 
-        /** @brief Opens a new thread that waits for an instruction for a certain amount of time. */
-        void wait(float seconds, const std::function<void()> &cons);
+        void run(float seconds, const std::function<void()> &cons);
     };
 }
 

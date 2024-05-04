@@ -90,7 +90,7 @@ void ic::Window::set_scaling(ic::WindowScaling to) {
 
 void ic::Window::set_vsync(int interval) {
     if (SDL_GL_SetSwapInterval(interval) != 0) {
-		std::cerr << "SDL_GL_SetSwapInterval Error: " << SDL_GetError();
+		std::cerr << "SDL_GL_SetSwapInterval Error: " << SDL_GetError() << "\n";
 		return;
 	}
 }
@@ -117,13 +117,16 @@ void ic::Window::set_cursor_visibility(bool to) {
     this->cursorVisibility = to;
 
     if (SDL_ShowCursor(to) < 0) {
-		std::cerr << "SDL_ShowCursor Error: " << SDL_GetError();
+		std::cerr << "SDL_ShowCursor Error: " << SDL_GetError() << "\n";
 		return;
 	}
 }
 
 void ic::Window::set_cursor_lock(bool to) {
-    SDL_SetRelativeMouseMode((SDL_bool) to);
+    if (SDL_SetRelativeMouseMode((SDL_bool) to) < 0) {
+        std::cerr << "SDL_SetRelativeMouseMode Error: " << SDL_GetError() << "\n";
+        return;
+    }
 }
 
 
@@ -255,10 +258,6 @@ void ic::Engine::pre_load(int w, int h) {
     SDL_GL_SetSwapInterval(1); // Enables VSync
     glViewport(0, 0, w, h);
     
-    //ic::FreeType::load();
-    //ic::Audio::init();
-    //ic::Noise::init();
-
     this->send_application_information();
 }
 
@@ -314,8 +313,6 @@ bool ic::Engine::process_window_callbacks(ic::Event &e) {
 
 
 void ic::Engine::close() {
-    //ic::FreeType::dispose();
-    //ic::Audio::dispose();
     this->window.dispose();
 
     IMG_Quit();
@@ -351,11 +348,11 @@ void ic::Application::construct(const char *title, int w, int h) {
 }
 
 void ic::Application::pre_load() {
+    engine.construct();
+
     if (!this->init()) {
         return;
     }
-
-    engine.construct();
 
     ic::FreeType::load();
     ic::Audio::init();
