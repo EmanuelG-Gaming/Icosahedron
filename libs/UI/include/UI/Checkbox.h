@@ -23,7 +23,9 @@ namespace ic { namespace UI {
             CheckboxStyle checkboxStyle;
 
             Checkbox();
-            Checkbox(bool *toChange);
+            Checkbox(const std::function<bool()> &callback);
+
+            virtual void mouse_up_callback() override;
 
             void draw() override;
 
@@ -31,7 +33,8 @@ namespace ic { namespace UI {
 
         protected:
             bool on;
-            bool *toChange;
+            std::function<bool()> clicked;
+
     };
 }}
 

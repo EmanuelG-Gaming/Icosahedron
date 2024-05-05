@@ -34,9 +34,9 @@ namespace ic { namespace UI {
             Button();
 
 
-            void mouse_moved_callback() override;
-            void mouse_up_callback() override;
-            void mouse_down_callback() override;
+            virtual void mouse_moved_callback() override;
+            virtual void mouse_up_callback() override;
+            virtual void mouse_down_callback() override;
             
             void draw() override;
 

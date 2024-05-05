@@ -20,6 +20,8 @@ float ic::Time::globalTime = 0.0f;
 float ic::Time::time = 0.0f;
 Uint32 ic::Time::lastUpdate = 0;
 
+
+
 /////////////////////
 ////// Window  //////
 /////////////////////

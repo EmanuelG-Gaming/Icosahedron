@@ -6,10 +6,13 @@
 
 #include <string>
 
+
+
 #include <glad/glad.h>
 
 #include <SDL.h>
 #include <SDL_opengl.h>
+
 
 #include <Icosahedron/Global.h>
 
@@ -27,6 +30,8 @@
 
 
 namespace ic {
+    const int TOTAL_WINDOWS = 5;
+
     enum class WindowScaling {
         invalid = -1,
         
@@ -36,7 +41,6 @@ namespace ic {
         fullscreenClamped = SDL_WINDOW_FULLSCREEN
     };
 
-    const int TOTAL_WINDOWS = 5;
 
     struct Window {
         public:

@@ -12,7 +12,7 @@
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/assets/loaders/TextureLoader.h>
 #include <Icosahedron/util/Noise.h>
-#include <IcosahedronDebug/ConsoleOutput.h>
+#include <Icosahedron/Debug.h>
 
 // ic::Shaders::basicTextureShaderFrag2D with slight modifications to allow more "refined" alpha blending,
 // rather than a cheap fragment discard when the color reaches a certain threshold
@@ -120,7 +120,7 @@ class Transparency2D : public ic::Application {
 };
 
 int main() {
-    ic::Debug::create_console();
+    ic::create_console();
 
     Transparency2D application;
     

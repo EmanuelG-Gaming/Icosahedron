@@ -4,11 +4,11 @@ using namespace ic::UI;
 
 Checkbox::Checkbox() : Button() {
     this->on = false;
-    this->toChange = NULL;
+    this->clicked = nullptr;
 }
 
-Checkbox::Checkbox(bool *toChange) : Checkbox() {
-    this->toChange = toChange;
+Checkbox::Checkbox(const std::function<bool()> &callback) : Checkbox() {
+    this->clicked = callback;
 }
 
 
@@ -51,4 +51,11 @@ ic::UI::Checkbox *ic::UI::Checkbox::set_style(const ic::UI::CheckboxStyle &style
     this->checkboxStyle = style;
 
     return this;
+}
+
+void ic::UI::Checkbox::mouse_up_callback() {
+    if (this->isPressed && this->clicked != nullptr) {
+        this->clicked();
+    }
+    this->isPressed = false;
 }
