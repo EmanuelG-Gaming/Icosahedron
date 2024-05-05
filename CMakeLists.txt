@@ -44,18 +44,15 @@ include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${FREETYPE_IN
 add_subdirectory(libs/Icosahedron)
 add_subdirectory(libs/Physics)
 add_subdirectory(libs/UI)
-add_subdirectory(tools/Debug)
 
 ##### Main program #####
 add_executable(main "src/main.cpp")
-target_link_libraries(main Icosahedron Physics UI 
-IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
+target_link_libraries(main Icosahedron Physics UI ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
 
 ##### Examples #####
-add_executable(examples "examples/demos/HeatEquation.cpp")
+add_executable(examples "examples/2D/Transparency.cpp")
 
-target_link_libraries(examples Icosahedron Physics UI 
-IcosahedronDebug ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)#
+target_link_libraries(examples Icosahedron Physics UI ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
 
 include(CTest)
 enable_testing()
