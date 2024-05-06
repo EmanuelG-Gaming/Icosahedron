@@ -6,8 +6,8 @@
 #include <Icosahedron/math/geom/Vectors.h>
 
 #include <UI/style/Drawable.h>
-#include <UI/layout/Table.h>
-
+#include <UI/Element.h>
+#include <UI/Global.h>
 
 
 namespace ic { namespace UI {
@@ -27,36 +27,36 @@ namespace ic { namespace UI {
 
 
 
-    class Slider : public Table {
+    class Slider : public Element {
         public:
             SliderStyle style;
-            std::function<void()> clickListener;
-
+            
             Slider();
             Slider(float t, float lineWidth, bool vertical, const std::function<float()> &knobMoved);
 
 
+            void draw() override;
 
             virtual void mouse_moved_callback() override;
             virtual void mouse_up_callback() override;
             virtual void mouse_down_callback() override;
             
-            void draw() override;
-
 
             ic::UI::Slider *set_style(const ic::UI::SliderStyle &style);
 
         protected:
-            bool contains(ic::Vec2f &point);
+            bool knob_contains(ic::Vec2f &point);
+            ic::Vec2 calculate_rotated_sizes(float baseWidth, float baseHeight);
 
         protected:
             bool vertical;
+            bool draggingKnob;
             float lineWidth, lineThickness;
             float knobWidth, knobHeight;
 
             ic::Vec2 previousKnobPosition, currentKnobPosition;
 
-            std::function<float()> knobMovedCallback;
+            std::function<void(float)> knobMovedCallback;
     };
 }}
 

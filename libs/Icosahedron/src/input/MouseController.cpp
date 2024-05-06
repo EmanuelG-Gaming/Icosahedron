@@ -17,12 +17,17 @@ void ic::MouseController::update(float dt) {
 }
 
 void ic::MouseController::handle_event(const ic::Event &event, float dt) {
-    int x = 0, y = 0;
+    int x, y;
     Uint32 state = SDL_GetMouseState(&x, &y);
 
     this->cursorPosition = { x, y };
     this->relativeMotion = { 0, 0 };
     this->scrollWheelDirection = 0.0f;
+
+    //std::cout << this->cursorPosition << "\n";
+
+
+
 
     if (event.type == SDL_MOUSEMOTION) {
         this->relativeMotion = { event.motion.xrel, event.motion.yrel };

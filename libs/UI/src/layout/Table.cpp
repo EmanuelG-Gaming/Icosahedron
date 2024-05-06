@@ -51,7 +51,7 @@ void ic::UI::Table::mouse_moved() {
     this->mouse_moved_callback();
 
     for (auto &cell : this->cells) {
-        cell->mouse_moved_callback();
+        cell->element->mouse_moved_callback();
     }
 
     for (auto &table : this->tables) {
@@ -63,7 +63,7 @@ void ic::UI::Table::mouse_up() {
     this->mouse_up_callback();
 
     for (auto &cell : this->cells) {
-        cell->mouse_up_callback();
+        cell->element->mouse_up_callback();
     }
 
     for (auto &table : this->tables) {
@@ -75,7 +75,7 @@ void ic::UI::Table::mouse_down() {
     this->mouse_down_callback();
 
     for (auto &cell : this->cells) {
-        cell->mouse_down_callback();
+        cell->element->mouse_down_callback();
     }
 
     for (auto &table : this->tables) {
@@ -220,6 +220,17 @@ ic::UI::ImageElement *ic::UI::Table::image(const std::string &atlasEntryName, fl
     return i;
 }
 
+ic::UI::Slider *ic::UI::Table::slider() {
+    ic::UI::Slider *i = new ic::UI::Slider();
+    ic::UI::Cell *cell = new ic::UI::Cell();
+
+    cell->set_layout(this);
+    cell->element = i;
+    
+    add(cell);
+
+    return i;
+}
 
 ic::UI::Table *ic::UI::Table::set_background(Drawable *background) {
     this->background = background;

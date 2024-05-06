@@ -20,6 +20,11 @@ namespace ic { namespace UI {
 
             virtual void draw() {}
 
+            virtual void mouse_moved_callback() {}
+            virtual void mouse_up_callback() {}
+            virtual void mouse_down_callback() {}
+
+            
 
             ic::UI::Element *set_position(float x, float y);
             ic::UI::Element *set_position(ic::Vec2f to);

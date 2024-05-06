@@ -11,7 +11,7 @@
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 
 #include <Icosahedron/scene/3d/controllers/FreeRoamCameraController3D.h>
-#include <IcosahedronDebug/ConsoleOutput.h>
+#include <Icosahedron/Debug.h>
 
 
 #include <UI/Core.h>
@@ -103,16 +103,9 @@ class UI3D : public ic::Application {
     GameStates state;
 
     public:
-        bool init() override {
-            displayName = "3D transparency with menu";
-            //hideCursor = true;
-
-            return true;
-        }
-        
         bool load() override {
-            ic::GLStateHandler::enable_depth_testing(ic::LESS);
-            ic::GLStateHandler::enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
+            ic::GL::enable_depth_testing(ic::LESS);
+            ic::GL::enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
 
             state = MENU;
 
@@ -230,7 +223,7 @@ class UI3D : public ic::Application {
         bool update() override {
             ic::UI::Core::get().update(ic::Time::globalDelta);
         
-            clear_color(ic::Colors::blue);
+            ic::GL::clear_color(ic::Colors::blue);
 
             if (state == MENU) {
             } else if (state == PLAYING) {
@@ -243,12 +236,12 @@ class UI3D : public ic::Application {
                 camera.upload_to_shader(shader);
     
     
-                ic::GLStateHandler::enable_face_culling(ic::FRONT, ic::CCW);
+                ic::GL::enable_face_culling(ic::FRONT, ic::CCW);
                 floorTexture.use();
                 floorMesh.draw(shader);
     
     
-                ic::GLStateHandler::disable_face_culling();
+                ic::GL::disable_face_culling();
                 windowTexture.use();
     
                 // Inspired from LearnOpenGL.com
@@ -285,11 +278,12 @@ class UI3D : public ic::Application {
 
 
 int main() {
+    ic::create_console();
+
     UI3D application;
 
-    if (application.construct(640, 480)) {
-        application.start();
-    }
+    application.construct("3D transparency with menu", 640, 480);
+    application.start();
 
     return 0;
 }

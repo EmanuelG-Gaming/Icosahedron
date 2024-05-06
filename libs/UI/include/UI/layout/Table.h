@@ -9,6 +9,7 @@
 #include <UI/style/Drawable.h>
 #include <UI/Label.h>
 #include <UI/ImageElement.h>
+#include <UI/Slider.h>
 
 
 namespace ic { namespace UI {
@@ -64,7 +65,7 @@ namespace ic { namespace UI {
 
             Label *label(const std::string &text);
             ImageElement *image(const std::string &atlasEntryName, float width = 0.1f, float height = 0.1f);
-
+            Slider *slider();
 
             Button *button();
             Button *button(const std::function<void()> &clicked);
@@ -73,7 +74,6 @@ namespace ic { namespace UI {
             Button *image_button(const std::string &atlasEntryName, float width, float height, const std::function<void()> &clicked = nullptr);
 
             Button *text_button(const std::string &text, const std::function<void()> &clicked= nullptr);
-
         
         protected:
             void draw_elements();

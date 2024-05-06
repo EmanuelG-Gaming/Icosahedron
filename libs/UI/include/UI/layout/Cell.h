@@ -16,11 +16,6 @@ namespace ic { namespace UI {
             Cell();
             Cell(ic::UI::Element *elem);
 
-            virtual void mouse_moved_callback() {}
-            virtual void mouse_up_callback() {}
-            virtual void mouse_down_callback() {}
-
-
             void set_layout(Table *table);
 
             bool has_element();

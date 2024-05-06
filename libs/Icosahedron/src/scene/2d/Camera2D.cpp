@@ -43,6 +43,7 @@ ic::Vec2f Camera2D::project(const ic::Vec2f &worldPosition) {
 }
 
 ic::Vec2f Camera2D::unproject(const ic::Vec2f &screenPosition) {
+    /*
     ic::Vec2f result;
 
     ic::Vec2f pos = screenPosition;
@@ -57,6 +58,25 @@ ic::Vec2f Camera2D::unproject(const ic::Vec2f &screenPosition) {
 
 
     result.x() = (pos.x() / this->scale) + position.x(); //* (width / (float) height) + position.x();
+    result.y() = (pos.y() / this->scale) + position.y();
+
+    return result;
+*/
+
+    ic::Vec2 result;
+
+    ic::Vec2 pos = screenPosition;
+    pos.x() /= width;
+    pos.y() /= height;
+
+    pos.x() *= 2.0f;
+    pos.y() *= 2.0f;
+    pos.x() -= 1.0f;
+    pos.y() -= 1.0f;
+    pos.y() *= -1.0f;
+
+
+    result.x() = (pos.x() / this->scale) * (width / (float) height) + position.x();
     result.y() = (pos.y() / this->scale) + position.y();
 
     return result;
