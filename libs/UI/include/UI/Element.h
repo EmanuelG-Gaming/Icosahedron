@@ -26,11 +26,11 @@ namespace ic { namespace UI {
 
             
 
-            ic::UI::Element *set_position(float x, float y);
-            ic::UI::Element *set_position(ic::Vec2f to);
-
-            ic::UI::Element *set_size(float w, float h);
-            ic::UI::Element *set_size(ic::Vec2f to);
+            virtual ic::UI::Element *set_position(float x, float y, bool insideTable = false);
+            virtual ic::UI::Element *set_position(ic::Vec2f to, bool insideTable = false);
+            
+            virtual ic::UI::Element *set_size(float w, float h);
+            virtual ic::UI::Element *set_size(ic::Vec2f to);
     };
 }}
 

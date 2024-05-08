@@ -66,6 +66,7 @@ namespace ic { namespace UI {
             Label *label(const std::string &text);
             ImageElement *image(const std::string &atlasEntryName, float width = 0.1f, float height = 0.1f);
             Slider *slider();
+            Slider *slider(const std::function<void(float)> &callback);
 
             Button *button();
             Button *button(const std::function<void()> &clicked);

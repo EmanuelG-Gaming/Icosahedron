@@ -9,16 +9,22 @@ Slider::Slider() {
     this->vertical = false;
     this->draggingKnob = false;
 
-    this->lineWidth = 0.1f;
-    this->lineThickness = 0.05f;
+    this->lineWidth = 0.3f;
+    this->lineThickness = 0.025f;
 
-    this->knobWidth = 0.08f;
-    this->knobHeight = 0.12f;
+    this->knobWidth = 0.04f;
+    this->knobHeight = 0.06f;
 }
 
 
-Slider::Slider(float t, float lineWidth, bool vertical, const std::function<float()> &knobMoved) {
+Slider::Slider(float t, float lineWidth, bool vertical, const std::function<void(float)> &knobMoved) : Slider() {
+    this->vertical = vertical;
+    this->lineWidth = lineWidth;
+    this->knobMovedCallback = knobMoved;
+}
 
+Slider::Slider(const std::function<void(float)> &knobMoved) : Slider() {
+    this->knobMovedCallback = knobMoved;
 }
 
 
@@ -27,11 +33,11 @@ void Slider::draw() {
     ic::Vec2 lineSizes = this->calculate_rotated_sizes(this->lineWidth, this->lineThickness);
 
     if (this->style.line != nullptr) {
-        this->style.line->draw(this->translation.x(), this->translation.y(), knobSizes.x(), knobSizes.y());
+        this->style.line->draw(this->translation.x(), this->translation.y(), lineSizes.x(), lineSizes.y());
     }
 
     if (this->style.knob != nullptr) {
-        this->style.knob->draw(this->currentKnobPosition.x(), tthis->currentKnobPosition.y(), knobSizes.x(), knobSizes.y());
+        this->style.knob->draw(this->currentKnobPosition.x(), this->currentKnobPosition.y(), knobSizes.x(), knobSizes.y());
     }
 }
 
@@ -42,16 +48,6 @@ void Slider::mouse_moved_callback() {
     if (!this->draggingKnob) {
         return;
     } 
-
-    //if (this->currentKnobPosition.dst2(this->previousKnobPosition) <= 0.005f) {
-    //    return;
-    //}
-
-    if (!this->knob_contains(cursorPos)) {
-        return;
-    }
-
-
 
     if (vertical) {
         this->currentKnobPosition.y() = ic::Mathf::clamp(cursorPos.y(), this->translation.y() - this->lineWidth, this->translation.y() + this->lineWidth);
@@ -116,4 +112,20 @@ ic::UI::Slider *ic::UI::Slider::set_style(const ic::UI::SliderStyle &style) {
     this->style = style;
 
     return this;
+}
+
+ic::UI::Slider *ic::UI::Slider::set_position(float x, float y, bool insideTable) {
+    if (insideTable) {
+        this->translation.x() = this->currentKnobPosition.x() = this->previousKnobPosition.x() = this->relativePosition.x() + x;
+        this->translation.y() = this->currentKnobPosition.y() = this->previousKnobPosition.y() = this->relativePosition.y() + y;
+    } else {
+        this->translation.x() = this->currentKnobPosition.x() = this->previousKnobPosition.x() = this->relativePosition.x() = x;
+        this->translation.y() = this->currentKnobPosition.y() = this->previousKnobPosition.y() = this->relativePosition.y() = y;
+    }
+
+    return this;
+}
+
+ic::UI::Slider *ic::UI::Slider::set_position(ic::Vec2f to, bool insideTable) {
+    return this->set_position(to.x(), to.y(), insideTable);
 }

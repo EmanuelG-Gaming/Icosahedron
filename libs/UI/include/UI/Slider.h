@@ -30,17 +30,25 @@ namespace ic { namespace UI {
     class Slider : public Element {
         public:
             SliderStyle style;
+            bool vertical;
             
-            Slider();
-            Slider(float t, float lineWidth, bool vertical, const std::function<float()> &knobMoved);
+            float lineWidth, lineThickness;
+            float knobWidth, knobHeight;
+            
 
+
+            Slider();
+            Slider(float t, float lineWidth, bool vertical, const std::function<void(float)> &knobMoved);
+            Slider(const std::function<void(float)> &knobMoved);
 
             void draw() override;
 
             virtual void mouse_moved_callback() override;
             virtual void mouse_up_callback() override;
             virtual void mouse_down_callback() override;
-            
+
+            virtual ic::UI::Slider *set_position(float x, float y, bool insideTable = false);
+            virtual ic::UI::Slider *set_position(ic::Vec2f to, bool insideTable = false);
 
             ic::UI::Slider *set_style(const ic::UI::SliderStyle &style);
 
@@ -49,10 +57,8 @@ namespace ic { namespace UI {
             ic::Vec2 calculate_rotated_sizes(float baseWidth, float baseHeight);
 
         protected:
-            bool vertical;
             bool draggingKnob;
-            float lineWidth, lineThickness;
-            float knobWidth, knobHeight;
+            float knobAlpha;
 
             ic::Vec2 previousKnobPosition, currentKnobPosition;
 

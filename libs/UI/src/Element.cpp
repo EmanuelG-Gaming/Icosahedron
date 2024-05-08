@@ -8,15 +8,20 @@ Element::Element() {
 }
 
 
-ic::UI::Element *ic::UI::Element::set_position(float x, float y) {
-    this->relativePosition.x() = this->translation.x() = x;
-    this->relativePosition.y() = this->translation.y() = y;
+ic::UI::Element *ic::UI::Element::set_position(float x, float y, bool insideTable) {
+    if (insideTable) {
+        this->translation.x() = this->relativePosition.x() + x;
+        this->translation.y() = this->relativePosition.y() + y;
+    } else {
+        this->relativePosition.x() = this->translation.x() = x;
+        this->relativePosition.y() = this->translation.y() = y;
+    }
 
     return this;
 }
 
-ic::UI::Element *ic::UI::Element::set_position(ic::Vec2f to) {
-    return this->set_position(to.x(), to.y());
+ic::UI::Element *ic::UI::Element::set_position(ic::Vec2f to, bool insideTable) {
+    return this->set_position(to.x(), to.y(), insideTable);
 }
 
 

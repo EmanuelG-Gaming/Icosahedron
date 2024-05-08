@@ -232,6 +232,18 @@ ic::UI::Slider *ic::UI::Table::slider() {
     return i;
 }
 
+ic::UI::Slider *ic::UI::Table::slider(const std::function<void(float)> &callback) {
+    ic::UI::Slider *i = new ic::UI::Slider(callback);
+    ic::UI::Cell *cell = new ic::UI::Cell();
+
+    cell->set_layout(this);
+    cell->element = i;
+    
+    add(cell);
+
+    return i;
+}
+
 ic::UI::Table *ic::UI::Table::set_background(Drawable *background) {
     this->background = background;
 
@@ -250,7 +262,8 @@ ic::UI::Table *ic::UI::Table::set_position(float x, float y) {
 
     // Move cells and tables with it
     for (auto &cell : this->cells) {
-        cell->element->translation = cell->element->relativePosition + this->position;
+        cell->element->set_position(this->position, true);
+        //cell->element->translation = cell->element->relativePosition + this->position;
     }
 
     for (auto &table : this->tables) {

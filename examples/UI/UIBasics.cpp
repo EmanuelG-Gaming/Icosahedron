@@ -12,6 +12,8 @@
 class UIBasics : public ic::Application {
     ic::UI::TextureDrawable *buttonDrawable;
     ic::UI::TextureDrawable *tinted;
+    float alpha = 0.0f;
+
     public:
         bool load() override {
             ic::GL::enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
@@ -40,7 +42,9 @@ class UIBasics : public ic::Application {
         }
 
         bool update() override {
-            ic::GL::clear_color(ic::Colors::blue);
+            ic::Color c1 = ic::Colors::red, c2 = ic::Colors::blue;
+            ic::Color c3 = c1.interpolate(c2, alpha);
+            ic::GL::clear_color(c3);
 
             ic::UI::Core::get().update_and_render(ic::Time::globalDelta);
 
@@ -61,7 +65,14 @@ class UIBasics : public ic::Application {
             ic::UI::SliderStyle style(new ic::UI::TextureDrawable("white"), new ic::UI::TextureDrawable("white"));
 
             table->label("Test dialog title")->set_position(0.0f, 0.5f);
-            table->slider()->set_style(style)->set_position(0.0f, 0.0f);
+            table->slider([this](float t) {
+                alpha = t;
+            })->set_style(style)->set_position(0.0f, 0.3f);
+
+            ic::UI::Slider *s = table->slider([this](float t) {
+                alpha = t;
+            })->set_style(style)->set_position(0.0f, 0.3f);
+            s->vertical = true;
 
             table->text_button("Remove", [table]() {
                 ui.mainTable->remove(table);
