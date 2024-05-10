@@ -42,7 +42,7 @@ class UIBasics : public ic::Application {
         }
 
         bool update() override {
-            ic::Color c1 = ic::Colors::red, c2 = ic::Colors::blue;
+            ic::Color c1 = ic::Colors::yellow, c2 = ic::Colors::blue;
             ic::Color c3 = c1.interpolate(c2, alpha);
             ic::GL::clear_color(c3);
 
@@ -68,11 +68,6 @@ class UIBasics : public ic::Application {
             table->slider([this](float t) {
                 alpha = t;
             })->set_style(style)->set_position(0.0f, 0.3f);
-
-            ic::UI::Slider *s = table->slider([this](float t) {
-                alpha = t;
-            })->set_style(style)->set_position(0.0f, 0.3f);
-            s->vertical = true;
 
             table->text_button("Remove", [table]() {
                 ui.mainTable->remove(table);

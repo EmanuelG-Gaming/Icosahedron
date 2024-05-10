@@ -1,11 +1,12 @@
-#ifndef IC_UI_ELEMENT_H
-#define IC_UI_ELEMENT_H
+#ifndef IC_UI_TEXT_FIELD
+#define IC_UI_TEXT_FIELD
 
-#include <Icosahedron/math/geom/Vectors.h>
-#include <Icosahedron/input/Input.h>
+
+#include <UI/Element.h>
+
 
 namespace ic { namespace UI {
-    class Element {
+    class TextField : public Element {
         public:
             /** @brief The total displacement of this element over the UI scene. */
             ic::Vec2f translation;
@@ -16,7 +17,7 @@ namespace ic { namespace UI {
             /** @brief Size of the bounding box. */
             float width, height;
             
-            Element();
+            TextField();
 
 
             virtual void draw() {}
@@ -25,14 +26,13 @@ namespace ic { namespace UI {
             virtual void mouse_up_callback() {}
             virtual void mouse_down_callback() {}
 
-            virtual void event_callback(const ic::Event &event) {}
             
 
-            virtual ic::UI::Element *set_position(float x, float y, bool insideTable = false);
-            virtual ic::UI::Element *set_position(ic::Vec2f to, bool insideTable = false);
+            virtual ic::UI::TextField *set_position(float x, float y, bool insideTable = false);
+            virtual ic::UI::TextField *set_position(ic::Vec2f to, bool insideTable = false);
             
-            virtual ic::UI::Element *set_size(float w, float h);
-            virtual ic::UI::Element *set_size(ic::Vec2f to);
+            virtual ic::UI::TextField *set_size(float w, float h);
+            virtual ic::UI::TextField *set_size(ic::Vec2f to);
     };
 }}
 

@@ -34,6 +34,7 @@ namespace ic { namespace UI {
             void mouse_moved();
             void mouse_up();
             void mouse_down();
+            void receive_event(const ic::Event &event);
             
             void update(float dt);
             
