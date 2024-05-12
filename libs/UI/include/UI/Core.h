@@ -21,9 +21,14 @@ namespace ic { namespace UI {
             }
 
             void load();
+
+            void handle_event(ic::Event event, float dt);
+
             void update(float dt);
             void render(float dt);
+
             void update_and_render(float dt);
+            
             void dispose();
         
         private:

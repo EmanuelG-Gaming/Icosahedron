@@ -2,7 +2,9 @@
 #include <Icosahedron/graphics/gl/Shaders.h>
 #include <Icosahedron/input/InputHandler.h>
 
+#include <UI/Global.h>
 #include <UI/Core.h>
+#include <UI/TextField.h>
 
 
 void ic::UI::Core::load() {
@@ -86,6 +88,11 @@ void ic::UI::Core::load() {
 
     this->mouse->add_mouse_up_action([this]() {
         this->mainTable->mouse_up();
+
+        if (ic::UI::Global::get().focusedTextField != nullptr) {
+            ic::UI::Global::get().focusedTextField->set_focused(false);
+            SDL_StopTextInput();
+        }
     });
 
     this->mouse->add_mouse_down_action([this]() {
@@ -93,6 +100,21 @@ void ic::UI::Core::load() {
     });
 
     ic::InputHandler::add_input(this->mouse, "ui mouse");
+}
+
+
+void ic::UI::Core::handle_event(ic::Event event, float dt) {
+    if (event.type == SDL_TEXTINPUT) {
+        if (ic::UI::Global::get().focusedTextField != nullptr) {
+            ic::UI::Global::get().focusedTextField->input_text(*event.text.text);
+        }
+    }
+
+    if (event.type == SDL_KEYDOWN) {
+        if (ic::UI::Global::get().focusedTextField != nullptr) {
+           ic::UI::Global::get().focusedTextField->input_key(&event.key);
+        }
+    }
 }
 
 

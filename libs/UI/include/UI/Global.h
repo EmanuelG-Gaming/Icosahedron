@@ -14,12 +14,17 @@
 
 
 namespace ic { namespace UI {
+    class TextField;
+
     class Global {
         public:
             ic::Batch fillBatch, fillTextBatch;
             ic::TextAtlas defaultAtlas;
             ic::TextureAtlas atlas;
             ic::Vec2f mouseCursorPosition;
+            
+            ic::UI::TextField *focusedTextField;
+
 
             static Global& get() {
                 static Global ins;

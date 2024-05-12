@@ -6,18 +6,18 @@
 
 
 namespace ic { namespace UI {
+    enum class TextFieldFilters { 
+        integers,
+        floats,
+        characters,
+    };
+
     class TextField : public Element {
         public:
-            /** @brief The total displacement of this element over the UI scene. */
-            ic::Vec2f translation;
-
-            /** @brief Position that is relative to the table. */
-            ic::Vec2f relativePosition;
-
-            /** @brief Size of the bounding box. */
-            float width, height;
-            
             TextField();
+            TextField(std::string label, std::string text, TextFieldFilters filter, bool positiveInput);
+            TextField(std::string label, TextFieldFilters filter, bool positiveInput);
+            TextField(std::string label, TextFieldFilters filter);
 
 
             virtual void draw() {}
@@ -25,14 +25,28 @@ namespace ic { namespace UI {
             virtual void mouse_moved_callback() {}
             virtual void mouse_up_callback() {}
             virtual void mouse_down_callback() {}
+         
+         
+        
+            void input_text(char input);
+            void input_key(SDL_KeyboardEvent *event);
 
-            
 
-            virtual ic::UI::TextField *set_position(float x, float y, bool insideTable = false);
-            virtual ic::UI::TextField *set_position(ic::Vec2f to, bool insideTable = false);
+            TextField *set_focused(bool to);
+            bool is_focused();
             
-            virtual ic::UI::TextField *set_size(float w, float h);
-            virtual ic::UI::TextField *set_size(ic::Vec2f to);
+            TextField *set_labelPaddingX(float x);
+        
+            TextField *set_text(const std::string &to);
+            std::string &get_text();
+
+        private:
+            std::string text;
+            TextFieldFilters filter;
+            
+            bool focused;
+            bool positiveInput;
+            float labelPadX;
     };
 }}
 
