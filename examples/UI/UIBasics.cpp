@@ -6,6 +6,8 @@
 #include <UI/Core.h>
 #include <UI/Label.h>
 #include <UI/Button.h>
+#include <UI/TextField.h>
+#include <UI/Slider.h>
 #include <UI/style/TextureDrawable.h>
 
 
@@ -41,6 +43,13 @@ class UIBasics : public ic::Application {
             return true;
         }
 
+        bool handle_event(ic::Event event) override {
+            ic::UI::Core::get().handle_event(event, ic::Time::delta);
+
+            return true;
+        }
+
+
         bool update() override {
             ic::Color c1 = ic::Colors::yellow, c2 = ic::Colors::blue;
             ic::Color c3 = c1.interpolate(c2, alpha);
@@ -68,6 +77,8 @@ class UIBasics : public ic::Application {
             table->slider([this](float t) {
                 alpha = t;
             })->set_style(style)->set_position(0.0f, 0.3f);
+
+            table->text_field("Yes...", ic::UI::TextFieldFilters::characters, 0.3f, 0.1f)->set_style(ic::UI::TextFieldStyle(tinted, tinted))->set_position(0.0f, 0.3f);
 
             table->text_button("Remove", [table]() {
                 ui.mainTable->remove(table);

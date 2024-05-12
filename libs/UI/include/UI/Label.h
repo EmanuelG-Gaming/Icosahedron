@@ -20,13 +20,13 @@ namespace ic { namespace UI {
             
             LabelStyle() {
                 this->font = ic::UI::Global::get().defaultAtlas;
-                this->fontColor = { 255, 255, 255 };
+                this->fontColor = ic::Colors::white;
                 this->background = nullptr;
             }
 
             LabelStyle(const std::string &fontName, ic::UI::Drawable *background = nullptr) {
                 this->font = ic::FreeType::find_atlas(fontName);
-                this->fontColor = { 255, 255, 255 };
+                this->fontColor = ic::Colors::white;
                 this->background = background;
             }
 

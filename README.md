@@ -8,7 +8,7 @@ A game engine that uses OpenGL for graphics. It is supposed to be for both 2D an
 - Add terminal output for Windows platforms. (done)
 - Add custom sound attenuation that can also be used to make sounds louder when they are facing the ear direction. ( )
 - Add support for multiple windows in one application. ( )
-- Add built-in checkboxes, sliders, text fields and dialogs via the ic::UI extension. (in progress) 
+- Add built-in checkboxes, sliders, text fields and dialogs via the ic::UI extension. (done - dialogs can be implemented in the frontend, but I will probably do so that they can also exist on the backend, by using `ic::UI::Table`s) 
 - Make event-driven programming accept multiple parameters in functions and also allow it to use methods from classes. ( )
 - Add more math functions. (in progress)
 - Allow raycasting for 3D boxes. ( )

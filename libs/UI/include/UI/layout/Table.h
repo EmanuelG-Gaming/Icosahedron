@@ -10,6 +10,7 @@
 #include <UI/Label.h>
 #include <UI/ImageElement.h>
 #include <UI/Slider.h>
+#include <UI/TextField.h>
 
 
 namespace ic { namespace UI {
@@ -68,6 +69,9 @@ namespace ic { namespace UI {
             ImageElement *image(const std::string &atlasEntryName, float width = 0.1f, float height = 0.1f);
             Slider *slider();
             Slider *slider(const std::function<void(float)> &callback);
+
+            TextField *text_field();
+            TextField *text_field(std::string text, TextFieldFilters filter, float width, float height, bool positiveInput = false);
 
             Button *button();
             Button *button(const std::function<void()> &clicked);

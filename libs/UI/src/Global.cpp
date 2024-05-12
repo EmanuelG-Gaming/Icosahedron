@@ -7,5 +7,7 @@ void ic::UI::Global::load() {
     ic::FreeType::add_atlas("default", "resources/fonts/Roboto-Regular.ttf", 48);
     defaultAtlas = ic::FreeType::find_atlas("default");
 
+    focusedTextField = nullptr;
+    
     atlas = ic::TextureAtlas(2048, 2048);
 }

@@ -244,6 +244,31 @@ ic::UI::Slider *ic::UI::Table::slider(const std::function<void(float)> &callback
     return i;
 }
 
+ic::UI::TextField *ic::UI::Table::text_field() {
+    ic::UI::TextField *i = new ic::UI::TextField();
+    ic::UI::Cell *cell = new ic::UI::Cell();
+
+    cell->set_layout(this);
+    cell->element = i;
+    
+    add(cell);
+
+    return i;
+}
+
+ic::UI::TextField *ic::UI::Table::text_field(std::string text, TextFieldFilters filter, float width, float height, bool positiveInput) {
+    ic::UI::TextField *i = new ic::UI::TextField(text, filter, width, height, positiveInput);
+    ic::UI::Cell *cell = new ic::UI::Cell();
+
+    cell->set_layout(this);
+    cell->element = i;
+    
+    add(cell);
+
+    return i;
+}
+
+
 ic::UI::Table *ic::UI::Table::set_background(Drawable *background) {
     this->background = background;
 
