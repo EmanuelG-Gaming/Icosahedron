@@ -1,5 +1,5 @@
-#ifndef IC_UI_TEXT_FIELD
-#define IC_UI_TEXT_FIELD
+#ifndef IC_UI_TEXT_FIELD_H
+#define IC_UI_TEXT_FIELD_H
 
 #include <functional>
 

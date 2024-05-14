@@ -83,8 +83,8 @@ void TextField::input_key(SDL_KeyboardEvent *event) {
         text.pop_back();
     }
 
-    // Stop inputting text if the enter key was pressed
-    if (event->keysym.scancode == SDL_SCANCODE_KP_ENTER) {
+    // Stop inputting text if the main enter key was pressed
+    if (event->keysym.scancode == SDL_SCANCODE_RETURN) {
         if (this->is_focused()) {
             this->set_focused(false);
             
