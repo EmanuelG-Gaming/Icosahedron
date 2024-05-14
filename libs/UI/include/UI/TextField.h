@@ -1,6 +1,7 @@
 #ifndef IC_UI_TEXT_FIELD
 #define IC_UI_TEXT_FIELD
 
+#include <functional>
 
 #include <UI/Element.h>
 #include <UI/style/TextureDrawable.h>
@@ -47,6 +48,9 @@ namespace ic { namespace UI {
     class TextField : public Element {
         public:
             TextFieldStyle style;
+            std::function<void()> submitCallback;
+            std::function<void(char)> letterInputCallback;
+
 
             TextField();
             TextField(std::string text, TextFieldFilters filter, float width, float height, bool positiveInput = false);
@@ -55,7 +59,7 @@ namespace ic { namespace UI {
             void draw() override;
 
             void mouse_down_callback() override;
-
+            void mouse_moved_callback() override;
         
             void input_text(char input);
             void input_key(SDL_KeyboardEvent *event);

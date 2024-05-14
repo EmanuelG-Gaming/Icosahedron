@@ -5,8 +5,11 @@ using namespace ic::UI;
 TextField::TextField() {
     this->text = "";
     this->filter = TextFieldFilters::characters;
-    this->width = this->height = 0.3f;
+    this->width = this->height = 0.1f;
     this->positiveInput = false;
+
+    this->submitCallback = nullptr;
+    this->letterInputCallback = nullptr;
 }
 
 
@@ -16,6 +19,9 @@ TextField::TextField(std::string text, TextFieldFilters filter, float width, flo
     this->width = width;
     this->height = height;
     this->positiveInput = positiveInput;
+
+    this->submitCallback = nullptr;
+    this->letterInputCallback = nullptr;
 }
 
 
@@ -28,14 +34,22 @@ void TextField::draw() {
         this->style.focused->draw(this->translation.x(), this->translation.y() - 0.005f, this->width - 0.01f, 0.005f);
     }
 
-    ic::Renderer::draw_string(ic::UI::Global::get().fillTextBatch, this->style.font, this->text, this->translation.x() - this->width + 0.005f, this->translation.y() - this->height, 1.0f, 1.0f, this->style.fontColor);
+    ic::Renderer::draw_string(ic::UI::Global::get().fillTextBatch, this->style.font, this->text, this->translation.x() - this->width + 0.005f, this->translation.y(), 1.0f, 1.0f, this->style.fontColor);
 }
 
 void TextField::mouse_down_callback() {
     bool contains = this->contains(ic::UI::Global::get().mouseCursorPosition);
     if (contains) {
-        SDL_StartTextInput();
         set_focused(true);
+        SDL_StartTextInput();
+    }
+}
+
+void TextField::mouse_moved_callback() {
+    bool contains = this->contains(ic::UI::Global::get().mouseCursorPosition);
+    if (!contains && this->focused) {
+        set_focused(false);
+        SDL_StopTextInput();
     }
 }
 
@@ -44,7 +58,6 @@ void TextField::mouse_down_callback() {
 void TextField::input_text(char input) {
     if (filter == TextFieldFilters::characters) {
         this->text += input;
-        std::cout << this->text << "\n";
     } else if (filter == TextFieldFilters::integers) {
         bool sign = !this->positiveInput && input == '-' && this->text.find("-") == std::string::npos;
         
@@ -59,11 +72,28 @@ void TextField::input_text(char input) {
             this->text += input;
         }
     }
+
+    if (this->letterInputCallback != nullptr) {
+        this->letterInputCallback(input);
+    }
 }
 
 void TextField::input_key(SDL_KeyboardEvent *event) {
     if (event->keysym.scancode == SDL_SCANCODE_BACKSPACE && text.size()) {
         text.pop_back();
+    }
+
+    // Stop inputting text if the enter key was pressed
+    if (event->keysym.scancode == SDL_SCANCODE_KP_ENTER) {
+        if (this->is_focused()) {
+            this->set_focused(false);
+            
+            if (this->submitCallback != nullptr) {
+                this->submitCallback();
+            }
+
+            SDL_StopTextInput();
+        }
     }
 }
 

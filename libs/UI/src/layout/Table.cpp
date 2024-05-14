@@ -256,8 +256,12 @@ ic::UI::TextField *ic::UI::Table::text_field() {
     return i;
 }
 
-ic::UI::TextField *ic::UI::Table::text_field(std::string text, TextFieldFilters filter, float width, float height, bool positiveInput) {
+ic::UI::TextField *ic::UI::Table::text_field(std::string text, TextFieldFilters filter, float width, float height, bool positiveInput,
+                                            const std::function<void()> &submitCallback, const std::function<void(char)> &letterInputCallback) {
     ic::UI::TextField *i = new ic::UI::TextField(text, filter, width, height, positiveInput);
+    i->submitCallback = submitCallback;
+    i->letterInputCallback = letterInputCallback;
+    
     ic::UI::Cell *cell = new ic::UI::Cell();
 
     cell->set_layout(this);

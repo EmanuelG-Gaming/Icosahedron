@@ -71,7 +71,8 @@ namespace ic { namespace UI {
             Slider *slider(const std::function<void(float)> &callback);
 
             TextField *text_field();
-            TextField *text_field(std::string text, TextFieldFilters filter, float width, float height, bool positiveInput = false);
+            TextField *text_field(std::string text, TextFieldFilters filter, float width, float height, bool positiveInput = false, 
+                                  const std::function<void()> &submitCallback = nullptr, const std::function<void(char)> &letterInputCallback = nullptr);
 
             Button *button();
             Button *button(const std::function<void()> &clicked);

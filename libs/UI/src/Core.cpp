@@ -88,11 +88,6 @@ void ic::UI::Core::load() {
 
     this->mouse->add_mouse_up_action([this]() {
         this->mainTable->mouse_up();
-
-        if (ic::UI::Global::get().focusedTextField != nullptr && ic::UI::Global::get().focusedTextField->is_focused()) {
-            ic::UI::Global::get().focusedTextField->set_focused(false);
-            SDL_StopTextInput();
-        }
     });
 
     this->mouse->add_mouse_down_action([this]() {
