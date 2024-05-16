@@ -1,5 +1,6 @@
 #include <UI/layout/Table.h>
 #include <UI/Button.h>
+#include <algorithm>
 
 using namespace ic::UI;
 

@@ -2,12 +2,14 @@
 
 #include <filesystem>
 #include <iostream>
+#include <algorithm>
 
 #include <Icosahedron/audio/Audio.h>
 #include <Icosahedron/util/Noise.h>
 
 #include <Icosahedron/graphics/ImageIO.h>
 #include <Icosahedron/math/Mathf.h>
+
 
 
 int IC_WINDOW_WIDTH = 0;
@@ -322,18 +324,18 @@ void ic::Engine::close() {
 }
 
 void ic::Engine::set_current_working_directory() {
-    std::string dir = std::string(SDL_GetBasePath());
-    std::replace(dir.begin(), dir.end(), '\\', '/');
+    std::string currentDir = std::string(SDL_GetBasePath());
+    std::replace(currentDir.begin(), currentDir.end(), '\\', '/');
 
     // Don't erase the build directory if there's no build directory, obviously
-    std::size_t findResult = dir.find("/build");
+    std::size_t findResult = currentDir.find("/build");
     if (findResult != std::string::npos) {
-        dir.erase(findResult);
+        currentDir.erase(findResult);
     }
 
-    std::cout << "Current working directory: " << dir << "\n";
+    std::cout << "Current working directory: " << currentDir << "\n";
     
-    std::filesystem::current_path(dir);
+    std::filesystem::current_path(currentDir);
 }
 
 ///////////////

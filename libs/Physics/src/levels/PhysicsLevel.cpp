@@ -1,4 +1,5 @@
 #include <Physics/levels/PhysicsLevel.h>
+#include <algorithm>
 
 using namespace ic::Physics;
 
