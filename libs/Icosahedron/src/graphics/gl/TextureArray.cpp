@@ -13,9 +13,7 @@ TextureArray::TextureArray(int textureSize, unsigned int numberOfTextures) {
     this->textureSize = textureSize;
     this->numberOfTextures = numberOfTextures;
 
-    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
-        this->setup(this->textureSize, this->numberOfTextures);
-    }
+    this->load(this->textureSize, this->numberOfTextures);
 }
 
 
@@ -57,7 +55,7 @@ void ic::TextureArray::dispose() {
     glDeleteTextures(1, &this->textureIndex);
 }
 
-void ic::TextureArray::setup(int textureSize, unsigned int numberOfTextures) {
+void ic::TextureArray::load(int textureSize, unsigned int numberOfTextures) {
     glGenTextures(1, &this->textureIndex);
     glBindTexture(GL_TEXTURE_2D_ARRAY, this->textureIndex);
 

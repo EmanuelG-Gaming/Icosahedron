@@ -7,15 +7,11 @@
 using namespace ic;
 
 Mesh2D::Mesh2D() {
-    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
-        this->vao.setup();
-    }
+    this->vao.setup();
 }
 
 Mesh2D::Mesh2D(ic::VertexArray &vao) {
-    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
-        this->vao = vao;
-    }
+    this->vao = vao;
 }
 
 void ic::Mesh2D::set_material(ic::MeshMaterial2D newMaterial) {

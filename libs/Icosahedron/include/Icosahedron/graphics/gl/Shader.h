@@ -38,8 +38,7 @@ namespace ic {
             
             void set_uniform_color(const std::string &name, float r, float g, float b);
             void set_uniform_color(const std::string &name, const ic::Color &color);
-
-        private:
+            
             void load(const std::string &vertSource, const std::string &fragSource);
             
         protected:

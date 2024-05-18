@@ -14,8 +14,8 @@ Framebuffer::Framebuffer(int width, int height, const ic::GLTextureTypes &type) 
     this->data.width = width;
     this->data.height = height;
     this->data.textureType = type;
-    
-    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+
+    {
         glGenFramebuffers(1, &this->fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
     
@@ -31,7 +31,7 @@ Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColor
     this->data.height = height;
     this->data.textureType = type;
 
-    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+    {
         glGenFramebuffers(1, &this->fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
     
@@ -47,7 +47,7 @@ Framebuffer::Framebuffer(ic::GLTextureAttachments attachment, ic::GLTextureColor
     this->data.height = height;
     this->data.textureType = type;
 
-    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+    {
         glGenFramebuffers(1, &this->fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, this->fbo);
 

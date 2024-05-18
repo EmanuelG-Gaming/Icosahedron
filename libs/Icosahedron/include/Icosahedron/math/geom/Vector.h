@@ -205,7 +205,7 @@ namespace ic {
         float dst(const Vec &other) const {
             float result = 0.0f;
             for (int i = 0; i < dimensions; i++) {
-                T v = other.other[i] - values[i];
+                T v = other[i] - values[i];
                 result += v * v;
             }
             result = sqrt(result);

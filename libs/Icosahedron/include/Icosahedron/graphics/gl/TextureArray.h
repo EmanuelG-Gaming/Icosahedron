@@ -14,6 +14,10 @@ namespace ic {
             TextureArray();
             TextureArray(int textureSize, unsigned int numberOfTextures);
 
+            /** @note This will empty the array of textures. */
+            void load(int textureSize, unsigned int numberOfTextures);
+
+
             void add_texture(const std::string &fileName);
 
             void use(int index = 0);
@@ -21,8 +25,10 @@ namespace ic {
 
             void dispose();
 
-        private:
-            void setup(int textureSize, unsigned int numberOfTextures);
+            
+            unsigned int get_textures_used();
+            unsigned int get_texture_capacity();
+            size_t get_texture_width();
 
         private:
             GLuint textureIndex = 0;

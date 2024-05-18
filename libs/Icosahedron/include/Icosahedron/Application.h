@@ -41,6 +41,7 @@ namespace ic {
         fullscreenClamped = SDL_WINDOW_FULLSCREEN
     };
 
+    SDL_GLContext create_GL_context(SDL_Window *window);
 
     struct Window {
         public:
@@ -51,6 +52,9 @@ namespace ic {
             void set(const char *title, int w, int h);
             void set(int w, int h);
             void init();
+
+            void create_GL_context();
+
 
             void dispose();
 
@@ -114,25 +118,24 @@ namespace ic {
         public:
             ic::Window window;
 
-            /* Sets up an SDL window along with an OpenGL context. */
-            bool construct();
+            Engine();
 
-            void close();
-
+            void init();
             void tick();
+            void close();
+            
+            void construct_window();
+            void create_GL_context();
+            void window_tweaks();
 
             int poll_events(ic::Event &e);
             bool process_window_callbacks(ic::Event &e);
             void swap_buffers();
-            
+
         private:
-            /* Sends relevant information such as the current OpenGL, GLEW, and SDL contexts' versions. */
+            /* Sends relevant information such as the current OpenGL, GLAD, and SDL contexts' versions. */
             void send_application_information();
-
-            void set_window_attributes();
-
-            /* Called before load(). */
-            void pre_load(int w, int h);
+            void set_GL_attributes();
     
             /** @brief Sets the app's working directory.
              *  @note The working directory would not be the generated "build" folder.
@@ -140,8 +143,15 @@ namespace ic {
             void set_current_working_directory();
     };
 
+    /** @brief A wrapper for an ic::Engine. */
+    /*
     class Application {
         public:
+            ic::Engine *engine;
+
+            Application();
+            Application(ic::Engine *engine);
+
             void construct(const char *title, int w, int h);
             void construct(int w, int h);
 
@@ -156,10 +166,8 @@ namespace ic {
         
         private:
             void pre_load();
-            
-        protected:
-            ic::Engine engine;
     };
+    */
 }
 
 #endif

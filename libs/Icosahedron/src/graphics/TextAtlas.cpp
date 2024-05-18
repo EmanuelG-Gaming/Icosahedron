@@ -18,12 +18,6 @@ TextAtlas::TextAtlas(FT_Face font) {
 }
 
 void TextAtlas::load() {
-    if (!IC_IS_OPENGL_CONTEXT_PRESENT) {
-        std::cerr << "Couldn't load text atlas. OpenGL context is not present!" << "\n";
-        return;
-    }
-    
-
     this->add_empty_texture();
               
     int x = 0;

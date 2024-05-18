@@ -5,13 +5,6 @@
 // Shows an empty blue window.
 class WindowExample : public ic::Application {
     public:
-        bool init() override {
-            // Use this to set up window settings, although this can also be done in the constructor
-            displayName = "Example window";
-
-            return true;
-        }
-        
         bool load() override {
             // This function is called after init() and after setting up the window
 
@@ -23,16 +16,16 @@ class WindowExample : public ic::Application {
             
         }
 
-        bool handle_event(ic::Event event, float dt) override { 
+        bool handle_event(ic::Event event) override { 
             // Called when events are retrieved and polled 
 
             return true;
         }
 
-        bool update(float dt) override {
+        bool update() override {
             // This is called once every frame
         
-            clear_color(ic::Colors::blue);
+            ic::GL::clear_color(ic::Colors::blue);
             return true; 
         }
 
@@ -62,11 +55,13 @@ class WindowExample : public ic::Application {
 */
 
 int main() {
-    WindowExample application;
+    ic::Engine engine;
+    engine.window.create_GL_context();
 
-    if (application.construct(640, 480)) {
-        application.start();
-    }
+    
+
+    application.construct("Example window", 640, 480);
+    application.start();
 
     return 0;
 }

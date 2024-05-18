@@ -14,7 +14,6 @@
 
 int IC_WINDOW_WIDTH = 0;
 int IC_WINDOW_HEIGHT = 0;
-bool IC_IS_OPENGL_CONTEXT_PRESENT = false;
 float ic::Time::delta = 0.0f;
 float ic::Time::globalDelta = 0.0f;
 float ic::Time::deltaMultiplier = 1.0f;
@@ -22,7 +21,12 @@ float ic::Time::globalTime = 0.0f;
 float ic::Time::time = 0.0f;
 Uint32 ic::Time::lastUpdate = 0;
 
+using namespace ic;
 
+
+SDL_GLContext ic::create_GL_context(SDL_Window *window) {
+    return SDL_GL_CreateContext(window);
+}
 
 /////////////////////
 ////// Window  //////
@@ -155,14 +159,9 @@ void ic::Window::init() {
 
     this->windowHandle = SDL_CreateWindow(this->displayName, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, this->width, this->height, flags);
 	if (this->windowHandle == NULL) {
-		auto errorMessage = "SDL_CreateWindow Error: " + std::string(SDL_GetError()) + "\n";
-        throw std::runtime_error(errorMessage);
-	}
-
-    // We will not actually need a context created, but we should create one
-	SDL_GLContext cont = SDL_GL_CreateContext(this->windowHandle);
-    this->glContext = cont;
-    IC_IS_OPENGL_CONTEXT_PRESENT = true;
+		std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << "\n";
+        return;
+    }
 }
 
 
@@ -198,28 +197,53 @@ ic::WindowScaling ic::Window::get_scaling() const {
     return this->scaling;
 }
 
+void ic::Window::create_GL_context() {
+    SDL_GLContext cont = ic::create_GL_context(this->windowHandle);
+    if (!cont) {
+        std::cerr << "SDL_GL_CreateContext Error: " << SDL_GetError() << "\n";
+        return;
+    } 
+
+    this->glContext = cont;
+}
+
+
 
 //////////////////////////
 ///////// Engine /////////
 //////////////////////////
 
-bool ic::Engine::construct() {
-    this->set_current_working_directory();
 
+Engine::Engine() {
+    this->init();
+}
+
+void ic::Engine::init() {
+    this->set_current_working_directory();
     
     SDL_SetMainReady();
     
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) != 0) {
 		std::cerr << "SDL_Init Error: " << SDL_GetError();
-		return false;
+		return;
 	}
 
-    this->set_window_attributes();
+    this->set_GL_attributes();
+}
+
+void ic::Engine::construct_window() {
     this->window.init();
+}
 
-    this->pre_load(this->window.get_width(), this->window.get_height());
+void ic::Engine::create_GL_context() {
+    this->window.create_GL_context();
 
-    return true;
+    if (!gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress)) {
+        throw std::runtime_error("Couldn't initialize GLAD.\n");
+    }
+
+    // Debugging
+    this->send_application_information();
 }
 
 
@@ -239,7 +263,7 @@ void ic::Engine::send_application_information() {
 }
 
 
-void ic::Engine::set_window_attributes() {
+void ic::Engine::set_GL_attributes() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
@@ -254,15 +278,9 @@ void ic::Engine::set_window_attributes() {
 
 
 
-void ic::Engine::pre_load(int w, int h) {
-    if (!gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress)) {
-        throw std::runtime_error("Couldn't initialize GLAD.\n");
-    }
-
+void ic::Engine::window_tweaks() {
     SDL_GL_SetSwapInterval(1); // Enables VSync
-    glViewport(0, 0, w, h);
-    
-    this->send_application_information();
+    glViewport(0, 0, this->window.get_width(), this->window.get_height());
 }
 
 void ic::Engine::swap_buffers() {
@@ -342,17 +360,25 @@ void ic::Engine::set_current_working_directory() {
 /// Application
 ///////////////
 
+/*
+Application::Application() {
+}
+
+Application::Application(ic::Engine *engine) {
+    this->engine = engine;
+}
+
 void ic::Application::construct(int w, int h) {
-    engine.window.set(w, h);
+    engine->window.set(w, h);
     this->pre_load();
 }
 void ic::Application::construct(const char *title, int w, int h) {
-    engine.window.set(title, w, h);
+    engine->window.set(title, w, h);
     this->pre_load();
 }
 
 void ic::Application::pre_load() {
-    engine.construct();
+    engine->construct();
 
     if (!this->init()) {
         return;
@@ -372,13 +398,13 @@ void ic::Application::start() {
     bool enabled = true;
     ic::Event event;
     while (enabled) {
-        while (engine.poll_events(event)) {
+        while (engine->poll_events(event)) {
             if (!this->handle_event(event)) {
                 enabled = false;
                 break;
             }
 
-            if (!engine.process_window_callbacks(event)) {
+            if (!engine->process_window_callbacks(event)) {
                 enabled = false;
                 break;
             }
@@ -392,8 +418,8 @@ void ic::Application::start() {
             break;
         }
 
-        engine.window.swap_buffers();
-	    engine.tick();
+        engine->window.swap_buffers();
+	    engine->tick();
     }
 
 
@@ -401,6 +427,6 @@ void ic::Application::start() {
     ic::Audio::dispose();
 
     this->dispose();
-    engine.close();
+    engine->close();
 }
-
+*/

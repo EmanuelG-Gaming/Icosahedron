@@ -20,9 +20,7 @@ Batch::Batch(int capacity, GLPrimitives renderType) {
     this->renderType = renderType;
 
 
-    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
-        setup();
-    }
+    setup();
 }
 
 void Batch::setup() {
