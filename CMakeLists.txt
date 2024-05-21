@@ -50,8 +50,8 @@ add_executable(main "src/main.cpp")
 target_link_libraries(main Icosahedron Physics UI ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
 
 ##### Examples #####
-#add_executable(examples "examples/windowing/WindowExample.cpp")
-#target_link_libraries(examples Icosahedron Physics UI ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
+add_executable(examples "examples/2D/Mesh2D.cpp")
+target_link_libraries(examples Icosahedron Physics UI ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} freetype)
 
 include(CTest)
 enable_testing()

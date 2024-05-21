@@ -6,7 +6,9 @@
 using namespace ic;
 
 Mesh3D::Mesh3D() {
-    this->vao.setup();
+    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+        this->vao.setup();
+    }
 }
 
 Mesh3D::Mesh3D(ic::VertexArray &vao) {

@@ -134,8 +134,3 @@ ic::Vec2f ic::Raycast::get_closest_point_line(ic::Vec2f &point, ic::Vec2f sidePo
     t = ic::Mathf::clamp(t, 0.0f, 1.0f);
     return sidePointA + gradientLine * t;
 }
-
-
-ic::RaycastHit<3> ic::Raycast::ray_triangle(ic::Vec3 p1, ic::Vec3 p2, ic::Vec3 p3, const ic::Vec3 &rayOrigin, const ic::Vec3 &rayDir) {
-    
-}

@@ -14,6 +14,8 @@
 
 int IC_WINDOW_WIDTH = 0;
 int IC_WINDOW_HEIGHT = 0;
+bool IC_IS_OPENGL_CONTEXT_PRESENT = false;
+
 float ic::Time::delta = 0.0f;
 float ic::Time::globalDelta = 0.0f;
 float ic::Time::deltaMultiplier = 1.0f;
@@ -218,6 +220,11 @@ Engine::Engine() {
     this->init();
 }
 
+Engine::~Engine() {
+    this->close();
+}
+
+
 void ic::Engine::init() {
     this->set_current_working_directory();
     
@@ -237,6 +244,7 @@ void ic::Engine::construct_window() {
 
 void ic::Engine::create_GL_context() {
     this->window.create_GL_context();
+    IC_IS_OPENGL_CONTEXT_PRESENT = true;
 
     if (!gladLoadGLLoader((GLADloadproc) SDL_GL_GetProcAddress)) {
         throw std::runtime_error("Couldn't initialize GLAD.\n");
@@ -244,6 +252,7 @@ void ic::Engine::create_GL_context() {
 
     // Debugging
     this->send_application_information();
+    ic::GL::set_viewport(this->window.get_width(), this->window.get_height());
 }
 
 
@@ -265,7 +274,7 @@ void ic::Engine::send_application_information() {
 
 void ic::Engine::set_GL_attributes() {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 	// We want at least 8 bits per color
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -276,12 +285,6 @@ void ic::Engine::set_GL_attributes() {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 }
 
-
-
-void ic::Engine::window_tweaks() {
-    SDL_GL_SetSwapInterval(1); // Enables VSync
-    glViewport(0, 0, this->window.get_width(), this->window.get_height());
-}
 
 void ic::Engine::swap_buffers() {
     this->window.swap_buffers();

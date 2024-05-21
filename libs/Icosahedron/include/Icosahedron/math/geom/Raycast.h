@@ -44,9 +44,6 @@ namespace ic {
         ic::RaycastHit<3> ray_box(ic::Vec3 boxLower, ic::Vec3f boxUpper, const ic::Vec3 &rayOrigin, const ic::Vec3 &rayDir);
         ic::RaycastPlaneHit ray_plane(ic::Vec3 planeOrigin, ic::Vec3 planeNormal, const ic::Vec3 &rayOrigin, const ic::Vec3 &rayDir);
         
-
-        ic::RaycastHit<3> ray_triangle(ic::Vec3 p1, ic::Vec3 p2, ic::Vec3 p3, const ic::Vec3 &rayOrigin, const ic::Vec3 &rayDir);
-
         ic::Vec2f get_closest_point_line(ic::Vec2f &point, ic::Vec2f sidePointA, ic::Vec2f sidePointB);
     };
 }

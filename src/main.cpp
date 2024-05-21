@@ -1,15 +1,14 @@
 #include <Icosahedron/Application.h>
 #include <Icosahedron/graphics/Colors.h>
 
-
 int main() {
+
     ic::Engine engine;
 
     engine.construct_window();
     engine.create_GL_context();
-    engine.window.set("Example window", 640, 480);
-    engine.window_tweaks();
-
+    
+    engine.window.set_vsync(1);
 
     bool enabled = true;
     ic::Event event;
@@ -30,9 +29,6 @@ int main() {
         engine.window.swap_buffers();
 	    engine.tick();
     }
-
-
-    engine.close();
 
     return 0;
 }

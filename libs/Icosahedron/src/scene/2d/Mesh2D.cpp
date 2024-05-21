@@ -7,7 +7,9 @@
 using namespace ic;
 
 Mesh2D::Mesh2D() {
-    this->vao.setup();
+    if (IC_IS_OPENGL_CONTEXT_PRESENT) {
+        this->vao.setup();
+    }
 }
 
 Mesh2D::Mesh2D(ic::VertexArray &vao) {

@@ -46,8 +46,10 @@ namespace ic {
     struct Window {
         public:
             const char *get_title() const;
+
             int get_width() const;
             int get_height() const;
+
 
             void set(const char *title, int w, int h);
             void set(int w, int h);
@@ -99,7 +101,7 @@ namespace ic {
             bool cursorVisibility = true;
         
             /* The name that is displayed on the window. */
-            const char *displayName = "test";
+            const char *displayName = "Warning: Window title hasn't been set explicitly by the user.";
 
             /* The type of scaling that this window uses. */
             ic::WindowScaling scaling = ic::WindowScaling::fixed;
@@ -119,14 +121,14 @@ namespace ic {
             ic::Window window;
 
             Engine();
-
+            ~Engine();
+            
             void init();
             void tick();
             void close();
             
             void construct_window();
             void create_GL_context();
-            void window_tweaks();
 
             int poll_events(ic::Event &e);
             bool process_window_callbacks(ic::Event &e);
