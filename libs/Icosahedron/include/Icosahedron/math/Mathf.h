@@ -2,10 +2,14 @@
 #define IC_MATHF_H
 
 #include <cmath>
+#include <random>
 
 namespace ic {
     /** @brief Mathematical functions. */
     namespace Mathf {
+        static std::random_device global_random_device;
+        static std::mt19937 global_random(global_random_device());
+       
         const float pi = 3.1415927f;
         const float twoPi = 6.2831853f;
 
@@ -50,6 +54,34 @@ namespace ic {
 
         int logarithm(int base, int exponent);
         bool is_power_of(int base, int value);
+
+
+        /************************************************/
+        /*************** Random Numbers *****************/
+        /************************************************/
+
+
+        float randf(float from, float to) {
+            return std::uniform_real_distribution(from, to)(global_random);
+        }
+
+        int randi(int from, int to) {
+            return std::uniform_int_distribution(from, to)(global_random);
+        }
+
+        /** @brief Samples a random number along a bell curve. */
+        float randf_normal(float mean, float standardDeviation) {
+            return std::normal_distribution(mean, standardDeviation)(global_random);
+        }
+
+        float randf_binominal(float tries, float probabilityTrial) {
+            return std::binomial_distribution(tries, probabilityTrial)(global_random);
+        }
+
+
+        float chance(float percentage) {
+            return randf(0.0f, 1.0f) <= percentage;
+        }
     };
 }
 #endif
