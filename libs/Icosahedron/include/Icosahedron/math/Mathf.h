@@ -61,27 +61,14 @@ namespace ic {
         /************************************************/
 
 
-        float randf(float from, float to) {
-            return std::uniform_real_distribution(from, to)(global_random);
-        }
-
-        int randi(int from, int to) {
-            return std::uniform_int_distribution(from, to)(global_random);
-        }
+        float randf(float from, float to);
+        int randi(int from, int to);
 
         /** @brief Samples a random number along a bell curve. */
-        float randf_normal(float mean, float standardDeviation) {
-            return std::normal_distribution(mean, standardDeviation)(global_random);
-        }
-
-        float randf_binominal(float tries, float probabilityTrial) {
-            return std::binomial_distribution(tries, probabilityTrial)(global_random);
-        }
+        float randf_normal(float mean, float standardDeviation);
 
 
-        float chance(float percentage) {
-            return randf(0.0f, 1.0f) <= percentage;
-        }
+        float chance(float percentage);
     };
 }
 #endif

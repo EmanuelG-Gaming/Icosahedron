@@ -26,7 +26,6 @@ namespace ic {
         ic::Cubemap load_png(const std::vector<std::string> &filePaths, bool gammaCorrection = false);
         ic::Cubemap load_bmp(const std::vector<std::string> &filePaths, bool gammaCorrection = false);
 
-        // Private functions in anonymous namespace
         namespace {
             GLenum map_to_texture_format(uint32_t format, bool gammaCorrection = false);
             void load_cubemap_face(const ic::CubemapFaceInformation &data);

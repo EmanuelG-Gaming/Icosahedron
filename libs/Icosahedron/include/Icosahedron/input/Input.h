@@ -71,7 +71,10 @@ enum KeyboardInput {
     KEY_RCTRL = SDL_SCANCODE_RCTRL,
     KEY_DELETE = SDL_SCANCODE_DELETE,
     KEY_PRINT_SCR = SDL_SCANCODE_PRINTSCREEN,
+
+    KEY_COUNT = 53,
 };
+
 
 enum KeyboardInputActionTypes {
     INVALID_KB_INPUT_ACTION = -1,
@@ -96,6 +99,7 @@ enum MouseInputActionTypes {
 };
 
 namespace ic {
+
     using Event = SDL_Event;
     using KeyboardEvent = SDL_KeyboardEvent;
     using Keycode = SDL_Keycode;
@@ -117,6 +121,19 @@ namespace ic {
         virtual void update(float dt) = 0;
         virtual void handle_event(const ic::Event &event, float dt) = 0;
     };
+
+    /*
+    struct Button {
+        bool pressed = false;
+    };
+
+    struct Input {
+        ic::Button keyboard[KEY_COUNT];
+
+        int cursorX = 0, cursorY = 0;
+
+    };
+    */
 }
 
 #endif

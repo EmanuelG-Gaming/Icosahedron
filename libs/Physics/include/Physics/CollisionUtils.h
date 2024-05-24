@@ -18,7 +18,7 @@ namespace ic { namespace Physics {
         ManifoldPoints polygon_sphere(PolygonCollider *colliderA, Transform *transformA, SphereCollider *colliderB, Transform *transformB);
         
         /** @brief Separating Axis Theorem. */
-        ManifoldPoints polygon_polygon_SAT(PolygonCollider *colliderA, Transform *transformA, PolygonCollider *colliderB, Transform *transformB);
+        //ManifoldPoints polygon_polygon_SAT(PolygonCollider *colliderA, Transform *transformA, PolygonCollider *colliderB, Transform *transformB);
     };
 }}
 #endif

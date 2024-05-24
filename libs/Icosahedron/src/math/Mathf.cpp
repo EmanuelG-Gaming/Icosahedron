@@ -88,3 +88,18 @@ bool ic::Mathf::is_power_of(int base, int value) {
     int v = ic::Mathf::logarithm(base, value);
     return (ceil(v) == floor(v));
 }
+
+
+float ic::Mathf::randf(float from, float to) {
+    return std::uniform_real_distribution(from, to)(global_random);
+}
+int ic::Mathf::randi(int from, int to) {
+    return std::uniform_int_distribution(from, to)(global_random);
+}
+/** @brief Samples a random number along a bell curve. */
+float ic::Mathf::randf_normal(float mean, float standardDeviation) {
+    return std::normal_distribution(mean, standardDeviation)(global_random);
+}
+float ic::Mathf::chance(float percentage) {
+    return randf(0.0f, 1.0f) <= percentage;
+}

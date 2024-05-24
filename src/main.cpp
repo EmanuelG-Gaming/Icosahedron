@@ -8,6 +8,7 @@ int main() {
     engine.construct_window();
     engine.create_GL_context();
     
+    engine.window.set("Example window", 640, 480);
     engine.window.set_vsync(1);
 
     bool enabled = true;

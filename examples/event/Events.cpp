@@ -1,6 +1,6 @@
 #include <iostream>
 #include <Icosahedron/Events.h>
-#include <IcosahedronDebug/ConsoleOutput.h>
+#include <Icosahedron/Debug.h>
 
 template <typename T>
 struct Consumer {
@@ -15,13 +15,13 @@ class YesClass {
         }
 };
 
-void event_callback() {
-    std::cout << "This is a callback from an event.\n";
+void event_callback(int n) {
+    std::cout << "This is a callback from an event. " << n << "\n";
 }
 
 int main() {
     // For Windows-specific platforms, this makes a command prompt window
-    ic::Debug::create_console();
+    ic::create_console();
 
     YesClass yes;
 
@@ -33,10 +33,9 @@ int main() {
     std::cout << "hello." << "\n";
 
     ic::Events::on("eventTest", event_callback);
-    ic::Events::on("eventYes", (yes.the));
 
-    ic::Events::fire("eventTest");
-    ic::Events::fire("eventTest");
+    ic::Events::fire("eventTest", 2);
+    ic::Events::fire("eventTest", 2);
 
     // Halt the closing of the terminal window, until text has been inputted from the keyboard, regardless of platform
     std::cin.get();
