@@ -15,8 +15,8 @@ class YesClass {
         }
 };
 
-void event_callback(int n) {
-    std::cout << "This is a callback from an event. " << n << "\n";
+void event_callback() {
+    std::cout << "This is a callback from an event." << "\n";
 }
 
 int main() {
@@ -34,8 +34,8 @@ int main() {
 
     ic::Events::on("eventTest", event_callback);
 
-    ic::Events::fire("eventTest", 2);
-    ic::Events::fire("eventTest", 2);
+    ic::Events::fire("eventTest");
+    ic::Events::fire("eventTest");
 
     // Halt the closing of the terminal window, until text has been inputted from the keyboard, regardless of platform
     std::cin.get();

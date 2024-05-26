@@ -15,6 +15,9 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/entity/Entity.h
     ${LIBRARY_HEADERS_DIRECTORY}/entity/Entities.h
     
+    ${LIBRARY_HEADERS_DIRECTORY}/scene/SceneGraph.h
+
+
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/Color.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Vector.h
     ${LIBRARY_HEADERS_DIRECTORY}/math/geom/Vectors.h
@@ -100,6 +103,7 @@ set(LIBRARY_SOURCE_DIRECTORY src)
 set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/util/Time.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/Debug.cpp
+
 
     ${LIBRARY_SOURCE_DIRECTORY}/math/Mathf.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/math/Interpolation.cpp
