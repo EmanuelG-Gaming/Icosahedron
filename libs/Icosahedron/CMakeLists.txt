@@ -86,10 +86,10 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/audio/Sound.h
     ${LIBRARY_HEADERS_DIRECTORY}/audio/Audio.h
 
-    ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Mesh2D.h
+    ${LIBRARY_HEADERS_DIRECTORY}/scene/Mesh.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Camera2D.h
 
-    ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Mesh3D.h
+    # ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Mesh3D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Camera3D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Skybox.h
     
@@ -144,10 +144,10 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/audio/Sound.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/audio/Audio.cpp
 
-    ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Mesh2D.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/scene/Mesh.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Camera2D.cpp
 
-    ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Mesh3D.cpp
+    # ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Mesh3D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Camera3D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Skybox.cpp
 

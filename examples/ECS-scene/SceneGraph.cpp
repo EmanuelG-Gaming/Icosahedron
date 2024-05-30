@@ -59,6 +59,10 @@ class MeshNode : public ic::SceneGraphNode {
             }
         }
 
+        void dispose_recursively() {
+            
+        }
+
         ic::Mat4x4 get_local_model_matrix() {
             ic::Mat4x4 translation = ic::Mat4x4().set_translation<2>(pos);
             ic::Mat4x4 scale = ic::Mat4x4().set_scaling<2>(scaling);
@@ -126,7 +130,7 @@ void game_dispose() {
             
     texture.dispose();
     
-    //rootNode->dispose_recursively();
+    rootNode->dispose_recursively();
 }
 
 

@@ -53,8 +53,6 @@ namespace ic {
             void set_index_count(GLsizei to);
 
         private:
-            std::vector<unsigned int> indices;
-
             ic::VertexArray vao;
             
             ic::Mat4x4 model;

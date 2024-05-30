@@ -1,5 +1,5 @@
-#ifndef IC_MESH_2D
-#define IC_MESH_2D
+#ifndef IC_MESH_H
+#define IC_MESH_H
 
 #include <vector>
 #include <map>
@@ -15,21 +15,13 @@
 
 
 namespace ic {
-    struct MeshMaterial2D {
-        float colorBlending;
-        ic::Vec3f baseColor;
-
-        MeshMaterial2D() : baseColor({1.0f, 1.0f, 1.0f}), colorBlending(0.0f) {}
-        MeshMaterial2D(ic::Color color, float colorBlending = 1.0f) : baseColor({ color.r / 255.0f, color.g / 255.0f, color.b / 255.0f }), colorBlending(colorBlending) {}
-    };
-
-    class Mesh2D {
+    class Mesh {
         public:
             /** @brief Constructs a new, but empty mesh. */
-            Mesh2D();
+            Mesh();
             
             /** @brief Constructs a new mesh, depending on a vertex array. */
-            Mesh2D(ic::VertexArray &vao);
+            Mesh(ic::VertexArray &vao);
 
 
             /** @brief Overrides the mesh's current model-level transformation matrix. */
@@ -37,9 +29,6 @@ namespace ic {
 
             /** @brief Incrementally multiplies this mesh's model matrix with another matrix. */
             void combine_transformation(ic::Mat4x4 &with);
-
-
-            void set_material(ic::MeshMaterial2D newMaterial);
 
             void attribute(int attributeIndex, int dimensions, const std::vector<float> &content);
 
@@ -57,15 +46,9 @@ namespace ic {
             void set_index_count(GLsizei to);
             
 
-        protected:
-            void upload_material(ic::Shader &shader, const ic::MeshMaterial2D &mat);
-
         private:
-            std::vector<unsigned int> indices;
-
             ic::VertexArray vao;
-            ic::MeshMaterial2D material;
-
+            
             ic::Mat4x4 model;
     };
 }
