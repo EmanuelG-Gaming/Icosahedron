@@ -30,6 +30,10 @@ namespace ic {
             /** @brief Incrementally multiplies this mesh's model matrix with another matrix. */
             void combine_transformation(ic::Mat4x4 &with);
 
+            void set_normal_transformation(const ic::Mat4x4 &to);
+            void combine_normal_transformation(ic::Mat4x4 &with);
+            
+            
             void attribute(int attributeIndex, int dimensions, const std::vector<float> &content);
 
             void add_attribute(int attributeIndex, int dimensions, const std::vector<float> &content);
@@ -39,7 +43,9 @@ namespace ic {
             
             void unuse_attribute_definitions();
 
-            void draw(ic::Shader &shader, ic::GLPrimitives primitive = ic::TRIANGLES);
+            void draw(ic::GLPrimitives primitive = ic::TRIANGLES);
+            void apply_transformations(ic::Shader &shader, const char *modelMatName = "model", const char *normalModelMatName = "normalModel");
+
             void dispose();
 
             void using_indices(bool to);
@@ -49,7 +55,7 @@ namespace ic {
         private:
             ic::VertexArray vao;
             
-            ic::Mat4x4 model;
+            ic::Mat4x4 model, normalModel;
     };
 }
 #endif

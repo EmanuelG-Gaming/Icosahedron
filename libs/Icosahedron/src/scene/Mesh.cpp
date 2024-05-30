@@ -25,6 +25,15 @@ void ic::Mesh::combine_transformation(ic::Mat4x4 &with) {
     this->model = this->model * with;
 }
 
+void ic::Mesh::set_normal_transformation(const ic::Mat4x4 &to) {
+    this->normalModel = to;
+}
+
+void ic::Mesh::combine_normal_transformation(ic::Mat4x4 &with) {
+    this->normalModel = this->normalModel * with;
+}
+
+
 void ic::Mesh::attribute(int attributeIndex, int dimensions, const std::vector<float> &content) {
     this->vao.vertex_buffer(attributeIndex, dimensions, content);
 }
@@ -61,22 +70,22 @@ void ic::Mesh::unuse_attribute_definitions() {
     this->vao.unuse_attribute_definitions();
 }
 
-void ic::Mesh::draw(ic::Shader &shader, ic::GLPrimitives primitive) {
+void ic::Mesh::draw(ic::GLPrimitives primitive) {
     auto drawable = this->vao.get_drawable();
 
-    //this->upload_material(shader, this->material);
-    shader.set_uniform_mat4("model", this->model);
     drawable.use_and_draw(primitive);
 }
+
+void ic::Mesh::apply_transformations(ic::Shader &shader, const char *modelMatName, const char *normalModelMatName) {
+    shader.set_uniform_mat4(modelMatName, this->model);
+    shader.set_uniform_mat4(normalModelMatName, this->normalModel);
+}
+
 
 void ic::Mesh::dispose() {
     this->vao.dispose();
 }
 
-void ic::Mesh::upload_material(ic::Shader &shader, const ic::MeshMaterial2D &mat) {
-    shader.set_uniform_float("material.colorBlending", mat.colorBlending);
-    shader.set_uniform_vec3f("material.baseColor", mat.baseColor);
-}
 
 void ic::Mesh::using_indices(bool to) {
     this->vao.using_indices(to);

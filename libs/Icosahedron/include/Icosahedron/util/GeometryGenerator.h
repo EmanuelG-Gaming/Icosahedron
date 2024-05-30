@@ -8,8 +8,8 @@
 #include <Icosahedron/math/geom/Polygon.h>
 #include <Icosahedron/math/EarClippingTriangulation.h>
 
-#include <Icosahedron/scene/2d/Mesh2D.h>
-#include <Icosahedron/scene/3d/Mesh3D.h>
+#include <Icosahedron/scene/Mesh.h>
+//#include <Icosahedron/scene/3d/Mesh3D.h>
 
 #include <Icosahedron/math/Mathf.h>
 
@@ -47,21 +47,21 @@ namespace ic {
 
         // ---------------- Shorthand notations ----------------
     
-        ic::Mesh2D generate_mesh(std::vector<float> &positions);
-        ic::Mesh2D generate_regular_polygon_mesh(int sides = 3, float radius = 1.0f);
+        ic::Mesh generate_mesh(std::vector<float> &positions);
+        ic::Mesh generate_regular_polygon_mesh(int sides = 3, float radius = 1.0f);
     
     
-        ic::Mesh2D generate_rectangle_mesh(float width, float height, float uScale = 1.0f, float vScale = 1.0f);
+        ic::Mesh generate_rectangle_mesh(float width, float height, float uScale = 1.0f, float vScale = 1.0f);
 
-        ic::Mesh3D generate_parallelipiped_mesh(float width, float height, float depth, float sScale = 1.0f, float tScale = 1.0f, float uScale = 1.0f);
+        ic::Mesh generate_parallelipiped_mesh(float width, float height, float depth, float sScale = 1.0f, float tScale = 1.0f, float uScale = 1.0f);
     
-        ic::Mesh3D generate_cube_mesh(float length, float sScale, float tScale, float uScale);
-        ic::Mesh3D generate_cube_mesh(float length, float texCoordScale = 1.0f);
+        ic::Mesh generate_cube_mesh(float length, float sScale, float tScale, float uScale);
+        ic::Mesh generate_cube_mesh(float length, float texCoordScale = 1.0f);
     
     
-        ic::Mesh3D generate_UV_sphere_mesh(float radius, int latitudeLines, int longitudeLines);
+        ic::Mesh generate_UV_sphere_mesh(float radius, int latitudeLines, int longitudeLines);
 
-        ic::Mesh3D generate_cone_mesh(ic::Vec3f height, float baseRadius, int baseSides, bool hasCap = true);
+        ic::Mesh generate_cone_mesh(ic::Vec3f height, float baseRadius, int baseSides, bool hasCap = true);
     };
 }
 #endif

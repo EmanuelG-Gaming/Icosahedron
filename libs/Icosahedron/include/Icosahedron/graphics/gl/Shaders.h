@@ -120,7 +120,7 @@ namespace ic {
             in vec3 vColor;
             in vec2 vTCoords;
             
-            uniform Material material = Material(1.0, vec3(1.0, 1.0, 1.0));
+            uniform Material material = Material(0.0, vec3(1.0, 1.0, 1.0));
             uniform sampler2D sampleTexture;
         
             out vec4 outColor;

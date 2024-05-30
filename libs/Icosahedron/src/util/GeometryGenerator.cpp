@@ -344,8 +344,8 @@ std::vector<unsigned int> ic::GeometryGenerator::generate_cone_indices(int baseS
 }
 // ---------------- Shorthand notations ----------------
 
-ic::Mesh2D ic::GeometryGenerator::generate_mesh(std::vector<float> &positions) {
-    ic::Mesh2D result;
+ic::Mesh ic::GeometryGenerator::generate_mesh(std::vector<float> &positions) {
+    ic::Mesh result;
     result.add_attribute(0, 2, positions);
     result.add_attribute(2, 2, generate_UV_polygon(positions));
     result.set_index_buffer(ic::EarClippingTriangulation::triangulate(positions));
@@ -353,10 +353,10 @@ ic::Mesh2D ic::GeometryGenerator::generate_mesh(std::vector<float> &positions) {
     return result;
 }
 
-ic::Mesh2D ic::GeometryGenerator::generate_regular_polygon_mesh(int sides, float radius) {
+ic::Mesh ic::GeometryGenerator::generate_regular_polygon_mesh(int sides, float radius) {
     std::vector<float> positions = generate_regular_polygon(sides, radius);
     
-    ic::Mesh2D result;
+    ic::Mesh result;
     result.add_attribute(0, 2, positions);
     result.add_attribute(2, 2, generate_UV_polygon(positions));
     result.set_index_buffer(ic::EarClippingTriangulation::triangulate(positions));
@@ -365,8 +365,8 @@ ic::Mesh2D ic::GeometryGenerator::generate_regular_polygon_mesh(int sides, float
 }
 
 
-ic::Mesh2D ic::GeometryGenerator::generate_rectangle_mesh(float width, float height, float uScale, float vScale) {
-    ic::Mesh2D result;
+ic::Mesh ic::GeometryGenerator::generate_rectangle_mesh(float width, float height, float uScale, float vScale) {
+    ic::Mesh result;
     result.add_attribute(0, 2, generate_rectangle(width, height));
     result.add_attribute(2, 2, generate_UV_rectangle(uScale, vScale));
     result.set_index_buffer({ 0, 1, 2, 0, 2, 3 });
@@ -375,8 +375,8 @@ ic::Mesh2D ic::GeometryGenerator::generate_rectangle_mesh(float width, float hei
 }
 
 
-ic::Mesh3D ic::GeometryGenerator::generate_parallelipiped_mesh(float width, float height, float depth, float sScale, float tScale, float uScale) {
-    ic::Mesh3D result;
+ic::Mesh ic::GeometryGenerator::generate_parallelipiped_mesh(float width, float height, float depth, float sScale, float tScale, float uScale) {
+    ic::Mesh result;
     result.add_attribute(0, 3, generate_parallelipiped(width, height, depth));
     result.add_attribute(2, 2, generate_UV_parallelipiped(sScale, tScale, uScale));
     result.add_attribute(3, 3, generate_normal_parallelipiped());
@@ -385,16 +385,16 @@ ic::Mesh3D ic::GeometryGenerator::generate_parallelipiped_mesh(float width, floa
     return result;
 }
 
-ic::Mesh3D ic::GeometryGenerator::generate_cube_mesh(float length, float sScale, float tScale, float uScale) {
+ic::Mesh ic::GeometryGenerator::generate_cube_mesh(float length, float sScale, float tScale, float uScale) {
     return generate_parallelipiped_mesh(length, length, length, sScale, tScale, uScale);
 }
-ic::Mesh3D ic::GeometryGenerator::generate_cube_mesh(float length, float texCoordScale) {
+ic::Mesh ic::GeometryGenerator::generate_cube_mesh(float length, float texCoordScale) {
     return generate_parallelipiped_mesh(length, length, length, texCoordScale, texCoordScale, texCoordScale);
 }
 
 
-ic::Mesh3D ic::GeometryGenerator::generate_UV_sphere_mesh(float radius, int latitudeLines, int longitudeLines) {
-    ic::Mesh3D result;
+ic::Mesh ic::GeometryGenerator::generate_UV_sphere_mesh(float radius, int latitudeLines, int longitudeLines) {
+    ic::Mesh result;
     result.add_attribute(0, 3, generate_UV_sphere(radius, latitudeLines, longitudeLines));
     result.add_attribute(2, 2, generate_UV_sphere_UVs(latitudeLines, longitudeLines));
     result.add_attribute(3, 3, generate_UV_sphere_normals(latitudeLines, longitudeLines));
@@ -402,8 +402,8 @@ ic::Mesh3D ic::GeometryGenerator::generate_UV_sphere_mesh(float radius, int lati
 
     return result;
 }
-ic::Mesh3D ic::GeometryGenerator::generate_cone_mesh(ic::Vec3f height, float baseRadius, int baseSides, bool hasCap) {
-    ic::Mesh3D result;
+ic::Mesh ic::GeometryGenerator::generate_cone_mesh(ic::Vec3f height, float baseRadius, int baseSides, bool hasCap) {
+    ic::Mesh result;
     
     result.add_attribute(0, 3, generate_cone(height, baseRadius, baseSides));
     result.set_index_buffer(generate_cone_indices(baseSides, hasCap));
