@@ -36,6 +36,9 @@ namespace ic {
             
             void attribute(int attributeIndex, int dimensions, const std::vector<float> &content);
 
+            void add_attribute(int attributeIndex, const std::vector<ic::Vec2f> &content);
+            void add_attribute(int attributeIndex, const std::vector<ic::Vec3f> &content);
+
             void add_attribute(int attributeIndex, int dimensions, const std::vector<float> &content);
             void add_attribute(int attributeIndex, int dimensions, const std::vector<int> &content);
             void add_attribute(int attributeIndex, int dimensions, const std::vector<ic::Color> &content);

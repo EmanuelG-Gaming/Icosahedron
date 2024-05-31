@@ -11,7 +11,7 @@
 #include <Icosahedron/assets/loaders/CubemapLoader.h>
 #include <Icosahedron/util/GeometryGenerator.h>
 
-#include <Icosahedron/scene/3d/Mesh3D.h>
+#include <Icosahedron/scene/Mesh.h>
 
 
 namespace ic {
@@ -40,16 +40,16 @@ namespace ic {
              *  @note f5 - front face
              *  @note f6 - back face
             */
-            Skybox(const ic::Mesh3D &mesh, const std::vector<std::string> &fileNames, bool loadsBMP = false);
+            Skybox(const ic::Mesh &mesh, const std::vector<std::string> &fileNames, bool loadsBMP = false);
 
-            void draw(ic::Shader &shader, ic::GLPrimitives primitive = ic::TRIANGLES);
+            void draw(ic::GLPrimitives primitive = ic::TRIANGLES);
             void dispose();
 
             void use_texture(int index = 0);
 
         private:
             ic::Cubemap textureCube;
-            ic::Mesh3D mesh;
+            ic::Mesh mesh;
     };
 }
 #endif

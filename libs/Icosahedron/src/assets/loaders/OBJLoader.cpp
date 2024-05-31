@@ -4,12 +4,12 @@
 ///// Object geometry /////
 ///////////////////////////
 
-ic::Mesh3D ic::OBJLoader::load(const char *objectFileName) {
+ic::Mesh ic::OBJLoader::load(const char *objectFileName) {
     std::ifstream objRead(objectFileName);
 
     if (!objRead.is_open() || objRead.fail()) {
         printf("Couldn't open the .obj file, returning an empty mesh instead.\n");
-        return ic::Mesh3D();
+        return ic::Mesh();
     }
 
     
@@ -25,7 +25,7 @@ ic::Mesh3D ic::OBJLoader::load(const char *objectFileName) {
     // Now try to convert to indices and geometric data
     ic::OBJGeometricData data = get_geometric_data(references);
 
-    ic::Mesh3D mesh;
+    ic::Mesh mesh;
     mesh.add_attribute(0, data.vertices);
     mesh.add_attribute(2, data.textureCoords);
     mesh.add_attribute(3, data.normals);
@@ -37,8 +37,8 @@ ic::Mesh3D ic::OBJLoader::load(const char *objectFileName) {
 }
 
 
-std::vector<ic::Mesh3D> ic::OBJLoader::load_multiple(const char *objectFileName, const char *separator) {
-    std::vector<ic::Mesh3D> result;
+std::vector<ic::Mesh> ic::OBJLoader::load_multiple(const char *objectFileName, const char *separator) {
+    std::vector<ic::Mesh> result;
     std::ifstream objRead(objectFileName);
     
     std::vector<ic::Vec3f> positions, normals;
@@ -102,7 +102,7 @@ std::vector<ic::Mesh3D> ic::OBJLoader::load_multiple(const char *objectFileName,
             std::vector<ic::Vec3> vertices, normal;
             std::vector<ic::Vec2> texCoords;
 
-            ic::Mesh3D structure;
+            ic::Mesh structure;
 
             for (int i = 0; i < vertexIndices.size(); i++) {
                 ic::Vec3 position = positions[vertexIndices.at(i)];
@@ -136,7 +136,7 @@ std::vector<ic::Mesh3D> ic::OBJLoader::load_multiple(const char *objectFileName,
         std::vector<ic::Vec3> vertices, normal;
         std::vector<ic::Vec2> texCoords;
 
-        ic::Mesh3D structure;
+        ic::Mesh structure;
 
         for (int i = 0; i < vertexIndices.size(); i++) {
             ic::Vec3 position = positions[vertexIndices.at(i)];

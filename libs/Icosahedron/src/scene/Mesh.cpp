@@ -34,6 +34,30 @@ void ic::Mesh::combine_normal_transformation(ic::Mat4x4 &with) {
 }
 
 
+
+void ic::Mesh::add_attribute(int attributeIndex, const std::vector<ic::Vec2f> &content) {
+    std::vector<float> values;
+    for (int i = 0; i < content.size(); i++) {
+        ic::Vec2f vector = content[i];
+
+        values.push_back(vector.x());
+        values.push_back(vector.y());
+    }
+    add_attribute(attributeIndex, 2, values);
+}
+void ic::Mesh::add_attribute(int attributeIndex, const std::vector<ic::Vec3f> &content) {
+    std::vector<float> values;
+    for (int i = 0; i < content.size(); i++) {
+        ic::Vec3f vector = content[i];
+
+        values.push_back(vector.x());
+        values.push_back(vector.y());
+        values.push_back(vector.z());
+    }
+    add_attribute(attributeIndex, 3, values);
+}
+
+
 void ic::Mesh::attribute(int attributeIndex, int dimensions, const std::vector<float> &content) {
     this->vao.vertex_buffer(attributeIndex, dimensions, content);
 }

@@ -10,7 +10,7 @@
 #include <sstream>
 
 #include <Icosahedron/math/geom/Vectors.h>
-#include <Icosahedron/scene/3d/Mesh3D.h>
+#include <Icosahedron/scene/Mesh.h>
 
 namespace ic {
     struct OBJMaterialInfo {
@@ -48,8 +48,8 @@ namespace ic {
 
     /** @brief Loads .obj model files. Can optionally load material content. */
     namespace OBJLoader {
-        ic::Mesh3D load(const char *objectFileName);
-        std::vector<ic::Mesh3D> load_multiple(const char *objectFileName, const char *separator = "o");
+        ic::Mesh load(const char *objectFileName);
+        std::vector<ic::Mesh> load_multiple(const char *objectFileName, const char *separator = "o");
 
         std::map<std::string, ic::OBJMaterialInfo> get_materials(const char *materialFileName);
         

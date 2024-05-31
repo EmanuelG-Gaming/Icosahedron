@@ -14,12 +14,12 @@ Skybox::Skybox(const std::vector<std::string> &fileNames, bool loadsBMP) {
         this->textureCube = ic::CubemapLoader::load_png(fileNames);
     }
 
-    this->mesh = ic::Mesh3D();
+    this->mesh = ic::Mesh();
     this->mesh.add_attribute(0, 3, ic::GeometryGenerator::generate_cube(1.0f));
     this->mesh.set_index_buffer(ic::GeometryGenerator::generate_parallelipiped_indices());
 }
 
-Skybox::Skybox(const ic::Mesh3D &mesh, const std::vector<std::string> &fileNames, bool loadsBMP) {
+Skybox::Skybox(const ic::Mesh &mesh, const std::vector<std::string> &fileNames, bool loadsBMP) {
     if (loadsBMP) {
         this->textureCube = ic::CubemapLoader::load_bmp(fileNames);
     } else {
@@ -31,12 +31,12 @@ Skybox::Skybox(const ic::Mesh3D &mesh, const std::vector<std::string> &fileNames
 
 
 
-void ic::Skybox::draw(ic::Shader &shader, ic::GLPrimitives primitive) {
+void ic::Skybox::draw(ic::GLPrimitives primitive) {
     glCullFace(GL_BACK);
     glDepthMask(GL_FALSE);
 
     this->textureCube.use();
-    this->mesh.draw(shader, primitive);
+    this->mesh.draw(primitive);
 
     glDepthMask(GL_TRUE);
     glCullFace(GL_FRONT);
