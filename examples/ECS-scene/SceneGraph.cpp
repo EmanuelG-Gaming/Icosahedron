@@ -83,32 +83,35 @@ ic::Camera2D camera;
 ic::Shader shader;
 
 
+MeshNode *add_mesh_to(const ic::Mesh &mesh, float x, float y, MeshNode *addTo = nullptr) {
+    MeshNode *node = new MeshNode();
+    node->mesh = mesh;
+    node->pos = { x, y };
+
+    if (addTo != nullptr) {
+        addTo->add_node(node);
+    }
+
+    return node;
+}
+
+void create_meshes() {
+    MeshNode *previous = add_mesh_to(ic::GeometryGenerator::generate_regular_polygon_mesh(7, 0.1f), 0.0f, 0.0f, rootNode);
+
+    for (int i = 0; i < 100; i++) {
+        float radians = (i / 100.0f) * (M_PI * 2.0f);
+        ic::Vec2 pos = ic::Vec2(0.05f, 0.0f).rotate(radians);
+
+        MeshNode *current = add_mesh_to(ic::GeometryGenerator::generate_regular_polygon_mesh(7, 0.1f), pos.x(), pos.y(), previous);
+        previous = current;
+    }
+}
+
 void game_load() {
     rootNode = new MeshNode();
 
-    {
-        ic::Mesh m = ic::GeometryGenerator::generate_regular_polygon_mesh(7, 0.3f);
+    create_meshes();
 
-        MeshNode *node = new MeshNode();
-        node->mesh = m;
-        node->pos = { -0.3f, 0.0f };
-
-        rootNode->add_node(node);
-
-        {
-            ic::Mesh m2 = ic::GeometryGenerator::generate_regular_polygon_mesh(3, 0.1f);
-
-            MeshNode *node2 = new MeshNode();
-            node2->mesh = m2;
-            node2->pos = { 0.0f, 0.5f };
-    
-            node->add_node(node2);
-
-
-            node->remove_all();
-        }
-    }
-    
     shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, ic::Shaders::meshShaderFrag2D);
     texture = ic::TextureLoader::load_png("resources/textures/wood.png");
     
