@@ -15,9 +15,11 @@ namespace ic {
     namespace FreeType {
         void load();
             
-        // @brief Loads a TrueType file from a relative path.
-        // @note By default, FreeType would choose an absolute directory, rather than a relative one.
+        /** @brief Loads a TrueType file from a relative path.
+         *  @note By default, FreeType would choose an absolute directory, rather than a relative one.
+         */
         TextAtlas add_atlas(const std::string &name, const std::string &relativeFile, int height);
+        
         TextAtlas &find_atlas(const std::string &name);
         
         void dispose();

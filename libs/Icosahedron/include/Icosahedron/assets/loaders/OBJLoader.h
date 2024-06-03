@@ -14,9 +14,9 @@
 
 namespace ic {
     struct OBJMaterialInfo {
-        ic::Vec3f ambient = { 0.0f, 0.0f, 0.0f };
-        ic::Vec3f diffuse = { 0.0f, 0.0f, 0.0f };
-        ic::Vec3f specular = { 0.0f, 0.0f, 0.0f };
+        ic::Vec3 ambient;
+        ic::Vec3 diffuse;
+        ic::Vec3 specular;
 
         float shininess = 0.0f;
     };

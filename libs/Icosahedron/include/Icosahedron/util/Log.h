@@ -6,12 +6,14 @@
 
 
 namespace ic {
-    enum class LogLevels {
-        NONE,
+    enum class LogLevels : std::size_t {
+        NONE = 0,
         INFO,
         DEBUG,
         WARN,
         ERROR,
+
+        SIZE
     };
 
     namespace Log {

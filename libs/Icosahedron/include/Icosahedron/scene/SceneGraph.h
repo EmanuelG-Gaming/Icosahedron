@@ -38,6 +38,23 @@ namespace ic {
                 node->remove_all();
                 nodes.remove(node);
             }
+
+            /** @returns A number that locates the node on the tree, as if it was placed with elements side by side. */
+            int get_index(int previous = -1) {
+                int result = previous + 1;
+
+                return result;
+            }
+
+            std::vector<SceneGraphNode*> get_branch() {
+                std::vector<SceneGraphNode*> result;
+
+                if (this->previous != nullptr) {
+                    result.push_back(this->previous);
+                }
+
+                return result;
+            }
     };
 }
 
