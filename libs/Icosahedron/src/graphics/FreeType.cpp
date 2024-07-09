@@ -18,7 +18,7 @@ TextAtlas FreeType::add_atlas(const std::string &name, const std::string &relati
     if (errorHandler == FT_Err_Unknown_File_Format) {
         throw std::runtime_error("The font file has an unknown format."); 
     } else if (errorHandler) {
-        throw std::runtime_error("At: " + path + ": Other error that occured when loading font. Perhaps the file name is not correct?");
+        throw std::runtime_error("At: " + path + ": Other error that occured when loading font. Perhaps the file name is not correct or the FreeType 2 library wasn't initialized?");
     }
               
     FT_Set_Pixel_Sizes(font, 0, height);

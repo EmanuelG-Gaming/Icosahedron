@@ -5,6 +5,8 @@
 #include <Icosahedron/util/GeometryGenerator.h>
 #include <Icosahedron/scene/Mesh.h>
 #include <Icosahedron/scene/2d/Camera2D.h>
+#include <Icosahedron/util/IO.h>
+#include <Icosahedron/Debug.h>
 
 struct Boid {
     ic::Vec2 position;
@@ -101,6 +103,8 @@ void update_boid(Boid *boid, float dt) {
 
 
 void init() {
+    ic::create_console();
+
     srand(time(NULL));
 
     boidMesh = ic::Mesh();
@@ -128,6 +132,15 @@ void init() {
 
         boids.push_back(new Boid({ ic::Vec2(x, y), ic::Vec2(cos(angle), sin(angle)) * 0.05f, 0.5f, 0.1f, 2.0f }));
     }
+
+
+    ic::IO::open("tmp.txt");
+    ic::IO::write(boids[0]->separationDetectionRadius);
+    ic::IO::read(boids[0]->separationDetectionRadius);
+
+    std::cout << "Size of Boid: " << sizeof(Boid) << "\n";
+
+    ic::IO::close();
 
 
 }
