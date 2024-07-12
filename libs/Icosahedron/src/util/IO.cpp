@@ -50,3 +50,28 @@ void ic::IO::write(float p) {
 std::istream &ic::IO::read_line_by_line(std::string &line) {
     return std::getline(ic::IO::readHandler, line);
 }
+
+
+bool ic::IO::compare(const std::string &first, const std::string &other) {
+    return !first.compare(other);
+}
+
+bool ic::IO::is_line_empty(const std::string &line) {
+    bool empty = compare(line, "") ||
+                 compare(line, " ");
+                  
+    return empty;
+}
+
+std::list<std::string> ic::IO::segment_line(const std::string &line, char separator) {
+    std::list<std::string> result;
+
+    std::istringstream stream(line);
+    std::string token;
+
+    while (std::getline(stream, token, separator)) {
+        result.push_back(token);
+    }
+
+    return result;
+}

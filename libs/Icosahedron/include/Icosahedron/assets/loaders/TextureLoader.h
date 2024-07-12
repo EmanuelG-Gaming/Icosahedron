@@ -5,8 +5,8 @@
 
 #include <glad/glad.h>
 
-#include <SDL.h>
-#include <SDL_image.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 #include <Icosahedron/math/Mathf.h>
 #include <Icosahedron/graphics/gl/GL.h>
@@ -17,12 +17,9 @@
 namespace ic {
     namespace TextureLoader {
         /**  @param gammaCorrection Whether or not the texture has sRGB pixels. */
-        ic::Texture load_png(const std::string &filePath, ic::TextureParameters parameters = ic::TextureParameters(), bool gammaCorrection = false);
+        ic::Texture load(const char *filePath, ic::TextureParameters parameters = ic::TextureParameters(), bool gammaCorrection = false);
+        ic::Texture load(const std::string &filePath, ic::TextureParameters parameters = ic::TextureParameters(), bool gammaCorrection = false);
         
-        /**  @param gammaCorrection Whether or not the texture has sRGB pixels. */
-        ic::Texture load_bmp(const std::string &filePath, ic::TextureParameters parameters = ic::TextureParameters(), bool gammaCorrection = false);
-
-
         /** @brief Loads a texture based on an RGB image. 
          *  @note The source image won't get disposed automatically, yet the underlying SDL_Surface will be. 
          *  @param gammaCorrection Whether or not the texture has sRGB pixels. */
@@ -31,7 +28,7 @@ namespace ic {
         /** @brief Converts a 32-bit encoding into a format that can be used by OpenGL.
          *  @param gammaCorrection Whether or not the format is in the non-linear sRGB space.
         */
-        GLenum map_to_texture_format(uint32_t format, bool gammaCorrection = false);
+        GLenum map_to_texture_format(int numberOfChannels, bool gammaCorrection = false);
 
         namespace {
             ic::Texture load_texture(const void *data, int width, int height, GLenum internalFormat, GLenum format, const ic::TextureParameters &parameters);

@@ -1,7 +1,7 @@
 ![Icosahedron cover art](resources/icosahedron-cover-art.png)
 
 # Icosahedron
-A game engine that uses OpenGL for graphics. It is supposed to be for both 2D and 3D applications. This is supposed to be more like a framework that abstracts most of the heavy lifting required for rendering. 
+Is a game engine/framework that uses OpenGL for graphics. It is supposed to aid the development of 2D and 3D applications.
 
 Also, this API tries to keep the number of relationships between its components (coupling) as small as possible, meaning that an utility that fails will not affect all the other elements.
 

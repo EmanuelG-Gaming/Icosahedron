@@ -81,6 +81,7 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/TextureAtlasLoader.h
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/CubemapLoader.h
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/OBJLoader.h
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/AssimpModelLoader.h
     
     ${LIBRARY_HEADERS_DIRECTORY}/audio/AudioSource.h
     ${LIBRARY_HEADERS_DIRECTORY}/audio/Music.h
@@ -88,6 +89,7 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/audio/Audio.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/scene/Mesh.h
+    ${LIBRARY_HEADERS_DIRECTORY}/scene/Model.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Camera2D.h
 
     # ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Mesh3D.h
@@ -141,15 +143,17 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/TextureLoader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/CubemapLoader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/OBJLoader.cpp
+    #${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/AssimpModelLoader.cpp
     
     ${LIBRARY_SOURCE_DIRECTORY}/audio/Music.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/audio/Sound.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/audio/Audio.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/scene/Mesh.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/scene/Model.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/2d/Camera2D.cpp
 
-    # ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Mesh3D.cpp
+
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Camera3D.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/scene/3d/Skybox.cpp
 
@@ -183,6 +187,4 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
 )
 
 
-target_link_libraries(${LIBRARY_NAME} glad ${SDL2_LIBRARIES} soloud
-${FREETYPE_LIBRARIES}
-)
+target_link_libraries(${LIBRARY_NAME} glad ${SDL2_LIBRARIES} soloud stb)

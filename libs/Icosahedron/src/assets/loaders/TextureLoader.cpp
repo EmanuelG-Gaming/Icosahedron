@@ -2,33 +2,24 @@
 #include <Icosahedron/graphics/ImageIO.h>
 
 
-ic::Texture ic::TextureLoader::load_png(const std::string &filePath, ic::TextureParameters parameters, bool gammaCorrection) {
-    SDL_Surface *texture = IMG_Load(filePath.c_str());
-    if (texture == NULL) {
-        fprintf(stderr, "IMG_Load Error: %s\n", IMG_GetError());
-        return ic::Texture();
-    }
+ic::Texture ic::TextureLoader::load(const char *filePath, ic::TextureParameters parameters, bool gammaCorrection) {
+    int width, height, numberOfChannels;
 
-    GLenum textureFormat = map_to_texture_format(texture->format->format, gammaCorrection);
-    ic::Texture result = load_texture(texture->pixels, texture->w, texture->h, textureFormat, textureFormat, parameters);
-    SDL_FreeSurface(texture);
+    unsigned char *data = stbi_load(filePath, &width, &height, &numberOfChannels, 0);
 
-    return result;
-}
+    GLenum textureFormat = map_to_texture_format(numberOfChannels, gammaCorrection);
+    ic::Texture result = load_texture(data, width, height, textureFormat, textureFormat, parameters);
 
-ic::Texture ic::TextureLoader::load_bmp(const std::string &filePath, ic::TextureParameters parameters, bool gammaCorrection) {
-    SDL_Surface *texture = SDL_LoadBMP(filePath.c_str());
-    if (texture == NULL) {
-        fprintf(stderr, "SDL_LoadBMP Error: %s\n", SDL_GetError());
-        return ic::Texture();
-    }
-
-    GLenum textureFormat = map_to_texture_format(texture->format->format, gammaCorrection);
-    ic::Texture result = load_texture(texture->pixels, texture->w, texture->h, textureFormat, textureFormat, parameters);
-    SDL_FreeSurface(texture);
+    stbi_image_free(data);
 
     return result;
 }
+
+ic::Texture ic::TextureLoader::load(const std::string &filePath, ic::TextureParameters parameters, bool gammaCorrection) {
+    return ic::TextureLoader::load(filePath.c_str(), parameters, gammaCorrection);
+}
+
+
 
 
 ic::Texture ic::TextureLoader::load(ic::Image &image, ic::TextureParameters parameters, bool gammaCorrection) {
@@ -39,19 +30,27 @@ ic::Texture ic::TextureLoader::load(ic::Image &image, ic::TextureParameters para
 }
 
 
-GLenum ic::TextureLoader::map_to_texture_format(uint32_t format, bool gammaCorrection) {
+GLenum ic::TextureLoader::map_to_texture_format(int numberOfChannels, bool gammaCorrection) {
     GLenum result = 0;
 
-    switch (format) {
-        case SDL_PIXELFORMAT_RGB24:
+    switch (numberOfChannels) {
+        case 1:
+            result = GL_RED;
+            break;
+
+        case 2:
+            result = GL_RG;
+            break;
+
+        case 3:
             result = gammaCorrection ? GL_SRGB : GL_RGB;
             break;
 
-        case SDL_PIXELFORMAT_RGBA32:
+        case 4:
             result = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
             break;
 
-        // By default, the format uses uses plain RGB
+        // By default, the format uses plain RGB
         default:
             result = gammaCorrection ? GL_SRGB : GL_RGB;
             break;

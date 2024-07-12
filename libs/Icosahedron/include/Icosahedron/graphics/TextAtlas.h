@@ -5,12 +5,11 @@
 
 #include <glad/glad.h>
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+#include <stb_truetype.h>
 
 
 namespace ic {
-    // @brief Stores information about a character of a text atlas.
+    /** @brief Stores information about a character of a text atlas. */
     struct CharacterInfo {
         float advX, advY;
     
@@ -20,13 +19,11 @@ namespace ic {
         float offsetX = 0.0f;
     };
 
-    // @brief A text atlas stores ASCII bitmap glyphs in a horizontal order.
     class TextAtlas {
         public:
             TextAtlas();
-            TextAtlas(FT_Face font);
-
-            void load();
+            
+            void add_empty_texture();
 
             void use();
             void dispose();
@@ -35,17 +32,11 @@ namespace ic {
             float get_width();
             float get_height();
 
-        protected:
-            void adjust_size();
-            void add_empty_texture();
-
         private:
-            FT_Face font;
-            FT_GlyphSlot glyph;
             GLuint textureIndex;
          
             int atlasWidth, atlasHeight;
-            std::array<CharacterInfo, 128> characters; // Currently the stores ASCII character range
+            std::array<CharacterInfo, 128> characters; // Currently stores ASCII character range
     };
 }
 #endif

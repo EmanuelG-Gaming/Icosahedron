@@ -1,43 +1,82 @@
 #include <Icosahedron/graphics/FreeType.h>
-#include <filesystem>
+#include <iostream>
 
-using namespace ic;
+#include <cmath>
+#include <cstring>
 
-void FreeType::load() {
-    errorHandler = FT_Init_FreeType(&library);
-    if (errorHandler) {
-        throw std::runtime_error("FreeType library couldn't load.");
+
+ic::TextAtlas ic::FreeType::load_atlas(const char *filePath) {
+    /* load font file */
+    long size;
+    unsigned char *fontBuffer;
+    
+    FILE* fontFile = fopen(filePath, "rb");
+    fseek(fontFile, 0, SEEK_END);
+    size = ftell(fontFile); /* how long is the file ? */
+    fseek(fontFile, 0, SEEK_SET); /* reset */
+    
+    fontBuffer = (unsigned char*) malloc(size);
+    
+    fread(fontBuffer, size, 1, fontFile);
+    fclose(fontFile);
+
+
+
+    /* prepare font */
+    stbtt_fontinfo info;
+    if (!stbtt_InitFont(&info, fontBuffer, 0))
+    {
+        std::cout << "Couldn't initialize font via stb_truetype." << "\n";
     }
-}
+    
+    int b_w = 512; /* bitmap width */
+    int b_h = 128; /* bitmap height */
+    int l_h = 64; /* line height */
 
-TextAtlas FreeType::add_atlas(const std::string &name, const std::string &relativeFile, int height) {
-    FT_Face font;
-    std::string path = std::filesystem::current_path().string() + "/" + relativeFile;
-    errorHandler = FT_New_Face(library, relativeFile.c_str(), 0, &font);
+    /* create a bitmap for the phrase */
+    unsigned char* bitmap = (unsigned char*) calloc(b_w * b_h, 1);
+    
+    /* calculate font scaling */
+    float scale = stbtt_ScaleForPixelHeight(&info, l_h);
 
-    if (errorHandler == FT_Err_Unknown_File_Format) {
-        throw std::runtime_error("The font file has an unknown format."); 
-    } else if (errorHandler) {
-        throw std::runtime_error("At: " + path + ": Other error that occured when loading font. Perhaps the file name is not correct or the FreeType 2 library wasn't initialized?");
+    const char *word = "the quick brown fox";
+    
+    int x = 0;
+       
+    int ascent, descent, lineGap;
+    stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
+    
+    ascent = roundf(ascent * scale);
+    descent = roundf(descent * scale);
+    
+    for (int i = 32; i < 128; i++) {
+        /* how wide is this character */
+        int ax;
+	    int lsb;
+
+        stbtt_GetCodepointHMetrics(&info, word[i], &ax, &lsb);
+        /* (Note that each Codepoint call has an alternative Glyph version which caches the work required to lookup the character word[i].) */
+
+        /* get bounding box for character (may be offset to account for chars that dip above or below the line) */
+        int c_x1, c_y1, c_x2, c_y2;
+        stbtt_GetCodepointBitmapBox(&info, word[i], scale, scale, &c_x1, &c_y1, &c_x2, &c_y2);
+        
+        /* compute y (different characters have different heights) */
+        int y = ascent + c_y1;
+        
+        /* render character (stride and offset is important here) */
+        int byteOffset = x + roundf(lsb * scale) + (y * b_w);
+        stbtt_MakeCodepointBitmap(&info, bitmap + byteOffset, c_x2 - c_x1, c_y2 - c_y1, b_w, scale, scale, word[i]);
+
+        /* advance x */
+        x += roundf(ax * scale);
+        
+        /* add kerning */
+        int kern;
+        kern = stbtt_GetCodepointKernAdvance(&info, word[i], word[i + 1]);
+        x += roundf(kern * scale);
     }
-              
-    FT_Set_Pixel_Sizes(font, 0, height);
-    TextAtlas atlas(font);
-    atlas.load();
-              
-    atlases[name] = atlas;
-
-    return atlas;
-}
-
-TextAtlas &FreeType::find_atlas(const std::string &name) {
-    return atlases[name];
-}
-              
-void FreeType::dispose() {
-    for (auto &atlas : atlases) {
-        TextAtlas &second = atlas.second;
-        second.dispose();
-    }
-    FT_Done_FreeType(library);
+    
+    free(fontBuffer);
+    free(bitmap);
 }

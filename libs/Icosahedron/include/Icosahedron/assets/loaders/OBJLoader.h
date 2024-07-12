@@ -46,7 +46,9 @@ namespace ic {
     };
 
 
-    /** @brief Loads .obj model files. Can optionally load material content. */
+    /** @brief Loads .obj model files. Can optionally load material content. 
+     *  @deprecated Might get deprecated in favour of Assimp.
+    */
     namespace OBJLoader {
         ic::Mesh load(const char *objectFileName);
         std::vector<ic::Mesh> load_multiple(const char *objectFileName, const char *separator = "o");
