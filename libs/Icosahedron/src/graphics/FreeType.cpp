@@ -6,6 +6,8 @@
 
 
 ic::TextAtlas ic::FreeType::load_atlas(const char *filePath) {
+    ic::TextAtlas result;
+
     /* load font file */
     long size;
     unsigned char *fontBuffer;
@@ -27,6 +29,7 @@ ic::TextAtlas ic::FreeType::load_atlas(const char *filePath) {
     if (!stbtt_InitFont(&info, fontBuffer, 0))
     {
         std::cout << "Couldn't initialize font via stb_truetype." << "\n";
+        return result;
     }
     
     int b_w = 512; /* bitmap width */
@@ -79,4 +82,6 @@ ic::TextAtlas ic::FreeType::load_atlas(const char *filePath) {
     
     free(fontBuffer);
     free(bitmap);
+
+    return result;
 }

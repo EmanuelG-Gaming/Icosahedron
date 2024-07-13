@@ -1,5 +1,7 @@
 #include <Icosahedron/graphics/ImageIO.h>
 
+
+/*
 ic::Image ic::ImageIO::read_png(const std::string &fileName) {
     SDL_Surface *surface = IMG_Load(fileName.c_str());
     if (surface == NULL) {
@@ -11,6 +13,8 @@ ic::Image ic::ImageIO::read_png(const std::string &fileName) {
     
     return result;
 }
+
+*/
 
 ic::Image ic::ImageIO::read_bmp(const std::string &fileName) {
     SDL_Surface *surface = SDL_LoadBMP(fileName.c_str());
@@ -77,6 +81,7 @@ ic::Image ic::ImageIO::read_ppm(const std::string &fileName) {
 }
 
 
+/*
 
 void ic::ImageIO::write_png(const std::string &fileName, const ic::Image &image) {
     SDL_Surface *surface = to_surface(image);
@@ -88,6 +93,9 @@ void ic::ImageIO::write_png(const std::string &fileName, const ic::Image &image)
     }
     SDL_FreeSurface(surface);
 }
+
+*/
+
 
 void ic::ImageIO::write_bmp(const std::string &fileName, const ic::Image &image) {
     SDL_Surface *surface = to_surface(image);

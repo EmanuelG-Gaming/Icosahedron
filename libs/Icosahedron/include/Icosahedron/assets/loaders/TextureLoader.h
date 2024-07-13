@@ -5,9 +5,6 @@
 
 #include <glad/glad.h>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
 #include <Icosahedron/math/Mathf.h>
 #include <Icosahedron/graphics/gl/GL.h>
 #include <Icosahedron/graphics/gl/Texture.h>

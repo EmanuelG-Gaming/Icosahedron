@@ -24,7 +24,10 @@
 #include <Icosahedron/input/InputHandler.h>
 
 #include <Icosahedron/graphics/FreeType.h>
+
 #include <Icosahedron/graphics/Image.h>
+#include <Icosahedron/graphics/ImageIO.h>
+
 #include <Icosahedron/util/Time.h>
 #include <Icosahedron/Renderer.h>
 

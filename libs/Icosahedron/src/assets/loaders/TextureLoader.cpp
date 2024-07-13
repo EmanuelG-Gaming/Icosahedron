@@ -1,6 +1,9 @@
 #include <Icosahedron/assets/loaders/TextureLoader.h>
 #include <Icosahedron/graphics/ImageIO.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 
 ic::Texture ic::TextureLoader::load(const char *filePath, ic::TextureParameters parameters, bool gammaCorrection) {
     int width, height, numberOfChannels;
@@ -23,9 +26,10 @@ ic::Texture ic::TextureLoader::load(const std::string &filePath, ic::TexturePara
 
 
 ic::Texture ic::TextureLoader::load(ic::Image &image, ic::TextureParameters parameters, bool gammaCorrection) {
-    bool transparent = ic::ImageIO::image_transparent(image);
-    GLenum format = gammaCorrection ? (transparent ? GL_SRGB_ALPHA : GL_SRGB) : (transparent ? GL_RGBA : GL_RGB);
-    
+    //bool transparent = ic::ImageIO::image_transparent(image);
+    // GLenum format = gammaCorrection ? (transparent ? GL_SRGB_ALPHA : GL_SRGB) : (transparent ? GL_RGBA : GL_RGB);
+    GLenum format = GL_RGB;
+
     return load_texture(image.data(), image.get_width(), image.get_height(), format, format, parameters);
 }
 

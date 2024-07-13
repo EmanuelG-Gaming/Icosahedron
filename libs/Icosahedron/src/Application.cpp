@@ -7,7 +7,7 @@
 #include <Icosahedron/audio/Audio.h>
 #include <Icosahedron/util/Noise.h>
 
-#include <Icosahedron/graphics/ImageIO.h>
+
 #include <Icosahedron/math/Mathf.h>
 
 
@@ -340,7 +340,7 @@ bool ic::Engine::process_window_callbacks(ic::Event &e) {
 void ic::Engine::close() {
     this->window.dispose();
 
-    IMG_Quit();
+    //IMG_Quit();
     SDL_Quit();
 }
 

@@ -5,13 +5,13 @@
 #include <Icosahedron/graphics/gl/Shader.h>
 #include <Icosahedron/graphics/Colors.h>
 
-#include <Icosahedron/scene/2d/Mesh2D.h>
+#include <Icosahedron/scene/Mesh.h>
 #include <Icosahedron/scene/2d/Camera2D.h>
 
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/assets/loaders/TextureLoader.h>
 
-ic::Mesh2D mesh1, mesh2;
+ic::Mesh mesh1, mesh2;
 ic::Texture texture;
 ic::Camera2D camera;
 ic::Shader shader;
@@ -38,11 +38,10 @@ void game_load() {
     mesh2.set_index_count(3);
     
     // Add a material that slightly brightens the colours shown by the vertex attributes 
-    mesh2.set_material(ic::MeshMaterial2D(ic::Colors::white, 0.2f));
     mesh2.set_transformation(ic::Mat4x4().set_translation<2>({ -0.35f, 0.0f }));
     
     shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex2D, ic::Shaders::meshShaderFrag2D);
-    texture = ic::TextureLoader::load_png("resources/textures/wood.png");
+    texture = ic::TextureLoader::load("resources/textures/wood.png");
     
     camera = ic::Camera2D();
 }
@@ -68,11 +67,13 @@ void game_update() {
 
     // Draws a textured mesh
     texture.use();
-    mesh1.draw(shader);
+    mesh1.apply_transformations(shader);
+    mesh1.draw();
     texture.unuse();
 
     // Draws an untextured mesh with vertex colours
-    mesh2.draw(shader);
+    mesh2.apply_transformations(shader);
+    mesh2.draw();
 }
 
 void game_dispose() {

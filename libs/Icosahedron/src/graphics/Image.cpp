@@ -192,7 +192,7 @@ void ic::Image::blit(const ic::Image &image, int topLeftX, int topLeftY) {
 }
 
 void ic::Image::blit_png(const std::string &fileName, int topLeftX, int topLeftY) {
-    this->blit(ic::ImageIO::read_png(fileName), topLeftX, topLeftY);
+    //this->blit(ic::ImageIO::read_png(fileName), topLeftX, topLeftY);
 }
 
 void ic::Image::blit(const std::string &fileName, int topLeftX, int topLeftY) {

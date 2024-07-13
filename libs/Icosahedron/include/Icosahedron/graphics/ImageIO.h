@@ -7,18 +7,17 @@
 #include <sstream>
 
 #include <SDL.h>
-#include <SDL_image.h>
 
 #include <Icosahedron/graphics/Image.h>
 
 
 namespace ic {
     namespace ImageIO {
-        ic::Image read_png(const std::string &fileName);
+        //ic::Image read_png(const std::string &fileName);
         ic::Image read_bmp(const std::string &fileName);
         ic::Image read_ppm(const std::string &fileName);
     
-        void write_png(const std::string &fileName, const ic::Image &image);
+        //void write_png(const std::string &fileName, const ic::Image &image);
         void write_bmp(const std::string &fileName, const ic::Image &image);
         void write_ppm(const std::string &fileName, const ic::Image &image);
 

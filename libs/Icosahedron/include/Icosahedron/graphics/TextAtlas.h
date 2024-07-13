@@ -21,6 +21,9 @@ namespace ic {
 
     class TextAtlas {
         public:
+            std::array<CharacterInfo, 128> characters;
+            
+        public:
             TextAtlas();
             
             void add_empty_texture();
@@ -36,7 +39,6 @@ namespace ic {
             GLuint textureIndex;
          
             int atlasWidth, atlasHeight;
-            std::array<CharacterInfo, 128> characters; // Currently stores ASCII character range
     };
 }
 #endif
