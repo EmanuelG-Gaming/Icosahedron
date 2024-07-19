@@ -175,15 +175,15 @@ void Renderer::draw_string_centered(ic::Batch &batch, ic::TextAtlas &textAtlas, 
     float w = 0.0f;
     float h = 0.0f;
     std::string::const_iterator iterator;
-    for (iterator = text.begin(); iterator != text.end(); iterator++) {
-        CharacterInfo ch = textAtlas.get_characters().at(*iterator);
-                
-        w += ch.advX;
-                
-        if (ch.bitmapHeight > h) {
-            h = ch.bitmapHeight;
-        }
-    }
+    //for (iterator = text.begin(); iterator != text.end(); iterator++) {
+    //    CharacterInfo ch = textAtlas.get_characters().at(*iterator);
+    //            
+    //    w += ch.advX;
+    //            
+    //    if (ch.bitmapHeight > h) {
+    //        h = ch.bitmapHeight;
+    //    }
+    //}
     
            
     w *= sclX;
@@ -204,26 +204,26 @@ void draw_string_itself(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::s
     float px = x;
     float py = y;
     std::string::const_iterator iterator;
-    for (iterator = text.begin(); iterator != text.end(); iterator++) {
-        CharacterInfo ch = textAtlas.get_characters().at(*iterator);
-                   
-        float x2 = px + ch.bitmapLeft * sclX;
-        float y2 = -py - ch.bitmapTop * sclY;
-        float width = ch.bitmapWidth * sclX;
-        float height = ch.bitmapHeight * sclY;
-                   
-        px += ch.advX * sclX;
-        py += ch.advY * sclY;
-                   
-                   
-        vertices.push_back(BatchVertex(x2, -y2, ch.offsetX, 0, color));
-        vertices.push_back(BatchVertex(x2 + width, -y2, ch.offsetX + ch.bitmapWidth / textAtlas.get_width(), 0, color));
-        vertices.push_back(BatchVertex(x2, -y2 - height, ch.offsetX, ch.bitmapHeight / textAtlas.get_height(), color));
-                   
-        vertices.push_back(BatchVertex(x2 + width, -y2, ch.offsetX + ch.bitmapWidth / textAtlas.get_width(), 0, color));
-        vertices.push_back(BatchVertex(x2 + width, -y2 - height, ch.offsetX + ch.bitmapWidth / textAtlas.get_width(), ch.bitmapHeight / textAtlas.get_height(), color));
-        vertices.push_back(BatchVertex(x2, -y2 - height, ch.offsetX, ch.bitmapHeight / textAtlas.get_height(), color));
-    }
+    //for (iterator = text.begin(); iterator != text.end(); iterator++) {
+    //    CharacterInfo ch = textAtlas.get_characters().at(*iterator);
+    //               
+    //    float x2 = px + ch.bitmapLeft * sclX;
+    //    float y2 = -py - ch.bitmapTop * sclY;
+    //    float width = ch.bitmapWidth * sclX;
+    //    float height = ch.bitmapHeight * sclY;
+    //               
+    //    px += ch.advX * sclX;
+    //    py += ch.advY * sclY;
+    //               
+    //               
+    //    vertices.push_back(BatchVertex(x2, -y2, ch.offsetX, 0, color));
+    //    vertices.push_back(BatchVertex(x2 + width, -y2, ch.offsetX + ch.bitmapWidth / textAtlas.get_width(), 0, color));
+    //    vertices.push_back(BatchVertex(x2, -y2 - height, ch.offsetX, ch.bitmapHeight / textAtlas.get_height(), color));
+    //               
+    //    vertices.push_back(BatchVertex(x2 + width, -y2, ch.offsetX + ch.bitmapWidth / textAtlas.get_width(), 0, color));
+    //    vertices.push_back(BatchVertex(x2 + width, -y2 - height, ch.offsetX + ch.bitmapWidth / textAtlas.get_width(), ch.bitmapHeight / textAtlas.get_height(), color));
+    //    vertices.push_back(BatchVertex(x2, -y2 - height, ch.offsetX, ch.bitmapHeight / textAtlas.get_height(), color));
+    //}
               
     batch.add(vertices);
 }

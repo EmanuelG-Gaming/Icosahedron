@@ -10,7 +10,6 @@
 #include <Icosahedron/graphics/gl/TextureAtlas.h>
 
 #include <Icosahedron/graphics/TextAtlas.h>
-#include <Icosahedron/graphics/FreeType.h>
 
 
 namespace ic {

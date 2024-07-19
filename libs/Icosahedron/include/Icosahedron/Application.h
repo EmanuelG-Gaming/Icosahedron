@@ -23,7 +23,6 @@
 #include <Icosahedron/input/Input.h>
 #include <Icosahedron/input/InputHandler.h>
 
-#include <Icosahedron/graphics/FreeType.h>
 
 #include <Icosahedron/graphics/Image.h>
 #include <Icosahedron/graphics/ImageIO.h>

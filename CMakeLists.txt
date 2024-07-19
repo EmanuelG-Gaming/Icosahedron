@@ -43,7 +43,7 @@ add_executable(main "src/main.cpp")
 target_link_libraries(main Icosahedron Physics ${SDL2_LIBRARIES})
 
 ##### Examples #####
-add_executable(examples "examples/2D/Mesh2D.cpp")
+add_executable(examples "examples/3D/Bloom.cpp")
 target_link_libraries(examples Icosahedron Physics ${SDL2_LIBRARIES})
 
 

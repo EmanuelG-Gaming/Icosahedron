@@ -64,7 +64,6 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/gl/Batch.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/graphics/TextAtlas.h
-    ${LIBRARY_HEADERS_DIRECTORY}/graphics/FreeType.h
 
     ${LIBRARY_HEADERS_DIRECTORY}/util/Noise.h
     ${LIBRARY_HEADERS_DIRECTORY}/util/GeometryGenerator.h
@@ -78,6 +77,7 @@ set(LIBRARY_HEADERS
 
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/ShaderLoader.h
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/TextureLoader.h
+    ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/FontLoader.h
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/TextureAtlasLoader.h
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/CubemapLoader.h
     ${LIBRARY_HEADERS_DIRECTORY}/assets/loaders/OBJLoader.h
@@ -92,7 +92,6 @@ set(LIBRARY_HEADERS
     ${LIBRARY_HEADERS_DIRECTORY}/scene/Model.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/2d/Camera2D.h
 
-    # ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Mesh3D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Camera3D.h
     ${LIBRARY_HEADERS_DIRECTORY}/scene/3d/Skybox.h
     
@@ -133,7 +132,6 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Batch.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/TextAtlas.cpp
-    ${LIBRARY_SOURCE_DIRECTORY}/graphics/FreeType.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/input/KeyboardController.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/input/MouseController.cpp
@@ -141,6 +139,7 @@ set(LIBRARY_SOURCE
 
     ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/ShaderLoader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/TextureLoader.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/FontLoader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/CubemapLoader.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/OBJLoader.cpp
     #${LIBRARY_SOURCE_DIRECTORY}/assets/loaders/AssimpModelLoader.cpp

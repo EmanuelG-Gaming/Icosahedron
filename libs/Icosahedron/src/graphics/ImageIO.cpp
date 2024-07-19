@@ -82,7 +82,6 @@ ic::Image ic::ImageIO::read_ppm(const std::string &fileName) {
 
 
 /*
-
 void ic::ImageIO::write_png(const std::string &fileName, const ic::Image &image) {
     SDL_Surface *surface = to_surface(image);
     if (surface == NULL) {
