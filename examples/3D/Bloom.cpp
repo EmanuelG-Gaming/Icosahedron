@@ -185,7 +185,7 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 );
 
 
-ic::Shader shader, blurShader, screenShader;
+ic::Shader shader, blurShader, screenShader, uiShader;
 ic::Framebuffer sceneFramebuffer;
 ic::Framebuffer pingpong1, pingpong2;
 ic::TextAtlas font;
@@ -198,14 +198,20 @@ ic::FreeRoamCameraController3D controller;
 float exposure;
 
 
+ic::Batch uiBatch;
+
+
+
 void load() {
-    ic::GL::enable_depth_testing(ic::LESS);
     ic::GL::enable_face_culling(ic::FRONT, ic::CCW);
-    
+    uiBatch = ic::Batch(10000, ic::TRIANGLES);
+
     shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, fragment);
     blurShader = ic::ShaderLoader::load(screenVertex, blurShaderFragment);
     screenShader = ic::ShaderLoader::load(screenVertex, screenFragment);
-    
+    uiShader = ic::ShaderLoader::load(ic::Shaders::basicTextShaderVertex2D, ic::Shaders::basicTextShaderFrag2D);
+
+
     // Shader configuration
     shader.use();
     shader.set_uniform_int("sampleTexture", 0);
@@ -224,7 +230,7 @@ void load() {
     floorTexture = ic::TextureLoader::load("resources/textures/wood.png", params, true);
     whiteTexture = ic::TextureLoader::load("resources/textures/white.png", params, true);
 
-    font = ic::FontLoader::load("resources/fonts/Roboto-Regular.ttf", "the slow brown fox jumps over the hasty dog");
+    font = ic::FontLoader::load("resources/fonts/Roboto-Regular.ttf");
 
     // Framebuffers
     sceneFramebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
@@ -274,7 +280,10 @@ void update() {
 
     controller.act(ic::Time::delta);
     camera.update();
-    
+
+
+    // Rendering
+    ic::GL::enable_depth_testing(ic::LESS);
     ic::GL::clear_color(ic::Colors::blue);
     
     // First pass - scene
@@ -342,7 +351,14 @@ void update() {
     sceneFramebuffer.use_texture(0, 0);
     (horizontal ? pingpong2 : pingpong1).use_texture(1, 0);
 
+    ic::GL::disable_depth_testing();
     screenQuad.draw(); 
+
+    // Now draw text on top of the framebuffer quad
+    uiShader.use();
+    font.use();
+    ic::Renderer::draw_string(uiBatch, font, "qwertyuiopasdfghjklzxcvbnm", -0.7f, 0.3f, 10.0f, 0.1f);
+    uiBatch.render();
 }
 
 void dispose() {

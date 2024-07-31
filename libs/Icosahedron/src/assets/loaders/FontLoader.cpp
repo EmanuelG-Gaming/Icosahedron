@@ -8,26 +8,27 @@
 #include <stb_truetype.h>
 
 
-ic::TextAtlas ic::FontLoader::load(const char *filePath, const char *text, int fontWidth, int fontHeight, int lineHeight) {
+ic::TextAtlas ic::FontLoader::load(const char *filePath, int fontWidth, int fontHeight, int lineHeight) {
+
     ic::TextAtlas result;
 
     /* load font file */
     long size;
-    unsigned char* fontBuffer;
+    unsigned char* fontVectorBuffer;
 
     FILE* fontFile = fopen(filePath, "rb");
     fseek(fontFile, 0, SEEK_END);
     size = ftell(fontFile); /* how long is the file ? */
     fseek(fontFile, 0, SEEK_SET); /* reset */
 
-    fontBuffer = (unsigned char*)malloc(size);
+    fontVectorBuffer = (unsigned char*)malloc(size);
 
-    fread(fontBuffer, size, 1, fontFile);
+    fread(fontVectorBuffer, size, 1, fontFile);
     fclose(fontFile);
 
     /* prepare font */
     stbtt_fontinfo info;
-    if (!stbtt_InitFont(&info, fontBuffer, 0))
+    if (!stbtt_InitFont(&info, fontVectorBuffer, 0))
     {
         printf("failed\n");
     }
@@ -36,61 +37,43 @@ ic::TextAtlas ic::FontLoader::load(const char *filePath, const char *text, int f
     int b_h = fontHeight; /* bitmap height */
     int l_h = lineHeight; /* line height */
 
-    /* create a bitmap for the phrase */
+
     unsigned char* bitmap = (unsigned char*)calloc(b_w * b_h, sizeof(unsigned char));
 
-    /* calculate font scaling */
-    float scale = stbtt_ScaleForPixelHeight(&info, l_h);
-
-    int x = 0;
-
-    int ascent, descent, lineGap;
-    stbtt_GetFontVMetrics(&info, &ascent, &descent, &lineGap);
-
-    ascent *= scale;
-    descent *= scale;
-
-    int i;
-    for (i = 0; i < strlen(text); ++i) {
-        /* get bounding box for character (may be offset to account for chars that dip above or below the line */
-        int c_x1, c_y1, c_x2, c_y2;
-        stbtt_GetCodepointBitmapBox(&info, text[i], scale, scale, &c_x1, &c_y1, &c_x2, &c_y2);
-
-        /* compute y (different characters have different heights */
-        int y = ascent + c_y1;
-
-        /* render character (stride and offset is important here) */
-        int byteOffset = x + (y  * b_w);
-        stbtt_MakeCodepointBitmap(&info, bitmap + byteOffset, c_x2 - c_x1, c_y2 - c_y1, b_w, scale, scale, text[i]);
-
-        /* how wide is this character */
-        int ax;
-        stbtt_GetCodepointHMetrics(&info, text[i], &ax, 0);
-        x += ax * scale;
-
-        /* add kerning */
-        int kern;
-        kern = stbtt_GetCodepointKernAdvance(&info, text[i], text[i + 1]);
-        x += kern * scale;
-
-        ic::CharacterInfo glyph;
-        glyph.u1 = c_x1 / (float) b_w;
-        glyph.v1 = c_y1 / (float) b_h;
-        glyph.u2 = c_x2 / (float) b_w;
-        glyph.v2 = c_y2 / (float) b_h;
-
-        glyph.width = glyph.u2 - glyph.u1;
-        glyph.height = glyph.v2 - glyph.v1;
-
-        glyph.shift = ax / (float) b_w;
-    }
+    // Font rasterization
+    stbtt_bakedchar cdata[128];
+    stbtt_BakeFontBitmap(fontVectorBuffer, stbtt_GetFontOffsetForIndex(fontVectorBuffer, 0), lineHeight, bitmap, fontWidth, lineHeight, 0, 128, cdata);
 
     result.atlasWidth = b_w;
-    result.atlasHeight = b_h;
+    result.atlasHeight = lineHeight;
+
+    float x = 0.0f, y = 0.0f;
+    for (int i = 0; i < 128; i++) {
+        stbtt_aligned_quad q;
+        stbtt_GetBakedQuad(cdata, fontWidth, fontHeight, i, &x, &y, &q, 1);
+
+        ic::CharacterInfo glyph;
+        glyph.u0 = q.s0; glyph.v0 = q.t0;
+        glyph.u1 = q.s1; glyph.v1 = q.t1;
+
+        glyph.p0x = q.x0 / (float) fontWidth; glyph.p0y = q.y0 / (float) lineHeight;
+        glyph.p1x = q.x1 / (float) fontWidth; glyph.p1y = q.y1 / (float) lineHeight;
+
+        glyph.width = glyph.u1 - glyph.u0;
+        glyph.height = glyph.v1 - glyph.v0;
+
+        glyph.shift = x / (float) fontWidth;
+
+        result.characters[i] = glyph;
+
+        //std::cout << glyph.u0 << " " << glyph.v0 << " " << glyph.u1 << " " << glyph.v1 << "\n";
+        std::cout << glyph.p0x << " " << glyph.p0y << "\n";
+
+    }
 
     result.initialize_texture(bitmap);
 
-    free(fontBuffer);
+    free(fontVectorBuffer);
     free(bitmap);
 
 

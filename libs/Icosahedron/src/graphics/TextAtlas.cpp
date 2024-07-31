@@ -62,9 +62,6 @@ void TextAtlas::initialize_texture(const void *bitmap) {
 
 
 
-std::array<CharacterInfo, 128> &TextAtlas::get_characters() { 
-    return characters; 
-}
 
 
 float TextAtlas::get_width() { 
@@ -72,4 +69,8 @@ float TextAtlas::get_width() {
 }
 float TextAtlas::get_height() { 
     return atlasHeight; 
+}
+
+ic::CharacterInfo &TextAtlas::glyph_at(int index) {
+    return this->characters[index];
 }

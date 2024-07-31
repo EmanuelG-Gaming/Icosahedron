@@ -10,11 +10,14 @@
 namespace ic {
     /** @brief Stores information about a character (glyph) of a text atlas. */
     struct CharacterInfo {
-        // Just for easier access
+        // For easier notation
         float width, height;
+        
+        // The bounding box coordinates of this glyph
+        float u0, v0, u1, v1;
 
-        // The bounding box coordinates relative to the text atlas (in the interval [0, 1]) 
-        float u1, v1, u2, v2;
+        float p0x, p0y, p1x, p1y;
+
 
         float shift;
     };
@@ -37,7 +40,8 @@ namespace ic {
             void blit_glyph(float u1, float v1, float width, float height, const void *pixels);
 
 
-            std::array<CharacterInfo, 128> &get_characters();
+            ic::CharacterInfo &glyph_at(int index);
+            
             float get_width();
             float get_height();
 

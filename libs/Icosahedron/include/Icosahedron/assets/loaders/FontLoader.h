@@ -13,8 +13,9 @@ namespace ic {
          *  @param filePath A relative or absolute directory path that points to a file with a format like .ttf.
          *  @param fontWidth The width of the text atlas.
          *  @param fontHeight The average size of each character.
+         *  @author Slightly modified from https://stackoverflow.com/questions/51276586/how-to-render-text-in-directx9-with-stb-truetype.
          */
-        ic::TextAtlas load(const char *filePath, const char *text, int fontWidth = 4096, int fontHeight = 1028, int lineHeight = 64);
+        ic::TextAtlas load(const char *filePath, int fontWidth = 4096, int fontHeight = 64, int lineHeight = 32);
     };
 }
 #endif

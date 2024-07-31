@@ -163,8 +163,8 @@ void Renderer::draw_vertices(ic::Batch &batch, std::vector<ic::Vec2f> vertices, 
 
 
 void Renderer::draw_string(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float scaleX, float scaleY, const ic::Color &color) {
-    float sclX = scaleX * 0.002f;
-    float sclY = scaleY * 0.002f;
+    float sclX = scaleX;
+    float sclY = scaleY;
            
     draw_string_itself(batch, textAtlas, text, x, y, sclX, sclY, color);
 }
@@ -175,15 +175,15 @@ void Renderer::draw_string_centered(ic::Batch &batch, ic::TextAtlas &textAtlas, 
     float w = 0.0f;
     float h = 0.0f;
     std::string::const_iterator iterator;
-    //for (iterator = text.begin(); iterator != text.end(); iterator++) {
-    //    CharacterInfo ch = textAtlas.get_characters().at(*iterator);
-    //            
-    //    w += ch.advX;
-    //            
-    //    if (ch.bitmapHeight > h) {
-    //        h = ch.bitmapHeight;
-    //    }
-    //}
+    for (iterator = text.begin(); iterator != text.end(); iterator++) {
+        CharacterInfo ch = textAtlas.glyph_at(*iterator);
+                
+        w += ch.shift;
+                
+        if (ch.height > h) {
+            h = ch.height;
+        }
+    }
     
            
     w *= sclX;
@@ -201,29 +201,37 @@ namespace ic::Renderer { namespace {
 void draw_string_itself(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float sclX, float sclY, const ic::Color &color) {
     std::vector<BatchVertex> vertices;
     
-    float px = x;
-    float py = y;
+    float currentX = x;
+    float currentY = y;
+
+    int glyphIndex = 0;
+
     std::string::const_iterator iterator;
-    //for (iterator = text.begin(); iterator != text.end(); iterator++) {
-    //    CharacterInfo ch = textAtlas.get_characters().at(*iterator);
-    //               
-    //    float x2 = px + ch.bitmapLeft * sclX;
-    //    float y2 = -py - ch.bitmapTop * sclY;
-    //    float width = ch.bitmapWidth * sclX;
-    //    float height = ch.bitmapHeight * sclY;
-    //               
-    //    px += ch.advX * sclX;
-    //    py += ch.advY * sclY;
-    //               
-    //               
-    //    vertices.push_back(BatchVertex(x2, -y2, ch.offsetX, 0, color));
-    //    vertices.push_back(BatchVertex(x2 + width, -y2, ch.offsetX + ch.bitmapWidth / textAtlas.get_width(), 0, color));
-    //    vertices.push_back(BatchVertex(x2, -y2 - height, ch.offsetX, ch.bitmapHeight / textAtlas.get_height(), color));
-    //               
-    //    vertices.push_back(BatchVertex(x2 + width, -y2, ch.offsetX + ch.bitmapWidth / textAtlas.get_width(), 0, color));
-    //    vertices.push_back(BatchVertex(x2 + width, -y2 - height, ch.offsetX + ch.bitmapWidth / textAtlas.get_width(), ch.bitmapHeight / textAtlas.get_height(), color));
-    //    vertices.push_back(BatchVertex(x2, -y2 - height, ch.offsetX, ch.bitmapHeight / textAtlas.get_height(), color));
-    //}
+    for (iterator = text.begin(); iterator != text.end(); iterator++) {
+        CharacterInfo ch = textAtlas.glyph_at(*iterator);
+                   
+        float x1 = currentX;
+        float y1 = -ch.p0y * sclY + currentY;
+        float x2 =  (ch.p1x - ch.p0x) * sclX + currentX;
+        float y2 = -ch.p1y * sclY + currentY;
+       
+        //std::cout << "scales: " << sclX << " " << sclY << "\n";
+        //std::cout << ch.u1 << "\n";
+        //std::cout << "at glyph index: " << glyphIndex << "\n";
+        //std::cout << x2 << " "  << y2 << " " << ch.shift << "\n\n";
+       
+                        
+        vertices.push_back(BatchVertex(x1, y1, ch.u0, ch.v0 * 2.0f, color));
+        vertices.push_back(BatchVertex(x2, y1, ch.u1, ch.v0 * 2.0f, color));
+        vertices.push_back(BatchVertex(x2, y2, ch.u1, ch.v1 * 2.0f, color));
+        
+        vertices.push_back(BatchVertex(x1, y1, ch.u0, ch.v0 * 2.0f, color));
+        vertices.push_back(BatchVertex(x2, y2, ch.u1, ch.v1 * 2.0f, color));
+        vertices.push_back(BatchVertex(x1, y2, ch.u0, ch.v1 * 2.0f, color));
+
+        currentX += 0.05f;
+        glyphIndex++;
+    }
               
     batch.add(vertices);
 }
