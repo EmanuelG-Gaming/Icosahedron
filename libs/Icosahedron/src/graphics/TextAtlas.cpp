@@ -9,6 +9,9 @@ using namespace ic;
 TextAtlas::TextAtlas() {
     this->atlasWidth = 4;
     this->atlasHeight = 4;
+
+    this->characters = nullptr;
+    this->firstGlyph = this->glyphCount = 0;
 }
 
 

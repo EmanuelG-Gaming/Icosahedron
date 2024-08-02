@@ -203,7 +203,6 @@ ic::Batch uiBatch;
 
 
 void load() {
-    ic::GL::enable_face_culling(ic::FRONT, ic::CCW);
     uiBatch = ic::Batch(10000, ic::TRIANGLES);
 
     shader = ic::ShaderLoader::load(ic::Shaders::meshShaderVertex3D, fragment);
@@ -230,7 +229,7 @@ void load() {
     floorTexture = ic::TextureLoader::load("resources/textures/wood.png", params, true);
     whiteTexture = ic::TextureLoader::load("resources/textures/white.png", params, true);
 
-    font = ic::FontLoader::load("resources/fonts/Roboto-Regular.ttf");
+    font = ic::FontLoader::load("resources/fonts/futura/Futura Extra Black Condensed Regular.otf");
 
     // Framebuffers
     sceneFramebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
@@ -284,6 +283,10 @@ void update() {
 
     // Rendering
     ic::GL::enable_depth_testing(ic::LESS);
+    ic::GL::enable_face_culling(ic::FRONT, ic::CCW);
+
+
+
     ic::GL::clear_color(ic::Colors::blue);
     
     // First pass - scene
@@ -295,15 +298,13 @@ void update() {
     camera.upload_to_shader(shader);
     
 
-    //ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, ic::Time::time, ic::Time::time);
-    ic::Quaternion quat = ic::Quaternion().identity();
+    ic::Quaternion quat = ic::Quaternion().from_euler(0.0f, ic::Time::time, ic::Time::time);
     ic::Mat4x4 rotation = quat.to_rotation_matrix();
     ic::Mat4x4 translation = ic::Mat4x4().set_translation<3>({0.0f, 0.6f, 0.0f});
     mesh.set_transformation(translation * rotation);
     mesh.set_normal_transformation(rotation);
 
-    //whiteTexture.use();
-    font.use();
+    whiteTexture.use();
     mesh.apply_transformations(shader);
     mesh.draw();
     
@@ -352,12 +353,14 @@ void update() {
     (horizontal ? pingpong2 : pingpong1).use_texture(1, 0);
 
     ic::GL::disable_depth_testing();
+    ic::GL::disable_face_culling();
     screenQuad.draw(); 
 
     // Now draw text on top of the framebuffer quad
     uiShader.use();
     font.use();
-    ic::Renderer::draw_string(uiBatch, font, "qwertyuiopasdfghjklzxcvbnm", -0.7f, 0.3f, 10.0f, 0.1f);
+    ic::Renderer::draw_string(uiBatch, font, "test font 1!2@3#4$5%6^7&8*9(0)", -0.5f, 0.0f, 0.1f, ic::Colors::black);
+    
     uiBatch.render();
 }
 

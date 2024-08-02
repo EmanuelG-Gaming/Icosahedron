@@ -10,22 +10,19 @@
 namespace ic {
     /** @brief Stores information about a character (glyph) of a text atlas. */
     struct CharacterInfo {
-        // For easier notation
-        float width, height;
-        
-        // The bounding box coordinates of this glyph
         float u0, v0, u1, v1;
-
         float p0x, p0y, p1x, p1y;
 
-
-        float shift;
+        float advance;
     };
 
     class TextAtlas {
         public:
             int atlasWidth, atlasHeight;
-            std::array<CharacterInfo, 128> characters;
+            CharacterInfo *characters;
+
+            int firstGlyph, glyphCount;
+            int fontHeight;
             
         public:
             TextAtlas();

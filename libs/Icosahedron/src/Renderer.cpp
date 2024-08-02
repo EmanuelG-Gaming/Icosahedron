@@ -160,82 +160,73 @@ void Renderer::draw_vertices(ic::Batch &batch, std::vector<ic::Vec2f> vertices, 
     batch.add(v);
 }
 
-
-
-void Renderer::draw_string(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float scaleX, float scaleY, const ic::Color &color) {
-    float sclX = scaleX;
-    float sclY = scaleY;
-           
-    draw_string_itself(batch, textAtlas, text, x, y, sclX, sclY, color);
-}
-void Renderer::draw_string_centered(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float scaleX, float scaleY, const ic::Color &color) {
-    float sclX = scaleX * 0.002f;
-    float sclY = scaleY * 0.002f;
-        
-    float w = 0.0f;
-    float h = 0.0f;
-    std::string::const_iterator iterator;
-    for (iterator = text.begin(); iterator != text.end(); iterator++) {
-        CharacterInfo ch = textAtlas.glyph_at(*iterator);
-                
-        w += ch.shift;
-                
-        if (ch.height > h) {
-            h = ch.height;
-        }
-    }
-    
-           
-    w *= sclX;
-    h *= sclY;
-           
-           
-    float px = x - w / 2.0f;
-    float py = y - h / 2.0f;
-    
-    draw_string_itself(batch, textAtlas, text, px, py, sclX, sclY, color); 
-}
-
-
-namespace ic::Renderer { namespace {
-void draw_string_itself(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float sclX, float sclY, const ic::Color &color) {
+void ic::Renderer::draw_string_monospace(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float h, float advance, const ic::Color &color) {
     std::vector<BatchVertex> vertices;
     
     float currentX = x;
     float currentY = y;
+    
+    float scale = h / (float) textAtlas.fontHeight;
+    int glyphIndex = 0;
 
+    std::string::const_iterator iterator;
+    for (iterator = text.begin(); iterator != text.end(); iterator++) {
+        CharacterInfo ch = textAtlas.glyph_at(*iterator);
+              
+        float x1 = currentX;
+        float y1 = currentY;
+        float x2 = (ch.p1x - ch.p0x) * scale + currentX;
+        float y2 = -(ch.p1y - ch.p0y) * scale + currentY;
+       
+                        
+        vertices.push_back(BatchVertex(x1, y1, ch.u0, ch.v0, color));
+        vertices.push_back(BatchVertex(x2, y1, ch.u1, ch.v0, color));
+        vertices.push_back(BatchVertex(x2, y2, ch.u1, ch.v1, color));
+        
+        vertices.push_back(BatchVertex(x1, y1, ch.u0, ch.v0, color));
+        vertices.push_back(BatchVertex(x2, y2, ch.u1, ch.v1, color));
+        vertices.push_back(BatchVertex(x1, y2, ch.u0, ch.v1, color));
+
+        currentX += advance;
+        glyphIndex++;
+    }
+              
+    batch.add(vertices);
+}
+
+void ic::Renderer::draw_string(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float h, const ic::Color &color) {
+    std::vector<BatchVertex> vertices;
+    
+    float currentX = x;
+    float currentY = y;
+    
+    float scale = h / (float) textAtlas.fontHeight;
     int glyphIndex = 0;
 
     std::string::const_iterator iterator;
     for (iterator = text.begin(); iterator != text.end(); iterator++) {
         CharacterInfo ch = textAtlas.glyph_at(*iterator);
                    
-        float x1 = currentX;
-        float y1 = -ch.p0y * sclY + currentY;
-        float x2 =  (ch.p1x - ch.p0x) * sclX + currentX;
-        float y2 = -ch.p1y * sclY + currentY;
-       
-        //std::cout << "scales: " << sclX << " " << sclY << "\n";
-        //std::cout << ch.u1 << "\n";
-        //std::cout << "at glyph index: " << glyphIndex << "\n";
-        //std::cout << x2 << " "  << y2 << " " << ch.shift << "\n\n";
+        float x1 = currentX + ch.p0x * scale;
+        float y1 = currentY + ch.p0y * scale;
+        float x2 = currentX + ch.p1x * scale;
+        float y2 = currentY + ch.p1y * scale;
        
                         
-        vertices.push_back(BatchVertex(x1, y1, ch.u0, ch.v0 * 2.0f, color));
-        vertices.push_back(BatchVertex(x2, y1, ch.u1, ch.v0 * 2.0f, color));
-        vertices.push_back(BatchVertex(x2, y2, ch.u1, ch.v1 * 2.0f, color));
+        vertices.push_back(BatchVertex(x1, y1, ch.u0, ch.v0, color));
+        vertices.push_back(BatchVertex(x2, y1, ch.u1, ch.v0, color));
+        vertices.push_back(BatchVertex(x2, y2, ch.u1, ch.v1, color));
         
-        vertices.push_back(BatchVertex(x1, y1, ch.u0, ch.v0 * 2.0f, color));
-        vertices.push_back(BatchVertex(x2, y2, ch.u1, ch.v1 * 2.0f, color));
-        vertices.push_back(BatchVertex(x1, y2, ch.u0, ch.v1 * 2.0f, color));
+        vertices.push_back(BatchVertex(x1, y1, ch.u0, ch.v0, color));
+        vertices.push_back(BatchVertex(x2, y2, ch.u1, ch.v1, color));
+        vertices.push_back(BatchVertex(x1, y2, ch.u0, ch.v1, color));
 
-        currentX += 0.05f;
+        currentX += ch.advance * scale;
         glyphIndex++;
     }
               
     batch.add(vertices);
 }
-}}
 
         
 void Renderer::tint(const ic::Color &to, float amount) {

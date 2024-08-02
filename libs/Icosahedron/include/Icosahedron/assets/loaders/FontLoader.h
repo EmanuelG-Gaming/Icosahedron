@@ -9,13 +9,10 @@
 
 namespace ic {
     namespace FontLoader {
-        /** @brief Loads a font containing most ASCII characters, in a horizontal array.
-         *  @param filePath A relative or absolute directory path that points to a file with a format like .ttf.
-         *  @param fontWidth The width of the text atlas.
-         *  @param fontHeight The average size of each character.
+        /** @brief Loads a font page containing most ASCII characters to a mostly horizontal image.
          *  @author Slightly modified from https://stackoverflow.com/questions/51276586/how-to-render-text-in-directx9-with-stb-truetype.
          */
-        ic::TextAtlas load(const char *filePath, int fontWidth = 4096, int fontHeight = 64, int lineHeight = 32);
+        ic::TextAtlas load(const char *filePath, int atlasWidth = 4096, int atlasHeight = 4096, int characterSize = 128, int glyphOversamplingX = 5, int glyphOversamplingY = 5, int firstCharacter = 0, int numberOfCharacters = 128);
     };
 }
 #endif

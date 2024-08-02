@@ -27,15 +27,13 @@ namespace ic {
         void draw_vertices(ic::Batch &batch, std::vector<ic::Vec2f> vertices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color = { 255, 255, 255 }); 
         void draw_vertices(ic::Batch &batch, std::vector<ic::Vec2f> vertices, std::vector<unsigned int> indices, std::vector<ic::Color> vertexColors, std::vector<ic::Vec2f> vertexTexCoords, const ic::Color &color = { 255, 255, 255 }); 
 
-
-        void draw_string(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f, const ic::Color &color = { 255, 255, 255 });
-        void draw_string_centered(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float scaleX = 1.0f, float scaleY = 1.0f, const ic::Color &color = { 255, 255, 255 });
+        void draw_string_monospace(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float h, float advance, const ic::Color &color = ic::Colors::white);
+        void draw_string(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float h, const ic::Color &color = ic::Colors::white);
+        
 
         void tint(const ic::Color &to, float amount);
             
         namespace {
-            void draw_string_itself(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float sclX, float sclY, const ic::Color &color = { 255, 255, 255 });
-
             float tinting = 0.0f;
             ic::Color tintColor = { 255, 255, 255 };
         };
