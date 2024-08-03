@@ -4,7 +4,6 @@
 #include <string>
 
 #include <Icosahedron/graphics/TextAtlas.h>
-#include <Icosahedron/graphics/FreeType.h>
 
 #include <UI/Element.h>
 #include <UI/style/Drawable.h>
@@ -15,24 +14,18 @@ namespace ic { namespace UI {
     class LabelStyle {
         public:
             ic::TextAtlas font;
-            ic::Color fontColor;
             ic::UI::Drawable *background;
+            ic::Color fontColor;
             
             LabelStyle() {
-                this->font = ic::UI::Global::get().defaultAtlas;
                 this->fontColor = ic::Colors::white;
                 this->background = nullptr;
+                this->font = ic::UI::Global::get().defaultAtlas;
             }
 
-            LabelStyle(const std::string &fontName, ic::UI::Drawable *background = nullptr) {
-                this->font = ic::FreeType::find_atlas(fontName);
+            LabelStyle(ic::TextAtlas &font, ic::UI::Drawable *background = nullptr) {
+                this->font = font;
                 this->fontColor = ic::Colors::white;
-                this->background = background;
-            }
-
-            LabelStyle(const std::string &fontName, const ic::Color &color, ic::UI::Drawable *background = nullptr) {
-                this->font = ic::FreeType::find_atlas(fontName);
-                this->fontColor = color;
                 this->background = background;
             }
     };
@@ -54,10 +47,6 @@ namespace ic { namespace UI {
             ic::UI::Label *set_text(const std::string &text);
 
             std::string &get_text();
-
-        protected:
-            ic::Vec2f compute_size(ic::TextAtlas &font);
-        
         
         protected:
             std::string text;

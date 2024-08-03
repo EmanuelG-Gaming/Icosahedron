@@ -13,7 +13,7 @@ namespace ic {
         float u0, v0, u1, v1;
         float p0x, p0y, p1x, p1y;
 
-        float advance;
+        float advance, offsetY;
     };
 
     class TextAtlas {

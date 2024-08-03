@@ -8,7 +8,7 @@
 
 #include <Icosahedron/graphics/TextAtlas.h>
 #include <Icosahedron/graphics/gl/TextureAtlas.h>
-#include <Icosahedron/graphics/FreeType.h>
+#include <Icosahedron/assets/loaders/FontLoader.h>
 
 #include <Icosahedron/input/MouseController.h>
 
@@ -19,8 +19,9 @@ namespace ic { namespace UI {
     class Global {
         public:
             ic::Batch fillBatch, fillTextBatch;
-            ic::TextAtlas defaultAtlas;
             ic::TextureAtlas atlas;
+            ic::TextAtlas defaultAtlas;
+
             ic::Vec2f mouseCursorPosition;
             
             ic::UI::TextField *focusedTextField;

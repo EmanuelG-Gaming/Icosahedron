@@ -13,6 +13,7 @@
 
 ic::UI::TextureDrawable *buttonDrawable;
 ic::UI::TextureDrawable *tinted;
+ic::TextAtlas font;
 float alpha = 0.0f;
 
 
@@ -23,11 +24,11 @@ void add_table() {
     
     ic::UI::Table *table = new ic::UI::Table(tinted);
     ic::UI::SliderStyle style(new ic::UI::TextureDrawable("white"), new ic::UI::TextureDrawable("white"));
-    table->label("Test dialog title")->set_position(0.0f, 0.5f);
+    table->label("Test dialog title")->set_style(ic::UI::LabelStyle(font))->set_position(0.0f, 0.5f);
     table->slider([&](float t) {
         alpha = t;
     })->set_style(style)->set_position(0.0f, 0.3f);
-    table->text_field("Yes...", ic::UI::TextFieldFilters::characters, 0.3f, 0.1f)->set_style(ic::UI::TextFieldStyle(tinted, tinted))->set_position(0.0f, 0.3f);
+    table->text_field("Yes...", ic::UI::TextFieldFilters::characters, 0.2f, 0.05f)->set_style(ic::UI::TextFieldStyle(tinted, tinted, ic::Colors::cyan, font))->set_position(0.0f, 0.15f);
     table->text_button("Remove", [table]() {
         ui.mainTable->remove(table);
     })->set_background(buttonDrawable)->set_position(0.0f, -0.5f);
@@ -38,6 +39,9 @@ void add_table() {
 
 
 bool load() {
+    font = ic::FontLoader::load("resources/fonts/futura/Futura Extra Black Condensed Regular.otf", 4096, 4096, 128, 2, 2);
+    ic::UI::Global::get().defaultAtlas = font;
+    
     ic::GL::enable_blending(ic::SRC_ALPHA, ic::DEST_ONE_MINUS_SRC_ALPHA);
     static auto &ui = ic::UI::Core::get();
     ui.load();
@@ -67,7 +71,8 @@ bool update() {
     ic::Color c1 = ic::Colors::yellow, c2 = ic::Colors::blue;
     ic::Color c3 = c1.interpolate(c2, alpha);
     ic::GL::clear_color(c3);
-    ic::UI::Core::get().update_and_render(ic::Time::globalDelta);
+
+    ic::UI::Core::get().update_and_render(ic::Time::globalDelta, font);
     return true; 
 }
 
@@ -88,8 +93,6 @@ int main() {
     
     engine.window.set("UI Basics", 640, 480);
     engine.window.set_vsync(1);
-
-    ic::FreeType::load();
 
     load();
 

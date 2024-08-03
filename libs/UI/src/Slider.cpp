@@ -9,7 +9,7 @@ Slider::Slider() {
     this->vertical = false;
     this->draggingKnob = false;
 
-    this->lineWidth = 0.3f;
+    this->lineWidth = 0.2f;
     this->lineThickness = 0.025f;
 
     this->knobWidth = 0.04f;

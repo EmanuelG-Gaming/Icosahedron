@@ -14,7 +14,6 @@
 
 #include <Icosahedron/assets/loaders/ShaderLoader.h>
 #include <Icosahedron/assets/loaders/TextureLoader.h>
-#include <Icosahedron/assets/loaders/FontLoader.h>
 
 #include <Icosahedron/Debug.h>
 
@@ -188,7 +187,6 @@ std::string fragment = IC_ADD_GLSL_DEFINITION(
 ic::Shader shader, blurShader, screenShader, uiShader;
 ic::Framebuffer sceneFramebuffer;
 ic::Framebuffer pingpong1, pingpong2;
-ic::TextAtlas font;
 
 ic::Camera3D camera;
 ic::Mesh screenQuad;
@@ -228,8 +226,6 @@ void load() {
 
     floorTexture = ic::TextureLoader::load("resources/textures/wood.png", params, true);
     whiteTexture = ic::TextureLoader::load("resources/textures/white.png", params, true);
-
-    font = ic::FontLoader::load("resources/fonts/futura/Futura Extra Black Condensed Regular.otf");
 
     // Framebuffers
     sceneFramebuffer = ic::Framebuffer(ic::TEXTURE_ATTACH_COLOR_0, ic::TEXTURE_RGBA_16F, ic::TEXTURE_RGBA, IC_WINDOW_WIDTH, IC_WINDOW_HEIGHT);
@@ -355,13 +351,6 @@ void update() {
     ic::GL::disable_depth_testing();
     ic::GL::disable_face_culling();
     screenQuad.draw(); 
-
-    // Now draw text on top of the framebuffer quad
-    uiShader.use();
-    font.use();
-    ic::Renderer::draw_string(uiBatch, font, "test font 1!2@3#4$5%6^7&8*9(0)", -0.5f, 0.0f, 0.1f, ic::Colors::black);
-    
-    uiBatch.render();
 }
 
 void dispose() {

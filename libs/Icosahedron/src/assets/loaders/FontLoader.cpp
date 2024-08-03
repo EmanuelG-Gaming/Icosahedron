@@ -77,6 +77,7 @@ ic::TextAtlas ic::FontLoader::load(const char *filePath, int atlasWidth, int atl
         glyph.p1x = q.x1; glyph.p1y = -q.y1;
 
         glyph.advance = offsetX;
+        glyph.offsetY = offsetY;
 
         result.characters[i] = glyph;
     }

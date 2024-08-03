@@ -119,7 +119,7 @@ void ic::UI::Core::update(float dt) {
 }
 
 
-void ic::UI::Core::render(float dt) {
+void ic::UI::Core::render(float dt, ic::TextAtlas &font) {
     this->mainTable->draw();
 
     glCullFace(GL_BACK);
@@ -136,9 +136,8 @@ void ic::UI::Core::render(float dt) {
     // Text
     this->uiTextShader.use();
     this->uiCamera.use(this->uiTextShader);
-    
-    // Currently uses the default atlas
-    ic::UI::Global::get().defaultAtlas.use();
+
+    font.use();
     ic::UI::Global::get().fillTextBatch.render();
 
     glDepthMask(GL_TRUE);
@@ -147,9 +146,9 @@ void ic::UI::Core::render(float dt) {
 
 
 
-void ic::UI::Core::update_and_render(float dt) {
+void ic::UI::Core::update_and_render(float dt, ic::TextAtlas &font) {
     this->update(dt);
-    this->render(dt);
+    this->render(dt, font);
 }
 
 

@@ -29,7 +29,8 @@ namespace ic {
 
         void draw_string_monospace(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float h, float advance, const ic::Color &color = ic::Colors::white);
         void draw_string(ic::Batch &batch, ic::TextAtlas &textAtlas, const std::string &text, float x, float y, float h, const ic::Color &color = ic::Colors::white);
-        
+
+        float calculate_width(ic::TextAtlas &atlas, const std::string &text, float h);
 
         void tint(const ic::Color &to, float amount);
             

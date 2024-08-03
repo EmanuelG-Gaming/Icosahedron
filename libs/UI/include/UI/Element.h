@@ -14,7 +14,7 @@ namespace ic { namespace UI {
             ic::Vec2f relativePosition;
 
             /** @brief Size of the bounding box. */
-            float width, height;
+            float width = 0.0f, height = 0.0f;
             
             Element();
 

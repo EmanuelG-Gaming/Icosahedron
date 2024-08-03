@@ -36,15 +36,16 @@ include_directories(${SDL2_INCLUDE_DIRS})
 # Libraries and extensions
 add_subdirectory(libs/Icosahedron)
 add_subdirectory(libs/Physics)
-# add_subdirectory(libs/UI)
+add_subdirectory(libs/UI)
 
 ##### Main program #####
 add_executable(main "src/main.cpp")
-target_link_libraries(main Icosahedron Physics ${SDL2_LIBRARIES})
+target_link_libraries(main Icosahedron Physics UI ${SDL2_LIBRARIES})
 
 ##### Examples #####
-add_executable(examples "examples/3D/Bloom.cpp")
-target_link_libraries(examples Icosahedron Physics ${SDL2_LIBRARIES})
+# add_executable(examples "examples/3D/Bloom.cpp")
+add_executable(examples "examples/UI/UIBasics.cpp")
+target_link_libraries(examples Icosahedron Physics UI ${SDL2_LIBRARIES})
 
 
 # Testing once again...

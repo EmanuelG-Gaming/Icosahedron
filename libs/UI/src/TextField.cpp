@@ -34,7 +34,7 @@ void TextField::draw() {
         this->style.focused->draw(this->translation.x(), this->translation.y() - 0.005f, this->width - 0.01f, 0.005f);
     }
 
-    ic::Renderer::draw_string(ic::UI::Global::get().fillTextBatch, this->style.font, this->text, this->translation.x() - this->width + 0.005f, this->translation.y(), 1.0f, 1.0f, this->style.fontColor);
+    ic::Renderer::draw_string(ic::UI::Global::get().fillTextBatch, this->style.font, this->text, this->translation.x() - this->width + 0.005f, this->translation.y(), 0.1f, this->style.fontColor);
 }
 
 void TextField::mouse_down_callback() {

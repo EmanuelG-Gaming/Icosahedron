@@ -21,27 +21,23 @@ namespace ic { namespace UI {
             Drawable *background, *focused;
     
             TextFieldStyle() {
-                background = focused = nullptr;
-                fontColor = ic::Colors::white;
-                font = ic::UI::Global::get().defaultAtlas;
+                this->background = this->focused = nullptr;
+                this->fontColor = ic::Colors::white;
+                this->font = ic::UI::Global::get().defaultAtlas;
             }
 
-            TextFieldStyle(const std::string &fontName) {
-                background = focused = nullptr;
-                fontColor = ic::Colors::white;
-                font = ic::FreeType::find_atlas(fontName);
+            TextFieldStyle(const ic::TextAtlas &font) {
+                this->background = this->focused = nullptr;
+                this->fontColor = ic::Colors::white;
+                this->font = font;
             }
 
-            TextFieldStyle(Drawable *back, Drawable *focus, const ic::Color &fontCol = ic::Colors::white, const std::string &fontName = "") {
-                background = back;
-                focused = focus;
-                fontColor = fontCol;
+            TextFieldStyle(Drawable *back, Drawable *focus, const ic::Color &fontCol, const ic::TextAtlas &font) {
+                this->background = back;
+                this->focused = focus;
+                this->fontColor = fontCol;
                 
-                if (!fontName.empty()) {
-                    font = ic::FreeType::find_atlas(fontName);
-                } else {
-                    font = ic::UI::Global::get().defaultAtlas;
-                }
+                this->font = font;
             }
     };
 

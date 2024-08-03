@@ -25,9 +25,9 @@ namespace ic { namespace UI {
             void handle_event(ic::Event event, float dt);
 
             void update(float dt);
-            void render(float dt);
+            void render(float dt, ic::TextAtlas &font);
 
-            void update_and_render(float dt);
+            void update_and_render(float dt, ic::TextAtlas &font);
             
             void dispose();
         

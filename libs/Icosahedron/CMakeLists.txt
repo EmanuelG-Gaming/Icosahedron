@@ -128,6 +128,7 @@ set(LIBRARY_SOURCE
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Cubemap.cpp
 
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/TextureArray.cpp
+    ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/TextureAtlas.cpp  
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/VertexArray.cpp
     ${LIBRARY_SOURCE_DIRECTORY}/graphics/gl/Batch.cpp
 
